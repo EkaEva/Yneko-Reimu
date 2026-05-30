@@ -20,7 +20,7 @@ function yneko_reimu_feature_defaults() {
 			'yneko_reimu_photoswipe_enable'      => false,
 			'yneko_reimu_mermaid_enable'         => false,
 			'yneko_reimu_algolia_enable'         => false,
-			'yneko_reimu_generator_search_enable'=> true,
+			'yneko_reimu_generator_search_enable' => true,
 			'yneko_reimu_custom_cursor'          => false,
 		)
 	);
