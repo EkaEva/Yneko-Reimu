@@ -22,3 +22,4 @@
 - Updated README release checks and directory tree for the new toolchain layout.
 - Synced the English README development section with the new Vite/PHPCS workflow.
 - Replaced theme screenshot with the user-provided compressed PNG from `C:\Users\86135\Downloads\screenshot.png`.
+- Fixed the release workflow after the first v0.1.2 tag run failed because CI had not installed npm dependencies before running Vite.
