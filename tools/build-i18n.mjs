@@ -155,7 +155,7 @@ const enTranslations = new Map(Object.entries({
   'Yneko-Reimu 主题作者': 'Yneko-Reimu theme author',
   'hexo-theme-reimu 原作者': 'Original hexo-theme-reimu author',
   '莉莉概念光标作者': 'Lily concept cursor author',
-  '未来有你...': 'The future has you...',
+  '未来有你...': 'Loading...',
   '少女祈祷中...': 'Loading...',
   '(无标题)': '(Untitled)',
   '%d 分钟阅读': '%d min read',

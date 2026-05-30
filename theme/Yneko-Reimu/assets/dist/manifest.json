@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-05-30T06:14:57.134Z",
+  "builtAt": "2026-05-30T07:07:25.537Z",
   "builder": "vite",
   "upstream": {
     "name": "hexo-theme-reimu",
@@ -17,7 +17,7 @@
     "assets/dist/reimu.css"
   ],
   "outputStats": {
-    "assets/dist/loader.css": 1722,
+    "assets/dist/loader.css": 1753,
     "assets/dist/reimu.js": 55802,
     "assets/dist/reimu.css": 172393
   }
