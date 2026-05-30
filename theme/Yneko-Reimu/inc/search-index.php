@@ -18,7 +18,7 @@ function yneko_reimu_search_json_url( $language = '' ) {
 function yneko_reimu_search_index_rewrite() {
 	add_rewrite_rule( '^search\.json$', 'index.php?yneko_reimu_search_json=1', 'top' );
 	if ( function_exists( 'yneko_reimu_i18n_url_prefix' ) ) {
-		add_rewrite_rule( '^' . preg_quote( yneko_reimu_i18n_url_prefix(), '/' ) . '/search\.json$', 'index.php?yneko_reimu_search_json=1&yneko_reimu_search_lang=en_US', 'top' );
+		add_rewrite_rule( '^' . preg_quote( yneko_reimu_i18n_url_prefix(), '/' ) . '/search\.json/?$', 'index.php?yneko_reimu_search_json=1&yneko_reimu_search_lang=en_US', 'top' );
 	}
 }
 add_action( 'init', 'yneko_reimu_search_index_rewrite' );
@@ -118,7 +118,7 @@ function yneko_reimu_is_search_json_request() {
 	}
 
 	if ( function_exists( 'yneko_reimu_i18n_relative_without_prefix' ) ) {
-		return 'search.json' === yneko_reimu_i18n_relative_without_prefix( $path );
+		return 'search.json' === trim( yneko_reimu_i18n_relative_without_prefix( $path ), '/' );
 	}
 
 	return false;

@@ -14,6 +14,16 @@ function yneko_reimu_vendor_url( $package_path ) {
 	return yneko_reimu_vendor_base_url() . '/' . ltrim( $package_path, '/' );
 }
 
+function yneko_reimu_asset_version( $relative_path ) {
+	$path = YNEKO_REIMU_DIR . '/' . ltrim( $relative_path, '/' );
+
+	if ( file_exists( $path ) ) {
+		return YNEKO_REIMU_VERSION . '.' . filemtime( $path );
+	}
+
+	return YNEKO_REIMU_VERSION;
+}
+
 function yneko_reimu_default_aplayer_audio_json() {
 	return '[]';
 }
@@ -115,7 +125,7 @@ add_action( 'wp_head', 'yneko_reimu_critical_cursor', 0 );
 function yneko_reimu_enqueue_assets() {
 	wp_enqueue_style( 'yneko-reimu-theme', get_stylesheet_uri(), array(), YNEKO_REIMU_VERSION );
 	wp_enqueue_style( 'yneko-reimu-fonts', 'https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto+Serif+SC:400,400italic,700,700italic&display=swap', array(), null );
-	wp_enqueue_style( 'yneko-reimu-loader', YNEKO_REIMU_URI . '/assets/dist/loader.css', array( 'yneko-reimu-theme' ), YNEKO_REIMU_VERSION );
+	wp_enqueue_style( 'yneko-reimu-loader', YNEKO_REIMU_URI . '/assets/dist/loader.css', array( 'yneko-reimu-theme' ), yneko_reimu_asset_version( 'assets/dist/loader.css' ) );
 	$aplayer_audio  = yneko_reimu_normalize_aplayer_audio( yneko_reimu_settings_music_items() );
 	$enable_aplayer = ( yneko_reimu_get_theme_mod( 'yneko_reimu_player_aplayer_enable', true ) && ! empty( $aplayer_audio ) ) || yneko_reimu_get_theme_mod( 'yneko_reimu_player_meting_enable', false );
 	if ( $enable_aplayer ) {
@@ -125,7 +135,7 @@ function yneko_reimu_enqueue_assets() {
 	if ( $enable_aplayer ) {
 		$main_style_deps[] = 'yneko-reimu-aplayer';
 	}
-	wp_enqueue_style( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.css', $main_style_deps, YNEKO_REIMU_VERSION );
+	wp_enqueue_style( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.css', $main_style_deps, yneko_reimu_asset_version( 'assets/dist/reimu.css' ) );
 
 	$accent = sanitize_hex_color( yneko_reimu_get_theme_mod( 'yneko_reimu_accent_color', '#ff5252' ) );
 	$accent = $accent ? $accent : '#ff5252';
@@ -137,7 +147,7 @@ function yneko_reimu_enqueue_assets() {
 		wp_add_inline_style( 'yneko-reimu-main', '#header-nav{position:absolute;}' );
 	}
 
-	wp_enqueue_script( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.js', array(), YNEKO_REIMU_VERSION, true );
+	wp_enqueue_script( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.js', array(), yneko_reimu_asset_version( 'assets/dist/reimu.js' ), true );
 
 	$current_language   = function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : get_locale();
 	$builtin_search_url = function_exists( 'yneko_reimu_search_json_url' ) ? yneko_reimu_search_json_url( $current_language ) : '';

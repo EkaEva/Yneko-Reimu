@@ -290,15 +290,6 @@
     });
     options.forEach(function (item) {
       item.addEventListener('click', function () {
-        options.forEach(function (option) {
-          option.classList.remove('selected');
-          option.setAttribute('aria-selected', 'false');
-        });
-        item.classList.add('selected');
-        item.setAttribute('aria-selected', 'true');
-        if (selectedLabel) {
-          selectedLabel.textContent = item.textContent;
-        }
         list.classList.remove('show');
         selected.setAttribute('aria-expanded', 'false');
         if (item.dataset.url && item.dataset.url !== window.location.href) {
@@ -2807,6 +2798,7 @@
     replaceElement('#header > img:first-of-type', nextDoc);
     replaceElement('#header-title', nextDoc);
     replaceElement('#subtitle-wrap', nextDoc);
+    replaceElement('#i18n-nav', nextDoc);
     replaceElement('#content', nextDoc, { classOnly: true });
     replaceElement('#main', nextDoc);
     replaceElement('.sidebar-wrapper-container', nextDoc);
