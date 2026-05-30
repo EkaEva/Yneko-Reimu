@@ -37,6 +37,34 @@ function yneko_reimu_register_rest_meta() {
 			);
 		}
 
+		register_post_meta(
+			$post_type,
+			'_yneko_reimu_language',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_key',
+				'auth_callback'     => static function () {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+
+		register_post_meta(
+			$post_type,
+			'_yneko_reimu_translation_id',
+			array(
+				'type'              => 'integer',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'absint',
+				'auth_callback'     => static function () {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+
 		foreach ( $choice_meta as $meta_key ) {
 			register_post_meta(
 				$post_type,
@@ -67,6 +95,20 @@ function yneko_reimu_add_post_meta_boxes() {
 	);
 }
 add_action( 'add_meta_boxes', 'yneko_reimu_add_post_meta_boxes' );
+
+function yneko_reimu_post_meta_admin_style( $hook ) {
+	if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+		return;
+	}
+
+	wp_register_style( 'yneko-reimu-post-meta-admin', false, array(), YNEKO_REIMU_VERSION );
+	wp_enqueue_style( 'yneko-reimu-post-meta-admin' );
+	wp_add_inline_style(
+		'yneko-reimu-post-meta-admin',
+		'.yneko-reimu-post-meta-bi{display:inline-flex;flex-direction:column;gap:2px;line-height:1.35}.yneko-reimu-post-meta-bi small{font-size:11px;color:#646970;font-weight:400}.misc-pub-section .yneko-reimu-post-meta-bi{display:inline-flex}'
+	);
+}
+add_action( 'admin_enqueue_scripts', 'yneko_reimu_post_meta_admin_style' );
 
 function yneko_reimu_render_post_options_meta_box( $post ) {
 	wp_nonce_field( 'yneko_reimu_save_post_options', 'yneko_reimu_post_options_nonce' );
@@ -139,6 +181,7 @@ function yneko_reimu_render_post_options_meta_box( $post ) {
 		<label for="yneko-reimu-keywords"><?php esc_html_e( '关键词', 'yneko-reimu' ); ?></label>
 		<input class="widefat" type="text" id="yneko-reimu-keywords" name="yneko_reimu_keywords" value="<?php echo esc_attr( yneko_reimu_get_post_meta( $post->ID, '_yneko_reimu_keywords', true ) ); ?>">
 	</p>
+	<?php yneko_reimu_render_language_meta_fields( $post ); ?>
 	<?php foreach ( $selects as $key => $config ) : ?>
 		<p>
 			<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $config['label'] ); ?></label>
@@ -155,6 +198,62 @@ function yneko_reimu_render_post_options_meta_box( $post ) {
 			</select>
 		</p>
 	<?php endforeach; ?>
+	<?php
+}
+
+function yneko_reimu_post_meta_bilingual_text( $zh, $en ) {
+	return '<span class="yneko-reimu-post-meta-bi"><span>' . esc_html( $zh ) . '</span><small>' . esc_html( $en ) . '</small></span>';
+}
+
+function yneko_reimu_post_meta_bilingual_label( $zh, $en ) {
+	echo wp_kses_post( yneko_reimu_post_meta_bilingual_text( $zh, $en ) );
+}
+
+function yneko_reimu_render_language_meta_fields( $post ) {
+	$current_language = function_exists( 'yneko_reimu_i18n_post_language' ) ? yneko_reimu_i18n_post_language( $post->ID ) : 'zh_CN';
+	$translation_id   = function_exists( 'yneko_reimu_i18n_translation_id' ) ? yneko_reimu_i18n_translation_id( $post->ID ) : 0;
+	$languages        = function_exists( 'yneko_reimu_i18n_languages' ) ? yneko_reimu_i18n_languages() : array(
+		'zh_CN' => array( 'label' => '简体中文' ),
+		'en_US' => array( 'label' => 'English' ),
+	);
+	$posts = get_posts(
+		array(
+			'post_type'      => $post->post_type,
+			'post_status'    => array( 'publish', 'draft', 'pending', 'future', 'private' ),
+			'posts_per_page' => 200,
+			'post__not_in'   => array( $post->ID ),
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		)
+	);
+	?>
+	<hr>
+	<p>
+		<label for="yneko-reimu-language"><?php yneko_reimu_post_meta_bilingual_label( '内容语言', 'Content language' ); ?></label>
+		<select class="widefat" id="yneko-reimu-language" name="yneko_reimu_language">
+			<?php foreach ( $languages as $code => $language ) : ?>
+				<option value="<?php echo esc_attr( $code ); ?>" <?php selected( $current_language, $code ); ?>><?php echo esc_html( $language['label'] ); ?></option>
+			<?php endforeach; ?>
+		</select>
+	</p>
+	<p>
+		<label for="yneko-reimu-translation-id"><?php yneko_reimu_post_meta_bilingual_label( '对应翻译文章/页面', 'Linked translation post/page' ); ?></label>
+		<select class="widefat" id="yneko-reimu-translation-id" name="yneko_reimu_translation_id">
+			<option value="0"><?php esc_html_e( '无对应内容', 'yneko-reimu' ); ?></option>
+			<?php foreach ( $posts as $candidate ) : ?>
+				<?php
+				$candidate_language = function_exists( 'yneko_reimu_i18n_post_language' ) ? yneko_reimu_i18n_post_language( $candidate->ID ) : 'zh_CN';
+				$candidate_label    = isset( $languages[ $candidate_language ] ) ? $languages[ $candidate_language ]['label'] : $candidate_language;
+				?>
+				<option value="<?php echo esc_attr( $candidate->ID ); ?>" <?php selected( $translation_id, $candidate->ID ); ?>>
+					<?php echo esc_html( sprintf( '[%1$s] %2$s', $candidate_label, get_the_title( $candidate ) ? get_the_title( $candidate ) : __( '(无标题)', 'yneko-reimu' ) ) ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<span class="description">
+			<?php echo wp_kses_post( yneko_reimu_post_meta_bilingual_text( '用于前台语言切换。保存后主题会自动同步对方文章的对应关系。', 'Used by the front-end language switcher. The reverse relation is synced after saving.' ) ); ?>
+		</span>
+	</p>
 	<?php
 }
 
@@ -199,6 +298,15 @@ function yneko_reimu_save_post_options( $post_id ) {
 		}
 	}
 
+	$language = isset( $_POST['yneko_reimu_language'] ) ? sanitize_text_field( wp_unslash( $_POST['yneko_reimu_language'] ) ) : 'zh_CN';
+	if ( ! function_exists( 'yneko_reimu_i18n_language_exists' ) || ! yneko_reimu_i18n_language_exists( $language ) ) {
+		$language = 'zh_CN';
+	}
+	update_post_meta( $post_id, '_yneko_reimu_language', $language );
+
+	$translation_id = isset( $_POST['yneko_reimu_translation_id'] ) ? absint( wp_unslash( $_POST['yneko_reimu_translation_id'] ) ) : 0;
+	yneko_reimu_save_translation_link( $post_id, $translation_id );
+
 	$allowed = array(
 		'_yneko_reimu_sidebar'   => array( 'inherit', 'right', 'left', 'disabled' ),
 		'_yneko_reimu_toc'       => array( 'inherit', 'show', 'hide' ),
@@ -232,3 +340,31 @@ function yneko_reimu_save_post_options( $post_id ) {
 	}
 }
 add_action( 'save_post', 'yneko_reimu_save_post_options' );
+
+function yneko_reimu_save_translation_link( $post_id, $translation_id ) {
+	$post_id        = absint( $post_id );
+	$translation_id = absint( $translation_id );
+
+	if ( ! $post_id ) {
+		return;
+	}
+
+	$old_translation = absint( get_post_meta( $post_id, '_yneko_reimu_translation_id', true ) );
+
+	if ( $old_translation && $old_translation !== $translation_id && absint( get_post_meta( $old_translation, '_yneko_reimu_translation_id', true ) ) === $post_id ) {
+		delete_post_meta( $old_translation, '_yneko_reimu_translation_id' );
+	}
+
+	if ( ! $translation_id || $translation_id === $post_id || get_post_type( $translation_id ) !== get_post_type( $post_id ) ) {
+		delete_post_meta( $post_id, '_yneko_reimu_translation_id' );
+		return;
+	}
+
+	update_post_meta( $post_id, '_yneko_reimu_translation_id', $translation_id );
+	update_post_meta( $translation_id, '_yneko_reimu_translation_id', $post_id );
+
+	if ( function_exists( 'yneko_reimu_i18n_post_language' ) && yneko_reimu_i18n_post_language( $translation_id ) === yneko_reimu_i18n_post_language( $post_id ) ) {
+		$opposite = 'zh_CN' === yneko_reimu_i18n_post_language( $post_id ) ? 'en_US' : 'zh_CN';
+		update_post_meta( $translation_id, '_yneko_reimu_language', $opposite );
+	}
+}

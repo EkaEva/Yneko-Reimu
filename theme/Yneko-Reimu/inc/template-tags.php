@@ -201,6 +201,85 @@ function yneko_reimu_word_count( $post_id = 0 ) {
 	);
 }
 
+function yneko_reimu_plain_word_count( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	$text    = wp_strip_all_tags( strip_shortcodes( get_post_field( 'post_content', $post_id ) ) );
+	$words   = str_word_count( preg_replace( '/[\x{4e00}-\x{9fff}]/u', ' ', $text ) );
+	$chars   = preg_match_all( '/[\x{4e00}-\x{9fff}]/u', $text );
+
+	return absint( $words + $chars );
+}
+
+function yneko_reimu_heatmap_config() {
+	$args = array(
+		'post_type'              => 'post',
+		'post_status'            => 'publish',
+		'posts_per_page'         => 500,
+		'orderby'                => 'date',
+		'order'                  => 'ASC',
+		'fields'                 => 'ids',
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+	);
+
+	if ( function_exists( 'yneko_reimu_i18n_enabled' ) && yneko_reimu_i18n_enabled() && function_exists( 'yneko_reimu_i18n_language_meta_query' ) ) {
+		$args['meta_query'] = yneko_reimu_i18n_language_meta_query(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+	}
+
+	$query = new WP_Query( $args );
+	$stats = array();
+
+	foreach ( $query->posts as $post_id ) {
+		$stats[] = array(
+			'title'     => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
+			'url'       => get_permalink( $post_id ),
+			'date'      => get_the_date( 'Y-m-d', $post_id ),
+			'wordcount' => yneko_reimu_plain_word_count( $post_id ),
+		);
+	}
+
+	return array(
+		'levelStandard' => '1000,5000,10000',
+		'articleStats'  => $stats,
+		'i18n'          => array(
+			'zh-CN' => array(
+				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
+				'words'          => __( '字', 'yneko-reimu' ),
+				'total_articles' => __( '共 $1 篇文章, $2 字', 'yneko-reimu' ),
+				'no_writing_on'  => __( '{date} 没有写作', 'yneko-reimu' ),
+				'writing_on'     => __( '{posts} {words} 于 {date}', 'yneko-reimu' ),
+				'year_total'     => __( '{posts} {words} 于 {year}', 'yneko-reimu' ),
+			),
+			'en-US' => array(
+				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
+				'words'          => __( '字', 'yneko-reimu' ),
+				'total_articles' => __( '共 $1 篇文章, $2 字', 'yneko-reimu' ),
+				'no_writing_on'  => __( '{date} 没有写作', 'yneko-reimu' ),
+				'writing_on'     => __( '{posts} {words} 于 {date}', 'yneko-reimu' ),
+				'year_total'     => __( '{posts} {words} 于 {year}', 'yneko-reimu' ),
+			),
+			'en'    => array(
+				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
+				'words'          => __( '字', 'yneko-reimu' ),
+				'total_articles' => __( '共 $1 篇文章, $2 字', 'yneko-reimu' ),
+				'no_writing_on'  => __( '{date} 没有写作', 'yneko-reimu' ),
+				'writing_on'     => __( '{posts} {words} 于 {date}', 'yneko-reimu' ),
+				'year_total'     => __( '{posts} {words} 于 {year}', 'yneko-reimu' ),
+			),
+		),
+	);
+}
+
+function yneko_reimu_render_heatmap() {
+	?>
+	<div id="heatmap" class="reimu-about-heatmap"></div>
+	<script>
+		window.REIMU_HEATMAP_CONFIG = <?php echo wp_json_encode( yneko_reimu_heatmap_config() ); ?>;
+	</script>
+	<?php
+}
+
 function yneko_reimu_excerpt( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
 	$length  = max( 40, absint( yneko_reimu_get_theme_mod( 'yneko_reimu_excerpt_length', 150 ) ) );
@@ -265,23 +344,23 @@ function yneko_reimu_default_nav_items() {
 	return array(
 		'home'     => array(
 			'label' => __( '首页', 'yneko-reimu' ),
-			'url'   => home_url( '/' ),
+			'url'   => function_exists( 'yneko_reimu_i18n_home_url' ) ? yneko_reimu_i18n_home_url() : home_url( '/' ),
 		),
 		'projects' => array(
 			'label' => __( '项目', 'yneko-reimu' ),
-			'url'   => home_url( '/projects/' ),
+			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'projects' ) : home_url( '/projects/' ),
 		),
 		'archives' => array(
 			'label' => __( '归档', 'yneko-reimu' ),
-			'url'   => home_url( '/archives/' ),
+			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'archives' ) : home_url( '/archives/' ),
 		),
 		'about'    => array(
 			'label' => __( '关于', 'yneko-reimu' ),
-			'url'   => home_url( '/about/' ),
+			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'about' ) : home_url( '/about/' ),
 		),
 		'friend'   => array(
 			'label' => __( '友链', 'yneko-reimu' ),
-			'url'   => home_url( '/friend/' ),
+			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'friend' ) : home_url( '/friend/' ),
 		),
 	);
 }
@@ -296,7 +375,7 @@ function yneko_reimu_nav_items() {
 		$items[] = array(
 			'key'   => $key,
 			'label' => '' === $label ? $default['label'] : $label,
-			'url'   => yneko_reimu_normalize_theme_url( $url, $default['url'] ),
+			'url'   => function_exists( 'yneko_reimu_i18n_localize_url' ) ? yneko_reimu_i18n_localize_url( yneko_reimu_normalize_theme_url( $url, $default['url'] ) ) : yneko_reimu_normalize_theme_url( $url, $default['url'] ),
 		);
 	}
 
@@ -406,6 +485,10 @@ function yneko_reimu_detect_virtual_page_slug() {
 		$path = trim( substr( $path, strlen( $home_path ) ), '/' );
 	}
 
+	if ( function_exists( 'yneko_reimu_i18n_relative_without_prefix' ) ) {
+		$path = yneko_reimu_i18n_relative_without_prefix( $path );
+	}
+
 	if ( '' === $path || false !== strpos( $path, '/' ) ) {
 		return '';
 	}
@@ -473,41 +556,6 @@ function yneko_reimu_virtual_template( $template ) {
 	return $virtual_template ? $virtual_template : $template;
 }
 add_filter( 'template_include', 'yneko_reimu_virtual_template', 99 );
-
-function yneko_reimu_i18n_options() {
-	if ( ! yneko_reimu_theme_mod_bool( 'yneko_reimu_i18n_enable', true ) ) {
-		return array();
-	}
-
-	$raw     = (string) yneko_reimu_get_theme_mod( 'yneko_reimu_i18n_links', "zh-CN|简体中文|/\nen|English|/en/" );
-	$current = (string) yneko_reimu_get_theme_mod( 'yneko_reimu_i18n_current', 'zh-CN' );
-	$options = array();
-
-	foreach ( preg_split( '/\r\n|\r|\n/', $raw ) as $line ) {
-		$line = trim( $line );
-		if ( '' === $line ) {
-			continue;
-		}
-
-		$parts = array_pad( array_map( 'trim', explode( '|', $line ) ), 3, '' );
-		if ( '' === $parts[0] || '' === $parts[1] ) {
-			continue;
-		}
-
-		$options[] = array(
-			'code'     => $parts[0],
-			'label'    => $parts[1],
-			'url'      => yneko_reimu_normalize_theme_url( $parts[2], '/' ),
-			'selected' => $parts[0] === $current,
-		);
-	}
-
-	if ( $options && ! wp_list_filter( $options, array( 'selected' => true ) ) ) {
-		$options[0]['selected'] = true;
-	}
-
-	return $options;
-}
 
 function yneko_reimu_home_category_capsules() {
 	$defaults = array(

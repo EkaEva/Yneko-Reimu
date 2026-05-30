@@ -42,6 +42,7 @@ $zipPath = Join-Path $releaseDir $zipFileName
 $allowedRoots = @(
   'inc',
   'template-parts',
+  'languages',
   'assets/dist',
   'assets/images'
 )

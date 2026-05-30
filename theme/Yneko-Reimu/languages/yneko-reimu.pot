@@ -1,0 +1,1329 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Yneko-Reimu 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/EkaEva/Yneko-Reimu/issues\n"
+"POT-Creation-Date: 2026-05-30 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: yneko-reimu\n"
+
+#: inc/post-meta.php
+msgid "(无标题)"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "{date} 没有写作"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "{posts} {words} 于 {date}"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "{posts} {words} 于 {year}"
+msgstr ""
+
+#: inc/customizer.php
+msgid "%1$s %2$d"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "%d 分钟阅读"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "%d 篇文章"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "%d 字"
+msgstr ""
+
+#: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
+msgid "%s 留言"
+msgstr ""
+
+#: comments.php
+msgid "%s 评论"
+msgstr ""
+
+#: inc/view-count.php
+msgid "%s 阅读量"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "%s 字"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "© %s. Powered by WordPress."
+msgstr ""
+
+#: inc/template-tags.php
+msgid "404（´◔ ₃ ◔`)"
+msgstr ""
+
+#: comments.php
+msgid "按倒序"
+msgstr ""
+
+#: comments.php
+msgid "按热度"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "按时间整理全部文章。"
+msgstr ""
+
+#: comments.php
+msgid "按正序"
+msgstr ""
+
+#: inc/customizer.php
+msgid "暗色"
+msgstr ""
+
+#: inc/customizer.php
+msgid "暗色模式默认值"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "版权框"
+msgstr ""
+
+#: inc/customizer.php
+msgid "版权文本"
+msgstr ""
+
+#: inc/customizer.php
+msgid "保持参考站侧栏作者卡下方的 Reimu 标签云区域；不启用 WordPress 原生小工具。"
+msgstr ""
+
+#: template-parts/meta/post-copyright.php
+msgid "本博客所有文章除特别声明外，均采用 %s 许可协议。转载请注明出处！"
+msgstr ""
+
+#: inc/customizer.php
+msgid "本地搜索 JSON URL"
+msgstr ""
+
+#: inc/customizer.php
+msgid "本地搜索入口"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "本地搜索索引加载失败。"
+msgstr ""
+
+#: template-parts/meta/post-copyright.php
+msgid "本文版权："
+msgstr ""
+
+#: template-parts/meta/post-copyright.php
+msgid "本文链接："
+msgstr ""
+
+#: template-parts/meta/post-copyright.php
+msgid "本文作者："
+msgstr ""
+
+#: template-parts/virtual/friend.php
+msgid "本站信息"
+msgstr ""
+
+#: inc/comments.php
+msgid "编辑"
+msgstr ""
+
+#: template-parts/layout/sidebar-common.php
+msgid "标签"
+msgstr ""
+
+#: template-parts/widgets/default-widgets.php
+msgid "标签云"
+msgstr ""
+
+#: inc/comments.php
+msgid "表情"
+msgstr ""
+
+#: inc/comments.php
+msgid "表情包"
+msgstr ""
+
+#: inc/customizer.php
+msgid "播放列表最大高度"
+msgstr ""
+
+#: inc/customizer.php
+msgid "播放器互斥"
+msgstr ""
+
+#: inc/customizer.php
+msgid "播放器位置"
+msgstr ""
+
+#: inc/customizer.php
+msgid "播放顺序"
+msgstr ""
+
+#: inc/customizer.php
+msgid "博客卡片"
+msgstr ""
+
+#: inc/customizer.php
+msgid "不蒜子统计"
+msgstr ""
+
+#: inc/post-meta.php sidebar.php
+msgid "侧边栏"
+msgstr ""
+
+#: inc/customizer.php
+msgid "侧边栏位置"
+msgstr ""
+
+#: inc/customizer.php
+msgid "侧栏卡片之后"
+msgstr ""
+
+#: inc/customizer.php
+msgid "侧栏卡片之前"
+msgstr ""
+
+#: inc/comments.php
+msgid "插入"
+msgstr ""
+
+#: inc/comments.php
+msgid "插入 GIF"
+msgstr ""
+
+#: inc/comments.php
+msgid "插入图片"
+msgstr ""
+
+#: template-parts/virtual/about.php
+msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "代码块折叠高度"
+msgstr ""
+
+#: inc/customizer.php
+msgid "导航滚动隐藏"
+msgstr ""
+
+#: inc/customizer.php
+msgid "导航链接：%s"
+msgstr ""
+
+#: inc/customizer.php
+msgid "导航文字：%s"
+msgstr ""
+
+#: comments.php inc/enqueue.php template-parts/virtual/projects.php
+msgid "到底了..."
+msgstr ""
+
+#: comments.php inc/comments.php
+msgid "登录"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "登录成功，正在刷新..."
+msgstr ""
+
+#: inc/comments.php
+msgid "登录成功。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "登录失败，请检查账号和密码。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "登录中..."
+msgstr ""
+
+#: inc/comments.php
+msgid "点赞"
+msgstr ""
+
+#: template-parts/virtual/archives.php
+msgid "发布文章后，这里会按年份生成归档列表。"
+msgstr ""
+
+#: template-parts/layout/sidebar-common.php
+msgid "分类"
+msgstr ""
+
+#: template-parts/components/pagination.php
+msgid "分页导航"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "辅助导航"
+msgstr ""
+
+#: inc/enqueue.php inc/template-tags.php
+msgid "复制"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "复制成功 (*^▽^*)"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
+msgstr ""
+
+#: template-parts/layout/site-footer.php
+msgid "改编"
+msgstr ""
+
+#: inc/customizer.php
+msgid "歌词模式"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "跟随 WordPress 置顶"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "跟随全局"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "跟随文章设置"
+msgstr ""
+
+#: inc/customizer.php
+msgid "跟随系统"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "共 $1 篇文章, $2 字"
+msgstr ""
+
+#: inc/customizer.php
+msgid "固定播放器"
+msgstr ""
+
+#: inc/customizer.php
+msgid "固定导航"
+msgstr ""
+
+#: inc/customizer.php inc/post-meta.php
+msgid "关闭"
+msgstr ""
+
+#: inc/comments.php
+msgid "关闭登录窗口"
+msgstr ""
+
+#: template-parts/layout/search-popup.php
+msgid "关闭搜索"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "关键词"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "关于"
+msgstr ""
+
+#: template-parts/virtual/about.php
+msgid "关于页待编辑"
+msgstr ""
+
+#: inc/customizer.php
+msgid "关于页简介"
+msgstr ""
+
+#: inc/customizer.php
+msgid "关于与友链"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "关于这个站点与作者。"
+msgstr ""
+
+#: inc/template-tags.php template-parts/widgets/default-widgets.php
+msgid "归档"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "过期提示"
+msgstr ""
+
+#: inc/customizer.php
+msgid "过期天数阈值"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "还没有内容。"
+msgstr ""
+
+#: comments.php
+msgid "还没有评论，来抢一张小板凳吧。"
+msgstr ""
+
+#: template-parts/virtual/archives.php
+msgid "还没有文章"
+msgstr ""
+
+#: inc/customizer.php
+msgid "横幅与图片"
+msgstr ""
+
+#: comments.php
+msgid "欢迎评论"
+msgstr ""
+
+#: inc/customizer.php
+msgid "回到顶部太极按钮"
+msgstr ""
+
+#: inc/comments.php
+msgid "回复"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "回复评论"
+msgstr ""
+
+#: inc/github-login.php
+msgid "或使用 WordPress 账号"
+msgstr ""
+
+#: template-parts/layout/site-footer.php
+msgid "基于"
+msgstr ""
+
+#: inc/comments.php
+msgid "记住我"
+msgstr ""
+
+#: inc/customizer.php
+msgid "加载动画"
+msgstr ""
+
+#: inc/customizer.php
+msgid "加载动画文案"
+msgstr ""
+
+#: comments.php inc/enqueue.php template-parts/virtual/projects.php
+msgid "加载更多..."
+msgstr ""
+
+#: inc/customizer.php
+msgid "开启时隐藏 WordPress 小工具区，只保留 Reimu 作者卡、统计、社交和菜单。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "可使用 {year} 作为年份占位。"
+msgstr ""
+
+#: template-parts/virtual/friend.php
+msgid "可在 Customizer 的“关于与友链”中配置，或创建 slug 为 friend 的真实页面覆盖。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "控制 Yneko-Reimu 的视觉、文章和社交入口。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "扩展默认关闭，填写配置或开启后才加载外部脚本。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "例如 320px。超过高度后列表内部滚动。"
+msgstr ""
+
+#: inc/settings.php
+msgid "莉莉概念光标作者"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "没有结果"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "没有文章"
+msgstr ""
+
+#: inc/comments.php
+msgid "密码"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认按 D-Sketon 演示站首页输出固定导航、语言入口、左侧个人卡和两个首页胶囊。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认横幅图片"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认卡片封面"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认使用主题自动生成的 /search.json；填写自定义本地 JSON URL 后会覆盖默认地址。搜索优先级：本地 JSON、Algolia、WordPress REST。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认头像/角色图"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认音量 0-1"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认折叠播放列表"
+msgstr ""
+
+#: comments.php
+msgid "昵称"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "配置 GitHub 主页链接后会自动同步 starred 项目。"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "朋友们的站点入口。"
+msgstr ""
+
+#: template-parts/layout/site-footer.php
+msgid "篇文章"
+msgstr ""
+
+#: comments.php
+msgid "评论"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论不存在。"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论操作"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论环境信息"
+msgstr ""
+
+#: comments.php
+msgid "评论排序"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "评论区"
+msgstr ""
+
+#: comments.php
+msgid "评论已关闭。"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论正在等待审核。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "启用严格复刻侧栏"
+msgstr ""
+
+#: inc/customizer.php
+msgid "起始年份"
+msgstr ""
+
+#: inc/customizer.php
+msgid "浅色"
+msgstr ""
+
+#: inc/customizer.php
+msgid "强调色"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "切换导航"
+msgstr ""
+
+#: template-parts/components/theme-toggle.php
+msgid "切换明暗模式"
+msgstr ""
+
+#: template-parts/content/content-none.php
+msgid "请稍后再来或联系管理员处理。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "请输入 http(s) 图片地址"
+msgstr ""
+
+#: inc/comments.php
+msgid "请输入用户名和密码。"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
+msgstr ""
+
+#: comments.php inc/enqueue.php
+msgid "取消回复"
+msgstr ""
+
+#: inc/comments.php
+msgid "上传图片"
+msgstr ""
+
+#: template-parts/content/content-single.php
+msgid "上一篇"
+msgstr ""
+
+#: template-parts/content/content-single.php
+msgid "上一篇：%s"
+msgstr ""
+
+#: template-parts/components/pagination.php
+msgid "上一页"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "少年，你迷路了吗？"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "少女检索中..."
+msgstr ""
+
+#: template-parts/layout/loader.php
+msgid "少女祈祷中..."
+msgstr ""
+
+#: inc/customizer.php
+msgid "社交链接"
+msgstr ""
+
+#: template-parts/virtual/friend.php
+msgid "申请方法"
+msgstr ""
+
+#: inc/github-login.php
+msgid "使用 GitHub 登录"
+msgstr ""
+
+#: inc/comments.php
+msgid "使用 WordPress 账号登录后即可评论。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "视觉主题"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "首页"
+msgstr ""
+
+#: inc/customizer.php
+msgid "首页胶囊标题"
+msgstr ""
+
+#: inc/customizer.php
+msgid "首页胶囊封面 %d"
+msgstr ""
+
+#: inc/customizer.php
+msgid "首页胶囊链接"
+msgstr ""
+
+#: inc/enqueue.php template-parts/layout/search-popup.php
+msgid "输入关键词后按回车搜索。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "鼠标烟花"
+msgstr ""
+
+#: comments.php
+msgid "说些什么吧！"
+msgstr ""
+
+#: searchform.php template-parts/layout/search-popup.php template-parts/layout/site-header.php
+msgid "搜索"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "搜索：%s"
+msgstr ""
+
+#: template-parts/layout/search-popup.php
+msgid "搜索....."
+msgstr ""
+
+#: inc/customizer.php
+msgid "搜索弹窗背景图"
+msgstr ""
+
+#: searchform.php
+msgid "搜索文章..."
+msgstr ""
+
+#: comments.php
+msgid "提交"
+msgstr ""
+
+#: searchform.php
+msgid "提交搜索"
+msgstr ""
+
+#: template-parts/virtual/friend.php
+msgid "添加本站后，在本页留言，格式如下"
+msgstr ""
+
+#: header.php
+msgid "跳到内容"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "推荐项目待同步"
+msgstr ""
+
+#: inc/customizer.php
+msgid "推荐在“外观 -> Yneko-Reimu 设置”中管理音乐。这里保留为旧配置兼容入口。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "推荐在“外观 -> Yneko-Reimu 设置”中管理友链。这里保留为旧配置兼容入口。"
+msgstr ""
+
+#: comments.php
+msgid "网址（可选）"
+msgstr ""
+
+#: inc/comments.php
+msgid "忘记密码？"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "未发现与「{query}」相关内容"
+msgstr ""
+
+#: inc/customizer.php template-parts/layout/loader.php
+msgid "未来有你..."
+msgstr ""
+
+#: template-parts/layout/sidebar-common.php
+msgid "文章"
+msgstr ""
+
+#: template-parts/content/content-single.php
+msgid "文章导航"
+msgstr ""
+
+#: inc/toc.php
+msgid "文章目录"
+msgstr ""
+
+#: inc/customizer.php
+msgid "文章页"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "文章摘要/副标题"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "我的 GitHub 主页与项目索引。"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "我的项目"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "无标题"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "无对应内容"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "无限进步"
+msgstr ""
+
+#: template-parts/content/content-single.php
+msgid "下一篇"
+msgstr ""
+
+#: template-parts/content/content-single.php
+msgid "下一篇：%s"
+msgstr ""
+
+#: template-parts/components/pagination.php
+msgid "下一页 »"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "显示"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示 TOC"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示暗色模式切换"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示版权框"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示标签"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示分类"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示过期提示"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示评论数"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示上一篇/下一篇"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示太极装饰"
+msgstr ""
+
+#: inc/customizer.php
+msgid "显示阅读时间"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "项目"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "项目待同步"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "项目推荐"
+msgstr ""
+
+#: template-parts/virtual/projects.php
+msgid "项目信息"
+msgstr ""
+
+#: inc/customizer.php
+msgid "小工具之后"
+msgstr ""
+
+#: template-parts/virtual/friend.php
+msgid "小伙伴们"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "学习笔记"
+msgstr ""
+
+#: inc/customizer.php
+msgid "循环模式"
+msgstr ""
+
+#: inc/customizer.php
+msgid "严格复刻时显示标签云小组件"
+msgstr ""
+
+#: inc/customizer.php
+msgid "页脚"
+msgstr ""
+
+#: inc/customizer.php
+msgid "页脚额外署名"
+msgstr ""
+
+#: template-parts/content/content-page.php template-parts/content/content-single.php template-parts/virtual/about.php
+msgid "页面："
+msgstr ""
+
+#: archive.php index.php page.php single.php virtual-page.php
+msgid "页面内容"
+msgstr ""
+
+#: template-parts/layout/mobile-nav.php
+msgid "移动端导航"
+msgstr ""
+
+#: comments.php
+msgid "以 <strong>%1$s</strong> 登录。<a href=\"%2$s\">退出</a>"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "以下是与你输入关键词相关的文章。"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "隐藏"
+msgstr ""
+
+#: inc/comments.php
+msgid "用户名或邮箱"
+msgstr ""
+
+#: inc/customizer.php
+msgid "用于 Reimu 扩展包的 CDN 前缀，默认与 upstream 演示站一致。"
+msgstr ""
+
+#: comments.php
+msgid "邮箱"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "友链"
+msgstr ""
+
+#: template-parts/virtual/friend.php
+msgid "友链待添加"
+msgstr ""
+
+#: inc/customizer.php
+msgid "友链列表"
+msgstr ""
+
+#: inc/customizer.php inc/post-meta.php
+msgid "右侧"
+msgstr ""
+
+#: inc/customizer.php
+msgid "右上角 GitHub 三角标"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "语言"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "语言菜单"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "语言选择"
+msgstr ""
+
+#: inc/customizer.php
+msgid "预加载"
+msgstr ""
+
+#: inc/comments.php
+msgid "预览"
+msgstr ""
+
+#: inc/comments.php
+msgid "预览:"
+msgstr ""
+
+#: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
+msgid "阅读量"
+msgstr ""
+
+#: template-parts/content/content-none.php
+msgid "暂时没有内容"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "赞助"
+msgstr ""
+
+#: inc/customizer.php inc/template-tags.php
+msgid "赞助二维码"
+msgstr ""
+
+#: inc/customizer.php
+msgid "摘要字数"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "展开代码"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "站点头图"
+msgstr ""
+
+#: template-parts/layout/site-footer.php
+msgid "站点页脚"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "找到 {count} 条结果"
+msgstr ""
+
+#: inc/enqueue.php inc/template-tags.php
+msgid "折叠代码"
+msgstr ""
+
+#: inc/customizer.php
+msgid "这里记录项目、学习笔记和日常灵感。"
+msgstr ""
+
+#: template-parts/meta/post-outdated.php
+msgid "这篇文章最后更新于 %s，部分内容可能已经变化，请结合最新资料判断。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "支持 APlayer 音频 JSON 或 Meting 歌单；未启用时不加载外部资源。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "只有在没有同 slug 的真实 WordPress 页面时，主题才会输出这些虚拟页面内容。"
+msgstr ""
+
+#: template-parts/content/content-card.php
+msgid "置顶"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "置顶标识"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "主导航"
+msgstr ""
+
+#: inc/customizer.php
+msgid "主题会始终保留 WordPress 与 hexo-theme-reimu/MIT 署名。"
+msgstr ""
+
+#: archive.php index.php page.php single.php virtual-page.php
+msgid "主要内容"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "字"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "自定义 Banner URL"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "自定义封面 URL"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "自定义链接"
+msgstr ""
+
+#: inc/customizer.php
+msgid "自定义鼠标指针"
+msgstr ""
+
+#: inc/customizer.php
+msgid "自动播放"
+msgstr ""
+
+#: template-parts/layout/site-footer.php
+msgid "总访客量"
+msgstr ""
+
+#: template-parts/layout/site-footer.php
+msgid "总访问量"
+msgstr ""
+
+#: inc/customizer.php inc/post-meta.php
+msgid "左侧"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Algolia 搜索入口"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Algolia App ID"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Algolia Index Name"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Algolia Search API Key"
+msgstr ""
+
+#: inc/toc.php
+msgid "anchor"
+msgstr ""
+
+#: inc/customizer.php
+msgid "APlayer 播放器"
+msgstr ""
+
+#: inc/customizer.php
+msgid "APlayer 的 lrcType。默认 3 表示读取 audio.lrc 外部歌词文件。"
+msgstr ""
+
+#: inc/customizer.php
+msgid "APlayer audio JSON"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Callback URL"
+msgstr ""
+
+#: inc/customizer.php
+msgid "CDN 前缀"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Client ID"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Client Secret"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Create a GitHub OAuth App and paste its credentials here. Keep the client secret private."
+msgstr ""
+
+#: inc/github-login.php
+msgid "Create a subscriber account when a verified GitHub user logs in for the first time."
+msgstr ""
+
+#: inc/customizer.php
+msgid "Disqus"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "Email"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Email URL 或 mailto:"
+msgstr ""
+
+#: inc/widgets.php
+msgid "Footer Column %d"
+msgstr ""
+
+#: inc/setup.php
+msgid "Footer Menu"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Giscus"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "GitHub 项目"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "GitHub 项目与作品。"
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub API request failed."
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub did not return an access token."
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub login is not configured."
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub login state expired. Please try again."
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub profile is missing required fields."
+msgstr ""
+
+#: inc/settings.php
+msgid "hexo-theme-reimu 原作者"
+msgstr ""
+
+#: inc/customizer.php
+msgid "KaTeX 数学公式"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Live2D Widgets"
+msgstr ""
+
+#: inc/widgets.php
+msgid "Main Reimu sidebar."
+msgstr ""
+
+#: inc/comments.php
+msgid "Markdown is supported"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Mermaid 图表"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Meting 歌单"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Meting auto URL"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Meting ID"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Meting server"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Meting type"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Missing GitHub OAuth response."
+msgstr ""
+
+#: inc/setup.php
+msgid "Mobile Menu"
+msgstr ""
+
+#: inc/github-login.php
+msgid "No WordPress account is linked to this GitHub account."
+msgstr ""
+
+#: inc/customizer.php
+msgid "PhotoSwipe 图片灯箱"
+msgstr ""
+
+#: inc/customizer.php
+msgid "PJAX 软导航"
+msgstr ""
+
+#: inc/setup.php
+msgid "Primary Menu"
+msgstr ""
+
+#: inc/widgets.php
+msgid "Primary Sidebar"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Reimu 播放器"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Reimu 复刻预设"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Reimu 扩展功能"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Reimu 评论系统"
+msgstr ""
+
+#: inc/post-meta.php
+msgid "Reimu 设置"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Reimu 搜索"
+msgstr ""
+
+#: template-parts/layout/site-header.php
+msgid "RSS 订阅"
+msgstr ""
+
+#: inc/setup.php
+msgid "Social Menu"
+msgstr ""
+
+#: inc/github-login.php
+msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
+msgstr ""
+
+#: inc/post-meta.php
+msgid "TOC"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Twikoo"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Users"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Utterances"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Valine"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Vendor CDN"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Waline"
+msgstr ""
+
+#: template-parts/meta/post-outdated.php
+msgid "WARNING"
+msgstr ""
+
+#: inc/customizer.php
+msgid "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "Yneko"
+msgstr ""
+
+#: template-parts/layout/hero.php
+msgid "Yneko-Reimu"
+msgstr ""
+
+#: inc/settings.php
+msgid "Yneko-Reimu 设置"
+msgstr ""
+
+#: inc/customizer.php
+msgid "Yneko-Reimu 主题设置"
+msgstr ""
+
+#: inc/settings.php
+msgid "Yneko-Reimu 主题作者"
+msgstr ""
+
+#: inc/github-login.php
+msgid "Yneko-Reimu GitHub Login"
+msgstr ""

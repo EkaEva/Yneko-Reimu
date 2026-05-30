@@ -10,6 +10,7 @@ define( 'YNEKO_REIMU_URI', get_template_directory_uri() );
 require_once YNEKO_REIMU_DIR . '/inc/sanitizers.php';
 require_once YNEKO_REIMU_DIR . '/inc/image-helpers.php';
 require_once YNEKO_REIMU_DIR . '/inc/settings.php';
+require_once YNEKO_REIMU_DIR . '/inc/i18n.php';
 require_once YNEKO_REIMU_DIR . '/inc/migrations.php';
 require_once YNEKO_REIMU_DIR . '/inc/setup.php';
 require_once YNEKO_REIMU_DIR . '/inc/enqueue.php';

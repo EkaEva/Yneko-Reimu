@@ -14,7 +14,9 @@ get_header();
 		<?php get_sidebar(); ?>
 		<section id="main" aria-label="<?php esc_attr_e( '主要内容', 'yneko-reimu' ); ?>">
 				<?php
-				if ( 'archives' === $reimu_special_page_slug ) {
+				if ( 'about' === $reimu_special_page_slug ) {
+					get_template_part( 'template-parts/virtual/about' );
+				} elseif ( 'archives' === $reimu_special_page_slug ) {
 					get_template_part( 'template-parts/virtual/archives' );
 				} elseif ( in_array( $reimu_special_page_slug, array( 'projects', 'friend' ), true ) ) {
 					get_template_part( 'template-parts/virtual/' . $reimu_special_page_slug );

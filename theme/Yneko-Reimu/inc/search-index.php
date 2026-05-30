@@ -3,17 +3,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-function yneko_reimu_search_json_url() {
+function yneko_reimu_search_json_url( $language = '' ) {
+	$language = function_exists( 'yneko_reimu_i18n_language_exists' ) && yneko_reimu_i18n_language_exists( $language )
+		? $language
+		: ( function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : 'zh_CN' );
+
+	if ( 'en_US' === $language && function_exists( 'yneko_reimu_i18n_prefixed_url' ) ) {
+		return yneko_reimu_i18n_prefixed_url( 'search.json' );
+	}
+
 	return home_url( '/search.json' );
 }
 
 function yneko_reimu_search_index_rewrite() {
 	add_rewrite_rule( '^search\.json$', 'index.php?yneko_reimu_search_json=1', 'top' );
+	if ( function_exists( 'yneko_reimu_i18n_url_prefix' ) ) {
+		add_rewrite_rule( '^' . preg_quote( yneko_reimu_i18n_url_prefix(), '/' ) . '/search\.json$', 'index.php?yneko_reimu_search_json=1&yneko_reimu_search_lang=en_US', 'top' );
+	}
 }
 add_action( 'init', 'yneko_reimu_search_index_rewrite' );
 
 function yneko_reimu_search_index_query_vars( $vars ) {
 	$vars[] = 'yneko_reimu_search_json';
+	$vars[] = 'yneko_reimu_search_lang';
 	return $vars;
 }
 add_filter( 'query_vars', 'yneko_reimu_search_index_query_vars' );
@@ -38,6 +50,7 @@ function yneko_reimu_search_index_item( $post_id ) {
 
 	return array(
 		'id'         => absint( $post_id ),
+		'language'   => function_exists( 'yneko_reimu_i18n_post_language' ) ? yneko_reimu_i18n_post_language( $post_id ) : 'zh_CN',
 		'title'      => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
 		'url'        => get_permalink( $post_id ),
 		'path'       => wp_make_link_relative( get_permalink( $post_id ) ),
@@ -49,19 +62,26 @@ function yneko_reimu_search_index_item( $post_id ) {
 	);
 }
 
-function yneko_reimu_search_index_data() {
+function yneko_reimu_search_index_data( $language = '' ) {
+	$language   = function_exists( 'yneko_reimu_i18n_language_exists' ) && yneko_reimu_i18n_language_exists( $language ) ? $language : ( function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : 'zh_CN' );
+	$meta_query = function_exists( 'yneko_reimu_i18n_language_meta_query' ) ? yneko_reimu_i18n_language_meta_query( $language ) : array();
+	$args       = array(
+		'post_type'              => 'post',
+		'post_status'            => 'publish',
+		'posts_per_page'         => 300,
+		'orderby'                => 'date',
+		'order'                  => 'DESC',
+		'fields'                 => 'ids',
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => true,
+	);
+	if ( $meta_query ) {
+		$args['meta_query'] = $meta_query;
+	}
+
 	$query = new WP_Query(
-		array(
-			'post_type'              => 'post',
-			'post_status'            => 'publish',
-			'posts_per_page'         => 300,
-			'orderby'                => 'date',
-			'order'                  => 'DESC',
-			'fields'                 => 'ids',
-			'no_found_rows'          => true,
-			'update_post_meta_cache' => false,
-			'update_post_term_cache' => true,
-		)
+		$args
 	);
 	$items = array();
 
@@ -73,7 +93,10 @@ function yneko_reimu_search_index_data() {
 		}
 	}
 
-	return $items;
+	return array(
+		'language' => $language,
+		'posts'    => $items,
+	);
 }
 
 function yneko_reimu_is_search_json_request() {
@@ -90,7 +113,15 @@ function yneko_reimu_is_search_json_request() {
 		$path = trim( substr( $path, strlen( $home_path ) ), '/' );
 	}
 
-	return 'search.json' === $path;
+	if ( 'search.json' === $path ) {
+		return true;
+	}
+
+	if ( function_exists( 'yneko_reimu_i18n_relative_without_prefix' ) ) {
+		return 'search.json' === yneko_reimu_i18n_relative_without_prefix( $path );
+	}
+
+	return false;
 }
 
 function yneko_reimu_search_index_template_redirect() {
@@ -100,7 +131,11 @@ function yneko_reimu_search_index_template_redirect() {
 
 	nocache_headers();
 	header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
-	echo wp_json_encode( yneko_reimu_search_index_data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+	$language = get_query_var( 'yneko_reimu_search_lang' );
+	if ( ! $language && function_exists( 'yneko_reimu_i18n_current_language' ) ) {
+		$language = yneko_reimu_i18n_current_language();
+	}
+	echo wp_json_encode( yneko_reimu_search_index_data( $language ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 	exit;
 }
 add_action( 'template_redirect', 'yneko_reimu_search_index_template_redirect', 0 );

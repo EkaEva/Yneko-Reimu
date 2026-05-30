@@ -99,55 +99,6 @@ function yneko_reimu_customize_register( $wp_customize ) {
 		);
 	}
 
-	$wp_customize->add_setting(
-		'yneko_reimu_i18n_enable',
-		array(
-			'default'           => true,
-			'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_i18n_enable',
-		array(
-			'label'   => __( '显示语言入口', 'yneko-reimu' ),
-			'section' => 'yneko_reimu_clone_preset',
-			'type'    => 'checkbox',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_i18n_current',
-		array(
-			'default'           => 'zh-CN',
-			'sanitize_callback' => 'sanitize_text_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_i18n_current',
-		array(
-			'label'   => __( '当前语言代码', 'yneko-reimu' ),
-			'section' => 'yneko_reimu_clone_preset',
-			'type'    => 'text',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_i18n_links',
-		array(
-			'default'           => "zh-CN|简体中文|/\nen|English|/en/",
-			'sanitize_callback' => 'sanitize_textarea_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_i18n_links',
-		array(
-			'label'       => __( '语言列表', 'yneko-reimu' ),
-			'description' => __( '每行：语言代码|显示文字|链接。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_clone_preset',
-			'type'        => 'textarea',
-		)
-	);
-
 	for ( $i = 1; $i <= 2; $i++ ) {
 		$defaults = yneko_reimu_home_category_capsules();
 		$default  = $defaults[ $i - 1 ];

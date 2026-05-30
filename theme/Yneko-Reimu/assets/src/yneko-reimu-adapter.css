@@ -477,6 +477,21 @@ body.error404[data-theme="dark"] #header::after {
   box-shadow: var(--shadow-card);
 }
 
+.reimu-empty h2 {
+  margin: 0;
+  color: var(--color-link);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.reimu-empty p {
+  margin: 8px 0 0;
+  color: var(--grey-7);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
 .reimu-button-ghost {
   color: var(--red-1);
   background: var(--red-5);
@@ -780,7 +795,7 @@ button *,
   width: 100%;
   flex-direction: row;
   justify-content: center;
-  margin: 12px 0 28px;
+  margin: 12px 0 30px;
   --heat-level-0: color-mix(in srgb, var(--red-0) 10%, white);
   --heat-level-1: color-mix(in srgb, var(--red-0) 40%, white);
   --heat-level-2: color-mix(in srgb, var(--red-0) 80%, white);
@@ -794,6 +809,14 @@ button *,
   --heat-level-2: color-mix(in srgb, var(--red-0) 50%, transparent);
   --heat-level-3: color-mix(in srgb, var(--red-0) 70%, transparent);
   --heat-level-4: var(--red-0);
+}
+
+.reimu-about-heatmap {
+  margin: 2px 0 24px;
+}
+
+.reimu-about-heatmap + .reimu-empty {
+  margin-top: 8px;
 }
 
 .calendar-container {

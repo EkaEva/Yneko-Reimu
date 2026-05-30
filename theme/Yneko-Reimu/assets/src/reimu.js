@@ -16,6 +16,11 @@
     volume: Number(config.aplayer && config.aplayer.volume || .7)
   };
 
+  function t(key, fallback) {
+    var i18n = config.i18n || {};
+    return i18n[key] || fallback;
+  }
+
   function qs(selector, parent) {
     return (parent || document).querySelector(selector);
   }
@@ -516,10 +521,10 @@
       '</div></div>',
       '<div class="code-right-wrap">',
       '<button type="button" class="code-copy icon-copy" aria-label="',
-      escapeHtml(config.copyText || '复制'),
+      escapeHtml(config.copyText || t('copy', '复制')),
       '"></button>',
       '<button type="button" class="icon-chevron-down code-expand" aria-label="',
-      escapeHtml(config.collapseText || '折叠代码'),
+      escapeHtml(config.collapseText || t('collapseCode', '折叠代码')),
       '" aria-expanded="true"></button>',
       '</div></div>',
       '<div class="code-area"><table><tr><td class="gutter"><pre>',
@@ -595,7 +600,7 @@
           button.classList.remove('icon-check');
         }, 1000);
       }
-      showTooltip(config.copiedText || '复制成功 (*^▽^*)');
+      showTooltip(config.copiedText || t('copied', '复制成功 (*^▽^*)'));
     };
     var fail = function () {
       if (button) {
@@ -606,7 +611,7 @@
           button.classList.remove('icon-times');
         }, 1000);
       }
-      showTooltip(config.failedText || '复制失败 (ﾟ⊿ﾟ)ﾂ');
+      showTooltip(config.failedText || t('copyFailed', '复制失败 (ﾟ⊿ﾟ)ﾂ'));
     };
 
     var copyWithTextarea = function () {
@@ -693,13 +698,19 @@
     if (lang.toLowerCase().indexOf('zh') === 0 && !i18n[lang]) {
       lang = 'zh-CN';
     }
+    if (lang === 'en-US' && !i18n[lang] && i18n.en) {
+      lang = 'en';
+    }
     if (!i18n[lang]) {
-      lang = i18n['zh-CN'] ? 'zh-CN' : 'en';
+      lang = lang.toLowerCase().indexOf('zh') === 0 && i18n['zh-CN'] ? 'zh-CN' : 'en';
     }
     var text = i18n[lang] || {
       no_articles: '没有文章',
       words: '字',
-      total_articles: '共 $1 篇文章, $2 字'
+      total_articles: '共 $1 篇文章, $2 字',
+      no_writing_on: '{date} 没有写作',
+      writing_on: '{posts} {words} 于 {date}',
+      year_total: '{posts} {words} 于 {year}'
     };
 
     function unitText(num, singular, plural, zhUnit) {
@@ -707,6 +718,12 @@
         return String(num) + ' ' + zhUnit;
       }
       return String(num) + ' ' + (num <= 1 ? singular : plural);
+    }
+
+    function templateText(template, values) {
+      return String(template || '').replace(/\{([a-z]+)\}/gi, function (match, key) {
+        return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : match;
+      });
     }
 
     function getLevelFromWordCount(count) {
@@ -904,7 +921,13 @@
           tile.className = 'tile';
           tile.dataset.level = c.level;
           tile.dataset.date = c.date;
-          tile.title = c.post ? unitText(c.post, 'post', 'posts', '篇文章') + ' ' + unitText(c.count, 'word', 'words', '字') + ' on ' + formatDate(date) : 'No writing on ' + formatDate(date);
+          tile.title = c.post
+            ? templateText(text.writing_on || '{posts} {words} on {date}', {
+              posts: unitText(c.post, 'post', 'posts', '篇文章'),
+              words: unitText(c.count, 'word', 'words', '字'),
+              date: formatDate(date)
+            })
+            : templateText(text.no_writing_on || 'No writing on {date}', { date: formatDate(date) });
           tile.setAttribute('data-articles', JSON.stringify(c.articles || []));
           tile.addEventListener('click', tileClickHandler);
           tilesFragment.appendChild(tile);
@@ -916,7 +939,11 @@
 
         calendarContainer.appendChild(monthFragment);
         tilesContainer.appendChild(tilesFragment);
-        calendarContainer.insertAdjacentHTML('beforeend', '<div class="total">' + unitText(totalStat.post, 'post', 'posts', '篇文章') + ' ' + unitText(totalStat.count, 'word', 'words', '字') + ' in ' + year + '</div>');
+        calendarContainer.insertAdjacentHTML('beforeend', '<div class="total">' + escapeHtml(templateText(text.year_total || '{posts} {words} in {year}', {
+          posts: unitText(totalStat.post, 'post', 'posts', '篇文章'),
+          words: unitText(totalStat.count, 'word', 'words', '字'),
+          year: year
+        })) + '</div>');
       }
 
       yearSelector.addEventListener('click', function (event) {
@@ -1263,21 +1290,21 @@
 
     var renderHits = function (items, keyword, total) {
       if (!keyword) {
-        stats.textContent = config.searchHint || '输入关键词后按回车搜索。';
+        stats.textContent = config.searchHint || t('searchHint', '输入关键词后按回车搜索。');
         hits.innerHTML = '';
         return;
       }
       if (typeof total === 'number') {
-        stats.textContent = total ? (config.searchStatsText || '找到 {count} 条结果').replace('{count}', total) : (config.searchEmptyText || '未发现与「{query}」相关内容').replace('{query}', keyword);
+        stats.textContent = total ? (config.searchStatsText || t('searchStats', '找到 {count} 条结果')).replace('{count}', total) : (config.searchEmptyText || t('searchEmpty', '未发现与「{query}」相关内容')).replace('{query}', keyword);
       } else {
-        stats.textContent = items.length ? items.length + ' results' : 'No results';
+        stats.textContent = items.length ? (config.searchStatsText || t('searchStats', '找到 {count} 条结果')).replace('{count}', items.length) : t('searchNoResults', '没有结果');
       }
       hits.innerHTML = items.length ? items.map(function (item) {
-        var title = escapeHtml(item.title || item.post_title || item.name || 'Untitled');
+        var title = escapeHtml(item.title || item.post_title || item.name || t('searchUntitled', '无标题'));
         var url = item.url || item.permalink || item.path || '#';
         var type = item.subtype || item.type || '';
         return '<a class="reimu-hit-item-link" href="' + escapeHtml(url) + '">' + title + (type ? '<span class="reimu-hit-type">' + escapeHtml(type) + '</span>' : '') + '</a>';
-      }).join('') : '<div id="reimu-hits-empty">No results</div>';
+      }).join('') : '<div id="reimu-hits-empty">' + escapeHtml(t('searchNoResults', '没有结果')) + '</div>';
     };
 
     var renderPagination = function (page, totalPages, keyword, onPage) {
@@ -1325,7 +1352,7 @@
           renderPagination(1, 0, '', wordpressSearch);
           return;
         }
-        stats.textContent = config.searchingText || '少女检索中...';
+        stats.textContent = config.searchingText || t('searching', '少女检索中...');
         if (activeController) {
           activeController.abort();
         }
@@ -1335,6 +1362,9 @@
         url.searchParams.set('per_page', String(perPage));
         url.searchParams.set('page', String(page || 1));
         url.searchParams.set('subtype', 'post');
+        if (config.search.language) {
+          url.searchParams.set('reimu_language', config.search.language);
+        }
         fetch(url.toString(), {
           credentials: 'same-origin',
           signal: activeController ? activeController.signal : undefined
@@ -1349,7 +1379,7 @@
           if (error && error.name === 'AbortError') {
             return;
           }
-          stats.textContent = config.searchHint || '输入关键词后按回车搜索。';
+          stats.textContent = config.searchHint || t('searchHint', '输入关键词后按回车搜索。');
         });
       };
 
@@ -1374,7 +1404,7 @@
       }).then(function (payload) {
         localIndex = Array.isArray(payload) ? payload : (payload.posts || payload.pages || payload.data || []);
       }).catch(function () {
-        stats.textContent = 'Local search index failed to load.';
+        stats.textContent = t('searchIndexFailed', '本地搜索索引加载失败。');
       });
       var localSearch = function (page) {
         var keyword = input.value.trim().toLowerCase();
@@ -1974,7 +2004,7 @@
       html = html.replace(block.key, block.html);
     });
 
-    return html || '<p class="reimu-comment-preview-empty">还没有内容。</p>';
+    return html || '<p class="reimu-comment-preview-empty">' + escapeHtml(t('commentPreviewEmpty', '还没有内容。')) + '</p>';
   }
 
   function closeCommentPopovers(form, except) {
@@ -2053,7 +2083,7 @@
         var input = qs('[data-comment-url-input="' + type + '"]', form);
         var url = input ? String(input.value || '').trim() : '';
         if (!/^https?:\/\//i.test(url)) {
-          showTooltip('请输入 http(s) 图片地址');
+          showTooltip(t('invalidImageUrl', '请输入 http(s) 图片地址'));
           if (input) {
             input.focus();
           }
@@ -2110,7 +2140,7 @@
       button.hidden = false;
       button.disabled = !hasMore;
       button.classList.toggle('is-end', !hasMore);
-      button.textContent = hasMore ? (button.dataset.labelMore || '加载更多...') : (button.dataset.labelEnd || '到底了...');
+      button.textContent = hasMore ? (button.dataset.labelMore || t('loadMore', '加载更多...')) : (button.dataset.labelEnd || t('loadEnd', '到底了...'));
       button.setAttribute('aria-disabled', hasMore ? 'false' : 'true');
       if (buttonWrap) {
         buttonWrap.hidden = false;
@@ -2307,7 +2337,7 @@
         formData.append('action', 'yneko_reimu_login');
         formData.append('nonce', config.login.nonce || '');
         if (message) {
-          message.textContent = config.login.loadingText || '登录中...';
+          message.textContent = config.login.loadingText || t('loginLoading', '登录中...');
           message.classList.remove('error', 'success');
         }
         if (submit) {
@@ -2319,12 +2349,12 @@
           body: formData
         }).then(function (response) {
           return response.json().catch(function () {
-            return { success: false, data: { message: config.login.failedText || '登录失败。' } };
+            return { success: false, data: { message: config.login.failedText || t('loginFailed', '登录失败。') } };
           });
         }).then(function (payload) {
           if (payload && payload.success) {
             if (message) {
-              message.textContent = config.login.successText || '登录成功，正在刷新...';
+              message.textContent = config.login.successText || t('loginSuccess', '登录成功，正在刷新...');
               message.classList.add('success');
             }
             window.setTimeout(function () {
@@ -2332,14 +2362,14 @@
             }, 600);
             return;
           }
-          var text = payload && payload.data && payload.data.message ? payload.data.message : (config.login.failedText || '登录失败。');
+          var text = payload && payload.data && payload.data.message ? payload.data.message : (config.login.failedText || t('loginFailed', '登录失败。'));
           if (message) {
             message.innerHTML = text;
             message.classList.add('error');
           }
         }).catch(function () {
           if (message) {
-            message.textContent = config.login.failedText || '登录失败。';
+            message.textContent = config.login.failedText || t('loginFailed', '登录失败。');
             message.classList.add('error');
           }
         }).finally(function () {
@@ -2412,7 +2442,7 @@
       var button = document.createElement('button');
       button.type = 'button';
       button.className = 'reimu-comment-cancel';
-      button.setAttribute('aria-label', '取消回复');
+      button.setAttribute('aria-label', t('cancelReply', '取消回复'));
       button.setAttribute('data-reimu-cancel-reply', 'true');
       button.addEventListener('click', function (event) {
         event.preventDefault();
@@ -2437,7 +2467,7 @@
       }
       if (liveRespond) {
         liveRespond.classList.add('reimu-respond-inline');
-        liveRespond.setAttribute('aria-label', '回复评论');
+        liveRespond.setAttribute('aria-label', t('replyComment', '回复评论'));
       }
       if (textarea && !textarea.value) {
         var author = qs('.reimu-comment__author', item);

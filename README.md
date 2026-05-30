@@ -19,7 +19,13 @@
   <a href="https://github.com/EkaEva/Yneko-Reimu/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/EkaEva/Yneko-Reimu?style=flat-square"></a>
 </p>
 
+<p align="center">
+  <a href="#中文">中文</a> | <a href="#english">English</a>
+</p>
+
 ![Yneko-Reimu 主题演示封面](theme/Yneko-Reimu/screenshot.png)
+
+## 中文
 
 Yneko-Reimu 是一个面向 WordPress 的经典主题，目标是在 WordPress 内容系统中复刻并延展 [D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) 的视觉与交互体验。
 
@@ -56,6 +62,7 @@ Yneko-Reimu 在此基础上完成了 WordPress 主题化，包括 PHP 模板、W
 - PJAX / 软导航：减少站内切换时的整页刷新断档。
 - 音乐播放器：基于 APlayer，曲目、歌词和封面从 WordPress 媒体库配置。
 - WordPress 原生评论视觉增强：保留原生评论提交、审核、回复、分页能力。
+- 内置中英双语系统：中文使用原地址，英文使用 `/en/` 前缀，文章/页面可互相关联翻译。
 - GitHub OAuth 登录：主题内置登录模块，可在后台配置 Client ID / Secret。
 - 自定义鼠标指针：桌面端使用莉莉概念光标 PNG，移动端自动回退。
 - 代码块编辑器样式：三色圆点、文件类型标识、行号、复制、折叠。
@@ -107,6 +114,25 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - GitHub 主页链接：统一用于顶部 GitHub 三角标、侧栏 GitHub 链接和项目页拉取来源。
 - 赞助二维码：留空则不显示赞助二维码；配置后可在页面底部或短代码中显示。
 
+#### 多语言设置
+
+主题内置轻量中英多语言系统，不依赖 Polylang。
+
+- 默认语言：建议保持 `zh_CN`。
+- 英文路径前缀：默认 `en`，英文内容会使用 `/en/...`。
+- 中文显示名 / 英文显示名：用于前台导航栏语言切换菜单。
+- 访问中文页面时，语言菜单会指向对应英文内容；访问英文页面时，会指回对应中文内容。
+
+文章和页面的中英对应关系在编辑器侧边栏的 `Reimu 设置` 中维护：
+
+1. 先发布或保存中文文章 A，语言选择 `简体中文`。
+2. 新建英文文章 B，语言选择 `English`，slug 建议使用英文。
+3. 在 B 的 `对应翻译文章/页面` 中选择 A，保存。
+4. 主题会自动把 A 和 B 的对应关系双向同步。
+5. 中文文章继续使用原始链接，英文文章会显示为 `/en/your-slug/`。
+
+没有设置语言的旧文章会被视为中文内容，避免启用多语言后旧内容从首页或归档消失。
+
 #### GitHub 登录
 
 主题内置 GitHub OAuth 登录，不需要额外安装独立插件。
@@ -157,7 +183,6 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 - Reimu 复刻预设
 - 顶部导航文字和链接
-- 语言入口
 - 首页分类胶囊标题、链接和封面
 - 播放器位置
 - 默认 Banner 图片
@@ -194,7 +219,13 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 /search.json
 ```
 
-启用后，搜索弹窗会优先使用本地 JSON 搜索文章标题、摘要和正文。你也可以在 Customizer 中配置其它搜索 JSON 地址。
+启用后，搜索弹窗会优先使用本地 JSON 搜索文章标题、摘要和正文。英文页面会自动读取：
+
+```text
+/en/search.json
+```
+
+搜索索引会按当前语言过滤文章。你也可以在 Customizer 中配置其它搜索 JSON 地址。
 
 ## 评论说明
 
@@ -236,6 +267,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 ```bash
 npm run check:js
+npm run i18n
 npm run build
 npm run package
 ```
@@ -243,8 +275,9 @@ npm run package
 脚本说明：
 
 - `npm run check:js`：检查前端 JS 语法。
-- `npm run build`：复制前端脚本、合并 CSS，并生成光标 PNG。
-- `npm run package`：按白名单生成 `releases/Yneko-Reimu.zip`。
+- `npm run i18n`：提取 gettext 字符串，生成 `languages/yneko-reimu.pot`、`zh_CN.po/mo` 和 `en_US.po/mo`。
+- `npm run build`：生成语言文件、复制前端脚本、合并 CSS，并生成光标 PNG。
+- `npm run package`：生成语言文件，并按白名单生成 `releases/Yneko-Reimu.zip`。
 
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
@@ -289,6 +322,7 @@ Action 会执行：
 
 ```bash
 npm run check:js
+npm run i18n
 npm run build
 pwsh tools/package-theme.ps1 -Version v0.1.0
 ```
@@ -314,6 +348,7 @@ Yneko-Reimu/
 │     │  ├─ images/         # 主题必要图片和光标
 │     │  └─ src/            # 开发用前端源码，不进入发布 ZIP
 │     ├─ inc/               # PHP 功能模块
+│     ├─ languages/         # gettext 语言文件，进入发布 ZIP
 │     ├─ template-parts/    # 模板片段
 │     ├─ 404.php
 │     ├─ index.php
@@ -335,6 +370,7 @@ Yneko-Reimu/
 
 ```bash
 npm run check:js
+npm run i18n
 npm run build
 npm run package
 ```
@@ -362,3 +398,265 @@ Yneko-Reimu 使用 MIT License 发布，详见 [LICENSE](LICENSE)。
 - [D-Sketon](https://github.com/D-Sketon)：感谢原作者创作 hexo-theme-reimu，并以开源方式分享如此完整而有辨识度的主题。
 - [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu)：Yneko-Reimu 的主要设计与交互来源。
 - [天羊EdSky](https://space.bilibili.com/16573583)：感谢莉莉概念鼠标指针素材的创作。
+
+## English
+
+Yneko-Reimu is a classic WordPress theme that recreates and extends the visual and interaction style of [D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) inside the WordPress content system.
+
+This project is not the official WordPress version of hexo-theme-reimu. It is a learning, porting, and secondary-development project. It adapts the Reimu-style header, hero image, post cards, author sidebar, archives, friend links, project page, search popup, loader, dark mode, music player, comment visuals, code blocks, and custom cursors to WordPress templates, the Customizer, the Media Library, and a built-in settings page.
+
+### Origins
+
+Yneko-Reimu’s design language, page structure, interactions, and part of its front-end styling are based on and adapted from [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu).
+
+- Original theme author: D-Sketon
+- Original repository: [https://github.com/D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu)
+- Original license: MIT License
+- Original demo site: [https://d-sketon.github.io/](https://d-sketon.github.io/)
+
+Yneko-Reimu adds the WordPress implementation layer: PHP templates, WordPress queries, native comments, theme settings, Media Library configuration, GitHub project fetching, PJAX adaptation, local search index generation, packaging, and release cleanup.
+
+### Cursor Credits
+
+The bundled Lily concept cursor assets are based on work by the Bilibili creator 天羊EdSky. They are organized into static PNG cursor states and wired into the WordPress front end.
+
+- Cursor creator: 天羊EdSky
+- Creator page: [https://space.bilibili.com/16573583](https://space.bilibili.com/16573583)
+- Usage in this theme: default, link, text, loading, unavailable, help, move, drag, and resize cursor states
+
+If you redistribute, commercialize, or replace these cursor assets, please confirm the original creator’s usage terms first. See [NOTICE.md](NOTICE.md) for credits and license notes.
+
+### Features
+
+- Reimu-style home page with navigation, hero image, post cards, sticky posts, and category capsules.
+- Reimu-style sidebar with author avatar, site stats, social links, menu buttons, and tag cloud.
+- Virtual pages for About, Archives, Friend Links, and Projects when no real page with the same slug exists.
+- GitHub project page that fetches user repositories and starred repositories from the configured GitHub profile.
+- Local JSON search index for WordPress posts.
+- PJAX-style soft navigation for smoother in-site transitions.
+- APlayer music player with audio, cover, and LRC lyrics configured from the WordPress Media Library.
+- Enhanced WordPress native comment visuals while keeping native submission, moderation, replies, and pagination.
+- Built-in Chinese/English multilingual system: Chinese uses normal URLs, English uses the `/en/` prefix, and posts/pages can be linked as translations.
+- Built-in GitHub OAuth login configured from the WordPress admin.
+- Custom Lily concept cursors on desktop with graceful mobile fallback.
+- Code block styling with language labels, line numbers, copy, and collapse controls.
+- Dark mode, view counts, local visitor stats, back-to-top, loading animation, mouse click effects, and a dedicated 404 page.
+
+### Requirements
+
+- WordPress 6.0 or later recommended
+- PHP 8.0 or later
+- Modern Chromium, Firefox, or Safari
+- Classic Theme + PHP templates + theme.json
+- Node.js only for development and packaging; the uploaded ZIP does not require Node.js
+
+### Installation
+
+#### Upload ZIP From WordPress Admin
+
+1. Download a Release asset or build `releases/Yneko-Reimu.zip` locally.
+2. Open the WordPress admin.
+3. Go to `Appearance -> Themes -> Add New -> Upload Theme`.
+4. Upload `releases/Yneko-Reimu.zip`.
+5. Install and activate the theme.
+
+#### Manual Installation
+
+Copy the theme source directory into your WordPress themes directory:
+
+```text
+theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
+```
+
+Then open `Appearance -> Themes` and activate `Yneko-Reimu`.
+
+### First-Time Configuration
+
+After activation, configure two admin areas.
+
+#### Appearance -> Yneko-Reimu Settings
+
+These settings are stored in the WordPress database and are not written into the theme source.
+
+Site profile:
+
+- Site avatar: site icon, default logo, and fallback sharing image.
+- Author avatar: front-end author card, character image, and friend/project fallback image.
+- Guest comment avatar: default avatar for logged-out commenters.
+- GitHub profile URL: shared by the GitHub corner ribbon, sidebar GitHub link, and project-page fetch source.
+- Sponsor QR code: hidden when empty; shown in sponsor entries when configured.
+
+Multilingual settings:
+
+- Default language: `zh_CN` is recommended.
+- English URL prefix: default is `en`; English content uses `/en/...`.
+- Chinese label / English label: shown in the front-end language switcher.
+- The language menu links to the paired translation when one exists; otherwise it falls back to the target language home page.
+
+Publishing translated posts and pages:
+
+1. Create or save the Chinese post A and set its language to `简体中文`.
+2. Create the English post B, set its language to `English`, and use an English slug.
+3. In B’s `Linked translation post/page` field, select A.
+4. Save B. The theme syncs the relation in both directions.
+5. Chinese content keeps the original permalink; English content is displayed under `/en/your-slug/`.
+
+Old posts without language metadata are treated as Chinese so existing content stays visible after enabling multilingual mode.
+
+GitHub Login:
+
+1. Create a GitHub OAuth App.
+2. Copy the Callback URL shown by the theme in WordPress admin.
+3. Paste it into the GitHub OAuth App `Authorization callback URL`.
+4. Fill in Client ID, Client Secret, optional Callback URL override, and auto-create-user setting.
+5. Save. The comment login modal will show the GitHub login entry when configured.
+
+Client Secret is stored only in the WordPress database. Do not commit it to GitHub.
+
+Friend links:
+
+- Name
+- URL
+- Description
+- Avatar
+
+The theme ships with three credit-related example links: the theme author, the original hexo-theme-reimu author, and the cursor creator. Users may delete or edit them.
+
+Music playlist:
+
+Upload audio, lyrics, and cover files to the WordPress Media Library, then add tracks in the settings page. If no tracks are configured, the front-end music player is not loaded.
+
+#### Appearance -> Customize -> Yneko-Reimu Theme Settings
+
+This area controls visual and layout options such as the Reimu clone preset, navigation text and URLs, home category capsules, player position, default banner, default card cover, default avatar, search background, sidebar position, dark mode, custom cursors, PJAX, local search, comment integrations, footer text, and click effects.
+
+### Built-In Pages
+
+If no real WordPress page with the same slug exists, the theme displays virtual Reimu-style pages:
+
+| Path | Purpose |
+| --- | --- |
+| `/about/` | About page |
+| `/archives/` | Archives |
+| `/friend/` | Friend links |
+| `/projects/` | GitHub projects |
+
+If you create a real page with the same slug, WordPress page content is used first while keeping the theme styling.
+
+### Local Search
+
+The default local search index is:
+
+```text
+/search.json
+```
+
+English pages automatically use:
+
+```text
+/en/search.json
+```
+
+The index is filtered by the current language. You can also configure a custom local JSON URL in the Customizer.
+
+### Development And Packaging
+
+Run these commands from the repository root:
+
+```bash
+npm run check:js
+npm run i18n
+npm run build
+npm run package
+```
+
+Scripts:
+
+- `npm run check:js`: checks front-end and tool JavaScript syntax.
+- `npm run i18n`: extracts gettext strings and generates `languages/yneko-reimu.pot`, `zh_CN.po/mo`, and `en_US.po/mo`.
+- `npm run build`: generates language files, builds front-end assets, and generates cursor PNGs.
+- `npm run package`: generates language files and creates `releases/Yneko-Reimu.zip` from a whitelist.
+
+To build a versioned package:
+
+```bash
+pwsh tools/package-theme.ps1 -Version v0.1.0
+```
+
+Output:
+
+```text
+releases/Yneko-Reimu-v0.1.0.zip
+```
+
+Upload the ZIP in `releases/`, not the GitHub repository ZIP.
+
+### GitHub Actions Release Packaging
+
+The workflow `.github/workflows/release-package.yml` runs when a version tag is pushed:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+It checks JavaScript, generates language files, builds assets, packages the theme, and uploads:
+
+```text
+Yneko-Reimu-v0.1.0.zip
+```
+
+If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
+
+### Repository Layout
+
+```text
+Yneko-Reimu/
+├─ theme/
+│  └─ Yneko-Reimu/
+│     ├─ assets/
+│     │  ├─ dist/
+│     │  ├─ images/
+│     │  └─ src/
+│     ├─ inc/
+│     ├─ languages/
+│     ├─ template-parts/
+│     ├─ style.css
+│     └─ theme.json
+├─ tools/
+├─ releases/
+├─ package.json
+├─ LICENSE
+├─ NOTICE.md
+└─ README.md
+```
+
+### Personal Data And Security
+
+Do not commit personal or sensitive content:
+
+- GitHub OAuth Client Secret
+- Database SQL files
+- `.wpress` backups
+- Personal post content
+- Personal music files
+- Lyrics files
+- Sponsor QR codes
+- Local WordPress uploads
+- Local backup directories
+
+These should live in the WordPress database and Media Library, referenced through theme settings.
+
+### License
+
+Yneko-Reimu is released under the MIT License. See [LICENSE](LICENSE).
+
+This theme includes references, ports, and adaptations of [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu), created by D-Sketon and released under the MIT License.
+
+The bundled Lily concept cursor assets belong to their original creator, 天羊EdSky. Please follow the original creator’s usage terms. See [NOTICE.md](NOTICE.md) for detailed credits.
+
+### Thanks
+
+- [D-Sketon](https://github.com/D-Sketon), for creating and open-sourcing hexo-theme-reimu.
+- [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu), the primary design and interaction source for Yneko-Reimu.
+- [天羊EdSky](https://space.bilibili.com/16573583), for the Lily concept cursor artwork.

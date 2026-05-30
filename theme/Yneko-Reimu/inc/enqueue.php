@@ -139,13 +139,15 @@ function yneko_reimu_enqueue_assets() {
 
 	wp_enqueue_script( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.js', array(), YNEKO_REIMU_VERSION, true );
 
-	$builtin_search_url = function_exists( 'yneko_reimu_search_json_url' ) ? yneko_reimu_search_json_url() : '';
+	$current_language   = function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : get_locale();
+	$builtin_search_url = function_exists( 'yneko_reimu_search_json_url' ) ? yneko_reimu_search_json_url( $current_language ) : '';
 	$local_search_url   = yneko_reimu_get_theme_mod( 'yneko_reimu_local_search_json', '' );
 	$local_search_url   = $local_search_url ? $local_search_url : $builtin_search_url;
 	$search             = array(
 		'type'    => 'wordpress',
 		'restUrl' => esc_url_raw( rest_url( 'wp/v2/search' ) ),
 		'perPage' => 10,
+		'language' => $current_language,
 	);
 
 	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_generator_search_enable', true ) && $local_search_url ) {
@@ -153,6 +155,7 @@ function yneko_reimu_enqueue_assets() {
 			'type'     => 'local',
 			'localUrl' => esc_url_raw( $local_search_url ),
 			'perPage'  => 10,
+			'language' => $current_language,
 		);
 	} elseif ( yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_api_key', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_index_name', '' ) ) {
 		$search = array(
@@ -166,33 +169,58 @@ function yneko_reimu_enqueue_assets() {
 	}
 
 	$custom_cursor = (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_custom_cursor', true );
+	$i18n = array(
+		'copy'                  => esc_html__( '复制', 'yneko-reimu' ),
+		'copied'                => esc_html__( '复制成功 (*^▽^*)', 'yneko-reimu' ),
+		'copyFailed'            => esc_html__( '复制失败 (ﾟ⊿ﾟ)ﾂ', 'yneko-reimu' ),
+		'collapseCode'          => esc_html__( '折叠代码', 'yneko-reimu' ),
+		'expandCode'            => esc_html__( '展开代码', 'yneko-reimu' ),
+		'searchHint'            => esc_html__( '输入关键词后按回车搜索。', 'yneko-reimu' ),
+		'searching'             => esc_html__( '少女检索中...', 'yneko-reimu' ),
+		'searchStats'           => esc_html__( '找到 {count} 条结果', 'yneko-reimu' ),
+		'searchEmpty'           => esc_html__( '未发现与「{query}」相关内容', 'yneko-reimu' ),
+		'searchUntitled'        => esc_html__( '无标题', 'yneko-reimu' ),
+		'searchNoResults'       => esc_html__( '没有结果', 'yneko-reimu' ),
+		'searchIndexFailed'     => esc_html__( '本地搜索索引加载失败。', 'yneko-reimu' ),
+		'loadMore'              => esc_html__( '加载更多...', 'yneko-reimu' ),
+		'loadEnd'               => esc_html__( '到底了...', 'yneko-reimu' ),
+		'commentPreviewEmpty'   => esc_html__( '还没有内容。', 'yneko-reimu' ),
+		'invalidImageUrl'       => esc_html__( '请输入 http(s) 图片地址', 'yneko-reimu' ),
+		'cancelReply'           => esc_html__( '取消回复', 'yneko-reimu' ),
+		'replyComment'          => esc_html__( '回复评论', 'yneko-reimu' ),
+		'loginLoading'          => esc_html__( '登录中...', 'yneko-reimu' ),
+		'loginSuccess'          => esc_html__( '登录成功，正在刷新...', 'yneko-reimu' ),
+		'loginFailed'           => esc_html__( '登录失败，请检查账号和密码。', 'yneko-reimu' ),
+	);
 	$config = array(
+		'language'        => $current_language,
+		'i18n'            => $i18n,
 		'darkModeDefault' => yneko_reimu_get_theme_mod( 'yneko_reimu_dark_mode_default', 'auto' ),
 		'showThemeToggle' => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_show_theme_toggle', true ),
 		'navHide'         => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_nav_hide', true ),
 		'toc'             => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_show_toc', true ),
-		'copyText'        => esc_html__( '复制', 'yneko-reimu' ),
-		'copiedText'      => esc_html__( '复制成功 (*^▽^*)', 'yneko-reimu' ),
-		'failedText'      => esc_html__( '复制失败 (ﾟ⊿ﾟ)ﾂ', 'yneko-reimu' ),
+		'copyText'        => $i18n['copy'],
+		'copiedText'      => $i18n['copied'],
+		'failedText'      => $i18n['copyFailed'],
 		'firework'        => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_firework_enable', true ),
 		'customCursor'    => $custom_cursor,
 		'pjax'            => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_pjax_enable', true ),
 		'katex'           => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_katex_enable', false ),
 		'mermaid'         => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_mermaid_enable', false ),
 		'search'          => $search,
-		'searchHint'      => esc_html__( '输入关键词后按回车搜索。', 'yneko-reimu' ),
-		'searchingText'   => esc_html__( '少女检索中...', 'yneko-reimu' ),
-		'searchStatsText' => esc_html__( '找到 {count} 条结果', 'yneko-reimu' ),
-		'searchEmptyText' => esc_html__( '未发现与「{query}」相关内容', 'yneko-reimu' ),
-		'expandText'      => esc_html__( '展开代码', 'yneko-reimu' ),
+		'searchHint'      => $i18n['searchHint'],
+		'searchingText'   => $i18n['searching'],
+		'searchStatsText' => $i18n['searchStats'],
+		'searchEmptyText' => $i18n['searchEmpty'],
+		'expandText'      => $i18n['expandCode'],
 		'codeExpandThreshold' => absint( yneko_reimu_get_theme_mod( 'yneko_reimu_code_expand_threshold', 420 ) ),
 		'login'           => array(
 			'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
 			'nonce'       => wp_create_nonce( 'yneko_reimu_ajax_login' ),
 			'redirectUrl' => home_url( add_query_arg( null, null ) ),
-			'loadingText' => esc_html__( '登录中...', 'yneko-reimu' ),
-			'successText' => esc_html__( '登录成功，正在刷新...', 'yneko-reimu' ),
-			'failedText'  => esc_html__( '登录失败，请检查账号和密码。', 'yneko-reimu' ),
+			'loadingText' => $i18n['loginLoading'],
+			'successText' => $i18n['loginSuccess'],
+			'failedText'  => $i18n['loginFailed'],
 		),
 		'aplayer'         => array(
 			'audio'    => $aplayer_audio,
