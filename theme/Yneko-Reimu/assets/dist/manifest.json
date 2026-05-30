@@ -1,0 +1,18 @@
+{
+  "builtAt": "2026-05-30T01:05:15.234Z",
+  "upstream": {
+    "name": "hexo-theme-reimu",
+    "version": "1.12.5",
+    "repository": "git+https://github.com/D-Sketon/hexo-theme-reimu.git",
+    "license": "MIT"
+  },
+  "cssSources": [
+    "assets/src/reimu-upstream.css",
+    "assets/src/yneko-reimu-adapter.css"
+  ],
+  "outputs": [
+    "assets/dist/loader.css",
+    "assets/dist/reimu.js",
+    "assets/dist/reimu.css"
+  ]
+}

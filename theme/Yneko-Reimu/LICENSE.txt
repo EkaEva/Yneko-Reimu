@@ -1,0 +1,5 @@
+Yneko-Reimu is licensed under the MIT License.
+
+The canonical license file for this repository is LICENSE.
+Credits and third-party notices are listed in NOTICE.md.
+

@@ -1,0 +1,49 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"appearanceTools": true,
+		"layout": {
+			"contentSize": "860px",
+			"wideSize": "1180px"
+		},
+		"color": {
+			"palette": [
+				{ "slug": "reimu-red", "name": "Reimu Red", "color": "#ff5252" },
+				{ "slug": "reimu-red-strong", "name": "Reimu Red Strong", "color": "#e82032" },
+				{ "slug": "reimu-pink", "name": "Reimu Pink", "color": "#ffecec" },
+				{ "slug": "reimu-white", "name": "Reimu White", "color": "#ffffff" },
+				{ "slug": "reimu-text", "name": "Reimu Text", "color": "#30292b" },
+				{ "slug": "reimu-muted", "name": "Reimu Muted", "color": "#817276" }
+			]
+		},
+		"spacing": {
+			"units": [ "px", "rem", "em", "%", "vh", "vw" ]
+		},
+		"typography": {
+			"fontFamilies": [
+				{
+					"slug": "reimu-serif",
+					"name": "Reimu Serif",
+					"fontFamily": "\"Noto Serif SC\", \"Songti SC\", \"SimSun\", serif"
+				},
+				{
+					"slug": "reimu-sans",
+					"name": "Reimu Sans",
+					"fontFamily": "\"LXGW WenKai\", \"Microsoft YaHei\", \"Noto Sans SC\", sans-serif"
+				}
+			]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "#fff8f8",
+			"text": "#30292b"
+		},
+		"typography": {
+			"fontFamily": "var(--wp--preset--font-family--reimu-sans)",
+			"fontSize": "16px",
+			"lineHeight": "1.75"
+		}
+	}
+}

@@ -1,0 +1,44 @@
+# Dependencies and local installs
+node_modules/
+vendor/
+
+# Build/cache output
+.cache/
+.parcel-cache/
+.sass-cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# WordPress local data and backups
+wp-local/
+backups/
+*.sql
+*.sqlite
+*.sqlite3
+*.wpress
+
+# Local packages and archives
+releases/
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+secrets.*
+*.pem
+*.key
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
