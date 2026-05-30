@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="icon-copyright"></span>
 			<?php echo esc_html( ltrim( yneko_reimu_footer_copyright(), "© \t\n\r\0\x0B" ) ); ?>
 			<span class="footer-info-sep rotate"></span>
-			<?php bloginfo( 'name' ); ?>
+			<a href="https://github.com/EkaEva/Yneko-Reimu" rel="noopener noreferrer" target="_blank"><?php bloginfo( 'name' ); ?></a>
 		</div>
 		<div>
 			<?php esc_html_e( '基于', 'yneko-reimu' ); ?>&nbsp;<a href="https://wordpress.org/" rel="noopener nofollow noreferrer" target="_blank">WordPress</a>&nbsp;
