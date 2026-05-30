@@ -23,3 +23,4 @@
 - Synced the English README development section with the new Vite/PHPCS workflow.
 - Replaced theme screenshot with the user-provided compressed PNG from `C:\Users\86135\Downloads\screenshot.png`.
 - Fixed the release workflow after the first v0.1.2 tag run failed because CI had not installed npm dependencies before running Vite.
+- Scoped PHPCS/WPCS to an incremental gate after the full legacy theme tree produced broad pre-existing style failures.

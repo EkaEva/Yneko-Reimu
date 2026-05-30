@@ -18,6 +18,7 @@ npm run package
 - GitHub OAuth, third-party comments, music, statistics, and visual effects are optional and off by default where they add weight.
 - JSON-LD schema is lightweight and can be disabled with `yneko_reimu_schema_enabled`.
 - Release packaging is whitelist-based to prevent development files from entering the installable ZIP.
+- PHPCS/WPCS is currently enforced as an incremental gate for new and high-risk entrypoint files. The legacy template tree is intentionally not made a hard blocker until it can be normalized without mixing a huge style-only rewrite into feature work.
 
 ## Manual Checks
 

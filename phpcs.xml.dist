@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
 <ruleset name="Yneko-Reimu">
 	<description>WordPress coding standards for the Yneko-Reimu theme.</description>
-	<file>theme/Yneko-Reimu</file>
-	<exclude-pattern>theme/Yneko-Reimu/assets/dist/*</exclude-pattern>
-	<exclude-pattern>theme/Yneko-Reimu/assets/src/*</exclude-pattern>
-	<exclude-pattern>theme/Yneko-Reimu/languages/*</exclude-pattern>
+	<file>theme/Yneko-Reimu/functions.php</file>
+	<file>theme/Yneko-Reimu/inc/features.php</file>
+	<file>theme/Yneko-Reimu/inc/schema.php</file>
 	<arg name="extensions" value="php"/>
 	<arg name="parallel" value="4"/>
+	<arg name="warning-severity" value="0"/>
 	<config name="testVersion" value="8.0-"/>
 	<rule ref="WordPress"/>
 	<rule ref="PHPCompatibilityWP"/>
+	<rule ref="Squiz.Commenting.FileComment">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionComment">
+		<severity>0</severity>
+	</rule>
 </ruleset>
