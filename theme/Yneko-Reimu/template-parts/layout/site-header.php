@@ -3,14 +3,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$header_title = is_singular() ? get_the_title() : yneko_reimu_archive_title();
-$summary      = is_singular() ? yneko_reimu_get_post_meta( get_the_ID(), '_yneko_reimu_summary', true ) : '';
-$subtitle     = is_singular( 'post' ) ? '' : ( $summary ? $summary : ( is_singular() ? get_the_excerpt() : yneko_reimu_archive_description() ) );
-$banner       = yneko_reimu_get_default_banner_url();
-
-if ( yneko_reimu_is_virtual_page() || yneko_reimu_special_page_slug() ) {
-	$subtitle = '';
-}
+$reimu_special_page_slug = yneko_reimu_special_page_slug();
+$reimu_archive_like_page = yneko_reimu_is_virtual_page() || $reimu_special_page_slug;
+$header_title            = $reimu_archive_like_page ? yneko_reimu_archive_title() : ( is_singular() ? get_the_title() : yneko_reimu_archive_title() );
+$summary                 = is_singular() ? yneko_reimu_get_post_meta( get_the_ID(), '_yneko_reimu_summary', true ) : '';
+$subtitle                = $reimu_archive_like_page || is_singular( 'post' ) ? '' : ( $summary ? $summary : ( is_singular() ? get_the_excerpt() : yneko_reimu_archive_description() ) );
+$banner                  = yneko_reimu_get_default_banner_url();
 ?>
 <div id="header-nav" data-site-header>
 	<nav id="main-nav" aria-label="<?php esc_attr_e( '主导航', 'yneko-reimu' ); ?>">

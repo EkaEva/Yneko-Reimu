@@ -253,19 +253,19 @@ function yneko_reimu_heatmap_config() {
 			),
 			'en-US' => array(
 				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
-				'words'          => __( '字', 'yneko-reimu' ),
-				'total_articles' => __( '共 $1 篇文章, $2 字', 'yneko-reimu' ),
-				'no_writing_on'  => __( '{date} 没有写作', 'yneko-reimu' ),
-				'writing_on'     => __( '{posts} {words} 于 {date}', 'yneko-reimu' ),
-				'year_total'     => __( '{posts} {words} 于 {year}', 'yneko-reimu' ),
+				'words'          => __( 'words', 'yneko-reimu' ),
+				'total_articles' => __( '$1 post(s), $2 word(s) in total', 'yneko-reimu' ),
+				'no_writing_on'  => __( 'No writing on {date}', 'yneko-reimu' ),
+				'writing_on'     => __( '{posts}, {words} on {date}', 'yneko-reimu' ),
+				'year_total'     => __( '{posts}, {words} in {year}', 'yneko-reimu' ),
 			),
 			'en'    => array(
 				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
-				'words'          => __( '字', 'yneko-reimu' ),
-				'total_articles' => __( '共 $1 篇文章, $2 字', 'yneko-reimu' ),
-				'no_writing_on'  => __( '{date} 没有写作', 'yneko-reimu' ),
-				'writing_on'     => __( '{posts} {words} 于 {date}', 'yneko-reimu' ),
-				'year_total'     => __( '{posts} {words} 于 {year}', 'yneko-reimu' ),
+				'words'          => __( 'words', 'yneko-reimu' ),
+				'total_articles' => __( '$1 post(s), $2 word(s) in total', 'yneko-reimu' ),
+				'no_writing_on'  => __( 'No writing on {date}', 'yneko-reimu' ),
+				'writing_on'     => __( '{posts}, {words} on {date}', 'yneko-reimu' ),
+				'year_total'     => __( '{posts}, {words} in {year}', 'yneko-reimu' ),
 			),
 		),
 	);
@@ -343,26 +343,42 @@ function yneko_reimu_normalize_theme_url( $url, $fallback = '' ) {
 function yneko_reimu_default_nav_items() {
 	return array(
 		'home'     => array(
+			'source_label' => '首页',
 			'label' => __( '首页', 'yneko-reimu' ),
+			'en_label' => __( 'Home', 'yneko-reimu' ),
 			'url'   => function_exists( 'yneko_reimu_i18n_home_url' ) ? yneko_reimu_i18n_home_url() : home_url( '/' ),
 		),
 		'projects' => array(
+			'source_label' => '项目',
 			'label' => __( '项目', 'yneko-reimu' ),
+			'en_label' => __( 'Projects', 'yneko-reimu' ),
 			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'projects' ) : home_url( '/projects/' ),
 		),
 		'archives' => array(
+			'source_label' => '归档',
 			'label' => __( '归档', 'yneko-reimu' ),
+			'en_label' => __( 'Archives', 'yneko-reimu' ),
 			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'archives' ) : home_url( '/archives/' ),
 		),
 		'about'    => array(
+			'source_label' => '关于',
 			'label' => __( '关于', 'yneko-reimu' ),
+			'en_label' => __( 'About', 'yneko-reimu' ),
 			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'about' ) : home_url( '/about/' ),
 		),
 		'friend'   => array(
+			'source_label' => '友链',
 			'label' => __( '友链', 'yneko-reimu' ),
+			'en_label' => __( 'Friends', 'yneko-reimu' ),
 			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'friend' ) : home_url( '/friend/' ),
 		),
 	);
+}
+
+function yneko_reimu_nav_item_is_builtin_label( $label, $default ) {
+	$label = trim( (string) $label );
+
+	return '' === $label || $label === $default['label'] || ( isset( $default['source_label'] ) && $label === $default['source_label'] ) || ( isset( $default['en_label'] ) && $label === $default['en_label'] );
 }
 
 function yneko_reimu_nav_items() {
@@ -371,6 +387,9 @@ function yneko_reimu_nav_items() {
 	foreach ( yneko_reimu_default_nav_items() as $key => $default ) {
 		$label = trim( (string) yneko_reimu_get_theme_mod( 'yneko_reimu_nav_' . $key . '_label', $default['label'] ) );
 		$url   = yneko_reimu_get_theme_mod( 'yneko_reimu_nav_' . $key . '_url', $default['url'] );
+		if ( function_exists( 'yneko_reimu_i18n_is_english_request' ) && yneko_reimu_i18n_is_english_request() && yneko_reimu_nav_item_is_builtin_label( $label, $default ) ) {
+			$label = $default['en_label'];
+		}
 
 		$items[] = array(
 			'key'   => $key,
@@ -380,6 +399,53 @@ function yneko_reimu_nav_items() {
 	}
 
 	return $items;
+}
+
+function yneko_reimu_nav_builtin_slug_from_url( $url ) {
+	$path      = trim( (string) wp_parse_url( (string) $url, PHP_URL_PATH ), '/' );
+	$home_path = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+	if ( '' !== $home_path && 0 === strpos( $path, $home_path . '/' ) ) {
+		$path = trim( substr( $path, strlen( $home_path ) ), '/' );
+	} elseif ( $home_path === $path ) {
+		$path = '';
+	}
+
+	if ( function_exists( 'yneko_reimu_i18n_relative_without_prefix' ) ) {
+		$path = yneko_reimu_i18n_relative_without_prefix( $path );
+	}
+
+	$path = trim( $path, '/' );
+	if ( '' === $path ) {
+		return 'home';
+	}
+
+	return in_array( $path, array( 'projects', 'archives', 'about', 'friend' ), true ) ? $path : '';
+}
+
+function yneko_reimu_nav_localized_url( $url ) {
+	$slug = yneko_reimu_nav_builtin_slug_from_url( $url );
+	if ( 'home' === $slug && function_exists( 'yneko_reimu_i18n_home_url' ) ) {
+		return yneko_reimu_i18n_home_url();
+	}
+	if ( $slug && function_exists( 'yneko_reimu_i18n_virtual_path' ) ) {
+		return yneko_reimu_i18n_virtual_path( $slug );
+	}
+
+	return function_exists( 'yneko_reimu_i18n_localize_url' ) ? yneko_reimu_i18n_localize_url( $url ) : $url;
+}
+
+function yneko_reimu_nav_localized_title( $title, $url = '' ) {
+	if ( ! function_exists( 'yneko_reimu_i18n_is_english_request' ) || ! yneko_reimu_i18n_is_english_request() ) {
+		return $title;
+	}
+
+	$slug     = yneko_reimu_nav_builtin_slug_from_url( $url );
+	$defaults = yneko_reimu_default_nav_items();
+	if ( ! $slug || ! isset( $defaults[ $slug ] ) ) {
+		return $title;
+	}
+
+	return yneko_reimu_nav_item_is_builtin_label( $title, $defaults[ $slug ] ) ? $defaults[ $slug ]['en_label'] : $title;
 }
 
 function yneko_reimu_menu_item_matches_url( $item, $path ) {
@@ -417,7 +483,7 @@ function yneko_reimu_ensure_projects_menu_item( $items, $args ) {
 		'type'              => 'custom',
 		'type_label'        => __( '自定义链接', 'yneko-reimu' ),
 		'title'             => __( '项目', 'yneko-reimu' ),
-		'url'               => home_url( '/projects/' ),
+		'url'               => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'projects' ) : home_url( '/projects/' ),
 		'target'            => '',
 		'attr_title'        => '',
 		'description'       => '',
@@ -1075,7 +1141,7 @@ function yneko_reimu_render_taichi_svg( $size = 150 ) {
 class Yneko_Reimu_Menu_Walker extends Walker_Nav_Menu {
 	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
 		$atts           = array();
-		$atts['href']   = ! empty( $item->url ) ? $item->url : '';
+		$atts['href']   = ! empty( $item->url ) ? yneko_reimu_nav_localized_url( $item->url ) : '';
 		$atts['class']  = 'main-nav-link-wrap';
 		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
 		$atts['target'] = ! empty( $item->target ) ? $item->target : '';
@@ -1088,7 +1154,7 @@ class Yneko_Reimu_Menu_Walker extends Walker_Nav_Menu {
 			}
 		}
 
-		$title   = apply_filters( 'the_title', $item->title, $item->ID );
+		$title   = yneko_reimu_nav_localized_title( apply_filters( 'the_title', $item->title, $item->ID ), $item->url );
 		$output .= '<a' . $attributes . '>';
 		$output .= '<div class="icon main-nav-icon rotate">&#xe62b;</div>';
 		$output .= '<span class="main-nav-link">' . esc_html( $title ) . '</span>';
@@ -1107,8 +1173,8 @@ class Yneko_Reimu_Menu_Walker extends Walker_Nav_Menu {
 
 class Yneko_Reimu_Sidebar_Menu_Walker extends Walker_Nav_Menu {
 	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
-		$href   = ! empty( $item->url ) ? $item->url : '#';
-		$title  = apply_filters( 'the_title', $item->title, $item->ID );
+		$href   = ! empty( $item->url ) ? yneko_reimu_nav_localized_url( $item->url ) : '#';
+		$title  = yneko_reimu_nav_localized_title( apply_filters( 'the_title', $item->title, $item->ID ), $item->url );
 		$output .= '<div class="sidebar-menu-link-wrap">';
 		$output .= '<a class="sidebar-menu-link-dummy" href="' . esc_url( $href ) . '" aria-label="' . esc_attr( $title ) . '"></a>';
 		$output .= '<div class="icon rotate sidebar-menu-icon">&#xe62b;</div>';
@@ -1130,6 +1196,14 @@ function yneko_reimu_archive_title() {
 	if ( yneko_reimu_is_virtual_page() ) {
 		$page = yneko_reimu_virtual_page();
 		return $page['title'];
+	}
+
+	$special_slug = yneko_reimu_special_page_slug();
+	if ( $special_slug ) {
+		$pages = yneko_reimu_virtual_pages();
+		if ( isset( $pages[ $special_slug ] ) ) {
+			return $pages[ $special_slug ]['title'];
+		}
 	}
 
 	if ( is_search() ) {
@@ -1159,6 +1233,14 @@ function yneko_reimu_archive_description() {
 	if ( yneko_reimu_is_virtual_page() ) {
 		$page = yneko_reimu_virtual_page();
 		return $page['description'];
+	}
+
+	$special_slug = yneko_reimu_special_page_slug();
+	if ( $special_slug ) {
+		$pages = yneko_reimu_virtual_pages();
+		if ( isset( $pages[ $special_slug ] ) ) {
+			return $pages[ $special_slug ]['description'];
+		}
 	}
 
 	if ( is_search() ) {

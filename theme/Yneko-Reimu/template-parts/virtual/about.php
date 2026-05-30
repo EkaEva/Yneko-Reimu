@@ -37,5 +37,6 @@ $reimu_about_content = $reimu_about_post_id ? trim( (string) get_post_field( 'po
 			<?php endif; ?>
 		</div>
 		<?php echo yneko_reimu_sponsor_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php get_template_part( 'template-parts/meta/virtual-page-footer' ); ?>
 	</div>
 </article>

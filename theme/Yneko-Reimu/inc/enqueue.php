@@ -204,6 +204,7 @@ function yneko_reimu_enqueue_assets() {
 	);
 	$config = array(
 		'language'        => $current_language,
+		'i18nPrefix'      => function_exists( 'yneko_reimu_i18n_url_prefix' ) ? yneko_reimu_i18n_url_prefix() : 'en',
 		'i18n'            => $i18n,
 		'darkModeDefault' => yneko_reimu_get_theme_mod( 'yneko_reimu_dark_mode_default', 'auto' ),
 		'showThemeToggle' => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_show_theme_toggle', true ),

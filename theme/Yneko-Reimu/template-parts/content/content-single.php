@@ -40,20 +40,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			get_template_part( 'template-parts/meta/post-copyright' );
 			get_template_part( 'template-parts/meta/post-terms' );
 			?>
-			<?php if ( yneko_reimu_should_show_comments( get_the_ID() ) ) : ?>
-				<a class="article-comment-link" data-aos="zoom-in" data-no-pjax href="<?php echo esc_url( get_permalink() . '#comments' ); ?>">
-					<?php
-					printf(
-						/* translators: %s: comment count. */
-						esc_html__( '%s 留言', 'yneko-reimu' ),
-						esc_html( number_format_i18n( get_comments_number() ) )
-					);
-					?>
-				</a>
-			<?php endif; ?>
 			<span class="article-visitor-link" data-aos="zoom-in" aria-label="<?php esc_attr_e( '阅读量', 'yneko-reimu' ); ?>">
 				<?php echo yneko_reimu_view_count_text( get_the_ID() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</span>
+			<?php if ( yneko_reimu_should_show_comments( get_the_ID() ) ) : ?>
+				<a class="article-comment-link" data-aos="zoom-in" data-no-pjax href="<?php echo esc_url( get_permalink() . '#comments' ); ?>">
+					<?php echo yneko_reimu_comment_count_text( get_the_ID() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</a>
+			<?php endif; ?>
 		</footer>
 	</div>
 	<?php

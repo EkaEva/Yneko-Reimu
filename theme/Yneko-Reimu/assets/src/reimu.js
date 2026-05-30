@@ -312,7 +312,18 @@
   }
 
   function initSidebarActive() {
-    var current = window.location.pathname.replace(/\/+$/, '') || '/';
+    var langPrefix = (config.i18nPrefix || 'en').replace(/^\/+|\/+$/g, '');
+    function normalizeNavPath(pathname) {
+      var path = String(pathname || '/').replace(/\/+$/, '') || '/';
+      if (langPrefix && path === '/' + langPrefix) {
+        return '/';
+      }
+      if (langPrefix && path.indexOf('/' + langPrefix + '/') === 0) {
+        path = path.slice(langPrefix.length + 1) || '/';
+      }
+      return path.replace(/\/+$/, '') || '/';
+    }
+    var current = normalizeNavPath(window.location.pathname);
     qsa('.sidebar-menu-link-wrap.link-active').forEach(function (wrap) {
       wrap.classList.remove('link-active');
     });
@@ -321,8 +332,8 @@
       if (!link) {
         return;
       }
-      var path = link.pathname.replace(/\/+$/, '') || '/';
-      if (path === current || (path !== '/' && current.indexOf(path + '/') === 0)) {
+      var path = normalizeNavPath(link.pathname);
+      if (path === current) {
         wrap.classList.add('link-active');
       }
     });
@@ -708,13 +719,21 @@
       if (lang.toLowerCase().indexOf('zh') === 0) {
         return String(num) + ' ' + zhUnit;
       }
-      return String(num) + ' ' + (num <= 1 ? singular : plural);
+      return String(num) + ' ' + (num === 1 ? singular : plural);
     }
 
     function templateText(template, values) {
       return String(template || '').replace(/\{([a-z]+)\}/gi, function (match, key) {
         return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : match;
       });
+    }
+
+    function heatmapTotalText(posts, words) {
+      if (lang.toLowerCase().indexOf('zh') === 0) {
+        return String(text.total_articles || '共 $1 篇文章, $2 字').replace('$1', posts).replace('$2', words);
+      }
+
+      return unitText(posts, 'post', 'posts', '篇文章') + ', ' + unitText(words, 'word', 'words', text.words || '字') + ' in total';
     }
 
     function getLevelFromWordCount(count) {
@@ -837,7 +856,7 @@
         });
       }
 
-      html += '</ul><div class="tooltip-footer">' + escapeHtml(String(text.total_articles || '$1 article(s), $2 word(s)').replace('$1', articles.length).replace('$2', totalWords)) + '</div></div>';
+      html += '</ul><div class="tooltip-footer">' + escapeHtml(heatmapTotalText(articles.length, totalWords)) + '</div></div>';
       tooltip.innerHTML = html;
 
       var rect = tile.getBoundingClientRect();
@@ -915,7 +934,7 @@
           tile.title = c.post
             ? templateText(text.writing_on || '{posts} {words} on {date}', {
               posts: unitText(c.post, 'post', 'posts', '篇文章'),
-              words: unitText(c.count, 'word', 'words', '字'),
+              words: unitText(c.count, 'word', 'words', text.words || '字'),
               date: formatDate(date)
             })
             : templateText(text.no_writing_on || 'No writing on {date}', { date: formatDate(date) });
@@ -932,7 +951,7 @@
         tilesContainer.appendChild(tilesFragment);
         calendarContainer.insertAdjacentHTML('beforeend', '<div class="total">' + escapeHtml(templateText(text.year_total || '{posts} {words} in {year}', {
           posts: unitText(totalStat.post, 'post', 'posts', '篇文章'),
-          words: unitText(totalStat.count, 'word', 'words', '字'),
+          words: unitText(totalStat.count, 'word', 'words', text.words || '字'),
           year: year
         })) + '</div>');
       }
@@ -2712,6 +2731,10 @@
   }
 
   function syncHeadMetadata(nextDoc) {
+    var nextHtmlLang = nextDoc.documentElement && nextDoc.documentElement.getAttribute('lang');
+    if (nextHtmlLang) {
+      document.documentElement.setAttribute('lang', nextHtmlLang);
+    }
     var nextCanonical = qs('link[rel="canonical"]', nextDoc);
     var currentCanonical = qs('link[rel="canonical"]');
     if (nextCanonical && currentCanonical) {
@@ -2747,6 +2770,15 @@
     });
     if (!qs('#heatmap', nextDoc)) {
       window.REIMU_HEATMAP_CONFIG = undefined;
+    }
+  }
+
+  function hideHeatmapTooltip() {
+    var tooltip = qs('#heatmap-tooltip');
+    if (tooltip) {
+      tooltip.style.display = 'none';
+      tooltip.style.visibility = '';
+      tooltip.innerHTML = '';
     }
   }
 
@@ -2794,6 +2826,9 @@
       preservedAPlayer.parentNode.removeChild(preservedAPlayer);
     }
 
+    hideHeatmapTooltip();
+    replaceElement('#main-nav', nextDoc);
+    replaceElement('#sub-nav', nextDoc);
     replaceElement('#header > picture', nextDoc);
     replaceElement('#header > img:first-of-type', nextDoc);
     replaceElement('#header-title', nextDoc);

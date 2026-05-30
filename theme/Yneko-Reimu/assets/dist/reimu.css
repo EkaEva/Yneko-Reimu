@@ -1218,12 +1218,13 @@ i.tile:hover {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  width: 87px !important;
-  min-width: 87px !important;
+  width: auto !important;
+  min-width: 86px !important;
+  max-width: 180px !important;
   height: 30px !important;
   min-height: 30px !important;
   margin: 0 0 0 12px !important;
-  padding: 0 16px !important;
+  padding: 0 14px !important;
   border-radius: 8px;
   background: var(--red-5);
   color: var(--red-1);
@@ -1232,6 +1233,8 @@ i.tile:hover {
   text-decoration: none;
   vertical-align: top;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   box-shadow: var(--shadow-meta);
   transition: box-shadow .3s ease, background .3s ease, color .3s ease;
 }
@@ -1260,12 +1263,13 @@ i.tile:hover {
 
   .article-footer.reimu-virtual-footer .article-visitor-link,
   .article-footer.reimu-virtual-footer .article-comment-link {
-    width: 82px !important;
+    width: auto !important;
     min-width: 82px !important;
+    max-width: 160px !important;
     height: 28px !important;
     min-height: 28px !important;
     margin-left: 8px !important;
-    padding: 0 12px !important;
+    padding: 0 10px !important;
     font-size: 13px;
     line-height: 28px !important;
   }

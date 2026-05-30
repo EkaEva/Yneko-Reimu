@@ -21,6 +21,15 @@ function yneko_reimu_view_count_text( $post_id = 0 ) {
 	);
 }
 
+function yneko_reimu_comment_count_text( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : absint( get_queried_object_id() );
+	return sprintf(
+		/* translators: %s: comment count. */
+		esc_html__( '%s 留言', 'yneko-reimu' ),
+		esc_html( number_format_i18n( $post_id ? get_comments_number( $post_id ) : 0 ) )
+	);
+}
+
 function yneko_reimu_should_count_request() {
 	if ( is_admin() || is_preview() || is_feed() || is_robots() || wp_doing_ajax() || wp_is_json_request() || is_404() ) {
 		return false;

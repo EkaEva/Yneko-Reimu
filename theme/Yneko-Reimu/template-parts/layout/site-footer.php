@@ -15,8 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<a href="https://github.com/EkaEva/Yneko-Reimu" rel="noopener noreferrer" target="_blank"><?php bloginfo( 'name' ); ?></a>
 		</div>
 		<div>
-			<?php esc_html_e( '基于', 'yneko-reimu' ); ?>&nbsp;<a href="https://wordpress.org/" rel="noopener nofollow noreferrer" target="_blank">WordPress</a>&nbsp;
-			Theme<?php esc_html_e( '基于', 'yneko-reimu' ); ?><a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a><?php esc_html_e( '改编', 'yneko-reimu' ); ?>
+			<?php
+			printf(
+				/* translators: 1: WordPress link, 2: Reimu link. */
+				wp_kses_post( __( '基于 %1$s，Theme 基于 %2$s 改编', 'yneko-reimu' ) ),
+				'<a href="https://wordpress.org/" rel="noopener nofollow noreferrer" target="_blank">WordPress</a>',
+				'<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a>'
+			);
+			?>
 		</div>
 		<?php if ( yneko_reimu_get_theme_mod( 'yneko_reimu_footer_extra_attribution', '' ) ) : ?>
 			<div><?php echo esc_html( yneko_reimu_get_theme_mod( 'yneko_reimu_footer_extra_attribution', '' ) ); ?></div>

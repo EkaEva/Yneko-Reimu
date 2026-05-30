@@ -24,6 +24,14 @@ msgstr ""
 msgid "{posts} {words} 于 {year}"
 msgstr ""
 
+#: inc/template-tags.php
+msgid "{posts}, {words} in {year}"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "{posts}, {words} on {date}"
+msgstr ""
+
 #: inc/customizer.php
 msgid "%1$s %2$d"
 msgstr ""
@@ -40,7 +48,7 @@ msgstr ""
 msgid "%d 字"
 msgstr ""
 
-#: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
+#: inc/view-count.php
 msgid "%s 留言"
 msgstr ""
 
@@ -58,6 +66,10 @@ msgstr ""
 
 #: inc/template-tags.php
 msgid "© %s. Powered by WordPress."
+msgstr ""
+
+#: inc/template-tags.php
+msgid "$1 post(s), $2 word(s) in total"
 msgstr ""
 
 #: inc/template-tags.php
@@ -280,10 +292,6 @@ msgstr ""
 msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr ""
 
-#: template-parts/layout/site-footer.php
-msgid "改编"
-msgstr ""
-
 #: inc/customizer.php
 msgid "歌词模式"
 msgstr ""
@@ -401,7 +409,7 @@ msgid "或使用 WordPress 账号"
 msgstr ""
 
 #: template-parts/layout/site-footer.php
-msgid "基于"
+msgid "基于 %1$s，Theme 基于 %2$s 改编"
 msgstr ""
 
 #: inc/comments.php
@@ -1052,6 +1060,10 @@ msgstr ""
 msgid "左侧"
 msgstr ""
 
+#: inc/template-tags.php
+msgid "About"
+msgstr ""
+
 #: inc/customizer.php
 msgid "Algolia 搜索入口"
 msgstr ""
@@ -1082,6 +1094,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "APlayer audio JSON"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "Archives"
 msgstr ""
 
 #: inc/github-login.php
@@ -1128,6 +1144,10 @@ msgstr ""
 msgid "Footer Menu"
 msgstr ""
 
+#: inc/template-tags.php
+msgid "Friends"
+msgstr ""
+
 #: inc/customizer.php
 msgid "Giscus"
 msgstr ""
@@ -1162,6 +1182,10 @@ msgstr ""
 
 #: inc/settings.php
 msgid "hexo-theme-reimu 原作者"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "Home"
 msgstr ""
 
 #: inc/customizer.php
@@ -1216,6 +1240,10 @@ msgstr ""
 msgid "No WordPress account is linked to this GitHub account."
 msgstr ""
 
+#: inc/template-tags.php
+msgid "No writing on {date}"
+msgstr ""
+
 #: inc/customizer.php
 msgid "PhotoSwipe 图片灯箱"
 msgstr ""
@@ -1230,6 +1258,10 @@ msgstr ""
 
 #: inc/widgets.php
 msgid "Primary Sidebar"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "Projects"
 msgstr ""
 
 #: inc/customizer.php
@@ -1302,6 +1334,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "words"
 msgstr ""
 
 #: inc/template-tags.php

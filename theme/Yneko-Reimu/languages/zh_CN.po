@@ -29,6 +29,14 @@ msgstr "{posts} {words} 于 {date}"
 msgid "{posts} {words} 于 {year}"
 msgstr "{posts} {words} 于 {year}"
 
+#: inc/template-tags.php
+msgid "{posts}, {words} in {year}"
+msgstr "{posts}, {words} in {year}"
+
+#: inc/template-tags.php
+msgid "{posts}, {words} on {date}"
+msgstr "{posts}, {words} on {date}"
+
 #: inc/customizer.php
 msgid "%1$s %2$d"
 msgstr "%1$s %2$d"
@@ -45,7 +53,7 @@ msgstr "%d 篇文章"
 msgid "%d 字"
 msgstr "%d 字"
 
-#: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
+#: inc/view-count.php
 msgid "%s 留言"
 msgstr "%s 留言"
 
@@ -64,6 +72,10 @@ msgstr "%s 字"
 #: inc/template-tags.php
 msgid "© %s. Powered by WordPress."
 msgstr "© %s. Powered by WordPress."
+
+#: inc/template-tags.php
+msgid "$1 post(s), $2 word(s) in total"
+msgstr "$1 post(s), $2 word(s) in total"
 
 #: inc/template-tags.php
 msgid "404（´◔ ₃ ◔`)"
@@ -285,10 +297,6 @@ msgstr "复制成功 (*^▽^*)"
 msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr "复制失败 (ﾟ⊿ﾟ)ﾂ"
 
-#: template-parts/layout/site-footer.php
-msgid "改编"
-msgstr "改编"
-
 #: inc/customizer.php
 msgid "歌词模式"
 msgstr "歌词模式"
@@ -406,8 +414,8 @@ msgid "或使用 WordPress 账号"
 msgstr "或使用 WordPress 账号"
 
 #: template-parts/layout/site-footer.php
-msgid "基于"
-msgstr "基于"
+msgid "基于 %1$s，Theme 基于 %2$s 改编"
+msgstr "基于 %1$s，Theme 基于 %2$s 改编"
 
 #: inc/comments.php
 msgid "记住我"
@@ -1057,6 +1065,10 @@ msgstr "总访问量"
 msgid "左侧"
 msgstr "左侧"
 
+#: inc/template-tags.php
+msgid "About"
+msgstr "About"
+
 #: inc/customizer.php
 msgid "Algolia 搜索入口"
 msgstr "Algolia 搜索入口"
@@ -1088,6 +1100,10 @@ msgstr "APlayer 的 lrcType。默认 3 表示读取 audio.lrc 外部歌词文件
 #: inc/customizer.php
 msgid "APlayer audio JSON"
 msgstr "APlayer audio JSON"
+
+#: inc/template-tags.php
+msgid "Archives"
+msgstr "Archives"
 
 #: inc/github-login.php
 msgid "Callback URL"
@@ -1133,6 +1149,10 @@ msgstr "Footer Column %d"
 msgid "Footer Menu"
 msgstr "Footer Menu"
 
+#: inc/template-tags.php
+msgid "Friends"
+msgstr "Friends"
+
 #: inc/customizer.php
 msgid "Giscus"
 msgstr "Giscus"
@@ -1168,6 +1188,10 @@ msgstr "GitHub profile is missing required fields."
 #: inc/settings.php
 msgid "hexo-theme-reimu 原作者"
 msgstr "hexo-theme-reimu 原作者"
+
+#: inc/template-tags.php
+msgid "Home"
+msgstr "Home"
 
 #: inc/customizer.php
 msgid "KaTeX 数学公式"
@@ -1221,6 +1245,10 @@ msgstr "Mobile Menu"
 msgid "No WordPress account is linked to this GitHub account."
 msgstr "No WordPress account is linked to this GitHub account."
 
+#: inc/template-tags.php
+msgid "No writing on {date}"
+msgstr "No writing on {date}"
+
 #: inc/customizer.php
 msgid "PhotoSwipe 图片灯箱"
 msgstr "PhotoSwipe 图片灯箱"
@@ -1236,6 +1264,10 @@ msgstr "Primary Menu"
 #: inc/widgets.php
 msgid "Primary Sidebar"
 msgstr "Primary Sidebar"
+
+#: inc/template-tags.php
+msgid "Projects"
+msgstr "Projects"
 
 #: inc/customizer.php
 msgid "Reimu 播放器"
@@ -1308,6 +1340,10 @@ msgstr "WARNING"
 #: inc/customizer.php
 msgid "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
 msgstr "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
+
+#: inc/template-tags.php
+msgid "words"
+msgstr "words"
 
 #: inc/template-tags.php
 msgid "Yneko"
