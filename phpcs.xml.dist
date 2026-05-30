@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="Yneko-Reimu">
+	<description>WordPress coding standards for the Yneko-Reimu theme.</description>
+	<file>theme/Yneko-Reimu</file>
+	<exclude-pattern>theme/Yneko-Reimu/assets/dist/*</exclude-pattern>
+	<exclude-pattern>theme/Yneko-Reimu/assets/src/*</exclude-pattern>
+	<exclude-pattern>theme/Yneko-Reimu/languages/*</exclude-pattern>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="4"/>
+	<config name="testVersion" value="8.0-"/>
+	<rule ref="WordPress"/>
+	<rule ref="PHPCompatibilityWP"/>
+</ruleset>

@@ -168,6 +168,33 @@ body.admin-bar #header-nav.header-nav-hidden {
   }
 }
 
+.wp-block-group.reimu-pattern-intro {
+  border-left: 4px solid var(--red-1, #ff5252);
+  padding: 1rem 1.25rem;
+  background: color-mix(in srgb, var(--red-1, #ff5252) 8%, transparent);
+}
+
+.wp-block-columns.reimu-pattern-columns {
+  gap: 1.5rem;
+}
+
+.wp-block-columns.reimu-pattern-columns > .wp-block-column {
+  border: 1px solid rgba(255, 82, 82, .18);
+  padding: 1rem;
+  background: rgba(255, 255, 255, .72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
 #header picture {
   position: absolute;
   inset: 0;

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version label, for example v0.1.0'
+        description: 'Version label, for example v0.1.2'
         required: true
         type: string
 
@@ -31,11 +31,14 @@ jobs:
       - name: Check JavaScript syntax
         run: npm run check:js
 
-      - name: Generate language files
-        run: npm run i18n
-
       - name: Build theme assets
         run: npm run build
+
+      - name: Install PHP tooling
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Check PHP coding standards
+        run: composer run lint:php
 
       - name: Resolve version
         id: version

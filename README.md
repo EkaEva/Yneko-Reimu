@@ -267,28 +267,29 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 ```bash
 npm run check:js
-npm run i18n
 npm run build
 npm run package
 ```
 
 脚本说明：
 
-- `npm run check:js`：检查前端 JS 语法。
+- `npm run check:js`：检查前端 JS 和构建脚本语法。
 - `npm run i18n`：提取 gettext 字符串，生成 `languages/yneko-reimu.pot`、`zh_CN.po/mo` 和 `en_US.po/mo`。
-- `npm run build`：生成语言文件、复制前端脚本、合并 CSS，并生成光标 PNG。
-- `npm run package`：生成语言文件，并按白名单生成 `releases/Yneko-Reimu.zip`。
+- `npm run build`：生成语言文件、光标 PNG，并通过 Vite 压缩输出 `assets/dist/`。
+- `npm run lint:php`：通过 Composer 调用 PHPCS/WPCS 检查 PHP 代码。
+- `npm run check`：依次执行 JS 检查、构建和 PHP 规范检查。
+- `npm run package`：先构建，再按白名单生成 `releases/Yneko-Reimu.zip`。
 
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.1.0
+pwsh tools/package-theme.ps1 -Version v0.1.2
 ```
 
 生成结果：
 
 ```text
-releases/Yneko-Reimu-v0.1.0.zip
+releases/Yneko-Reimu-v0.1.2.zip
 ```
 
 构建产物位于：
@@ -301,41 +302,51 @@ theme/Yneko-Reimu/assets/dist/
 
 ```text
 theme/Yneko-Reimu/assets/src/reimu.js
+theme/Yneko-Reimu/assets/src/reimu.css
 theme/Yneko-Reimu/assets/src/reimu-upstream.css
 theme/Yneko-Reimu/assets/src/yneko-reimu-adapter.css
 theme/Yneko-Reimu/inc/
 theme/Yneko-Reimu/template-parts/
+vendor-src/reimu-upstream/
 ```
 
-打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、上游源码镜像、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/Yneko-Reimu.zip`，不是 GitHub 仓库根目录的 ZIP。
+打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、仓库级上游源码镜像、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/Yneko-Reimu.zip`，不是 GitHub 仓库根目录的 ZIP。
 
 ## GitHub Actions 自动打包
 
 仓库内置了 `.github/workflows/release-package.yml`。当你向 GitHub 推送版本 tag 时会自动触发构建，例如：
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.2
+git push origin v0.1.2
 ```
 
 Action 会执行：
 
 ```bash
 npm run check:js
-npm run i18n
 npm run build
-pwsh tools/package-theme.ps1 -Version v0.1.0
+composer install --no-interaction --prefer-dist
+composer run lint:php
+pwsh tools/package-theme.ps1 -Version v0.1.2
 ```
 
 随后生成并上传：
 
 ```text
-Yneko-Reimu-v0.1.0.zip
+Yneko-Reimu-v0.1.2.zip
 ```
 
 如果同名 GitHub Release 不存在，Action 会根据 tag 创建 Release；如果 Release 已存在，则会把 ZIP 上传到该 Release。也可以在 GitHub Actions 页面手动运行该 workflow，输入版本号后生成同名 artifact。
 
-推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.1.0`、`v0.1.1`。如果手动输入 `0.1.0`，打包脚本会自动补成 `v0.1.0`。
+推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.1.2`。如果手动输入 `0.1.2`，打包脚本会自动补成 `v0.1.2`。
+
+## 开发文档
+
+- [开发与构建](docs/development.md)
+- [Hooks / Filters](docs/hooks.md)
+- [发布流程](docs/release.md)
+- [Theme Check 说明](docs/theme-check.md)
 
 ## 目录结构
 
@@ -357,6 +368,8 @@ Yneko-Reimu/
 │     ├─ style.css
 │     └─ theme.json
 ├─ tools/                   # 仓库级构建和打包脚本
+├─ docs/                    # 开发、Hooks、发布和 Theme Check 文档
+├─ vendor-src/              # 上游参考源码镜像，不进入发布 ZIP
 ├─ releases/                # 本地打包输出，默认不提交
 ├─ package.json             # 仓库根统一 npm 入口
 ├─ LICENSE
@@ -369,11 +382,19 @@ Yneko-Reimu/
 发布到 GitHub 前建议检查：
 
 ```bash
+npm run check
+npm run package
+```
+
+如果本地没有 Composer，可以先运行：
+
+```bash
 npm run check:js
-npm run i18n
 npm run build
 npm run package
 ```
+
+CI 会在 GitHub Actions 中继续执行 PHPCS/WPCS。
 
 同时确认仓库或 ZIP 中不包含：
 
@@ -574,19 +595,21 @@ Scripts:
 
 - `npm run check:js`: checks front-end and tool JavaScript syntax.
 - `npm run i18n`: extracts gettext strings and generates `languages/yneko-reimu.pot`, `zh_CN.po/mo`, and `en_US.po/mo`.
-- `npm run build`: generates language files, builds front-end assets, and generates cursor PNGs.
-- `npm run package`: generates language files and creates `releases/Yneko-Reimu.zip` from a whitelist.
+- `npm run build`: generates language files, cursor PNGs, and minified Vite assets.
+- `npm run lint:php`: runs PHPCS/WPCS through Composer.
+- `npm run check`: runs JS checks, build, and PHP coding standards.
+- `npm run package`: builds first, then creates `releases/Yneko-Reimu.zip` from a whitelist.
 
 To build a versioned package:
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.1.0
+pwsh tools/package-theme.ps1 -Version v0.1.2
 ```
 
 Output:
 
 ```text
-releases/Yneko-Reimu-v0.1.0.zip
+releases/Yneko-Reimu-v0.1.2.zip
 ```
 
 Upload the ZIP in `releases/`, not the GitHub repository ZIP.
@@ -596,14 +619,14 @@ Upload the ZIP in `releases/`, not the GitHub repository ZIP.
 The workflow `.github/workflows/release-package.yml` runs when a version tag is pushed:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.2
+git push origin v0.1.2
 ```
 
-It checks JavaScript, generates language files, builds assets, packages the theme, and uploads:
+It checks JavaScript, builds assets, runs PHPCS/WPCS, packages the theme, and uploads:
 
 ```text
-Yneko-Reimu-v0.1.0.zip
+Yneko-Reimu-v0.1.2.zip
 ```
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
@@ -624,6 +647,8 @@ Yneko-Reimu/
 │     ├─ style.css
 │     └─ theme.json
 ├─ tools/
+├─ docs/
+├─ vendor-src/
 ├─ releases/
 ├─ package.json
 ├─ LICENSE

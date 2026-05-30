@@ -248,7 +248,7 @@ function yneko_reimu_customize_register( $wp_customize ) {
 		'yneko_reimu_sticky_nav'        => array( __( '固定导航', 'yneko-reimu' ), true ),
 		'yneko_reimu_nav_hide'          => array( __( '导航滚动隐藏', 'yneko-reimu' ), true ),
 		'yneko_reimu_show_taichi'       => array( __( '显示太极装饰', 'yneko-reimu' ), true ),
-		'yneko_reimu_custom_cursor'     => array( __( '自定义鼠标指针', 'yneko-reimu' ), true ),
+		'yneko_reimu_custom_cursor'     => array( __( '自定义鼠标指针', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_custom_cursor', false ) ),
 	);
 
 	foreach ( $visual_booleans as $id => $setting ) {
@@ -576,20 +576,20 @@ function yneko_reimu_customize_register( $wp_customize ) {
 
 	foreach (
 		array(
-			'yneko_reimu_preloader_enable'     => array( __( '加载动画', 'yneko-reimu' ), true ),
-			'yneko_reimu_top_enable'           => array( __( '回到顶部太极按钮', 'yneko-reimu' ), true ),
-			'yneko_reimu_triangle_badge'       => array( __( '右上角 GitHub 三角标', 'yneko-reimu' ), true ),
-			'yneko_reimu_firework_enable'      => array( __( '鼠标烟花', 'yneko-reimu' ), true ),
-			'yneko_reimu_pjax_enable'          => array( __( 'PJAX 软导航', 'yneko-reimu' ), true ),
-			'yneko_reimu_busuanzi_enable'      => array( __( '不蒜子统计', 'yneko-reimu' ), false ),
-			'yneko_reimu_player_aplayer_enable'=> array( __( 'APlayer 播放器', 'yneko-reimu' ), true ),
-			'yneko_reimu_player_meting_enable' => array( __( 'Meting 歌单', 'yneko-reimu' ), false ),
-			'yneko_reimu_live2d_widgets_enable'=> array( __( 'Live2D Widgets', 'yneko-reimu' ), false ),
-			'yneko_reimu_katex_enable'         => array( __( 'KaTeX 数学公式', 'yneko-reimu' ), false ),
-			'yneko_reimu_photoswipe_enable'    => array( __( 'PhotoSwipe 图片灯箱', 'yneko-reimu' ), false ),
-			'yneko_reimu_mermaid_enable'       => array( __( 'Mermaid 图表', 'yneko-reimu' ), false ),
-			'yneko_reimu_algolia_enable'       => array( __( 'Algolia 搜索入口', 'yneko-reimu' ), false ),
-			'yneko_reimu_generator_search_enable' => array( __( '本地搜索入口', 'yneko-reimu' ), true ),
+			'yneko_reimu_preloader_enable'     => array( __( '加载动画', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_preloader_enable', true ) ),
+			'yneko_reimu_top_enable'           => array( __( '回到顶部太极按钮', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_top_enable', true ) ),
+			'yneko_reimu_triangle_badge'       => array( __( '右上角 GitHub 三角标', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_triangle_badge', true ) ),
+			'yneko_reimu_firework_enable'      => array( __( '鼠标烟花', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_firework_enable', false ) ),
+			'yneko_reimu_pjax_enable'          => array( __( 'PJAX 软导航', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_pjax_enable', false ) ),
+			'yneko_reimu_busuanzi_enable'      => array( __( '不蒜子统计', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_busuanzi_enable', false ) ),
+			'yneko_reimu_player_aplayer_enable'=> array( __( 'APlayer 播放器', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_player_aplayer_enable', false ) ),
+			'yneko_reimu_player_meting_enable' => array( __( 'Meting 歌单', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_player_meting_enable', false ) ),
+			'yneko_reimu_live2d_widgets_enable'=> array( __( 'Live2D Widgets', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_live2d_widgets_enable', false ) ),
+			'yneko_reimu_katex_enable'         => array( __( 'KaTeX 数学公式', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_katex_enable', false ) ),
+			'yneko_reimu_photoswipe_enable'    => array( __( 'PhotoSwipe 图片灯箱', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_photoswipe_enable', false ) ),
+			'yneko_reimu_mermaid_enable'       => array( __( 'Mermaid 图表', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_mermaid_enable', false ) ),
+			'yneko_reimu_algolia_enable'       => array( __( 'Algolia 搜索入口', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_algolia_enable', false ) ),
+			'yneko_reimu_generator_search_enable' => array( __( '本地搜索入口', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_generator_search_enable', true ) ),
 		) as $id => $setting
 	) {
 		$wp_customize->add_setting(

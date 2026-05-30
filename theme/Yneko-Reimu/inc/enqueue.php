@@ -48,7 +48,7 @@ function yneko_reimu_normalize_aplayer_audio( $audio ) {
 }
 
 function yneko_reimu_cursor_variables_css() {
-	if ( ! yneko_reimu_get_theme_mod( 'yneko_reimu_custom_cursor', true ) ) {
+	if ( ! yneko_reimu_feature_enabled( 'yneko_reimu_custom_cursor', false ) ) {
 		return ':root{--cursor-default:auto;--cursor-pointer:pointer;--cursor-text:text;--cursor-busy:wait;--cursor-progress:progress;--cursor-not-allowed:not-allowed;--cursor-help:help;--cursor-move:move;--cursor-grab:grab;--cursor-grabbing:grabbing;--cursor-crosshair:crosshair;--cursor-ew-resize:ew-resize;--cursor-ns-resize:ns-resize;--cursor-nwse-resize:nwse-resize;--cursor-nesw-resize:nesw-resize;--cursor-alias:alias;}';
 	}
 
@@ -75,12 +75,12 @@ function yneko_reimu_cursor_variables_css() {
 
 function yneko_reimu_critical_cursor() {
 	$cursor_base = YNEKO_REIMU_URI . '/assets/images/cursor/';
+	$strategy    = yneko_reimu_asset_strategy();
 	?>
-	<?php if ( yneko_reimu_get_theme_mod( 'yneko_reimu_custom_cursor', true ) ) : ?>
-		<link rel="preload" as="image" href="<?php echo esc_url( $cursor_base . 'lily-normal.png' ); ?>">
-		<link rel="preload" as="image" href="<?php echo esc_url( $cursor_base . 'lily-link.png' ); ?>">
-		<link rel="preload" as="image" href="<?php echo esc_url( $cursor_base . 'lily-text.png' ); ?>">
-		<link rel="preload" as="image" href="<?php echo esc_url( $cursor_base . 'lily-work.png' ); ?>">
+	<?php if ( yneko_reimu_feature_enabled( 'yneko_reimu_custom_cursor', false ) && ! empty( $strategy['preload_cursor_images'] ) ) : ?>
+		<?php foreach ( (array) $strategy['preload_cursor_variants'] as $cursor_file ) : ?>
+			<link rel="preload" as="image" href="<?php echo esc_url( $cursor_base . basename( $cursor_file ) ); ?>">
+		<?php endforeach; ?>
 	<?php endif; ?>
 	<style id="yneko-reimu-critical-cursor">
 		<?php echo yneko_reimu_cursor_variables_css(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -123,15 +123,21 @@ function yneko_reimu_critical_cursor() {
 add_action( 'wp_head', 'yneko_reimu_critical_cursor', 0 );
 
 function yneko_reimu_enqueue_assets() {
+	$asset_strategy = yneko_reimu_asset_strategy();
 	wp_enqueue_style( 'yneko-reimu-theme', get_stylesheet_uri(), array(), YNEKO_REIMU_VERSION );
-	wp_enqueue_style( 'yneko-reimu-fonts', 'https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto+Serif+SC:400,400italic,700,700italic&display=swap', array(), null );
+	if ( ! empty( $asset_strategy['font_display'] ) ) {
+		wp_enqueue_style( 'yneko-reimu-fonts', 'https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto+Serif+SC:400,400italic,700,700italic&display=swap', array(), null );
+	}
 	wp_enqueue_style( 'yneko-reimu-loader', YNEKO_REIMU_URI . '/assets/dist/loader.css', array( 'yneko-reimu-theme' ), yneko_reimu_asset_version( 'assets/dist/loader.css' ) );
 	$aplayer_audio  = yneko_reimu_normalize_aplayer_audio( yneko_reimu_settings_music_items() );
-	$enable_aplayer = ( yneko_reimu_get_theme_mod( 'yneko_reimu_player_aplayer_enable', true ) && ! empty( $aplayer_audio ) ) || yneko_reimu_get_theme_mod( 'yneko_reimu_player_meting_enable', false );
+	$enable_aplayer = ( yneko_reimu_feature_enabled( 'yneko_reimu_player_aplayer_enable', false ) && ! empty( $aplayer_audio ) ) || yneko_reimu_feature_enabled( 'yneko_reimu_player_meting_enable', false );
 	if ( $enable_aplayer ) {
 		wp_enqueue_style( 'yneko-reimu-aplayer', yneko_reimu_vendor_url( 'aplayer@1.10.1/dist/APlayer.min.css' ), array(), '1.10.1' );
 	}
-	$main_style_deps = array( 'yneko-reimu-theme', 'yneko-reimu-loader', 'yneko-reimu-fonts' );
+	$main_style_deps = array( 'yneko-reimu-theme', 'yneko-reimu-loader' );
+	if ( ! empty( $asset_strategy['font_display'] ) ) {
+		$main_style_deps[] = 'yneko-reimu-fonts';
+	}
 	if ( $enable_aplayer ) {
 		$main_style_deps[] = 'yneko-reimu-aplayer';
 	}
@@ -140,7 +146,7 @@ function yneko_reimu_enqueue_assets() {
 	$accent = sanitize_hex_color( yneko_reimu_get_theme_mod( 'yneko_reimu_accent_color', '#ff5252' ) );
 	$accent = $accent ? $accent : '#ff5252';
 	wp_add_inline_style( 'yneko-reimu-main', ':root{--red-1:' . esc_html( $accent ) . ';--color-link:' . esc_html( $accent ) . ';}' );
-	if ( ! yneko_reimu_get_theme_mod( 'yneko_reimu_custom_cursor', true ) ) {
+	if ( ! yneko_reimu_feature_enabled( 'yneko_reimu_custom_cursor', false ) ) {
 		wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_cursor_variables_css() );
 	}
 	if ( ! yneko_reimu_get_theme_mod( 'yneko_reimu_sticky_nav', true ) ) {
@@ -148,6 +154,9 @@ function yneko_reimu_enqueue_assets() {
 	}
 
 	wp_enqueue_script( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.js', array(), yneko_reimu_asset_version( 'assets/dist/reimu.js' ), true );
+	if ( function_exists( 'wp_script_add_data' ) && ! empty( $asset_strategy['script_strategy'] ) ) {
+		wp_script_add_data( 'yneko-reimu-main', 'strategy', sanitize_key( $asset_strategy['script_strategy'] ) );
+	}
 
 	$current_language   = function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : get_locale();
 	$builtin_search_url = function_exists( 'yneko_reimu_search_json_url' ) ? yneko_reimu_search_json_url( $current_language ) : '';
@@ -160,14 +169,14 @@ function yneko_reimu_enqueue_assets() {
 		'language' => $current_language,
 	);
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_generator_search_enable', true ) && $local_search_url ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_generator_search_enable', true ) && $local_search_url ) {
 		$search = array(
 			'type'     => 'local',
 			'localUrl' => esc_url_raw( $local_search_url ),
 			'perPage'  => 10,
 			'language' => $current_language,
 		);
-	} elseif ( yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_api_key', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_index_name', '' ) ) {
+	} elseif ( yneko_reimu_feature_enabled( 'yneko_reimu_algolia_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_api_key', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_index_name', '' ) ) {
 		$search = array(
 			'type'      => 'algolia',
 			'appId'     => yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_app_id', '' ),
@@ -178,7 +187,7 @@ function yneko_reimu_enqueue_assets() {
 		wp_enqueue_script( 'yneko-reimu-algoliasearch', yneko_reimu_vendor_url( 'algoliasearch@4.24.0/dist/algoliasearch-lite.umd.js' ), array(), '4.24.0', true );
 	}
 
-	$custom_cursor = (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_custom_cursor', true );
+	$custom_cursor = yneko_reimu_feature_enabled( 'yneko_reimu_custom_cursor', false );
 	$i18n = array(
 		'copy'                  => esc_html__( '复制', 'yneko-reimu' ),
 		'copied'                => esc_html__( '复制成功 (*^▽^*)', 'yneko-reimu' ),
@@ -213,11 +222,11 @@ function yneko_reimu_enqueue_assets() {
 		'copyText'        => $i18n['copy'],
 		'copiedText'      => $i18n['copied'],
 		'failedText'      => $i18n['copyFailed'],
-		'firework'        => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_firework_enable', true ),
+		'firework'        => yneko_reimu_feature_enabled( 'yneko_reimu_firework_enable', false ),
 		'customCursor'    => $custom_cursor,
-		'pjax'            => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_pjax_enable', true ),
-		'katex'           => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_katex_enable', false ),
-		'mermaid'         => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_mermaid_enable', false ),
+		'pjax'            => yneko_reimu_feature_enabled( 'yneko_reimu_pjax_enable', false ),
+		'katex'           => yneko_reimu_feature_enabled( 'yneko_reimu_katex_enable', false ),
+		'mermaid'         => yneko_reimu_feature_enabled( 'yneko_reimu_mermaid_enable', false ),
 		'search'          => $search,
 		'searchHint'      => $i18n['searchHint'],
 		'searchingText'   => $i18n['searching'],
@@ -249,11 +258,11 @@ function yneko_reimu_enqueue_assets() {
 	);
 	wp_add_inline_script( 'yneko-reimu-main', 'window.REIMU_CONFIG=' . wp_json_encode( $config ) . ';', 'before' );
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_firework_enable', true ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_firework_enable', false ) ) {
 		wp_enqueue_script( 'yneko-reimu-firework', yneko_reimu_vendor_url( 'mouse-firework@0.2.0/dist/index.umd.js' ), array(), '0.2.0', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_busuanzi_enable', false ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_busuanzi_enable', false ) ) {
 		wp_enqueue_script( 'yneko-reimu-busuanzi', yneko_reimu_vendor_url( 'busuanzi@2.3.0/bsz.pure.mini.js' ), array(), '2.3.0', true );
 	}
 
@@ -261,41 +270,41 @@ function yneko_reimu_enqueue_assets() {
 		wp_enqueue_script( 'yneko-reimu-aplayer', yneko_reimu_vendor_url( 'aplayer@1.10.1/dist/APlayer.min.js' ), array(), '1.10.1', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_player_meting_enable', false ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_player_meting_enable', false ) ) {
 		wp_enqueue_script( 'yneko-reimu-meting', yneko_reimu_vendor_url( 'meting@2.0.1/dist/Meting.min.js' ), array( 'yneko-reimu-aplayer' ), '2.0.1', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_live2d_widgets_enable', false ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_live2d_widgets_enable', false ) ) {
 		wp_enqueue_script( 'yneko-reimu-live2d', yneko_reimu_vendor_url( 'live2d-widgets@0.9.0/autoload.js' ), array(), '0.9.0', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_katex_enable', false ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_katex_enable', false ) ) {
 		wp_enqueue_style( 'yneko-reimu-katex', yneko_reimu_vendor_url( 'katex@0.16.24/dist/katex.min.css' ), array(), '0.16.24' );
 		wp_enqueue_script( 'yneko-reimu-katex', yneko_reimu_vendor_url( 'katex@0.16.24/dist/katex.min.js' ), array(), '0.16.24', true );
 		wp_enqueue_script( 'yneko-reimu-katex-auto', yneko_reimu_vendor_url( 'katex@0.16.24/dist/contrib/auto-render.min.js' ), array( 'yneko-reimu-katex' ), '0.16.24', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_photoswipe_enable', false ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_photoswipe_enable', false ) ) {
 		wp_enqueue_style( 'yneko-reimu-photoswipe', yneko_reimu_vendor_url( 'photoswipe@5.4.4/dist/photoswipe.css' ), array(), '5.4.4' );
 		if ( function_exists( 'wp_enqueue_script_module' ) ) {
 			wp_enqueue_script_module( 'yneko-reimu-photoswipe-lightbox', yneko_reimu_vendor_url( 'photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js' ), array(), '5.4.4' );
 		}
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_mermaid_enable', false ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_mermaid_enable', false ) ) {
 		wp_enqueue_script( 'yneko-reimu-mermaid', yneko_reimu_vendor_url( 'mermaid@11.12.0/dist/mermaid.min.js' ), array(), '11.12.0', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_waline_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_waline_server_url', '' ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_waline_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_waline_server_url', '' ) ) {
 		wp_enqueue_style( 'yneko-reimu-waline', yneko_reimu_vendor_url( '@waline/client@2.15.8/dist/waline.css' ), array(), '2.15.8' );
 		wp_enqueue_script( 'yneko-reimu-waline', yneko_reimu_vendor_url( '@waline/client@2.15.8/dist/waline.umd.js' ), array(), '2.15.8', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_twikoo_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_twikoo_env_id', '' ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_twikoo_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_twikoo_env_id', '' ) ) {
 		wp_enqueue_script( 'yneko-reimu-twikoo', yneko_reimu_vendor_url( 'twikoo@1.6.42/dist/twikoo.all.min.js' ), array(), '1.6.42', true );
 	}
 
-	if ( yneko_reimu_get_theme_mod( 'yneko_reimu_valine_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_valine_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_valine_app_key', '' ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_valine_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_valine_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_valine_app_key', '' ) ) {
 		wp_enqueue_script( 'yneko-reimu-valine', yneko_reimu_vendor_url( 'valine@1.5.3/dist/Valine.min.js' ), array(), '1.5.3', true );
 	}
 

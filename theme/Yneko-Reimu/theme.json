@@ -18,9 +18,21 @@
 			]
 		},
 		"spacing": {
+			"spacingScale": {
+				"steps": 0
+			},
+			"spacingSizes": [
+				{ "slug": "20", "name": "2", "size": "0.5rem" },
+				{ "slug": "30", "name": "3", "size": "0.75rem" },
+				{ "slug": "40", "name": "4", "size": "1rem" },
+				{ "slug": "50", "name": "5", "size": "1.5rem" },
+				{ "slug": "60", "name": "6", "size": "2rem" },
+				{ "slug": "70", "name": "7", "size": "3rem" }
+			],
 			"units": [ "px", "rem", "em", "%", "vh", "vw" ]
 		},
 		"typography": {
+			"fluid": false,
 			"fontFamilies": [
 				{
 					"slug": "reimu-serif",
@@ -32,6 +44,12 @@
 					"name": "Reimu Sans",
 					"fontFamily": "\"LXGW WenKai\", \"Microsoft YaHei\", \"Noto Sans SC\", sans-serif"
 				}
+			],
+			"fontSizes": [
+				{ "slug": "small", "name": "Small", "size": "0.875rem" },
+				{ "slug": "medium", "name": "Medium", "size": "1rem" },
+				{ "slug": "large", "name": "Large", "size": "1.25rem" },
+				{ "slug": "x-large", "name": "Extra Large", "size": "1.75rem" }
 			]
 		}
 	},
@@ -45,5 +63,7 @@
 			"fontSize": "16px",
 			"lineHeight": "1.75"
 		}
-	}
+	},
+	"customTemplates": [],
+	"templateParts": []
 }

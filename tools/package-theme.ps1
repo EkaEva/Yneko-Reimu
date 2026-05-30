@@ -77,6 +77,10 @@ $rootFiles = @(
   'README.md'
 )
 
+$rootDirs = @(
+  'docs'
+)
+
 New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
 New-Item -ItemType Directory -Path $stageTheme -Force | Out-Null
 
@@ -106,17 +110,24 @@ foreach ($file in $rootFiles) {
   }
 }
 
+foreach ($rootDir in $rootDirs) {
+  $source = Join-Path $repoDir $rootDir
+  if (Test-Path -LiteralPath $source) {
+    $dest = Join-Path $stageTheme $rootDir
+    Copy-Item -LiteralPath $source -Destination $dest -Recurse -Force
+  }
+}
+
 $removePatterns = @(
   'assets/dist/manifest.json',
   'assets/images/covers/README.md',
   'assets/images/avatar.png',
   'assets/images/avatar.webp',
-  'assets/images/banner.webp',
-  'assets/images/banner-600w.webp',
-  'assets/images/banner-800w.webp',
+  'assets/images/banner.png',
   'assets/images/favicon.ico',
   'assets/images/reimu.png',
   'assets/images/projects',
+  'assets/images/search-bg.png',
   'assets/images/taichi-fill.png',
   'assets/images/taichi-fill.svg'
 )

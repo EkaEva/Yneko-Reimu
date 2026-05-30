@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 ?>
-<div id="content" aria-label="<?php esc_attr_e( '页面内容', 'yneko-reimu' ); ?>" class="sidebar-<?php echo esc_attr( yneko_reimu_sidebar_position() ); ?>">
+<main id="content" aria-label="<?php esc_attr_e( '页面内容', 'yneko-reimu' ); ?>" class="sidebar-<?php echo esc_attr( yneko_reimu_sidebar_position() ); ?>">
 	<?php get_sidebar(); ?>
 	<section id="main" aria-label="<?php esc_attr_e( '主要内容', 'yneko-reimu' ); ?>">
 			<?php if ( have_posts() ) : ?>
@@ -28,6 +28,6 @@ get_header();
 				<?php get_template_part( 'template-parts/content/content-none' ); ?>
 			<?php endif; ?>
 	</section>
-</div>
+</main>
 <?php
 get_footer();

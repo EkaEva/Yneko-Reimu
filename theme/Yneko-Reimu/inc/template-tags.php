@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_theme_mod_bool( $name, $default = true ) {
-	return (bool) yneko_reimu_get_theme_mod( $name, $default );
+	return (bool) yneko_reimu_get_theme_mod( $name, yneko_reimu_feature_default( $name, $default ) );
 }
 
 function yneko_reimu_meta_choice( $post_id, $key, $default = 'inherit' ) {
@@ -1123,10 +1123,6 @@ function yneko_reimu_total_word_count() {
 	}
 
 	return (string) $total;
-}
-
-function yneko_reimu_feature_enabled( $name, $default = false ) {
-	return (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_' . $name, $default );
 }
 
 function yneko_reimu_render_taichi_svg( $size = 150 ) {

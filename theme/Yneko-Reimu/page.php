@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 ?>
-<div id="content" aria-label="<?php esc_attr_e( '页面内容', 'yneko-reimu' ); ?>" class="sidebar-<?php echo esc_attr( yneko_reimu_sidebar_position( get_queried_object_id() ) ); ?>">
+<main id="content" aria-label="<?php esc_attr_e( '页面内容', 'yneko-reimu' ); ?>" class="sidebar-<?php echo esc_attr( yneko_reimu_sidebar_position( get_queried_object_id() ) ); ?>">
 	<?php
 	while ( have_posts() ) :
 		the_post();
@@ -31,6 +31,6 @@ get_header();
 				?>
 		</section>
 	<?php endwhile; ?>
-</div>
+</main>
 <?php
 get_footer();

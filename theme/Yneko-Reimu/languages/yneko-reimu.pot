@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Yneko-Reimu 0.1.0\n"
+"Project-Id-Version: Yneko-Reimu 0.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/EkaEva/Yneko-Reimu/issues\n"
 "POT-Creation-Date: 2026-05-30 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -182,6 +182,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "博客卡片"
+msgstr ""
+
+#: inc/setup.php
+msgid "补充"
 msgstr ""
 
 #: inc/customizer.php
@@ -636,7 +640,7 @@ msgstr ""
 msgid "视觉主题"
 msgstr ""
 
-#: inc/template-tags.php
+#: inc/schema.php inc/template-tags.php
 msgid "首页"
 msgstr ""
 
@@ -658,6 +662,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "鼠标烟花"
+msgstr ""
+
+#: inc/setup.php
+msgid "双栏说明区块"
 msgstr ""
 
 #: comments.php
@@ -742,6 +750,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "文章页"
+msgstr ""
+
+#: inc/setup.php
+msgid "文章引言卡片"
 msgstr ""
 
 #: inc/post-meta.php
@@ -900,6 +912,14 @@ msgstr ""
 msgid "用于 Reimu 扩展包的 CDN 前缀，默认与 upstream 演示站一致。"
 msgstr ""
 
+#: inc/setup.php
+msgid "用于放置上下文、链接或轻量的延伸解释。"
+msgstr ""
+
+#: inc/setup.php
+msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
+msgstr ""
+
 #: comments.php
 msgid "邮箱"
 msgstr ""
@@ -950,6 +970,10 @@ msgstr ""
 
 #: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
 msgid "阅读量"
+msgstr ""
+
+#: inc/setup.php
+msgid "在这里写下文章的核心摘要，让读者先抓住这一页最重要的情绪与信息。"
 msgstr ""
 
 #: template-parts/content/content-none.php
@@ -1010,6 +1034,10 @@ msgstr ""
 
 #: inc/post-meta.php
 msgid "置顶标识"
+msgstr ""
+
+#: inc/setup.php
+msgid "重点"
 msgstr ""
 
 #: template-parts/layout/site-header.php
@@ -1344,7 +1372,7 @@ msgstr ""
 msgid "Yneko"
 msgstr ""
 
-#: template-parts/layout/hero.php
+#: inc/setup.php template-parts/layout/hero.php
 msgid "Yneko-Reimu"
 msgstr ""
 

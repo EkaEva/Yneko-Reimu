@@ -13,6 +13,10 @@ function yneko_reimu_get_default_banner_url() {
 		return esc_url_raw( $custom );
 	}
 
+	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner.webp' ) ) {
+		return yneko_reimu_asset_uri( 'assets/images/banner.webp' );
+	}
+
 	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner.png' ) ) {
 		return yneko_reimu_asset_uri( 'assets/images/banner.png' );
 	}
@@ -22,6 +26,33 @@ function yneko_reimu_get_default_banner_url() {
 
 function yneko_reimu_get_banner_srcset( $banner = '' ) {
 	$src = $banner ? esc_url_raw( $banner ) : yneko_reimu_get_default_banner_url();
+
+	$sources = array();
+
+	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner-600w.webp' ) ) {
+		$sources[] = array(
+			'media' => '(max-width: 479px)',
+			'src'   => yneko_reimu_asset_uri( 'assets/images/banner-600w.webp' ),
+		);
+	}
+
+	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner-800w.webp' ) ) {
+		$sources[] = array(
+			'media' => '(max-width: 799px)',
+			'src'   => yneko_reimu_asset_uri( 'assets/images/banner-800w.webp' ),
+		);
+	}
+
+	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner.webp' ) ) {
+		$sources[] = array(
+			'media' => '(min-width: 800px)',
+			'src'   => yneko_reimu_asset_uri( 'assets/images/banner.webp' ),
+		);
+	}
+
+	if ( $sources ) {
+		return $sources;
+	}
 
 	return array(
 		array(
@@ -122,6 +153,10 @@ function yneko_reimu_get_search_bg_url() {
 	$custom = yneko_reimu_get_theme_mod( 'yneko_reimu_search_background', '' );
 	if ( $custom ) {
 		return esc_url_raw( $custom );
+	}
+
+	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/search-bg.webp' ) ) {
+		return yneko_reimu_asset_uri( 'assets/images/search-bg.webp' );
 	}
 
 	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/search-bg.png' ) ) {

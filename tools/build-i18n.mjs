@@ -430,7 +430,7 @@ function potHeader() {
   return [
     'msgid ""',
     'msgstr ""',
-    '"Project-Id-Version: Yneko-Reimu 0.1.0\\n"',
+    '"Project-Id-Version: Yneko-Reimu 0.1.2\\n"',
     '"Report-Msgid-Bugs-To: https://github.com/EkaEva/Yneko-Reimu/issues\\n"',
     '"POT-Creation-Date: 2026-05-30 00:00+0000\\n"',
     '"MIME-Version: 1.0\\n"',
@@ -446,7 +446,7 @@ function poHeader(locale) {
   return [
     'msgid ""',
     'msgstr ""',
-    '"Project-Id-Version: Yneko-Reimu 0.1.0\\n"',
+    '"Project-Id-Version: Yneko-Reimu 0.1.2\\n"',
     '"Report-Msgid-Bugs-To: https://github.com/EkaEva/Yneko-Reimu/issues\\n"',
     '"POT-Creation-Date: 2026-05-30 00:00+0000\\n"',
     '"PO-Revision-Date: 2026-05-30 00:00+0000\\n"',

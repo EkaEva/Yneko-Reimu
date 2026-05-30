@@ -1,0 +1,19 @@
+{
+  "name": "ekaeva/yneko-reimu",
+  "description": "Development tooling for the Yneko-Reimu WordPress theme.",
+  "type": "project",
+  "license": "MIT",
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^3.1",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+  },
+  "scripts": {
+    "lint:php": "phpcs --standard=phpcs.xml.dist"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}
