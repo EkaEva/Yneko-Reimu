@@ -6,6 +6,17 @@
 
 <p align="center">
   一个面向 WordPress 的 Reimu 风格经典主题。
+  <br>
+  A Reimu-style classic WordPress theme port inspired by hexo-theme-reimu.
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/EkaEva/Yneko-Reimu?style=flat-square"></a>
+  <a href="https://github.com/EkaEva/Yneko-Reimu/releases"><img alt="Release" src="https://img.shields.io/github/v/release/EkaEva/Yneko-Reimu?style=flat-square&label=release"></a>
+  <a href="https://github.com/EkaEva/Yneko-Reimu/actions/workflows/release-package.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/EkaEva/Yneko-Reimu/release-package.yml?style=flat-square&label=build"></a>
+  <a href="https://github.com/EkaEva/Yneko-Reimu/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/EkaEva/Yneko-Reimu/total?style=flat-square"></a>
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-6.0%2B-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <a href="https://github.com/EkaEva/Yneko-Reimu/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/EkaEva/Yneko-Reimu?style=flat-square"></a>
 </p>
 
 ![Yneko-Reimu 主题演示封面](theme/Yneko-Reimu/screenshot.png)
