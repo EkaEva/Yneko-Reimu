@@ -9,7 +9,7 @@ if ( ! yneko_reimu_should_show_sidebar( $reimu_sidebar_post_id ) ) {
 	return;
 }
 
-$reimu_player_enabled  = ( yneko_reimu_feature_enabled( 'player_aplayer_enable', true ) && yneko_reimu_settings_music_items() ) || yneko_reimu_feature_enabled( 'player_meting_enable', false );
+$reimu_player_enabled  = yneko_reimu_player_enabled();
 $reimu_player_position = yneko_reimu_player_position();
 $reimu_has_toc         = is_singular( 'post' ) && yneko_reimu_post_has_toc( get_the_ID() );
 $reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_enabled ) {
@@ -17,14 +17,15 @@ $reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_ena
 		return;
 	}
 	?>
-	<?php if ( yneko_reimu_feature_enabled( 'player_meting_enable', false ) ) : ?>
+	<?php if ( yneko_reimu_meting_enabled() ) : ?>
+		<?php $reimu_meting_config = yneko_reimu_meting_config(); ?>
 		<meting-js
 			theme="var(--color-link)"
 			<?php if ( $class ) : ?>class="<?php echo esc_attr( $class ); ?>"<?php endif; ?>
-			<?php if ( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_id', '' ) ) : ?>id="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_id', '' ) ); ?>"<?php endif; ?>
-			<?php if ( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_server', '' ) ) : ?>server="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_server', '' ) ); ?>"<?php endif; ?>
-			<?php if ( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_type', '' ) ) : ?>type="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_type', '' ) ); ?>"<?php endif; ?>
-			<?php if ( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_auto', '' ) ) : ?>auto="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_meting_auto', '' ) ); ?>"<?php endif; ?>
+			<?php if ( $reimu_meting_config['id'] ) : ?>id="<?php echo esc_attr( $reimu_meting_config['id'] ); ?>"<?php endif; ?>
+			<?php if ( $reimu_meting_config['server'] ) : ?>server="<?php echo esc_attr( $reimu_meting_config['server'] ); ?>"<?php endif; ?>
+			<?php if ( $reimu_meting_config['type'] ) : ?>type="<?php echo esc_attr( $reimu_meting_config['type'] ); ?>"<?php endif; ?>
+			<?php if ( $reimu_meting_config['auto'] ) : ?>auto="<?php echo esc_url( $reimu_meting_config['auto'] ); ?>"<?php endif; ?>
 			fixed="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_fixed', false ) ? 'true' : 'false' ); ?>"
 			autoplay="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_autoplay', false ) ? 'true' : 'false' ); ?>"
 			loop="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_loop', 'all' ) ); ?>"

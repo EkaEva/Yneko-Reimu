@@ -36,10 +36,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div>
 			<span class="icon-eye"></span>
-			<?php esc_html_e( '总访问量', 'yneko-reimu' ); ?>&nbsp;<?php echo esc_html( number_format_i18n( yneko_reimu_get_site_pv() ) ); ?>
+			<?php esc_html_e( '总访问量', 'yneko-reimu' ); ?>&nbsp;<?php echo yneko_reimu_site_pv_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			&nbsp;|&nbsp;
 			<span class="icon-user"></span>
-			<?php esc_html_e( '总访客量', 'yneko-reimu' ); ?>&nbsp;<?php echo esc_html( number_format_i18n( yneko_reimu_get_site_uv() ) ); ?>
+			<?php esc_html_e( '总访客量', 'yneko-reimu' ); ?>&nbsp;<?php echo yneko_reimu_site_uv_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 	</div>
 </footer>

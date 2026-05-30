@@ -14,6 +14,14 @@ function yneko_reimu_get_view_count( $post_id = 0 ) {
 }
 
 function yneko_reimu_view_count_text( $post_id = 0 ) {
+	if ( yneko_reimu_busuanzi_enabled() ) {
+		return sprintf(
+			/* translators: %s: Busuanzi page-view placeholder. */
+			esc_html__( '%s 阅读量', 'yneko-reimu' ),
+			'<span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">' . esc_html( number_format_i18n( yneko_reimu_get_view_count( $post_id ) ) ) . '</span></span>'
+		);
+	}
+
 	return sprintf(
 		/* translators: %s: view count. */
 		esc_html__( '%s 阅读量', 'yneko-reimu' ),
@@ -121,4 +129,20 @@ function yneko_reimu_get_site_pv() {
 
 function yneko_reimu_get_site_uv() {
 	return absint( yneko_reimu_get_option( 'yneko_reimu_site_uv', 0 ) );
+}
+
+function yneko_reimu_site_pv_html() {
+	if ( yneko_reimu_busuanzi_enabled() ) {
+		return '<span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv">' . esc_html( number_format_i18n( yneko_reimu_get_site_pv() ) ) . '</span></span>';
+	}
+
+	return esc_html( number_format_i18n( yneko_reimu_get_site_pv() ) );
+}
+
+function yneko_reimu_site_uv_html() {
+	if ( yneko_reimu_busuanzi_enabled() ) {
+		return '<span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">' . esc_html( number_format_i18n( yneko_reimu_get_site_uv() ) ) . '</span></span>';
+	}
+
+	return esc_html( number_format_i18n( yneko_reimu_get_site_uv() ) );
 }

@@ -21,3 +21,12 @@ function yneko_reimu_sanitize_url_or_empty( $value ) {
 	$value = trim( (string) $value );
 	return '' === $value ? '' : esc_url_raw( $value );
 }
+
+function yneko_reimu_sanitize_url_base_or_empty( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+
+	return esc_url_raw( untrailingslashit( $value ) );
+}
