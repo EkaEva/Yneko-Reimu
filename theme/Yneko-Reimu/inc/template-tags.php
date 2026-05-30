@@ -568,6 +568,11 @@ function yneko_reimu_maybe_set_virtual_page() {
 		return;
 	}
 
+	global $wp_query;
+	if ( $wp_query instanceof WP_Query && $wp_query->get( 'yneko_reimu_force_404' ) ) {
+		return;
+	}
+
 	$slug = yneko_reimu_detect_virtual_page_slug();
 	$existing_page = $slug ? get_page_by_path( $slug, OBJECT, 'page' ) : null;
 	if ( ! $slug || ( $existing_page && 'publish' === get_post_status( $existing_page ) ) ) {

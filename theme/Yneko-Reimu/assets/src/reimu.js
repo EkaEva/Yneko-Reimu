@@ -68,6 +68,22 @@
     }
   }
 
+  function scrollHeadingIntoView(target, behavior) {
+    if (!target) {
+      return false;
+    }
+    var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    var rect = target.getBoundingClientRect();
+    var targetHeight = Math.min(rect.height || 0, viewportHeight);
+    var centerOffset = Math.max(80, (viewportHeight - targetHeight) / 2);
+    var top = Math.max(0, rect.top + window.scrollY - centerOffset);
+    window.scrollTo({
+      top: top,
+      behavior: behavior || 'smooth'
+    });
+    return true;
+  }
+
   function dispatchReimuEvent(name, detail) {
     var event;
     try {
@@ -1071,7 +1087,7 @@
           return;
         }
         event.preventDefault();
-        heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollHeadingIntoView(heading, 'smooth');
         window.setTimeout(function () {
           activateTocLink(link, index);
         }, 120);
@@ -2910,11 +2926,7 @@
     if (!target) {
       return false;
     }
-    target.scrollIntoView({
-      behavior: options && options.instant ? 'auto' : 'smooth',
-      block: 'start'
-    });
-    return true;
+    return scrollHeadingIntoView(target, options && options.instant ? 'auto' : 'smooth');
   }
 
   function isAssetPath(pathname) {
@@ -3192,7 +3204,7 @@
       if (target.hash) {
         var heading = getHeadingFromHash(target.hash);
         if (heading) {
-          heading.scrollIntoView({ block: 'start' });
+          scrollHeadingIntoView(heading, 'auto');
         }
       } else {
         window.scrollTo({ top: 0, behavior: 'auto' });
