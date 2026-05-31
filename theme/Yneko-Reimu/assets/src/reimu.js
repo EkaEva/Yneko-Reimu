@@ -1055,6 +1055,21 @@
       return getHeadingFromHash(link.getAttribute('href'));
     }).filter(Boolean);
     var activeLock = null;
+    var syncTocTimer = null;
+
+    function syncTocScrollState() {
+      qsa('.sidebar-toc-wrapper').forEach(function (wrapper) {
+        if (!wrapper.offsetParent) {
+          return;
+        }
+        wrapper.dataset.reimuTocScrollable = wrapper.scrollHeight > wrapper.clientHeight + 2 ? 'true' : 'false';
+      });
+    }
+
+    function scheduleTocScrollSync(delay) {
+      window.clearTimeout(syncTocTimer);
+      syncTocTimer = window.setTimeout(syncTocScrollState, typeof delay === 'number' ? delay : 80);
+    }
 
     qsa('.sidebar-toc-btn').forEach(function (button) {
       if (button.dataset.tocSwitchReady) {
@@ -1069,6 +1084,7 @@
         qsa('.sidebar-common-btn').forEach(function (item) { item.classList.remove('current'); });
         qsa('.sidebar-toc-sidebar').forEach(function (el) { el.classList.remove('hidden'); });
         qsa('.sidebar-common-sidebar').forEach(function (el) { el.classList.add('hidden'); });
+        scheduleTocScrollSync(40);
       });
     });
 
@@ -1085,6 +1101,7 @@
         qsa('.sidebar-toc-btn').forEach(function (item) { item.classList.remove('current'); });
         qsa('.sidebar-toc-sidebar').forEach(function (el) { el.classList.add('hidden'); });
         qsa('.sidebar-common-sidebar').forEach(function (el) { el.classList.remove('hidden'); });
+        scheduleTocScrollSync(40);
       });
     });
 
@@ -1111,7 +1128,9 @@
         window.setTimeout(function () {
           activateTocLink(link, index);
           activeLock = null;
+          scheduleTocScrollSync(120);
         }, 420);
+        scheduleTocScrollSync(40);
       });
     });
 
@@ -1147,11 +1166,13 @@
       }
 
       if (sidebar && !sidebar.classList.contains('hidden') && wrapper) {
+        syncTocScrollState();
         wrapper.scrollTo({
           top: wrapper.scrollTop + item.offsetTop - (wrapper.clientHeight / 2),
           behavior: 'smooth'
         });
       }
+      scheduleTocScrollSync(340);
     }
 
     function findActiveIndex(entries) {
@@ -1177,6 +1198,12 @@
       return headings.indexOf(entry.target);
     }
 
+    syncTocScrollState();
+    window.addEventListener('resize', debounce(syncTocScrollState, 120));
+    window.addEventListener('load', function () {
+      scheduleTocScrollSync(120);
+    });
+
     if (!('IntersectionObserver' in window)) {
       return;
     }
@@ -1196,6 +1223,7 @@
     headings.forEach(function (heading) {
       observer.observe(heading);
     });
+
   }
 
   function initArticleAnchors() {
@@ -2680,6 +2708,151 @@
     syncLoadMoreRoot(list);
   }
 
+  function getActiveCommentSortMode() {
+    var active = qs('#comments [data-comment-sort].active');
+    return active ? (active.getAttribute('data-comment-sort') || 'asc') : 'asc';
+  }
+
+  function updateCommentCount(count, label) {
+    var title = qs('#comments .reimu-comment-count');
+    if (!title || typeof count === 'undefined') {
+      return;
+    }
+    title.textContent = label || (String(count) + ' ' + (config.language === 'en_US' ? 'Comments' : '评论'));
+  }
+
+  function clearCommentForm(form) {
+    var textarea = qs('textarea[name="comment"]', form);
+    if (textarea) {
+      textarea.value = '';
+      dispatchInputEvent(textarea);
+    }
+    qsa('[data-comment-upload-status]', form).forEach(function (status) {
+      status.textContent = '';
+    });
+    var preview = qs('[data-comment-preview-panel]', form);
+    if (preview) {
+      preview.hidden = true;
+      preview.classList.remove('is-open');
+    }
+    setCommentToolState(form, 'preview', false);
+    closeCommentPopovers(form);
+  }
+
+  function appendSubmittedComment(html, approved, parentId) {
+    var list = qs('#reimu-comment-list');
+    if (!list || !html) {
+      return null;
+    }
+    var template = document.createElement('template');
+    template.innerHTML = html.trim();
+    var item = template.content.firstElementChild;
+    if (!item) {
+      return null;
+    }
+    if (!approved) {
+      item.classList.add('reimu-comment-pending');
+    }
+    var parent = parentId ? qs('#comment-' + parentId) : null;
+    if (parent) {
+      var children = qs(':scope > .children', parent);
+      if (!children) {
+        children = document.createElement('ol');
+        children.className = 'children';
+        parent.appendChild(children);
+      }
+      children.appendChild(item);
+    } else {
+      list.hidden = false;
+      list.appendChild(item);
+    }
+    var empty = qs('#comments .reimu-comment-empty');
+    if (empty) {
+      empty.hidden = true;
+    }
+    if (!parent) {
+      sortCommentList(getActiveCommentSortMode());
+    }
+    initCommentLikes();
+    initWordPressCommentForm();
+    syncLoadMoreRoot(list);
+    return item;
+  }
+
+  function initAjaxCommentSubmit(form) {
+    if (form.dataset.ajaxCommentReady) {
+      return;
+    }
+    form.dataset.ajaxCommentReady = 'true';
+    form.addEventListener('submit', function (event) {
+      if (!config.login || !config.login.ajaxUrl || !config.comments || !config.comments.nonce) {
+        return;
+      }
+      event.preventDefault();
+      var textarea = qs('textarea[name="comment"]', form);
+      if (textarea && !textarea.value.trim()) {
+        showTooltip(t('commentEmpty', '还没有评论，来抢一张小板凳吧。'));
+        textarea.focus();
+        return;
+      }
+      var submit = qs('.reimu-comment-submit', form) || qs('[type="submit"]', form);
+      if (submit && submit.disabled) {
+        return;
+      }
+      var originalText = submit ? submit.textContent : '';
+      var formData = new FormData(form);
+      formData.append('action', 'yneko_reimu_submit_comment');
+      formData.append('nonce', config.comments.nonce || '');
+      if (submit) {
+        submit.disabled = true;
+        submit.classList.add('is-loading');
+        submit.setAttribute('aria-busy', 'true');
+        submit.setAttribute('data-original-text', originalText);
+      }
+      fetch(config.login.ajaxUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: formData
+      }).then(function (response) {
+        return response.json().catch(function () {
+          return { success: false, data: { message: t('commentSubmitFailed', '评论提交失败。') } };
+        });
+      }).then(function (payload) {
+        if (!payload || !payload.success || !payload.data) {
+          var message = payload && payload.data && payload.data.message ? payload.data.message : t('commentSubmitFailed', '评论提交失败。');
+          showTooltip(message);
+          return;
+        }
+        var item = appendSubmittedComment(payload.data.html || '', !!payload.data.approved, Number(payload.data.parent_id || 0));
+        updateCommentCount(payload.data.count, payload.data.count_label);
+        clearCommentForm(form);
+        var liveRespond = qs('#respond');
+        if (liveRespond && liveRespond.classList.contains('reimu-respond-inline')) {
+          var cancel = qs('[data-reimu-cancel-reply]', liveRespond) || qs('#cancel-comment-reply-link');
+          if (cancel) {
+            cancel.click();
+          }
+        }
+        showTooltip(payload.data.message || (!!payload.data.approved ? t('commentSubmitSuccess', '评论已发布。') : t('commentSubmitPending', '评论已提交，正在等待审核。')));
+        if (item && item.scrollIntoView) {
+          window.setTimeout(function () {
+            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 80);
+        }
+      }).catch(function () {
+        showTooltip(t('commentSubmitFailed', '评论提交失败。'));
+      }).finally(function () {
+        if (submit) {
+          submit.disabled = false;
+          submit.classList.remove('is-loading');
+          submit.removeAttribute('aria-busy');
+          submit.textContent = submit.getAttribute('data-original-text') || originalText;
+          submit.removeAttribute('data-original-text');
+        }
+      });
+    });
+  }
+
   function getLikedComments() {
     try {
       return JSON.parse(localStorage.getItem('reimu_comment_likes') || '{}') || {};
@@ -2976,6 +3149,7 @@
         updateCount();
       }
       initCommentTools(form);
+      initAjaxCommentSubmit(form);
     });
     ensureReplyCancelButton();
 

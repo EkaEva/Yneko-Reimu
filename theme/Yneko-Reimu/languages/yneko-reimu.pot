@@ -32,7 +32,7 @@ msgstr ""
 msgid "%s 留言"
 msgstr ""
 
-#: comments.php
+#: comments.php inc/comments.php
 msgid "%s 评论"
 msgstr ""
 
@@ -376,7 +376,7 @@ msgstr ""
 msgid "还没有内容。"
 msgstr ""
 
-#: comments.php
+#: comments.php inc/enqueue.php
 msgid "还没有评论，来抢一张小板凳吧。"
 msgstr ""
 
@@ -608,6 +608,10 @@ msgstr ""
 msgid "评论上传：%s"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "评论提交失败。"
+msgstr ""
+
 #: inc/settings.php
 msgid "评论图片"
 msgstr ""
@@ -616,8 +620,16 @@ msgstr ""
 msgid "评论图片上传已关闭。"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "评论已发布。"
+msgstr ""
+
 #: comments.php
 msgid "评论已关闭。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "评论已提交，正在等待审核。"
 msgstr ""
 
 #: inc/comments.php
@@ -826,6 +838,10 @@ msgstr ""
 
 #: searchform.php
 msgid "提交搜索"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "提交中..."
 msgstr ""
 
 #: template-parts/virtual/friend.php

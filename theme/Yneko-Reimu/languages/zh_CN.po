@@ -37,7 +37,7 @@ msgstr "%d 字"
 msgid "%s 留言"
 msgstr "%s 留言"
 
-#: comments.php
+#: comments.php inc/comments.php
 msgid "%s 评论"
 msgstr "%s 评论"
 
@@ -381,7 +381,7 @@ msgstr "过期天数阈值"
 msgid "还没有内容。"
 msgstr "还没有内容。"
 
-#: comments.php
+#: comments.php inc/enqueue.php
 msgid "还没有评论，来抢一张小板凳吧。"
 msgstr "还没有评论，来抢一张小板凳吧。"
 
@@ -613,6 +613,10 @@ msgstr "评论区"
 msgid "评论上传：%s"
 msgstr "评论上传：%s"
 
+#: inc/comments.php inc/enqueue.php
+msgid "评论提交失败。"
+msgstr "评论提交失败。"
+
 #: inc/settings.php
 msgid "评论图片"
 msgstr "评论图片"
@@ -621,9 +625,17 @@ msgstr "评论图片"
 msgid "评论图片上传已关闭。"
 msgstr "评论图片上传已关闭。"
 
+#: inc/comments.php inc/enqueue.php
+msgid "评论已发布。"
+msgstr "评论已发布。"
+
 #: comments.php
 msgid "评论已关闭。"
 msgstr "评论已关闭。"
+
+#: inc/comments.php inc/enqueue.php
+msgid "评论已提交，正在等待审核。"
+msgstr "评论已提交，正在等待审核。"
 
 #: inc/comments.php
 msgid "评论正在等待审核。"
@@ -832,6 +844,10 @@ msgstr "提交"
 #: searchform.php
 msgid "提交搜索"
 msgstr "提交搜索"
+
+#: inc/enqueue.php
+msgid "提交中..."
+msgstr "提交中..."
 
 #: template-parts/virtual/friend.php
 msgid "添加本站后，在本页留言，格式如下"

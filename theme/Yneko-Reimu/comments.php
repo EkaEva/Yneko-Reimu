@@ -108,8 +108,8 @@ $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 				</div>
 			</div>
 
+			<ol id="reimu-comment-list" class="reimu-comment-list" data-reimu-loadmore-root data-reimu-loadmore-batch="12"<?php echo $reimu_comments ? '' : ' hidden'; ?>>
 			<?php if ( $reimu_comments ) : ?>
-				<ol id="reimu-comment-list" class="reimu-comment-list" data-reimu-loadmore-root data-reimu-loadmore-batch="12">
 					<?php
 					$GLOBALS['yneko_reimu_comment_display_url'] = get_permalink( $reimu_display_post_id );
 					wp_list_comments(
@@ -125,10 +125,12 @@ $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 					);
 					unset( $GLOBALS['yneko_reimu_comment_display_url'] );
 					?>
-				</ol>
+			<?php endif; ?>
+			</ol>
 				<div class="reimu-load-more-wrap reimu-comment-load-more-wrap">
 					<button type="button" class="reimu-load-more" data-reimu-loadmore-target="#reimu-comment-list" data-label-more="<?php esc_attr_e( '加载更多...', 'yneko-reimu' ); ?>" data-label-end="<?php esc_attr_e( '到底了...', 'yneko-reimu' ); ?>"><?php echo $reimu_comment_count > 12 ? esc_html__( '加载更多...', 'yneko-reimu' ) : esc_html__( '到底了...', 'yneko-reimu' ); ?></button>
 				</div>
+			<?php if ( $reimu_comments ) : ?>
 				<?php the_comments_navigation(); ?>
 			<?php else : ?>
 				<p class="reimu-comment-empty"><?php esc_html_e( '还没有评论，来抢一张小板凳吧。', 'yneko-reimu' ); ?></p>

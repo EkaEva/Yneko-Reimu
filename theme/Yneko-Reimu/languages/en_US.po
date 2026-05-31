@@ -37,7 +37,7 @@ msgstr "%d words"
 msgid "%s 留言"
 msgstr "%s comments"
 
-#: comments.php
+#: comments.php inc/comments.php
 msgid "%s 评论"
 msgstr "%s comments"
 
@@ -381,7 +381,7 @@ msgstr "Outdated-day threshold"
 msgid "还没有内容。"
 msgstr "No content yet."
 
-#: comments.php
+#: comments.php inc/enqueue.php
 msgid "还没有评论，来抢一张小板凳吧。"
 msgstr "No comments yet. Be the first to leave one."
 
@@ -613,6 +613,10 @@ msgstr "Comments"
 msgid "评论上传：%s"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "评论提交失败。"
+msgstr ""
+
 #: inc/settings.php
 msgid "评论图片"
 msgstr ""
@@ -621,9 +625,17 @@ msgstr ""
 msgid "评论图片上传已关闭。"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "评论已发布。"
+msgstr ""
+
 #: comments.php
 msgid "评论已关闭。"
 msgstr "Comments are closed."
+
+#: inc/comments.php inc/enqueue.php
+msgid "评论已提交，正在等待审核。"
+msgstr ""
 
 #: inc/comments.php
 msgid "评论正在等待审核。"
@@ -832,6 +844,10 @@ msgstr "Submit"
 #: searchform.php
 msgid "提交搜索"
 msgstr "Submit search"
+
+#: inc/enqueue.php
+msgid "提交中..."
+msgstr ""
 
 #: template-parts/virtual/friend.php
 msgid "添加本站后，在本页留言，格式如下"

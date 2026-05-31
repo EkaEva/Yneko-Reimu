@@ -225,6 +225,11 @@ function yneko_reimu_enqueue_assets() {
 		'commentUploadFailed'   => esc_html__( '上传失败。', 'yneko-reimu' ),
 		'commentUploadDone'     => esc_html__( '已插入评论。', 'yneko-reimu' ),
 		'commentGifEmpty'       => esc_html__( '暂无可选...', 'yneko-reimu' ),
+		'commentSubmitting'     => esc_html__( '提交中...', 'yneko-reimu' ),
+		'commentSubmitFailed'   => esc_html__( '评论提交失败。', 'yneko-reimu' ),
+		'commentSubmitSuccess'  => esc_html__( '评论已发布。', 'yneko-reimu' ),
+		'commentSubmitPending'  => esc_html__( '评论已提交，正在等待审核。', 'yneko-reimu' ),
+		'commentEmpty'          => esc_html__( '还没有评论，来抢一张小板凳吧。', 'yneko-reimu' ),
 		'cancelReply'           => esc_html__( '取消回复', 'yneko-reimu' ),
 		'replyComment'          => esc_html__( '回复评论', 'yneko-reimu' ),
 		'loginLoading'          => esc_html__( '登录中...', 'yneko-reimu' ),
@@ -277,6 +282,9 @@ function yneko_reimu_enqueue_assets() {
 			'isLoggedIn' => is_user_logged_in(),
 			'nonce'      => wp_create_nonce( 'yneko_reimu_comment_upload' ),
 			'gifs'       => function_exists( 'yneko_reimu_comment_gif_library' ) ? yneko_reimu_comment_gif_library( 24, false ) : array(),
+		),
+		'comments'        => array(
+			'nonce' => wp_create_nonce( 'yneko_reimu_submit_comment' ),
 		),
 		'aplayer'         => array(
 			'audio'    => $aplayer_audio,

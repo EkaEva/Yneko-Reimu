@@ -118,21 +118,44 @@ body.admin-bar #header-nav.header-nav-hidden {
     overflow: hidden;
   }
 
+  .single-post #sidebar .sidebar-wrapper .aos-animate:hover {
+    box-shadow: none;
+  }
+
   .single-post #sidebar .sidebar-toc-sidebar {
     padding: 18px 20px 0;
   }
 
-  .single-post #sidebar .sidebar-toc-sidebar:not(.hidden),
-  .single-post #sidebar .sidebar-common-sidebar:not(.hidden) {
+  .single-post #sidebar .sidebar-toc-sidebar:not(.hidden) {
     display: flex;
+    flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .single-post #sidebar .sidebar-common-sidebar:not(.hidden) {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     width: 100%;
   }
 
   .single-post #sidebar .sidebar-toc-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
     max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding-right: 2px;
+  }
+
+  .single-post #sidebar .sidebar-toc-wrapper[data-reimu-toc-scrollable="false"] {
+    overflow-y: hidden;
   }
 
   .single-post #sidebar .toc-title {
@@ -2948,6 +2971,35 @@ html[lang="en-US"] .article-copyright p {
   opacity: .9;
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(31, 191, 117, .24);
+}
+
+#main .reimu-comment-form .reimu-comment-submit.is-loading,
+#main .reimu-comment-form button.reimu-comment-submit.is-loading {
+  color: transparent;
+  pointer-events: none;
+  position: relative;
+}
+
+#main .reimu-comment-form .reimu-comment-submit.is-loading::after,
+#main .reimu-comment-form button.reimu-comment-submit.is-loading::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, .48);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: reimu-comment-submit-spin .7s linear infinite;
+}
+
+@keyframes reimu-comment-submit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reimu-comment-pending {
+  opacity: .86;
 }
 
 #main .reimu-comment-login a,
