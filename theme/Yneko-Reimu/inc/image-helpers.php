@@ -27,6 +27,24 @@ function yneko_reimu_get_default_banner_url() {
 function yneko_reimu_get_banner_srcset( $banner = '' ) {
 	$src = $banner ? esc_url_raw( $banner ) : yneko_reimu_get_default_banner_url();
 
+	$custom = yneko_reimu_get_theme_mod( 'yneko_reimu_default_banner', '' );
+	if ( $custom ) {
+		return array(
+			array(
+				'media' => '(max-width: 479px)',
+				'src'   => $src,
+			),
+			array(
+				'media' => '(max-width: 799px)',
+				'src'   => $src,
+			),
+			array(
+				'media' => '(min-width: 800px)',
+				'src'   => $src,
+			),
+		);
+	}
+
 	$sources = array();
 
 	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner-600w.webp' ) ) {

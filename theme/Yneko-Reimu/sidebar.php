@@ -61,13 +61,15 @@ $reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_ena
 			<?php $reimu_render_player( 'aplayer-after-sidebar' ); ?>
 		<?php endif; ?>
 		<div class="sidebar-widget">
-			<?php if ( yneko_reimu_should_show_clone_widgets() ) : ?>
-				<?php get_template_part( 'template-parts/widgets/default-widgets', null, array( 'clone_only' => true ) ); ?>
-			<?php elseif ( yneko_reimu_should_show_wp_widgets() ) : ?>
-				<?php if ( is_active_sidebar( 'sidebar-1' ) ) : ?>
-					<?php dynamic_sidebar( 'sidebar-1' ); ?>
-				<?php else : ?>
-					<?php get_template_part( 'template-parts/widgets/default-widgets' ); ?>
+			<?php if ( ! is_singular( 'post' ) ) : ?>
+				<?php if ( yneko_reimu_should_show_clone_widgets() ) : ?>
+					<?php get_template_part( 'template-parts/widgets/default-widgets', null, array( 'clone_only' => true ) ); ?>
+				<?php elseif ( yneko_reimu_should_show_wp_widgets() ) : ?>
+					<?php if ( is_active_sidebar( 'sidebar-1' ) ) : ?>
+						<?php dynamic_sidebar( 'sidebar-1' ); ?>
+					<?php else : ?>
+						<?php get_template_part( 'template-parts/widgets/default-widgets' ); ?>
+					<?php endif; ?>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>

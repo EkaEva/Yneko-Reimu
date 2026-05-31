@@ -147,7 +147,21 @@ if (Test-Path -LiteralPath $zipPath) {
   Remove-Item -LiteralPath $zipPath -Force
 }
 
-Compress-Archive -LiteralPath $stageTheme -DestinationPath $zipPath -CompressionLevel Optimal
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
+try {
+  $stageRootPath = [System.IO.Path]::GetFullPath($stageRoot)
+  $files = Get-ChildItem -LiteralPath $stageTheme -Recurse -File
+  foreach ($file in $files) {
+    $filePath = [System.IO.Path]::GetFullPath($file.FullName)
+    $relative = $filePath.Substring($stageRootPath.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+    $entryName = $relative.Replace([System.IO.Path]::DirectorySeparatorChar, '/').Replace([System.IO.Path]::AltDirectorySeparatorChar, '/')
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $filePath, $entryName, [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+  }
+} finally {
+  $zip.Dispose()
+}
 Remove-Item -LiteralPath $stageRoot -Recurse -Force
 
 Write-Host "Created $zipPath"

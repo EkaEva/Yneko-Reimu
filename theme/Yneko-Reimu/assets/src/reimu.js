@@ -9,6 +9,7 @@
   var pjaxController = null;
   var pjaxRequestId = 0;
   var aplayerInstance = null;
+  var scrollDirection = 0;
   var aplayerState = {
     index: 0,
     currentTime: 0,
@@ -314,6 +315,7 @@
       root.dataset.navScrollReady = 'true';
       window.addEventListener('scroll', function () {
         var current = window.scrollY;
+        scrollDirection = current > lastY ? 1 : (current < lastY ? -1 : 0);
         var liveHeader = qs('#header-nav');
         if (liveHeader && config.navHide && current > 300 && current > lastY) {
           liveHeader.classList.add('header-nav-hidden');
@@ -1043,13 +1045,16 @@
   }
 
   function initToc() {
-    var links = qsa('.toc-link');
+    var desktopSidebar = qs('#sidebar');
+    var tocScope = desktopSidebar && window.getComputedStyle(desktopSidebar).display === 'block' ? desktopSidebar : (qs('#mobile-nav') || document);
+    var links = qsa('.sidebar-toc-wrapper .toc-link', tocScope);
     if (!links.length) {
       return;
     }
     var headings = links.map(function (link) {
       return getHeadingFromHash(link.getAttribute('href'));
     }).filter(Boolean);
+    var activeLock = null;
 
     qsa('.sidebar-toc-btn').forEach(function (button) {
       if (button.dataset.tocSwitchReady) {
@@ -1057,6 +1062,9 @@
       }
       button.dataset.tocSwitchReady = 'true';
       button.addEventListener('click', function () {
+        if (button.classList.contains('current')) {
+          return;
+        }
         qsa('.sidebar-toc-btn').forEach(function (item) { item.classList.add('current'); });
         qsa('.sidebar-common-btn').forEach(function (item) { item.classList.remove('current'); });
         qsa('.sidebar-toc-sidebar').forEach(function (el) { el.classList.remove('hidden'); });
@@ -1070,6 +1078,9 @@
       }
       button.dataset.tocSwitchReady = 'true';
       button.addEventListener('click', function () {
+        if (button.classList.contains('current')) {
+          return;
+        }
         qsa('.sidebar-common-btn').forEach(function (item) { item.classList.add('current'); });
         qsa('.sidebar-toc-btn').forEach(function (item) { item.classList.remove('current'); });
         qsa('.sidebar-toc-sidebar').forEach(function (el) { el.classList.add('hidden'); });
@@ -1088,10 +1099,19 @@
           return;
         }
         event.preventDefault();
+        activeLock = index;
         scrollHeadingIntoView(heading, 'smooth');
+        if (link.closest('#mobile-nav')) {
+          body.classList.remove('mobile-nav-on');
+          var mask = qs('#mask');
+          if (mask) {
+            mask.classList.add('hide');
+          }
+        }
         window.setTimeout(function () {
           activateTocLink(link, index);
-        }, 120);
+          activeLock = null;
+        }, 420);
       });
     });
 
@@ -1106,7 +1126,7 @@
       var sidebar = link.closest('.sidebar-toc-sidebar');
       var wrapper = link.closest('.sidebar-toc-wrapper');
 
-      if (!item) {
+      if (!item || item.classList.contains('current')) {
         return;
       }
 
@@ -1134,23 +1154,44 @@
       }
     }
 
+    function findActiveIndex(entries) {
+      if (!entries.length) {
+        return 0;
+      }
+      var index = 0;
+      var entry = entries[index];
+
+      if (entry.boundingClientRect.top > 0) {
+        index = headings.indexOf(entry.target);
+        return index === 0 ? 0 : index - 1;
+      }
+
+      for (; index < entries.length; index += 1) {
+        if (entries[index].boundingClientRect.top <= 0) {
+          entry = entries[index];
+        } else {
+          return headings.indexOf(entry.target);
+        }
+      }
+
+      return headings.indexOf(entry.target);
+    }
+
     if (!('IntersectionObserver' in window)) {
       return;
     }
 
     var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) {
-          return;
-        }
-        var active = links.filter(function (link) {
-          return getHeadingFromHash(link.getAttribute('href')) === entry.target;
-        })[0];
-        if (active) {
-          activateTocLink(active, links.indexOf(active));
-        }
-      });
-    }, { rootMargin: '-20% 0px -70% 0px' });
+      if (activeLock !== null) {
+        return;
+      }
+
+      var index = findActiveIndex(entries) + (scrollDirection > 0 ? 1 : 0);
+      var active = links[index];
+      if (active) {
+        activateTocLink(active, index);
+      }
+    }, { rootMargin: '0px 0px -100% 0px', threshold: 0 });
 
     headings.forEach(function (heading) {
       observer.observe(heading);

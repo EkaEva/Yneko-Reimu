@@ -82,8 +82,11 @@ body.admin-bar #header-nav.header-nav-hidden {
 
   .single-post #sidebar.has-toc .sidebar-wrapper-container.sticky {
     max-height: calc(100vh - 40px);
-    min-height: 420px;
     height: calc(100vh - 40px);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .single-post #sidebar .sidebar-wrapper,
@@ -101,12 +104,17 @@ body.admin-bar #header-nav.header-nav-hidden {
   }
 
   .single-post #sidebar .sidebar-wrapper {
+    display: flex;
     flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .single-post #sidebar .sidebar-wrap {
-    justify-content: stretch;
-    align-items: stretch;
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
   }
 
@@ -117,6 +125,9 @@ body.admin-bar #header-nav.header-nav-hidden {
   .single-post #sidebar .sidebar-toc-sidebar:not(.hidden),
   .single-post #sidebar .sidebar-common-sidebar:not(.hidden) {
     display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
   }
 
   .single-post #sidebar .sidebar-toc-wrapper {
@@ -131,6 +142,7 @@ body.admin-bar #header-nav.header-nav-hidden {
 
   .single-post #sidebar .sidebar-btn-wrapper {
     flex: 0 0 auto;
+    position: static;
   }
 
   .single-post #sidebar .sidebar-common-sidebar .sidebar-author {
@@ -165,6 +177,70 @@ body.admin-bar #header-nav.header-nav-hidden {
 
   .single-post #sidebar.no-toc .sidebar-author img {
     margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  #mobile-nav {
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #mobile-nav .sidebar-wrap {
+    max-height: none;
+    min-height: 0;
+    justify-content: flex-start;
+    overflow: visible;
+  }
+
+  #mobile-nav .sidebar-toc-sidebar.hidden,
+  #mobile-nav .sidebar-common-sidebar.hidden {
+    display: none;
+  }
+
+  #mobile-nav .sidebar-toc-sidebar:not(.hidden) {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: calc(100vh - 100px);
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #mobile-nav .sidebar-toc-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #mobile-nav .sidebar-common-sidebar {
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  #mobile-nav .sidebar-common-sidebar:not(.hidden) {
+    display: flex;
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #mobile-nav .sidebar-author {
+    padding-top: max(28px, env(safe-area-inset-top));
+  }
+
+  #mobile-nav .sidebar-author img {
+    flex: 0 0 auto;
+    margin-top: 16px;
+  }
+
+  #mobile-nav .sidebar-btn-wrapper {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 }
 
@@ -3065,6 +3141,7 @@ body.dark-theme .reimu-load-more:hover {
 #sidebar > meting-js,
 .sidebar-wrapper-container > #aplayer,
 .sidebar-wrapper-container > meting-js {
+  flex: 0 0 auto;
   width: 100%;
 }
 
