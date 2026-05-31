@@ -1401,6 +1401,10 @@ msgid "Social Menu"
 msgstr ""
 
 #: inc/github-login.php
+msgid "This GitHub account is already linked to another WordPress account."
+msgstr ""
+
+#: inc/github-login.php
 msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 msgstr ""
 

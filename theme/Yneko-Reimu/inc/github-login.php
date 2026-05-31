@@ -60,6 +60,23 @@ function yneko_reimu_github_login_start_url( $redirect_to = '' ) {
 	return add_query_arg( $args, wp_login_url() );
 }
 
+function yneko_reimu_github_login_bind_url( $redirect_to = '' ) {
+	if ( ! is_user_logged_in() ) {
+		return wp_login_url( $redirect_to );
+	}
+
+	$args = array(
+		'action' => 'yneko_reimu_github_bind',
+		'nonce'  => wp_create_nonce( 'yneko_reimu_github_bind' ),
+	);
+
+	if ( $redirect_to ) {
+		$args['redirect_to'] = $redirect_to;
+	}
+
+	return add_query_arg( $args, wp_login_url() );
+}
+
 function yneko_reimu_github_login_sanitize_options( $input ) {
 	$defaults = yneko_reimu_github_login_default_options();
 	$input    = is_array( $input ) ? $input : array();
@@ -227,6 +244,19 @@ add_action( 'wp_enqueue_scripts', 'yneko_reimu_github_login_enqueue_styles' );
 add_action( 'login_enqueue_scripts', 'yneko_reimu_github_login_enqueue_styles' );
 
 function yneko_reimu_github_login_begin() {
+	yneko_reimu_github_login_begin_oauth( false );
+}
+
+function yneko_reimu_github_login_begin_bind() {
+	if ( ! is_user_logged_in() ) {
+		auth_redirect();
+	}
+
+	check_admin_referer( 'yneko_reimu_github_bind', 'nonce' );
+	yneko_reimu_github_login_begin_oauth( true );
+}
+
+function yneko_reimu_github_login_begin_oauth( $bind_current_user = false ) {
 	$options = yneko_reimu_github_login_get_options();
 
 	if ( empty( $options['client_id'] ) || empty( $options['client_secret'] ) ) {
@@ -242,7 +272,8 @@ function yneko_reimu_github_login_begin() {
 		$state_key,
 		array(
 			'redirect_to'  => $redirect_to,
-			'link_user_id' => get_current_user_id(),
+			'link_user_id' => $bind_current_user ? get_current_user_id() : 0,
+			'mode'         => $bind_current_user ? 'bind' : 'login',
 			'created_at'   => time(),
 		),
 		10 * MINUTE_IN_SECONDS
@@ -265,6 +296,7 @@ function yneko_reimu_github_login_begin() {
 	exit;
 }
 add_action( 'login_form_yneko_reimu_github_login', 'yneko_reimu_github_login_begin' );
+add_action( 'login_form_yneko_reimu_github_bind', 'yneko_reimu_github_login_begin_bind' );
 add_action( 'login_form_yneko_github_login', 'yneko_reimu_github_login_begin' );
 
 function yneko_reimu_github_login_callback() {
@@ -302,7 +334,7 @@ function yneko_reimu_github_login_callback() {
 		$emails = array();
 	}
 
-	$user_id = yneko_reimu_github_login_find_or_create_user( $profile, $emails, absint( $payload['link_user_id'] ?? 0 ) );
+	$user_id = yneko_reimu_github_login_find_or_create_user( $profile, $emails, absint( $payload['link_user_id'] ?? 0 ), ( $payload['mode'] ?? 'login' ) );
 	if ( is_wp_error( $user_id ) ) {
 		wp_die( esc_html( $user_id->get_error_message() ), 403 );
 	}
@@ -374,7 +406,7 @@ function yneko_reimu_github_login_github_get( $url, $token ) {
 	return is_array( $body ) ? $body : array();
 }
 
-function yneko_reimu_github_login_find_or_create_user( $profile, $emails, $link_user_id = 0 ) {
+function yneko_reimu_github_login_find_or_create_user( $profile, $emails, $link_user_id = 0, $mode = 'login' ) {
 	$github_id = isset( $profile['id'] ) ? (string) absint( $profile['id'] ) : '';
 	$login     = isset( $profile['login'] ) ? sanitize_user( $profile['login'], true ) : '';
 
@@ -382,12 +414,17 @@ function yneko_reimu_github_login_find_or_create_user( $profile, $emails, $link_
 		return new WP_Error( 'yneko_github_profile_invalid', __( 'GitHub profile is missing required fields.', 'yneko-reimu' ) );
 	}
 
-	if ( $link_user_id && get_user_by( 'id', $link_user_id ) ) {
+	$existing_user_id = yneko_reimu_github_login_find_user_by_github_id( $github_id );
+
+	if ( 'bind' === $mode && $link_user_id && get_user_by( 'id', $link_user_id ) ) {
+		if ( $existing_user_id && absint( $existing_user_id ) !== absint( $link_user_id ) ) {
+			return new WP_Error( 'yneko_github_already_linked', __( 'This GitHub account is already linked to another WordPress account.', 'yneko-reimu' ) );
+		}
+
 		yneko_reimu_github_login_update_user_meta( $link_user_id, $profile );
 		return $link_user_id;
 	}
 
-	$existing_user_id = yneko_reimu_github_login_find_user_by_github_id( $github_id );
 	if ( $existing_user_id ) {
 		yneko_reimu_github_login_update_user_meta( $existing_user_id, $profile );
 		return $existing_user_id;
@@ -548,6 +585,33 @@ function yneko_reimu_github_login_avatar_html( $avatar, $id_or_email, $size, $de
 	);
 }
 add_filter( 'get_avatar', 'yneko_reimu_github_login_avatar_html', 1000, 6 );
+
+function yneko_reimu_current_user_can_access_admin() {
+	return current_user_can( 'manage_options' );
+}
+
+function yneko_reimu_hide_admin_bar_for_comment_users( $show ) {
+	if ( is_user_logged_in() ) {
+		return false;
+	}
+
+	return $show;
+}
+add_filter( 'show_admin_bar', 'yneko_reimu_hide_admin_bar_for_comment_users' );
+
+function yneko_reimu_block_comment_users_from_admin() {
+	if ( ! is_user_logged_in() || yneko_reimu_current_user_can_access_admin() ) {
+		return;
+	}
+
+	if ( wp_doing_ajax() || wp_doing_cron() ) {
+		return;
+	}
+
+	wp_safe_redirect( home_url( '/' ) );
+	exit;
+}
+add_action( 'admin_init', 'yneko_reimu_block_comment_users_from_admin' );
 
 function yneko_reimu_github_login_user_has_local_avatar( $user_id ) {
 	$user_id = absint( $user_id );
