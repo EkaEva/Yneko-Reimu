@@ -4,6 +4,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $reimu_about_post_id = is_singular( 'page' ) ? get_the_ID() : 0;
+
+if ( $reimu_about_post_id && function_exists( 'yneko_reimu_i18n_is_english_request' ) && yneko_reimu_i18n_is_english_request() && function_exists( 'yneko_reimu_i18n_get_translation_id' ) ) {
+	$reimu_about_translation_id = yneko_reimu_i18n_get_translation_id( $reimu_about_post_id, 'en_US' );
+	if ( $reimu_about_translation_id && $reimu_about_translation_id !== $reimu_about_post_id ) {
+		$reimu_about_post_id = $reimu_about_translation_id;
+	}
+}
+
 $reimu_about_content = $reimu_about_post_id ? trim( (string) get_post_field( 'post_content', $reimu_about_post_id ) ) : '';
 ?>
 <article id="page-about" class="h-entry article reimu-virtual-page">
@@ -21,7 +29,8 @@ $reimu_about_content = $reimu_about_post_id ? trim( (string) get_post_field( 'po
 			<?php yneko_reimu_render_heatmap(); ?>
 			<?php if ( $reimu_about_post_id && '' !== $reimu_about_content ) : ?>
 				<?php
-				the_content();
+				$reimu_about_post = get_post( $reimu_about_post_id );
+				echo apply_filters( 'the_content', $reimu_about_post ? $reimu_about_post->post_content : '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				wp_link_pages(
 					array(
 						'before' => '<div class="page-links">' . esc_html__( '页面：', 'yneko-reimu' ),

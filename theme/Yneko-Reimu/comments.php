@@ -8,9 +8,19 @@ if ( post_password_required() ) {
 }
 
 $reimu_external_comments = yneko_reimu_external_comment_systems();
-$reimu_show_wp_comments  = comments_open() || have_comments() || get_comments_number();
+$reimu_display_post_id   = function_exists( 'yneko_reimu_comments_current_display_post_id' ) ? yneko_reimu_comments_current_display_post_id() : get_the_ID();
+$reimu_canonical_post_id = function_exists( 'yneko_reimu_comments_canonical_post_id' ) ? yneko_reimu_comments_canonical_post_id( $reimu_display_post_id ) : $reimu_display_post_id;
+$reimu_comments          = $reimu_canonical_post_id ? get_comments(
+	array(
+		'post_id' => $reimu_canonical_post_id,
+		'status'  => 'approve',
+		'order'   => 'ASC',
+	)
+) : array();
+$reimu_show_wp_comments  = comments_open( $reimu_canonical_post_id ) || ! empty( $reimu_comments ) || get_comments_number( $reimu_canonical_post_id );
 $reimu_has_selector      = ! empty( $reimu_external_comments );
-$reimu_comment_count     = get_comments_number();
+$reimu_comment_count     = get_comments_number( $reimu_canonical_post_id );
+$reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 ?>
 <section id="comments" data-aos="fade-up">
 	<div class="comment-header">
@@ -31,7 +41,7 @@ $reimu_comment_count     = get_comments_number();
 	<?php if ( $reimu_show_wp_comments ) : ?>
 		<div id="comment-panel-wordpress" class="comment-panel comment wordpress-comment<?php echo $reimu_has_selector ? '' : ' active'; ?>" data-aos="fade-up">
 			<?php
-			if ( comments_open() ) {
+			if ( $reimu_comment_open ) {
 				$reimu_logged_in_as = '';
 				if ( is_user_logged_in() ) {
 					$reimu_current_user = wp_get_current_user();
@@ -39,10 +49,10 @@ $reimu_comment_count     = get_comments_number();
 						/* translators: 1: user display name, 2: logout url. */
 						wp_kses_post( __( '以 <strong>%1$s</strong> 登录。<a href="%2$s">退出</a>', 'yneko-reimu' ) ),
 						esc_html( $reimu_current_user->display_name ),
-						esc_url( wp_logout_url( get_permalink() ) )
+						esc_url( wp_logout_url( get_permalink( $reimu_display_post_id ) ) )
 					);
 				} else {
-					$reimu_logged_in_as = '<a class="reimu-comment-login-link" href="' . esc_url( wp_login_url( get_permalink() ) ) . '">' . esc_html__( '登录', 'yneko-reimu' ) . '</a>';
+					$reimu_logged_in_as = '<a class="reimu-comment-login-link" href="' . esc_url( wp_login_url( get_permalink( $reimu_display_post_id ) ) ) . '">' . esc_html__( '登录', 'yneko-reimu' ) . '</a>';
 				}
 				$reimu_logged_in_as = str_replace( '%', '%%', $reimu_logged_in_as );
 
@@ -56,6 +66,7 @@ $reimu_comment_count     = get_comments_number();
 						'comment_notes_before' => '',
 						'comment_notes_after'  => '',
 						'logged_in_as'          => '',
+						'comment_post_ID'       => $reimu_canonical_post_id,
 						'title_reply'           => '',
 						'title_reply_before'    => '',
 						'title_reply_after'     => '',
@@ -69,10 +80,11 @@ $reimu_comment_count     = get_comments_number();
 							'url'    => '<p class="comment-form-url"><label class="screen-reader-text" for="url">' . esc_html__( '网址（可选）', 'yneko-reimu' ) . '</label><input id="url" name="url" type="url" placeholder="' . esc_attr__( '网址（可选）', 'yneko-reimu' ) . '" value="' . esc_attr( wp_get_current_commenter()['comment_author_url'] ) . '" size="30"></p></div>',
 							'cookies' => '<input type="hidden" name="wp-comment-cookies-consent" value="yes">',
 						),
-						'comment_field'         => '<p class="comment-form-comment"><label class="screen-reader-text" for="comment">' . esc_html__( '评论', 'yneko-reimu' ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" placeholder="' . esc_attr__( '欢迎评论', 'yneko-reimu' ) . '" required></textarea></p>',
-					)
+						'comment_field'         => '<p class="comment-form-comment"><label class="screen-reader-text" for="comment">' . esc_html__( '评论', 'yneko-reimu' ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" placeholder="' . esc_attr__( '欢迎评论', 'yneko-reimu' ) . '" required></textarea><input type="hidden" name="redirect_to" value="' . esc_url( get_permalink( $reimu_display_post_id ) . '#comments' ) . '"></p>',
+					),
+					$reimu_canonical_post_id
 				);
-			} elseif ( get_comments_number() ) {
+			} elseif ( $reimu_comment_count ) {
 				?>
 				<p class="no-comments"><?php esc_html_e( '评论已关闭。', 'yneko-reimu' ); ?></p>
 				<?php
@@ -96,17 +108,22 @@ $reimu_comment_count     = get_comments_number();
 				</div>
 			</div>
 
-			<?php if ( have_comments() ) : ?>
+			<?php if ( $reimu_comments ) : ?>
 				<ol id="reimu-comment-list" class="reimu-comment-list" data-reimu-loadmore-root data-reimu-loadmore-batch="12">
 					<?php
+					$GLOBALS['yneko_reimu_comment_display_url'] = get_permalink( $reimu_display_post_id );
 					wp_list_comments(
 						array(
 							'style'       => 'ol',
 							'short_ping'  => true,
 							'avatar_size' => 56,
 							'callback'    => 'yneko_reimu_comment_callback',
-						)
+							'per_page'    => 0,
+							'post_id'     => $reimu_canonical_post_id,
+						),
+						$reimu_comments
 					);
+					unset( $GLOBALS['yneko_reimu_comment_display_url'] );
 					?>
 				</ol>
 				<div class="reimu-load-more-wrap reimu-comment-load-more-wrap">

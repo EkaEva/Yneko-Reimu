@@ -146,8 +146,63 @@ function yneko_reimu_count_text( $count ) {
 	);
 }
 
+function yneko_reimu_get_adjacent_post_for_language( $post_id = 0, $previous = true, $language = '' ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	if ( ! $post_id ) {
+		return null;
+	}
+
+	$source_id = function_exists( 'yneko_reimu_i18n_source_post_id' ) ? yneko_reimu_i18n_source_post_id( $post_id ) : $post_id;
+	$current  = get_post( $source_id );
+	if ( ! $current || 'post' !== $current->post_type ) {
+		return null;
+	}
+
+	$language = $language && function_exists( 'yneko_reimu_i18n_language_exists' ) && yneko_reimu_i18n_language_exists( $language )
+		? $language
+		: ( function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : '' );
+
+	$args = array(
+		'post_type'              => 'post',
+		'post_status'            => 'publish',
+		'posts_per_page'         => 1,
+		'orderby'                => array(
+			'date' => $previous ? 'DESC' : 'ASC',
+			'ID'   => $previous ? 'DESC' : 'ASC',
+		),
+		'ignore_sticky_posts'    => true,
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+		'post__not_in'           => array( $source_id ),
+		'date_query'             => array(
+			array(
+				$previous ? 'before' : 'after' => get_post_time( 'Y-m-d H:i:s', false, $source_id ),
+				'inclusive' => false,
+			),
+		),
+	);
+
+	if ( function_exists( 'yneko_reimu_i18n_apply_language_query_args' ) ) {
+		$args = yneko_reimu_i18n_apply_language_query_args( $args, 'zh_CN' );
+	}
+
+	$query = new WP_Query( $args );
+	if ( ! $query->posts ) {
+		return null;
+	}
+
+	$adjacent_id = absint( $query->posts[0]->ID );
+	if ( function_exists( 'yneko_reimu_i18n_display_post_for_language' ) && $language ) {
+		$adjacent_id = yneko_reimu_i18n_display_post_for_language( $adjacent_id, $language );
+	}
+
+	return get_post( $adjacent_id );
+}
+
 function yneko_reimu_should_show_comments( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	$canonical_post_id = function_exists( 'yneko_reimu_comments_canonical_post_id' ) ? yneko_reimu_comments_canonical_post_id( $post_id ) : $post_id;
 	$choice  = yneko_reimu_meta_choice( $post_id, '_yneko_reimu_comments' );
 
 	if ( 'show' === $choice ) {
@@ -162,7 +217,7 @@ function yneko_reimu_should_show_comments( $post_id = 0 ) {
 		return true;
 	}
 
-	return comments_open( $post_id ) || get_comments_number( $post_id );
+	return comments_open( $canonical_post_id ) || get_comments_number( $canonical_post_id );
 }
 
 function yneko_reimu_reading_time( $post_id = 0 ) {
@@ -223,10 +278,6 @@ function yneko_reimu_heatmap_config() {
 		'update_post_term_cache' => false,
 	);
 
-	if ( function_exists( 'yneko_reimu_i18n_enabled' ) && yneko_reimu_i18n_enabled() && function_exists( 'yneko_reimu_i18n_language_meta_query' ) ) {
-		$args['meta_query'] = yneko_reimu_i18n_language_meta_query(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-	}
-
 	$query = new WP_Query( $args );
 	$stats = array();
 
@@ -244,28 +295,28 @@ function yneko_reimu_heatmap_config() {
 		'articleStats'  => $stats,
 		'i18n'          => array(
 			'zh-CN' => array(
-				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
-				'words'          => __( '字', 'yneko-reimu' ),
-				'total_articles' => __( '共 $1 篇文章, $2 字', 'yneko-reimu' ),
-				'no_writing_on'  => __( '{date} 没有写作', 'yneko-reimu' ),
-				'writing_on'     => __( '{posts} {words} 于 {date}', 'yneko-reimu' ),
-				'year_total'     => __( '{posts} {words} 于 {year}', 'yneko-reimu' ),
+				'no_articles'    => '没有文章',
+				'words'          => '字',
+				'total_articles' => '共 $1 篇文章, $2 字',
+				'no_writing_on'  => '{date} 没有写作',
+				'writing_on'     => '{posts} {words} 于 {date}',
+				'year_total'     => '{posts} {words} 于 {year}',
 			),
 			'en-US' => array(
-				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
-				'words'          => __( 'words', 'yneko-reimu' ),
-				'total_articles' => __( '$1 post(s), $2 word(s) in total', 'yneko-reimu' ),
-				'no_writing_on'  => __( 'No writing on {date}', 'yneko-reimu' ),
-				'writing_on'     => __( '{posts}, {words} on {date}', 'yneko-reimu' ),
-				'year_total'     => __( '{posts}, {words} in {year}', 'yneko-reimu' ),
+				'no_articles'    => 'No posts',
+				'words'          => 'words',
+				'total_articles' => '$1 post(s), $2 word(s) in total',
+				'no_writing_on'  => 'No writing on {date}',
+				'writing_on'     => '{posts}, {words} on {date}',
+				'year_total'     => '{posts}, {words} in {year}',
 			),
 			'en'    => array(
-				'no_articles'    => __( '没有文章', 'yneko-reimu' ),
-				'words'          => __( 'words', 'yneko-reimu' ),
-				'total_articles' => __( '$1 post(s), $2 word(s) in total', 'yneko-reimu' ),
-				'no_writing_on'  => __( 'No writing on {date}', 'yneko-reimu' ),
-				'writing_on'     => __( '{posts}, {words} on {date}', 'yneko-reimu' ),
-				'year_total'     => __( '{posts}, {words} in {year}', 'yneko-reimu' ),
+				'no_articles'    => 'No posts',
+				'words'          => 'words',
+				'total_articles' => '$1 post(s), $2 word(s) in total',
+				'no_writing_on'  => 'No writing on {date}',
+				'writing_on'     => '{posts}, {words} on {date}',
+				'year_total'     => '{posts}, {words} in {year}',
 			),
 		),
 	);
@@ -453,11 +504,16 @@ function yneko_reimu_menu_item_matches_url( $item, $path ) {
 		return false;
 	}
 
-	$item_path = trim( (string) wp_parse_url( $item->url, PHP_URL_PATH ), '/' );
+	$item_url  = function_exists( 'yneko_reimu_i18n_localize_url' ) ? yneko_reimu_i18n_localize_url( $item->url ) : $item->url;
+	$item_path = trim( (string) wp_parse_url( $item_url, PHP_URL_PATH ), '/' );
 	$home_path = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
 
 	if ( '' !== $home_path && 0 === strpos( $item_path, $home_path . '/' ) ) {
 		$item_path = trim( substr( $item_path, strlen( $home_path ) ), '/' );
+	}
+
+	if ( function_exists( 'yneko_reimu_i18n_relative_without_prefix' ) ) {
+		$item_path = yneko_reimu_i18n_relative_without_prefix( $item_path );
 	}
 
 	return trim( $path, '/' ) === $item_path;
@@ -482,7 +538,7 @@ function yneko_reimu_ensure_projects_menu_item( $items, $args ) {
 		'object'            => 'custom',
 		'type'              => 'custom',
 		'type_label'        => __( '自定义链接', 'yneko-reimu' ),
-		'title'             => __( '项目', 'yneko-reimu' ),
+		'title'             => function_exists( 'yneko_reimu_i18n_frontend_text' ) ? yneko_reimu_i18n_frontend_text( '项目' ) : __( '项目', 'yneko-reimu' ),
 		'url'               => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'projects' ) : home_url( '/projects/' ),
 		'target'            => '',
 		'attr_title'        => '',
@@ -519,6 +575,30 @@ function yneko_reimu_ensure_projects_menu_item( $items, $args ) {
 	return $items;
 }
 add_filter( 'wp_nav_menu_objects', 'yneko_reimu_ensure_projects_menu_item', 10, 2 );
+
+function yneko_reimu_dedupe_builtin_menu_items( $items, $args ) {
+	if ( is_admin() || empty( $args->theme_location ) || ! in_array( $args->theme_location, array( 'primary', 'mobile' ), true ) ) {
+		return $items;
+	}
+
+	$seen = array();
+	foreach ( $items as $index => $item ) {
+		$slug = yneko_reimu_nav_builtin_slug_from_url( $item->url );
+		if ( ! $slug ) {
+			continue;
+		}
+
+		if ( isset( $seen[ $slug ] ) ) {
+			unset( $items[ $index ] );
+			continue;
+		}
+
+		$seen[ $slug ] = true;
+	}
+
+	return array_values( $items );
+}
+add_filter( 'wp_nav_menu_objects', 'yneko_reimu_dedupe_builtin_menu_items', 20, 2 );
 
 function yneko_reimu_virtual_pages() {
 	return array(
@@ -1098,6 +1178,22 @@ function yneko_reimu_post_is_sticky( $post_id = 0 ) {
 
 	if ( '0' === $meta ) {
 		return false;
+	}
+
+	if ( function_exists( 'yneko_reimu_get_visual_source_post_id' ) ) {
+		$source_id = yneko_reimu_get_visual_source_post_id( $post_id );
+		if ( $source_id ) {
+			$source_meta = yneko_reimu_get_post_meta( $source_id, '_yneko_reimu_sticky', true );
+			if ( '1' === $source_meta ) {
+				return true;
+			}
+
+			if ( '0' === $source_meta ) {
+				return false;
+			}
+
+			return is_sticky( $source_id );
+		}
 	}
 
 	return is_sticky( $post_id );

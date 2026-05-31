@@ -773,6 +773,7 @@
     if (!i18n[lang]) {
       lang = lang.toLowerCase().indexOf('zh') === 0 && i18n['zh-CN'] ? 'zh-CN' : 'en';
     }
+    var isChinese = lang.toLowerCase().indexOf('zh') === 0;
     var text = i18n[lang] || {
       no_articles: '没有文章',
       words: '字',
@@ -783,7 +784,7 @@
     };
 
     function unitText(num, singular, plural, zhUnit) {
-      if (lang.toLowerCase().indexOf('zh') === 0) {
+      if (isChinese) {
         return String(num) + ' ' + zhUnit;
       }
       return String(num) + ' ' + (num === 1 ? singular : plural);
@@ -796,7 +797,7 @@
     }
 
     function heatmapTotalText(posts, words) {
-      if (lang.toLowerCase().indexOf('zh') === 0) {
+      if (isChinese) {
         return String(text.total_articles || '共 $1 篇文章, $2 字').replace('$1', posts).replace('$2', words);
       }
 
@@ -908,7 +909,7 @@
         return;
       }
       var date = new Date(Number(tile.dataset.date));
-      var formattedDate = date.toLocaleDateString();
+      var formattedDate = date.toLocaleDateString(isChinese ? 'zh-CN' : 'en-US');
       var articles = JSON.parse(tile.getAttribute('data-articles') || '[]');
       var totalWords = 0;
       var html = '<div class="tooltip-header"><div class="tooltip-header-content">' + escapeHtml(formattedDate) + ' (Level ' + escapeHtml(tile.dataset.level) + ')</div><div class="popup-btn-close tooltip-close"></div></div><div class="tooltip-content"><ul>';

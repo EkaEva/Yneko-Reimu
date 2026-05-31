@@ -11,7 +11,10 @@ $reimu_site_yml = sprintf(
 	get_bloginfo( 'description' ),
 	yneko_reimu_get_default_avatar_url()
 );
-$reimu_apply_yml = "```yml\n- name: #您的名字\n  url: #您的网址\n  desc: #简短描述\n  image: #一张图片\n```";
+$reimu_is_english = function_exists( 'yneko_reimu_i18n_is_english_request' ) && yneko_reimu_i18n_is_english_request();
+$reimu_apply_yml  = $reimu_is_english
+	? "```yml\n- name: # Your name\n  url: # Your site URL\n  desc: # Short description\n  image: # Image URL\n```"
+	: "```yml\n- name: #您的名字\n  url: #您的网址\n  desc: #简短描述\n  image: #一张图片\n```";
 ?>
 <article id="page-friend" class="h-entry article reimu-virtual-page">
 	<div class="article-inner" data-aos="fade-up">
@@ -25,16 +28,16 @@ $reimu_apply_yml = "```yml\n- name: #您的名字\n  url: #您的网址\n  desc:
 		</div>
 		<div class="hr-line"></div>
 		<div class="e-content article-entry" itemprop="articleBody">
-			<h2 id="本站信息"><a class="markdownIt-Anchor" href="#本站信息"></a><?php esc_html_e( '本站信息', 'yneko-reimu' ); ?></h2>
+			<h2 id="site-info"><a class="markdownIt-Anchor" href="#site-info"></a><?php echo esc_html( function_exists( 'yneko_reimu_i18n_frontend_text' ) ? yneko_reimu_i18n_frontend_text( '本站信息' ) : __( '本站信息', 'yneko-reimu' ) ); ?></h2>
 			<?php echo yneko_reimu_yml_editor( $reimu_site_yml ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
-			<h2 id="申请方法"><a class="markdownIt-Anchor" href="#申请方法"></a><?php esc_html_e( '申请方法', 'yneko-reimu' ); ?></h2>
+			<h2 id="how-to-apply"><a class="markdownIt-Anchor" href="#how-to-apply"></a><?php echo esc_html( function_exists( 'yneko_reimu_i18n_frontend_text' ) ? yneko_reimu_i18n_frontend_text( '申请方法' ) : __( '申请方法', 'yneko-reimu' ) ); ?></h2>
 			<ul>
-				<li><?php esc_html_e( '添加本站后，在本页留言，格式如下', 'yneko-reimu' ); ?></li>
+				<li><?php echo esc_html( function_exists( 'yneko_reimu_i18n_frontend_text' ) ? yneko_reimu_i18n_frontend_text( '添加本站后，在本页留言，格式如下' ) : __( '添加本站后，在本页留言，格式如下', 'yneko-reimu' ) ); ?></li>
 			</ul>
 			<?php echo yneko_reimu_yml_editor( $reimu_apply_yml ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
-			<h2 id="小伙伴们"><a class="markdownIt-Anchor" href="#小伙伴们"></a><?php esc_html_e( '小伙伴们', 'yneko-reimu' ); ?></h2>
+			<h2 id="friends"><a class="markdownIt-Anchor" href="#friends"></a><?php echo esc_html( function_exists( 'yneko_reimu_i18n_frontend_text' ) ? yneko_reimu_i18n_frontend_text( '小伙伴们' ) : __( '小伙伴们', 'yneko-reimu' ) ); ?></h2>
 			<?php if ( $reimu_friends ) : ?>
 				<div class="friend-wrap" data-aos="zoom-in">
 					<?php foreach ( $reimu_friends as $friend ) : ?>

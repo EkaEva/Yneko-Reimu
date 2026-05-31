@@ -12,26 +12,6 @@ msgstr ""
 msgid "(无标题)"
 msgstr ""
 
-#: inc/template-tags.php
-msgid "{date} 没有写作"
-msgstr ""
-
-#: inc/template-tags.php
-msgid "{posts} {words} 于 {date}"
-msgstr ""
-
-#: inc/template-tags.php
-msgid "{posts} {words} 于 {year}"
-msgstr ""
-
-#: inc/template-tags.php
-msgid "{posts}, {words} in {year}"
-msgstr ""
-
-#: inc/template-tags.php
-msgid "{posts}, {words} on {date}"
-msgstr ""
-
 #: inc/customizer.php
 msgid "%1$s %2$d"
 msgstr ""
@@ -66,10 +46,6 @@ msgstr ""
 
 #: inc/template-tags.php
 msgid "© %s. Powered by WordPress."
-msgstr ""
-
-#: inc/template-tags.php
-msgid "$1 post(s), $2 word(s) in total"
 msgstr ""
 
 #: inc/template-tags.php
@@ -320,10 +296,6 @@ msgstr ""
 msgid "跟随系统"
 msgstr ""
 
-#: inc/template-tags.php
-msgid "共 $1 篇文章, $2 字"
-msgstr ""
-
 #: inc/customizer.php
 msgid "固定播放器"
 msgstr ""
@@ -526,10 +498,6 @@ msgstr ""
 
 #: inc/enqueue.php
 msgid "没有结果"
-msgstr ""
-
-#: inc/template-tags.php
-msgid "没有文章"
 msgstr ""
 
 #: inc/comments.php
@@ -1160,10 +1128,6 @@ msgstr ""
 msgid "主要内容"
 msgstr ""
 
-#: inc/template-tags.php
-msgid "字"
-msgstr ""
-
 #: inc/post-meta.php
 msgid "自定义 Banner URL"
 msgstr ""
@@ -1384,10 +1348,6 @@ msgstr ""
 msgid "No WordPress account is linked to this GitHub account."
 msgstr ""
 
-#: inc/template-tags.php
-msgid "No writing on {date}"
-msgstr ""
-
 #: inc/customizer.php
 msgid "PhotoSwipe 图片灯箱"
 msgstr ""
@@ -1478,10 +1438,6 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
-msgstr ""
-
-#: inc/template-tags.php
-msgid "words"
 msgstr ""
 
 #: inc/template-tags.php

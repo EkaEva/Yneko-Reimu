@@ -213,6 +213,24 @@ function yneko_reimu_get_cover_pool() {
 	);
 }
 
+function yneko_reimu_get_visual_source_post_id( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	if ( ! $post_id || ! function_exists( 'yneko_reimu_i18n_enabled' ) || ! yneko_reimu_i18n_enabled() || ! function_exists( 'yneko_reimu_i18n_post_language' ) || ! function_exists( 'yneko_reimu_i18n_translation_id' ) ) {
+		return 0;
+	}
+
+	if ( 'en_US' !== yneko_reimu_i18n_post_language( $post_id ) ) {
+		return 0;
+	}
+
+	$source_id = yneko_reimu_i18n_translation_id( $post_id );
+	if ( $source_id && 'publish' === get_post_status( $source_id ) && 'en_US' !== yneko_reimu_i18n_post_language( $source_id ) ) {
+		return $source_id;
+	}
+
+	return 0;
+}
+
 function yneko_reimu_get_post_banner_url( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
 	$custom  = yneko_reimu_get_post_meta( $post_id, '_yneko_reimu_banner_url', true );
@@ -225,6 +243,21 @@ function yneko_reimu_get_post_banner_url( $post_id = 0 ) {
 		$image = get_the_post_thumbnail_url( $post_id, 'reimu-hero' );
 		if ( $image ) {
 			return esc_url_raw( $image );
+		}
+	}
+
+	$source_id = yneko_reimu_get_visual_source_post_id( $post_id );
+	if ( $source_id ) {
+		$source_custom = yneko_reimu_get_post_meta( $source_id, '_yneko_reimu_banner_url', true );
+		if ( $source_custom ) {
+			return esc_url_raw( $source_custom );
+		}
+
+		if ( has_post_thumbnail( $source_id ) ) {
+			$image = get_the_post_thumbnail_url( $source_id, 'reimu-hero' );
+			if ( $image ) {
+				return esc_url_raw( $image );
+			}
 		}
 	}
 
@@ -243,6 +276,21 @@ function yneko_reimu_get_post_cover_url( $post_id = 0 ) {
 		$image = get_the_post_thumbnail_url( $post_id, 'reimu-card' );
 		if ( $image ) {
 			return esc_url_raw( $image );
+		}
+	}
+
+	$source_id = yneko_reimu_get_visual_source_post_id( $post_id );
+	if ( $source_id ) {
+		$source_custom = yneko_reimu_get_post_meta( $source_id, '_yneko_reimu_cover_url', true );
+		if ( $source_custom ) {
+			return esc_url_raw( $source_custom );
+		}
+
+		if ( has_post_thumbnail( $source_id ) ) {
+			$image = get_the_post_thumbnail_url( $source_id, 'reimu-card' );
+			if ( $image ) {
+				return esc_url_raw( $image );
+			}
 		}
 	}
 

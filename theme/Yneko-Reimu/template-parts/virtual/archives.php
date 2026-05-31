@@ -3,15 +3,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$reimu_archive_args = array(
+	'post_type'              => 'post',
+	'post_status'            => 'publish',
+	'posts_per_page'         => -1,
+	'ignore_sticky_posts'    => true,
+	'no_found_rows'          => true,
+	'update_post_meta_cache' => false,
+);
+
+if ( function_exists( 'yneko_reimu_i18n_apply_language_query_args' ) ) {
+	$reimu_archive_args = yneko_reimu_i18n_apply_language_query_args( $reimu_archive_args );
+}
+
 $reimu_archive_query = new WP_Query(
-	array(
-		'post_type'              => 'post',
-		'post_status'            => 'publish',
-		'posts_per_page'         => -1,
-		'ignore_sticky_posts'    => true,
-		'no_found_rows'          => true,
-		'update_post_meta_cache' => false,
-	)
+	$reimu_archive_args
 );
 ?>
 <div class="archives-outer-wrap" data-aos="fade-up">

@@ -10,6 +10,10 @@ function yneko_reimu_get_view_count( $post_id = 0 ) {
 		return 0;
 	}
 
+	if ( function_exists( 'yneko_reimu_i18n_source_post_id' ) ) {
+		$post_id = yneko_reimu_i18n_source_post_id( $post_id );
+	}
+
 	return absint( yneko_reimu_get_post_meta( $post_id, '_yneko_reimu_view_count', true ) );
 }
 
@@ -31,6 +35,9 @@ function yneko_reimu_view_count_text( $post_id = 0 ) {
 
 function yneko_reimu_comment_count_text( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : absint( get_queried_object_id() );
+	if ( function_exists( 'yneko_reimu_comments_canonical_post_id' ) ) {
+		$post_id = yneko_reimu_comments_canonical_post_id( $post_id );
+	}
 	return sprintf(
 		/* translators: %s: comment count. */
 		esc_html__( '%s 留言', 'yneko-reimu' ),
@@ -116,6 +123,10 @@ function yneko_reimu_count_post_view() {
 
 	if ( ! yneko_reimu_should_count_view( $post_id ) ) {
 		return;
+	}
+
+	if ( function_exists( 'yneko_reimu_i18n_source_post_id' ) ) {
+		$post_id = yneko_reimu_i18n_source_post_id( $post_id );
 	}
 
 	$count = yneko_reimu_get_view_count( $post_id );

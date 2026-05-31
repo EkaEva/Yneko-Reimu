@@ -17,26 +17,6 @@ msgstr ""
 msgid "(无标题)"
 msgstr "(无标题)"
 
-#: inc/template-tags.php
-msgid "{date} 没有写作"
-msgstr "{date} 没有写作"
-
-#: inc/template-tags.php
-msgid "{posts} {words} 于 {date}"
-msgstr "{posts} {words} 于 {date}"
-
-#: inc/template-tags.php
-msgid "{posts} {words} 于 {year}"
-msgstr "{posts} {words} 于 {year}"
-
-#: inc/template-tags.php
-msgid "{posts}, {words} in {year}"
-msgstr "{posts}, {words} in {year}"
-
-#: inc/template-tags.php
-msgid "{posts}, {words} on {date}"
-msgstr "{posts}, {words} on {date}"
-
 #: inc/customizer.php
 msgid "%1$s %2$d"
 msgstr "%1$s %2$d"
@@ -72,10 +52,6 @@ msgstr "%s 字"
 #: inc/template-tags.php
 msgid "© %s. Powered by WordPress."
 msgstr "© %s. Powered by WordPress."
-
-#: inc/template-tags.php
-msgid "$1 post(s), $2 word(s) in total"
-msgstr "$1 post(s), $2 word(s) in total"
 
 #: inc/template-tags.php
 msgid "404（´◔ ₃ ◔`)"
@@ -325,10 +301,6 @@ msgstr "跟随文章设置"
 msgid "跟随系统"
 msgstr "跟随系统"
 
-#: inc/template-tags.php
-msgid "共 $1 篇文章, $2 字"
-msgstr "共 $1 篇文章, $2 字"
-
 #: inc/customizer.php
 msgid "固定播放器"
 msgstr "固定播放器"
@@ -532,10 +504,6 @@ msgstr "留空时使用主题自动生成的 /search.json。"
 #: inc/enqueue.php
 msgid "没有结果"
 msgstr "没有结果"
-
-#: inc/template-tags.php
-msgid "没有文章"
-msgstr "没有文章"
 
 #: inc/comments.php
 msgid "密码"
@@ -1165,10 +1133,6 @@ msgstr "主题会始终保留 WordPress 与 hexo-theme-reimu/MIT 署名。"
 msgid "主要内容"
 msgstr "主要内容"
 
-#: inc/template-tags.php
-msgid "字"
-msgstr "字"
-
 #: inc/post-meta.php
 msgid "自定义 Banner URL"
 msgstr "自定义 Banner URL"
@@ -1389,10 +1353,6 @@ msgstr "Mobile Menu"
 msgid "No WordPress account is linked to this GitHub account."
 msgstr "No WordPress account is linked to this GitHub account."
 
-#: inc/template-tags.php
-msgid "No writing on {date}"
-msgstr "No writing on {date}"
-
 #: inc/customizer.php
 msgid "PhotoSwipe 图片灯箱"
 msgstr "PhotoSwipe 图片灯箱"
@@ -1484,10 +1444,6 @@ msgstr "WARNING"
 #: inc/customizer.php
 msgid "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
 msgstr "WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。"
-
-#: inc/template-tags.php
-msgid "words"
-msgstr "words"
 
 #: inc/template-tags.php
 msgid "Yneko"

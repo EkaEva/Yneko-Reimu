@@ -10,10 +10,13 @@ $reimu_comment_url = $reimu_page_slug && function_exists( 'yneko_reimu_i18n_virt
 	: get_permalink( $reimu_page_id );
 ?>
 <footer class="article-footer reimu-virtual-footer">
-	<span class="article-visitor-link" data-aos="zoom-in" aria-label="<?php esc_attr_e( '阅读量', 'yneko-reimu' ); ?>">
-		<?php echo yneko_reimu_view_count_text( $reimu_page_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-	</span>
-	<a class="article-comment-link" data-aos="zoom-in" data-no-pjax href="<?php echo esc_url( $reimu_comment_url . '#comments' ); ?>">
-		<?php echo yneko_reimu_comment_count_text( $reimu_page_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-	</a>
+	<div class="article-footer-terms"></div>
+	<div class="article-footer-stats">
+		<span class="article-visitor-link" data-aos="zoom-in" aria-label="<?php esc_attr_e( '阅读量', 'yneko-reimu' ); ?>">
+			<?php echo yneko_reimu_view_count_text( $reimu_page_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</span>
+		<a class="article-comment-link" data-aos="zoom-in" data-no-pjax href="<?php echo esc_url( $reimu_comment_url . '#comments' ); ?>">
+			<?php echo yneko_reimu_comment_count_text( $reimu_page_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</a>
+	</div>
 </footer>

@@ -44,7 +44,7 @@ function yneko_reimu_register_rest_meta() {
 				'type'              => 'string',
 				'single'            => true,
 				'show_in_rest'      => true,
-				'sanitize_callback' => 'sanitize_key',
+				'sanitize_callback' => 'yneko_reimu_sanitize_post_language',
 				'auth_callback'     => static function () {
 					return current_user_can( 'edit_posts' );
 				},
@@ -83,6 +83,15 @@ function yneko_reimu_register_rest_meta() {
 	}
 }
 add_action( 'init', 'yneko_reimu_register_rest_meta' );
+
+function yneko_reimu_sanitize_post_language( $language ) {
+	if ( function_exists( 'yneko_reimu_i18n_normalize_language' ) ) {
+		$normalized = yneko_reimu_i18n_normalize_language( $language );
+		return $normalized ? $normalized : 'zh_CN';
+	}
+
+	return 'en_US' === $language ? 'en_US' : 'zh_CN';
+}
 
 function yneko_reimu_add_post_meta_boxes() {
 	add_meta_box(

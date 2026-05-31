@@ -52,6 +52,19 @@ function yneko_reimu_i18n_language_exists( $language ) {
 	return isset( yneko_reimu_i18n_languages()[ $language ] );
 }
 
+function yneko_reimu_i18n_normalize_language( $language ) {
+	$language = (string) $language;
+	$map      = array(
+		'zh_CN' => 'zh_CN',
+		'zh_cn' => 'zh_CN',
+		'zh-cn' => 'zh_CN',
+		'en_US' => 'en_US',
+		'en_us' => 'en_US',
+		'en-us' => 'en_US',
+	);
+	return isset( $map[ $language ] ) ? $map[ $language ] : '';
+}
+
 function yneko_reimu_i18n_url_prefix() {
 	$languages = yneko_reimu_i18n_languages();
 	return $languages['en_US']['slug'] ? $languages['en_US']['slug'] : 'en';
@@ -91,6 +104,25 @@ function yneko_reimu_i18n_current_language() {
 
 function yneko_reimu_i18n_is_english_request() {
 	return 'en_US' === yneko_reimu_i18n_current_language();
+}
+
+function yneko_reimu_i18n_frontend_text( $text ) {
+	if ( ! yneko_reimu_i18n_enabled() || is_admin() && ! wp_doing_ajax() || 'en_US' !== yneko_reimu_i18n_current_language() ) {
+		return $text;
+	}
+
+	$translations = array(
+		'置顶' => 'Sticky',
+		'本站信息' => 'Site info',
+		'申请方法' => 'How to apply',
+		'小伙伴们' => 'Friends',
+		'添加本站后，在本页留言，格式如下' => 'After adding this site, leave a comment on this page in the following format.',
+		'没有文章' => 'No posts',
+		'字'   => 'words',
+		'篇文章' => 'posts',
+	);
+
+	return isset( $translations[ $text ] ) ? $translations[ $text ] : $text;
 }
 
 function yneko_reimu_i18n_filter_locale( $locale ) {
@@ -185,12 +217,32 @@ function yneko_reimu_i18n_localize_url( $url, $language = '' ) {
 function yneko_reimu_i18n_post_language( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
 	$lang    = $post_id ? (string) get_post_meta( $post_id, '_yneko_reimu_language', true ) : '';
+	$lang    = yneko_reimu_i18n_normalize_language( $lang );
 	return yneko_reimu_i18n_language_exists( $lang ) ? $lang : 'zh_CN';
 }
 
 function yneko_reimu_i18n_translation_id( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
 	return $post_id ? absint( get_post_meta( $post_id, '_yneko_reimu_translation_id', true ) ) : 0;
+}
+
+function yneko_reimu_i18n_source_post_id( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : absint( get_queried_object_id() );
+	if ( ! $post_id ) {
+		return 0;
+	}
+
+	$lang = yneko_reimu_i18n_post_language( $post_id );
+	if ( 'en_US' !== $lang ) {
+		return $post_id;
+	}
+
+	$translation_id = yneko_reimu_i18n_translation_id( $post_id );
+	if ( $translation_id && get_post( $translation_id ) && 'en_US' !== yneko_reimu_i18n_post_language( $translation_id ) ) {
+		return $translation_id;
+	}
+
+	return $post_id;
 }
 
 function yneko_reimu_i18n_get_translation_id( $post_id, $target_language ) {
@@ -229,6 +281,18 @@ function yneko_reimu_i18n_post_url( $post_id, $language = '' ) {
 	$relative = trim( wp_make_link_relative( $url ), '/' );
 	$relative = yneko_reimu_i18n_relative_without_prefix( $relative );
 	return yneko_reimu_i18n_prefixed_url( $relative );
+}
+
+function yneko_reimu_i18n_display_post_for_language( $post_id, $language = '' ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id ) {
+		return 0;
+	}
+
+	$language = $language && yneko_reimu_i18n_language_exists( $language ) ? $language : yneko_reimu_i18n_current_language();
+	$target   = yneko_reimu_i18n_get_translation_id( $post_id, $language );
+
+	return $target ? $target : $post_id;
 }
 
 function yneko_reimu_i18n_find_post_by_en_path( $path ) {
@@ -569,8 +633,8 @@ function yneko_reimu_i18n_language_meta_query( $language = '' ) {
 			),
 			array(
 				'key'     => '_yneko_reimu_language',
-				'value'   => 'zh_CN',
-				'compare' => '=',
+				'value'   => array( 'zh_CN', 'zh_cn' ),
+				'compare' => 'IN',
 			),
 			array(
 				'key'     => '_yneko_reimu_language',
@@ -584,8 +648,8 @@ function yneko_reimu_i18n_language_meta_query( $language = '' ) {
 		'relation' => 'OR',
 		array(
 			'key'     => '_yneko_reimu_language',
-			'value'   => $language,
-			'compare' => '=',
+			'value'   => 'en_US' === $language ? array( 'en_US', 'en_us' ) : array( $language ),
+			'compare' => 'IN',
 		),
 		array(
 			'key'     => '_yneko_reimu_language',
@@ -593,8 +657,8 @@ function yneko_reimu_i18n_language_meta_query( $language = '' ) {
 		),
 		array(
 			'key'     => '_yneko_reimu_language',
-			'value'   => 'zh_CN',
-			'compare' => '=',
+			'value'   => array( 'zh_CN', 'zh_cn' ),
+			'compare' => 'IN',
 		),
 		array(
 			'key'     => '_yneko_reimu_language',
@@ -624,6 +688,95 @@ function yneko_reimu_i18n_merge_meta_query( $query, $language = '' ) {
 	);
 }
 
+function yneko_reimu_i18n_translated_original_ids( $language = '' ) {
+	$language = $language && yneko_reimu_i18n_language_exists( $language ) ? $language : yneko_reimu_i18n_current_language();
+	if ( 'en_US' !== $language ) {
+		return array();
+	}
+
+	static $cache = array();
+	if ( isset( $cache[ $language ] ) ) {
+		return $cache[ $language ];
+	}
+
+	$english_posts = get_posts(
+		array(
+			'post_type'              => array( 'post', 'page' ),
+			'post_status'            => 'publish',
+			'posts_per_page'         => -1,
+			'fields'                 => 'ids',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				array(
+					'key'     => '_yneko_reimu_language',
+					'value'   => array( 'en_US', 'en_us' ),
+					'compare' => 'IN',
+				),
+			),
+		)
+	);
+
+	$exclude = array();
+	foreach ( $english_posts as $english_post_id ) {
+		$translation_id = yneko_reimu_i18n_translation_id( $english_post_id );
+		if ( $translation_id && 'publish' === get_post_status( $translation_id ) && 'en_US' !== yneko_reimu_i18n_post_language( $translation_id ) ) {
+			$exclude[] = absint( $translation_id );
+		}
+	}
+
+	$cache[ $language ] = array_values( array_unique( array_filter( $exclude ) ) );
+	return $cache[ $language ];
+}
+
+function yneko_reimu_i18n_merge_language_meta_query_args( $args, $language = '' ) {
+	$args           = is_array( $args ) ? $args : array();
+	$existing       = isset( $args['meta_query'] ) && is_array( $args['meta_query'] ) ? $args['meta_query'] : array();
+	$language_query = yneko_reimu_i18n_language_meta_query( $language );
+
+	if ( empty( $existing ) ) {
+		$args['meta_query'] = $language_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+		return $args;
+	}
+
+	$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+		'relation' => 'AND',
+		$existing,
+		$language_query,
+	);
+
+	return $args;
+}
+
+function yneko_reimu_i18n_apply_language_query_args( $args, $language = '' ) {
+	if ( ! yneko_reimu_i18n_enabled() ) {
+		return is_array( $args ) ? $args : array();
+	}
+
+	$language = $language && yneko_reimu_i18n_language_exists( $language ) ? $language : yneko_reimu_i18n_current_language();
+	$args     = yneko_reimu_i18n_merge_language_meta_query_args( $args, $language );
+	$exclude  = yneko_reimu_i18n_translated_original_ids( $language );
+
+	if ( $exclude ) {
+		$existing = array_map( 'absint', isset( $args['post__not_in'] ) ? (array) $args['post__not_in'] : array() );
+		$args['post__not_in'] = array_values( array_unique( array_merge( $existing, $exclude ) ) );
+	}
+
+	return $args;
+}
+
+function yneko_reimu_i18n_exclude_translated_originals( $query, $language = '' ) {
+	$exclude = yneko_reimu_i18n_translated_original_ids( $language );
+
+	if ( ! $exclude ) {
+		return;
+	}
+
+	$existing = array_map( 'absint', (array) $query->get( 'post__not_in' ) );
+	$query->set( 'post__not_in', array_values( array_unique( array_merge( $existing, $exclude ) ) ) );
+}
+
 function yneko_reimu_i18n_filter_main_query( $query ) {
 	if ( is_admin() || ! yneko_reimu_i18n_enabled() || ! $query->is_main_query() ) {
 		return;
@@ -631,6 +784,7 @@ function yneko_reimu_i18n_filter_main_query( $query ) {
 
 	if ( is_home() || is_archive() || is_search() ) {
 		yneko_reimu_i18n_merge_meta_query( $query );
+		yneko_reimu_i18n_exclude_translated_originals( $query );
 	}
 }
 add_action( 'pre_get_posts', 'yneko_reimu_i18n_filter_main_query', 20 );
@@ -645,12 +799,28 @@ function yneko_reimu_i18n_rest_post_query( $args, $request ) {
 		return $args;
 	}
 
-	$existing = isset( $args['meta_query'] ) && is_array( $args['meta_query'] ) ? $args['meta_query'] : array();
-	$language_query = yneko_reimu_i18n_language_meta_query( $language );
-	$args['meta_query'] = $existing ? array( 'relation' => 'AND', $existing, $language_query ) : $language_query;
-	return $args;
+	return yneko_reimu_i18n_apply_language_query_args( $args, $language );
 }
 add_filter( 'rest_post_query', 'yneko_reimu_i18n_rest_post_query', 20, 2 );
+
+function yneko_reimu_i18n_filter_sticky_posts( $sticky_posts ) {
+	if ( is_admin() || ! yneko_reimu_i18n_enabled() || 'en_US' !== yneko_reimu_i18n_current_language() ) {
+		return $sticky_posts;
+	}
+
+	$sticky_posts = array_map( 'absint', (array) $sticky_posts );
+	$translated   = array();
+
+	foreach ( $sticky_posts as $post_id ) {
+		$translation_id = yneko_reimu_i18n_get_translation_id( $post_id, 'en_US' );
+		if ( $translation_id && 'publish' === get_post_status( $translation_id ) ) {
+			$translated[] = $translation_id;
+		}
+	}
+
+	return array_values( array_unique( array_merge( $sticky_posts, $translated ) ) );
+}
+add_filter( 'option_sticky_posts', 'yneko_reimu_i18n_filter_sticky_posts', 20 );
 
 function yneko_reimu_i18n_virtual_path( $slug, $language = '' ) {
 	$slug     = trim( (string) $slug, '/' );

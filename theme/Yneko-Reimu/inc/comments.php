@@ -3,6 +3,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+function yneko_reimu_comments_canonical_post_id( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : absint( get_queried_object_id() );
+	if ( ! $post_id ) {
+		return 0;
+	}
+
+	if ( function_exists( 'yneko_reimu_i18n_source_post_id' ) ) {
+		$source_id = yneko_reimu_i18n_source_post_id( $post_id );
+		if ( $source_id ) {
+			return $source_id;
+		}
+	}
+
+	return $post_id;
+}
+
+function yneko_reimu_comments_current_display_post_id() {
+	$post_id = absint( get_queried_object_id() );
+	return $post_id ? $post_id : get_the_ID();
+}
+
 function yneko_reimu_waline_icon( $name ) {
 	$icons = array(
 		'markdown' => '<svg width="16" height="16" aria-hidden="true" viewBox="0 0 16 16"><path d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z" fill="currentColor"></path></svg>',
@@ -340,15 +361,19 @@ function yneko_reimu_comment_callback( $comment, $args, $depth ) {
 	$comment_id   = get_comment_ID();
 	$like_count   = absint( yneko_reimu_get_comment_meta( $comment_id, '_yneko_reimu_like_count', true ) );
 	$badges       = yneko_reimu_comment_agent_badges( $comment->comment_agent, $comment->comment_author_IP );
+	$comment_link = get_comment_link( $comment );
+	if ( ! empty( $GLOBALS['yneko_reimu_comment_display_url'] ) ) {
+		$comment_link = untrailingslashit( (string) $GLOBALS['yneko_reimu_comment_display_url'] ) . '#comment-' . absint( $comment_id );
+	}
 	?>
 	<li <?php comment_class( 'reimu-comment' ); ?> id="comment-<?php comment_ID(); ?>" data-comment-time="<?php echo esc_attr( $comment_time ); ?>" data-comment-id="<?php echo esc_attr( $comment_id ); ?>">
 		<article class="reimu-comment__body">
-			<a class="reimu-comment__avatar" href="<?php echo esc_url( get_comment_link( $comment ) ); ?>" aria-hidden="true" tabindex="-1"><?php echo yneko_reimu_get_comment_avatar( $comment, 56 ); ?></a>
+			<a class="reimu-comment__avatar" href="<?php echo esc_url( $comment_link ); ?>" aria-hidden="true" tabindex="-1"><?php echo yneko_reimu_get_comment_avatar( $comment, 56 ); ?></a>
 			<div class="reimu-comment__content">
 				<header class="reimu-comment__meta">
 					<span class="reimu-comment__headline">
 						<span class="reimu-comment__author"><?php comment_author_link(); ?></span>
-						<a class="reimu-comment__date" href="<?php echo esc_url( get_comment_link( $comment ) ); ?>">
+						<a class="reimu-comment__date" href="<?php echo esc_url( $comment_link ); ?>">
 							<time datetime="<?php echo esc_attr( get_comment_date( DATE_W3C, $comment ) ); ?>"><?php echo esc_html( get_comment_date( 'Y-m-d', $comment ) ); ?></time>
 						</a>
 					</span>

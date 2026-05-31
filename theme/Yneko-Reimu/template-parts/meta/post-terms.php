@@ -29,9 +29,11 @@ if ( $tags ) {
 }
 ?>
 <?php if ( yneko_reimu_theme_mod_bool( 'yneko_reimu_show_categories', true ) ) : ?>
+	<div class="article-category-list">
 	<?php foreach ( $categories as $category ) : ?>
 		<a class="article-category-link" data-aos="zoom-in" href="<?php echo esc_url( get_category_link( $category ) ); ?>"><?php echo esc_html( $category->name ); ?></a>
 	<?php endforeach; ?>
+	</div>
 <?php endif; ?>
 
 <?php if ( $visible_tags && yneko_reimu_theme_mod_bool( 'yneko_reimu_show_tags', true ) ) : ?>
