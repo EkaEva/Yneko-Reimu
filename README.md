@@ -62,6 +62,8 @@ Yneko-Reimu 在此基础上完成了 WordPress 主题化，包括 PHP 模板、W
 - PJAX / 软导航：减少站内切换时的整页刷新断档。
 - 音乐播放器：基于 APlayer，曲目、歌词和封面从 WordPress 媒体库配置。
 - WordPress 原生评论视觉增强：保留原生评论提交、审核、回复、分页能力。
+- 评论区图片 / GIF 上传：登录用户可上传，先进入临时目录，评论通过后才正式入库。
+- 评论 GIF 表情库：管理员可上传公共 GIF，用户评论 GIF 经审核后也可加入表情库。
 - 内置中英双语系统：中文使用原地址，英文使用 `/en/` 前缀，文章/页面可互相关联翻译。
 - GitHub OAuth 登录：主题内置登录模块，可在后台配置 Client ID / Secret。
 - 自定义鼠标指针：桌面端使用莉莉概念光标 PNG，移动端自动回退。
@@ -148,6 +150,46 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 5. 保存后，评论登录弹窗中会出现 GitHub 登录入口。
 
 注意：Client Secret 只保存在 WordPress 数据库中，不应写入主题源码或提交到 GitHub。
+
+普通 GitHub 登录只用于登录或自动创建订阅者用户，不会绑定当前已登录的 WordPress 用户。管理员如需绑定或重新绑定 GitHub，请使用设置页中明确的“绑定/重新绑定 GitHub”入口。
+
+如果 WordPress 后台未开启“任何人都可以注册”，前台评论登录弹窗只显示 GitHub 登录入口，不再显示 WordPress 用户名/密码登录表单。
+
+#### 评论上传
+
+评论上传位于“评论设置”标签页，可配置：
+
+- 是否允许登录用户上传评论图片和 GIF。
+- 图片大小上限，默认 `1MB`。
+- GIF 大小上限，默认 `1MB`。
+- 管理员上传公共 GIF。
+- 评论上传管理区。
+
+登录用户在评论区上传图片或 GIF 时，文件会先保存到：
+
+```text
+wp-content/uploads/yneko-reimu-comments/tmp/
+```
+
+此时不会创建媒体附件记录，避免用户只上传不提交时污染数据库。只有评论发布成功并通过审核后，主题才会把评论中实际引用到的临时文件转入正式目录：
+
+```text
+wp-content/uploads/yneko-reimu-comments/YYYY/MM/
+```
+
+通过后的文件会创建为隐藏附件，默认不显示在普通媒体库列表中。评论被删除、标记垃圾或未通过审核时，对应临时文件会被清理；超过 24 小时未使用的临时上传也会通过 WP-Cron 自动清理。
+
+评论上传管理区按三类展示：
+
+- 后台上传的 GIF
+- 用户评论 GIF
+- 用户评论图片
+
+管理员上传的 GIF 会直接进入公共 GIF 表情库。用户评论 GIF 在评论通过后进入待审核，管理员批准后才会出现在评论区 GIF 面板中。评论图片只作为评论附件管理，不会进入 GIF 表情库。
+
+评论区显示的图片和 GIF 最大为 `200x200`。如果后台删除了评论上传附件，前台会使用主题内置的缺失图片占位图显示，避免出现破图。
+
+为了减少刷屏，同一用户、邮箱或 IP 在一小时内不能重复发布完全相同的纯文字评论、单图片评论或单 GIF 评论。只有公共 GIF 库中的单个 GIF、且没有其它文字内容的评论会自动通过审核。
 
 #### 友链列表
 
@@ -240,6 +282,10 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - 评论分页
 - 加载更多
 - GitHub 登录入口，可选
+- 登录用户图片 / GIF 上传
+- 公共 GIF 表情库
+- 评论上传临时文件清理
+- 简单重复评论限制
 
 主题不会伪装成 Waline，只是参考 Reimu 演示站中 Waline 评论组件的视觉形式做 WordPress 原生等效实现。
 
@@ -456,6 +502,8 @@ If you redistribute, commercialize, or replace these cursor assets, please confi
 - PJAX-style soft navigation for smoother in-site transitions.
 - APlayer music player with audio, cover, and LRC lyrics configured from the WordPress Media Library.
 - Enhanced WordPress native comment visuals while keeping native submission, moderation, replies, and pagination.
+- Comment image/GIF uploads for logged-in users, using temporary files first and promoting them only after comment approval.
+- Comment GIF picker with administrator-uploaded GIFs and approved user-submitted GIFs.
 - Built-in Chinese/English multilingual system: Chinese uses normal URLs, English uses the `/en/` prefix, and posts/pages can be linked as translations.
 - Built-in GitHub OAuth login configured from the WordPress admin.
 - Custom Lily concept cursors on desktop with graceful mobile fallback.
@@ -532,6 +580,38 @@ GitHub Login:
 5. Save. The comment login modal will show the GitHub login entry when configured.
 
 Client Secret is stored only in the WordPress database. Do not commit it to GitHub.
+
+Normal GitHub login only signs users in or creates subscriber accounts when enabled. It does not bind GitHub to the currently logged-in WordPress user. Administrators should use the explicit bind/rebind entry in the settings page when they need to link their own GitHub account.
+
+If WordPress registration is disabled, the front-end comment login modal shows only the GitHub login entry and hides the WordPress username/password form.
+
+Comment uploads:
+
+- Logged-in users can upload comment images and GIFs.
+- Image upload limit defaults to `1MB`.
+- GIF upload limit defaults to `1MB`.
+- Administrators can upload public GIFs.
+- The upload manager groups items into admin GIFs, user comment GIFs, and user comment images.
+
+Front-end uploads are first stored under:
+
+```text
+wp-content/uploads/yneko-reimu-comments/tmp/
+```
+
+No Media Library attachment is created at this point, so abandoned uploads do not immediately pollute the database. After a comment is submitted and approved, files actually referenced by the comment are moved into:
+
+```text
+wp-content/uploads/yneko-reimu-comments/YYYY/MM/
+```
+
+Approved files are then registered as hidden attachments. Temporary files are removed when related comments are deleted, rejected, or marked as spam, and unused temporary files older than 24 hours are cleaned by WP-Cron.
+
+Administrator-uploaded GIFs enter the public GIF picker directly. User-submitted GIFs become pending after the comment is approved and only appear in the picker after administrator approval. Comment images are managed as comment attachments and are not added to the GIF picker.
+
+Comment images and GIFs are displayed within `200x200`. If an attachment managed by the theme is deleted, the comment falls back to the bundled missing-image placeholder instead of showing a broken image.
+
+To reduce spam, the same user, email, or IP cannot post the same text-only, image-only, or GIF-only comment more than once per hour. A single GIF from the public GIF picker, with no extra text, is auto-approved.
 
 Friend links:
 

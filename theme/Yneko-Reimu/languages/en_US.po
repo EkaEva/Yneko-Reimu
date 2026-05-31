@@ -173,6 +173,10 @@ msgstr ""
 msgid "不蒜子统计"
 msgstr "Busuanzi statistics"
 
+#: inc/settings.php
+msgid "部分 GIF 上传失败。"
+msgstr ""
+
 #: inc/post-meta.php sidebar.php
 msgid "侧边栏"
 msgstr "Sidebar"
@@ -194,12 +198,12 @@ msgid "插入"
 msgstr "Insert"
 
 #: inc/comments.php
-msgid "插入 GIF"
-msgstr "Insert GIF"
+msgid "插入 GIF 链接"
+msgstr ""
 
 #: inc/comments.php
-msgid "插入图片"
-msgstr "Insert image"
+msgid "插入图片链接"
+msgstr ""
 
 #: template-parts/virtual/about.php
 msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
@@ -208,6 +212,10 @@ msgstr "Create a WordPress page with the slug about, and its content will be sho
 #: inc/customizer.php
 msgid "代码块折叠高度"
 msgstr "Code collapse height"
+
+#: inc/settings.php
+msgid "当前账户已绑定 GitHub：%s"
+msgstr ""
 
 #: inc/customizer.php
 msgid "导航滚动隐藏"
@@ -236,6 +244,14 @@ msgstr "Login successful, refreshing..."
 #: inc/comments.php
 msgid "登录成功。"
 msgstr "Login successful."
+
+#: inc/comments.php
+msgid "登录后可上传 GIF。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "登录后可上传图片。"
+msgstr ""
 
 #: inc/enqueue.php
 msgid "登录失败，请检查账号和密码。"
@@ -377,6 +393,10 @@ msgstr "No posts yet"
 msgid "横幅与图片"
 msgstr "Banners and images"
 
+#: inc/settings.php
+msgid "后台上传的 GIF"
+msgstr ""
+
 #: comments.php
 msgid "欢迎评论"
 msgstr "Comments are welcome"
@@ -416,6 +436,14 @@ msgstr "Loading animation text"
 #: comments.php inc/enqueue.php template-parts/virtual/projects.php
 msgid "加载更多..."
 msgstr "Load more..."
+
+#: inc/comments.php
+msgid "仅支持 JPG、PNG、WebP 和 GIF。"
+msgstr ""
+
+#: inc/settings.php
+msgid "仅支持未超出大小限制的 GIF 文件。"
+msgstr ""
 
 #: inc/customizer.php
 msgid "开启 Algolia 搜索时必填。"
@@ -545,6 +573,10 @@ msgstr "Starred projects will be synced after a GitHub profile URL is configured
 msgid "朋友们的站点入口。"
 msgstr "Entry points to friends’ sites."
 
+#: inc/settings.php
+msgid "批准入库"
+msgstr ""
+
 #: template-parts/layout/site-footer.php
 msgid "篇文章"
 msgstr "posts"
@@ -552,6 +584,10 @@ msgstr "posts"
 #: comments.php
 msgid "评论"
 msgstr "Comments"
+
+#: inc/comments.php
+msgid "评论 GIF：%s"
+msgstr ""
 
 #: inc/comments.php
 msgid "评论不存在。"
@@ -572,6 +608,18 @@ msgstr "Comment order"
 #: inc/post-meta.php
 msgid "评论区"
 msgstr "Comments"
+
+#: inc/comments.php
+msgid "评论上传：%s"
+msgstr ""
+
+#: inc/settings.php
+msgid "评论图片"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论图片上传已关闭。"
+msgstr ""
 
 #: comments.php
 msgid "评论已关闭。"
@@ -605,6 +653,10 @@ msgstr "Toggle navigation"
 msgid "切换明暗模式"
 msgstr "Toggle color scheme"
 
+#: inc/comments.php
+msgid "请不要重复发送相同的评论。"
+msgstr ""
+
 #: template-parts/content/content-none.php
 msgid "请稍后再来或联系管理员处理。"
 msgstr "Please come back later or contact the administrator."
@@ -617,6 +669,22 @@ msgstr "Please enter an http(s) image URL"
 msgid "请输入用户名和密码。"
 msgstr "Please enter a username and password."
 
+#: inc/enqueue.php
+msgid "请先选择文件。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请选择 GIF 文件。"
+msgstr ""
+
+#: inc/settings.php
+msgid "请选择要上传的 GIF。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请选择要上传的文件。"
+msgstr ""
+
 #: template-parts/virtual/projects.php
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr "Please configure your GitHub profile URL in Appearance -> Yneko-Reimu Settings."
@@ -626,8 +694,28 @@ msgid "取消回复"
 msgstr "Cancel reply"
 
 #: inc/comments.php
+msgid "权限不足。"
+msgstr ""
+
+#: inc/settings.php
+msgid "删除文件"
+msgstr ""
+
+#: inc/comments.php
+msgid "上传"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "上传失败。"
+msgstr ""
+
+#: inc/comments.php
 msgid "上传图片"
 msgstr "Upload image"
+
+#: inc/enqueue.php
+msgid "上传中..."
+msgstr ""
 
 #: template-parts/content/content-single.php
 msgid "上一篇"
@@ -668,6 +756,10 @@ msgstr "How to apply"
 #: inc/github-login.php
 msgid "使用 GitHub 登录"
 msgstr "Login with GitHub"
+
+#: inc/comments.php
+msgid "使用 GitHub 登录后即可评论。"
+msgstr ""
 
 #: inc/comments.php
 msgid "使用 WordPress 账号登录后即可评论。"
@@ -757,6 +849,18 @@ msgstr "Enter an Algolia Search-Only API Key, not an Admin API Key."
 msgid "跳到内容"
 msgstr "Skip to content"
 
+#: inc/settings.php
+msgid "图片"
+msgstr ""
+
+#: inc/comments.php
+msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
+msgstr ""
+
+#: inc/comments.php
+msgid "图片已上传。"
+msgstr ""
+
 #: inc/enqueue.php
 msgid "图片预览"
 msgstr "Image preview"
@@ -788,6 +892,14 @@ msgstr "No content found for \"{query}\""
 #: inc/customizer.php template-parts/layout/loader.php
 msgid "未来有你..."
 msgstr "Loading..."
+
+#: inc/settings.php
+msgid "未知用户"
+msgstr ""
+
+#: inc/comments.php
+msgid "文件大小超出限制。"
+msgstr ""
 
 #: template-parts/layout/sidebar-common.php
 msgid "文章"
@@ -832,6 +944,10 @@ msgstr "No linked translation"
 #: inc/template-tags.php
 msgid "无限进步"
 msgstr "Keep improving"
+
+#: inc/comments.php
+msgid "无效的评论上传附件。"
+msgstr ""
 
 #: template-parts/content/content-single.php
 msgid "下一篇"
@@ -933,6 +1049,10 @@ msgstr "Add tracks in Appearance -> Yneko-Reimu Settings first. No player is out
 msgid "需要在 Yneko-Reimu 设置中填写 GitHub 主页链接。"
 msgstr "Requires the GitHub profile URL in Yneko-Reimu Settings."
 
+#: inc/enqueue.php
+msgid "选择文件"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "学习笔记"
 msgstr "Study notes"
@@ -961,9 +1081,25 @@ msgstr "Page:"
 msgid "页面内容"
 msgstr "Page content"
 
+#: inc/settings.php
+msgid "移出表情库"
+msgstr ""
+
 #: template-parts/layout/mobile-nav.php
 msgid "移动端导航"
 msgstr "Mobile navigation"
+
+#: inc/enqueue.php
+msgid "已插入评论。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已上传 %d 个 GIF 并加入表情库。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已上传 %d 个 GIF，部分文件未成功。"
+msgstr ""
 
 #: comments.php
 msgid "以 <strong>%1$s</strong> 登录。<a href=\"%2$s\">退出</a>"
@@ -980,6 +1116,14 @@ msgstr "Hide"
 #: inc/comments.php
 msgid "用户名或邮箱"
 msgstr "Username or email"
+
+#: inc/settings.php
+msgid "用户评论 GIF"
+msgstr ""
+
+#: inc/settings.php
+msgid "用户评论图片"
+msgstr ""
 
 #: inc/customizer.php
 msgid "用于 Reimu 扩展包的 CDN 前缀，默认使用 jsDelivr；如果你的地区访问不稳定，可以换成自己的 npm CDN。"
@@ -1045,7 +1189,7 @@ msgstr "Preload"
 msgid "预览"
 msgstr "Preview"
 
-#: inc/comments.php
+#: comments.php
 msgid "预览:"
 msgstr "Preview:"
 
@@ -1060,6 +1204,14 @@ msgstr ""
 #: template-parts/content/content-none.php
 msgid "暂时没有内容"
 msgstr "No content yet"
+
+#: inc/enqueue.php inc/settings.php
+msgid "暂无可选..."
+msgstr ""
+
+#: inc/settings.php
+msgid "暂无评论图片或 GIF 上传。"
+msgstr ""
 
 #: inc/template-tags.php
 msgid "赞助"
@@ -1252,6 +1404,26 @@ msgstr ""
 #: inc/template-tags.php
 msgid "Friends"
 msgstr "Friends"
+
+#: inc/settings.php
+msgid "GIF"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 待审核"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 上传失败。"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 已入库"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 已上传并加入表情库。"
+msgstr ""
 
 #: inc/customizer.php
 msgid "Giscus"
@@ -1460,6 +1632,10 @@ msgstr ""
 #: inc/settings.php
 msgid "Yneko-Reimu 设置"
 msgstr "Yneko-Reimu Settings"
+
+#: inc/settings.php
+msgid "Yneko-Reimu 设置分类"
+msgstr ""
 
 #: inc/customizer.php
 msgid "Yneko-Reimu 主题设置"

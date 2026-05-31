@@ -168,6 +168,10 @@ msgstr ""
 msgid "不蒜子统计"
 msgstr ""
 
+#: inc/settings.php
+msgid "部分 GIF 上传失败。"
+msgstr ""
+
 #: inc/post-meta.php sidebar.php
 msgid "侧边栏"
 msgstr ""
@@ -189,11 +193,11 @@ msgid "插入"
 msgstr ""
 
 #: inc/comments.php
-msgid "插入 GIF"
+msgid "插入 GIF 链接"
 msgstr ""
 
 #: inc/comments.php
-msgid "插入图片"
+msgid "插入图片链接"
 msgstr ""
 
 #: template-parts/virtual/about.php
@@ -202,6 +206,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "代码块折叠高度"
+msgstr ""
+
+#: inc/settings.php
+msgid "当前账户已绑定 GitHub：%s"
 msgstr ""
 
 #: inc/customizer.php
@@ -230,6 +238,14 @@ msgstr ""
 
 #: inc/comments.php
 msgid "登录成功。"
+msgstr ""
+
+#: inc/comments.php
+msgid "登录后可上传 GIF。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "登录后可上传图片。"
 msgstr ""
 
 #: inc/enqueue.php
@@ -372,6 +388,10 @@ msgstr ""
 msgid "横幅与图片"
 msgstr ""
 
+#: inc/settings.php
+msgid "后台上传的 GIF"
+msgstr ""
+
 #: comments.php
 msgid "欢迎评论"
 msgstr ""
@@ -410,6 +430,14 @@ msgstr ""
 
 #: comments.php inc/enqueue.php template-parts/virtual/projects.php
 msgid "加载更多..."
+msgstr ""
+
+#: inc/comments.php
+msgid "仅支持 JPG、PNG、WebP 和 GIF。"
+msgstr ""
+
+#: inc/settings.php
+msgid "仅支持未超出大小限制的 GIF 文件。"
 msgstr ""
 
 #: inc/customizer.php
@@ -540,12 +568,20 @@ msgstr ""
 msgid "朋友们的站点入口。"
 msgstr ""
 
+#: inc/settings.php
+msgid "批准入库"
+msgstr ""
+
 #: template-parts/layout/site-footer.php
 msgid "篇文章"
 msgstr ""
 
 #: comments.php
 msgid "评论"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论 GIF：%s"
 msgstr ""
 
 #: inc/comments.php
@@ -566,6 +602,18 @@ msgstr ""
 
 #: inc/post-meta.php
 msgid "评论区"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论上传：%s"
+msgstr ""
+
+#: inc/settings.php
+msgid "评论图片"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论图片上传已关闭。"
 msgstr ""
 
 #: comments.php
@@ -600,6 +648,10 @@ msgstr ""
 msgid "切换明暗模式"
 msgstr ""
 
+#: inc/comments.php
+msgid "请不要重复发送相同的评论。"
+msgstr ""
+
 #: template-parts/content/content-none.php
 msgid "请稍后再来或联系管理员处理。"
 msgstr ""
@@ -612,6 +664,22 @@ msgstr ""
 msgid "请输入用户名和密码。"
 msgstr ""
 
+#: inc/enqueue.php
+msgid "请先选择文件。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请选择 GIF 文件。"
+msgstr ""
+
+#: inc/settings.php
+msgid "请选择要上传的 GIF。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请选择要上传的文件。"
+msgstr ""
+
 #: template-parts/virtual/projects.php
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr ""
@@ -621,7 +689,27 @@ msgid "取消回复"
 msgstr ""
 
 #: inc/comments.php
+msgid "权限不足。"
+msgstr ""
+
+#: inc/settings.php
+msgid "删除文件"
+msgstr ""
+
+#: inc/comments.php
+msgid "上传"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "上传失败。"
+msgstr ""
+
+#: inc/comments.php
 msgid "上传图片"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "上传中..."
 msgstr ""
 
 #: template-parts/content/content-single.php
@@ -662,6 +750,10 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "使用 GitHub 登录"
+msgstr ""
+
+#: inc/comments.php
+msgid "使用 GitHub 登录后即可评论。"
 msgstr ""
 
 #: inc/comments.php
@@ -752,6 +844,18 @@ msgstr ""
 msgid "跳到内容"
 msgstr ""
 
+#: inc/settings.php
+msgid "图片"
+msgstr ""
+
+#: inc/comments.php
+msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
+msgstr ""
+
+#: inc/comments.php
+msgid "图片已上传。"
+msgstr ""
+
 #: inc/enqueue.php
 msgid "图片预览"
 msgstr ""
@@ -782,6 +886,14 @@ msgstr ""
 
 #: inc/customizer.php template-parts/layout/loader.php
 msgid "未来有你..."
+msgstr ""
+
+#: inc/settings.php
+msgid "未知用户"
+msgstr ""
+
+#: inc/comments.php
+msgid "文件大小超出限制。"
 msgstr ""
 
 #: template-parts/layout/sidebar-common.php
@@ -826,6 +938,10 @@ msgstr ""
 
 #: inc/template-tags.php
 msgid "无限进步"
+msgstr ""
+
+#: inc/comments.php
+msgid "无效的评论上传附件。"
 msgstr ""
 
 #: template-parts/content/content-single.php
@@ -928,6 +1044,10 @@ msgstr ""
 msgid "需要在 Yneko-Reimu 设置中填写 GitHub 主页链接。"
 msgstr ""
 
+#: inc/enqueue.php
+msgid "选择文件"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "学习笔记"
 msgstr ""
@@ -956,8 +1076,24 @@ msgstr ""
 msgid "页面内容"
 msgstr ""
 
+#: inc/settings.php
+msgid "移出表情库"
+msgstr ""
+
 #: template-parts/layout/mobile-nav.php
 msgid "移动端导航"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "已插入评论。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已上传 %d 个 GIF 并加入表情库。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已上传 %d 个 GIF，部分文件未成功。"
 msgstr ""
 
 #: comments.php
@@ -974,6 +1110,14 @@ msgstr ""
 
 #: inc/comments.php
 msgid "用户名或邮箱"
+msgstr ""
+
+#: inc/settings.php
+msgid "用户评论 GIF"
+msgstr ""
+
+#: inc/settings.php
+msgid "用户评论图片"
 msgstr ""
 
 #: inc/customizer.php
@@ -1040,7 +1184,7 @@ msgstr ""
 msgid "预览"
 msgstr ""
 
-#: inc/comments.php
+#: comments.php
 msgid "预览:"
 msgstr ""
 
@@ -1054,6 +1198,14 @@ msgstr ""
 
 #: template-parts/content/content-none.php
 msgid "暂时没有内容"
+msgstr ""
+
+#: inc/enqueue.php inc/settings.php
+msgid "暂无可选..."
+msgstr ""
+
+#: inc/settings.php
+msgid "暂无评论图片或 GIF 上传。"
 msgstr ""
 
 #: inc/template-tags.php
@@ -1246,6 +1398,26 @@ msgstr ""
 
 #: inc/template-tags.php
 msgid "Friends"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 待审核"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 上传失败。"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 已入库"
+msgstr ""
+
+#: inc/settings.php
+msgid "GIF 已上传并加入表情库。"
 msgstr ""
 
 #: inc/customizer.php
@@ -1454,6 +1626,10 @@ msgstr ""
 
 #: inc/settings.php
 msgid "Yneko-Reimu 设置"
+msgstr ""
+
+#: inc/settings.php
+msgid "Yneko-Reimu 设置分类"
 msgstr ""
 
 #: inc/customizer.php

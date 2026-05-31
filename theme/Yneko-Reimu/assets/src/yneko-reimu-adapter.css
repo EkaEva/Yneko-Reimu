@@ -2022,10 +2022,12 @@ html[lang="en-US"] .article-copyright p {
 
 .comment-text img,
 .reimu-comment-preview-content img {
-  max-width: 100%;
+  max-width: 200px;
+  max-height: 200px;
   height: auto;
   margin: 8px 0;
   border-radius: 8px;
+  object-fit: contain;
   box-shadow: var(--shadow-card);
 }
 
@@ -2458,7 +2460,7 @@ html[lang="en-US"] .article-copyright p {
   flex-direction: column;
   position: relative;
   margin: 0;
-  overflow: hidden;
+  overflow: visible;
   background: var(--color-wrap);
   border: 1px solid rgba(255, 82, 82, .48);
   border-radius: 12px;
@@ -2569,19 +2571,20 @@ html[lang="en-US"] .article-copyright p {
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 8px);
   z-index: 10;
   pointer-events: none;
 }
 
 .reimu-comment-popover {
-  max-width: min(520px, 100%);
-  padding: 14px;
+  max-width: min(680px, 100%);
+  padding: 16px;
   color: var(--color-default);
   background: var(--color-wrap);
   border: 1px solid rgba(255, 82, 82, .28);
   border-radius: 10px;
   box-shadow: var(--shadow-card-hover);
+  box-sizing: border-box;
   pointer-events: auto;
 }
 
@@ -2597,10 +2600,18 @@ html[lang="en-US"] .article-copyright p {
   font-weight: 700;
 }
 
+.reimu-comment-popover-subtitle {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 82, 82, .14);
+}
+
 .reimu-comment-emoji-grid {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
   gap: 6px;
+  max-height: 180px;
+  overflow: auto;
 }
 
 .reimu-comment-popover-item {
@@ -2624,11 +2635,81 @@ html[lang="en-US"] .article-copyright p {
   transform: translateY(-1px);
 }
 
+.reimu-comment-media-row,
 .reimu-comment-url-row {
   display: flex;
   gap: 8px;
 }
 
+.reimu-comment-media-row {
+  align-items: stretch;
+}
+
+.reimu-comment-media-row input[type="url"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.reimu-comment-media-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.reimu-comment-media-actions input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.reimu-comment-gif-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 8px;
+  max-height: 190px;
+  margin-top: 12px;
+  overflow: auto;
+}
+
+.reimu-comment-gif-item {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 3px;
+  overflow: hidden;
+  background: var(--red-5-5);
+  border: 1px solid rgba(255, 82, 82, .16);
+  border-radius: 8px;
+  cursor: var(--cursor-pointer) !important;
+  transition: border-color .2s ease, transform .2s ease;
+}
+
+.reimu-comment-gif-item:hover {
+  border-color: var(--red-1);
+  transform: translateY(-1px);
+}
+
+.reimu-comment-gif-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.reimu-comment-gif-empty,
+.reimu-comment-upload-login {
+  margin: 8px 0 0;
+  color: var(--grey-9);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.reimu-comment-media-row input[type="url"],
 .reimu-comment-url-row input {
   flex: 1;
   min-width: 0;
@@ -2640,6 +2721,7 @@ html[lang="en-US"] .article-copyright p {
   border-radius: 8px;
 }
 
+.reimu-comment-media-actions button,
 .reimu-comment-url-row button {
   flex: 0 0 auto;
   padding: 0 14px;
@@ -2651,16 +2733,49 @@ html[lang="en-US"] .article-copyright p {
   cursor: var(--cursor-pointer) !important;
 }
 
-.reimu-comment-preview {
-  max-width: 100%;
+.reimu-comment-preview-panel {
+  order: 3;
+  margin: 0;
+  padding: 18px 22px;
+  overflow: hidden;
+  text-align: left;
+  border-top: 1px dashed rgba(255, 82, 82, .14);
+  box-sizing: border-box;
+  animation: reimu-comment-preview-in .18s ease-out;
+}
+
+.reimu-comment-preview-panel[hidden] {
+  display: none !important;
+}
+
+.reimu-comment-preview-panel h4 {
+  margin: 0 0 12px;
+  color: var(--color-link);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
 }
 
 .reimu-comment-preview-content {
-  max-height: 260px;
-  overflow: auto;
-  padding: 4px 2px;
+  min-height: 64px;
+  max-height: none;
+  overflow: visible;
+  padding: 0 0 6px;
   color: var(--color-default);
   line-height: 1.67;
+  text-align: left;
+}
+
+@keyframes reimu-comment-preview-in {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  to {
+    max-height: 360px;
+    opacity: 1;
+  }
 }
 
 .reimu-comment-preview-empty {
@@ -3267,6 +3382,75 @@ body.dark-theme .reimu-load-more:hover {
 #aplayer .aplayer-time .aplayer-volume-wrap .aplayer-volume-bar,
 #aplayer .aplayer-time .aplayer-volume-wrap .aplayer-volume {
   cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-comment-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.reimu-comment-upload-row[hidden],
+.reimu-comment-upload-login[hidden] {
+  display: none !important;
+}
+
+.reimu-comment-upload-row input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.reimu-comment-upload-picker {
+  display: inline-flex;
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 12px;
+  color: var(--grey-7);
+  background: var(--color-background);
+  border: 1px solid rgba(255, 82, 82, .18);
+  border-radius: 8px;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-comment-upload-picker span {
+  display: block;
+  overflow: hidden;
+  color: inherit;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reimu-comment-upload-row button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 12px;
+  color: var(--red-1);
+  background: var(--red-5-5);
+  border: 1px solid rgba(255, 82, 82, .2);
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-comment-upload-row button:disabled {
+  opacity: .58;
+  cursor: var(--cursor-progress) !important;
+}
+
+.reimu-comment-upload-row > span {
+  flex: 1 1 100%;
+  color: var(--grey-9);
+  font-size: 12px;
 }
 
 .sidebar-wrapper-container > #aplayer .aplayer-icon-menu,
@@ -3918,6 +4102,26 @@ body #sidebar > #aplayer.aplayer .aplayer-list.reimu-scroll-zone-dragging ol::-w
 
   .reimu-comment-toolbar {
     gap: 10px;
+  }
+
+  .reimu-comment-popovers {
+    width: 100%;
+  }
+
+  .reimu-comment-media-row,
+  .reimu-comment-url-row,
+  .reimu-comment-upload-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reimu-comment-media-actions {
+    width: 100%;
+  }
+
+  .reimu-comment-media-actions button {
+    flex: 1 1 0;
+    min-height: 36px;
   }
 
   .reimu-comment-tools,

@@ -2327,6 +2327,14 @@
     });
   }
 
+  function setCommentToolState(form, name, active) {
+    var button = qs('[data-comment-tool="' + name + '"]', form);
+    if (button) {
+      button.classList.toggle('active', !!active);
+      button.setAttribute('aria-expanded', active ? 'true' : 'false');
+    }
+  }
+
   function toggleCommentPopover(form, name) {
     var popover = qs('[data-comment-popover="' + name + '"]', form);
     var button = qs('[data-comment-tool="' + name + '"]', form);
@@ -2338,6 +2346,157 @@
     popover.hidden = !shouldOpen;
     button.classList.toggle('active', shouldOpen);
     button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+  }
+
+  function initCommentPopoverOutsideClose() {
+    if (document.documentElement.dataset.commentPopoverOutsideReady) {
+      return;
+    }
+    document.documentElement.dataset.commentPopoverOutsideReady = 'true';
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!target || !target.closest) {
+        return;
+      }
+      if (target.closest('.reimu-comment-popover') || target.closest('[data-comment-tool]')) {
+        return;
+      }
+      qsa('.reimu-comment-form').forEach(function (form) {
+        closeCommentPopovers(form);
+      });
+    });
+  }
+
+  function updateCommentPreview(form, textarea) {
+    var preview = qs('[data-comment-preview-panel] .reimu-comment-preview-content', form);
+    if (preview) {
+      preview.innerHTML = markdownToHtml(textarea.value);
+    }
+  }
+
+  function insertCommentMedia(textarea, url, type) {
+    var alt = type === 'gif' ? 'GIF' : 'image';
+    insertIntoTextarea(textarea, '![' + alt + '](' + url + ')');
+  }
+
+  function initCommentGifLibrary(form, textarea) {
+    var library = qs('[data-comment-gif-library]', form);
+    var uploads = config.commentUploads || {};
+    var gifs = Array.isArray(uploads.gifs) ? uploads.gifs : [];
+    if (!library || library.dataset.gifLibraryReady) {
+      return;
+    }
+    library.dataset.gifLibraryReady = 'true';
+
+    if (!gifs.length) {
+      library.innerHTML = '<p class="reimu-comment-gif-empty">' + escapeHtml(t('commentGifEmpty', '暂无可选 GIF。')) + '</p>';
+      return;
+    }
+
+    library.innerHTML = gifs.map(function (item) {
+      return '<button type="button" class="reimu-comment-gif-item" data-comment-gif-url="' + escapeHtml(item.url || '') + '" title="' + escapeHtml(item.title || 'GIF') + '"><img src="' + escapeHtml(item.url || '') + '" alt="GIF" loading="lazy" decoding="async"></button>';
+    }).join('');
+
+    qsa('[data-comment-gif-url]', library).forEach(function (button) {
+      button.addEventListener('click', function () {
+        var url = button.getAttribute('data-comment-gif-url') || '';
+        if (url) {
+          insertCommentMedia(textarea, url, 'gif');
+          closeCommentPopovers(form);
+        }
+      });
+    });
+  }
+
+  function initCommentUploadRows(form, textarea) {
+    var uploads = config.commentUploads || {};
+    var canUpload = !!(uploads.enabled && uploads.isLoggedIn && uploads.nonce && config.login && config.login.ajaxUrl);
+
+    qsa('[data-comment-upload-row]', form).forEach(function (row) {
+      row.hidden = !canUpload;
+    });
+    qsa('[data-comment-upload-login]', form).forEach(function (note) {
+      note.hidden = canUpload;
+    });
+
+    qsa('[data-comment-upload-button]', form).forEach(function (button) {
+      if (button.dataset.commentUploadReady) {
+        return;
+      }
+      button.dataset.commentUploadReady = 'true';
+      var type = button.getAttribute('data-comment-upload-button') === 'gif' ? 'gif' : 'image';
+      var input = qs('[data-comment-upload-input="' + type + '"]', form);
+      if (input && !input.dataset.commentUploadInputReady) {
+        input.dataset.commentUploadInputReady = 'true';
+        input.addEventListener('change', function () {
+          if (input.files && input.files[0]) {
+            uploadCommentFile(type, input, button, textarea, form);
+          }
+        });
+      }
+      button.addEventListener('click', function () {
+        if (!canUpload) {
+          showTooltip(t('commentUploadLogin', '登录后可上传图片。'));
+          return;
+        }
+        if (input) {
+          input.click();
+        }
+      });
+    });
+
+    function uploadCommentFile(type, input, button, textarea, form) {
+      if (!canUpload) {
+        showTooltip(t('commentUploadLogin', '登录后可上传图片。'));
+        return;
+      }
+
+      var status = qs('[data-comment-upload-status="' + type + '"]', form);
+      if (!input || !input.files || !input.files[0]) {
+        showTooltip(t('commentUploadChoose', '请先选择文件。'));
+        return;
+      }
+
+      var formData = new FormData();
+      formData.append('action', 'yneko_reimu_comment_upload');
+      formData.append('nonce', uploads.nonce || '');
+      formData.append('type', type);
+      formData.append('file', input.files[0]);
+      button.disabled = true;
+      if (status) {
+        status.textContent = t('commentUploadUploading', '上传中...');
+      }
+
+      fetch(config.login.ajaxUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: formData
+      }).then(function (response) {
+        return response.json().catch(function () {
+          return { success: false, data: { message: t('commentUploadFailed', '上传失败。') } };
+        });
+      }).then(function (payload) {
+        if (!payload || !payload.success || !payload.data || !payload.data.url) {
+          var message = payload && payload.data && payload.data.message ? payload.data.message : t('commentUploadFailed', '上传失败。');
+          if (status) {
+            status.textContent = message;
+          }
+          showTooltip(message);
+          return;
+        }
+        insertCommentMedia(textarea, payload.data.url, payload.data.type || type);
+        input.value = '';
+        if (status) {
+          status.textContent = Object.prototype.hasOwnProperty.call(payload.data, 'message') ? payload.data.message : t('commentUploadDone', '已插入评论。');
+        }
+      }).catch(function () {
+        if (status) {
+          status.textContent = t('commentUploadFailed', '上传失败。');
+        }
+      }).finally(function () {
+        button.disabled = false;
+      });
+    }
   }
 
   function initCommentTools(form) {
@@ -2355,10 +2514,16 @@
       button.addEventListener('click', function () {
         var tool = button.getAttribute('data-comment-tool');
         if (tool === 'preview') {
-          var preview = qs('[data-comment-popover="preview"] .reimu-comment-preview-content', form);
-          if (preview) {
-            preview.innerHTML = markdownToHtml(textarea.value);
+          var panel = qs('[data-comment-preview-panel]', form);
+          var shouldOpen = panel ? panel.hidden : false;
+          if (panel) {
+            panel.hidden = !shouldOpen;
+            panel.classList.toggle('is-open', shouldOpen);
           }
+          updateCommentPreview(form, textarea);
+          closeCommentPopovers(form);
+          setCommentToolState(form, 'preview', shouldOpen);
+          return;
         }
         toggleCommentPopover(form, tool);
         var input = qs('[data-comment-popover="' + tool + '"] input', form);
@@ -2366,6 +2531,16 @@
           input.focus();
         }
       });
+    });
+
+    initCommentGifLibrary(form, textarea);
+    initCommentUploadRows(form, textarea);
+    initCommentPopoverOutsideClose();
+    textarea.addEventListener('input', function () {
+      var preview = qs('[data-comment-preview-panel]', form);
+      if (preview && !preview.hidden) {
+        updateCommentPreview(form, textarea);
+      }
     });
 
     qsa('[data-comment-insert]', form).forEach(function (button) {
@@ -2395,8 +2570,7 @@
           }
           return;
         }
-        var alt = type === 'gif' ? 'GIF' : 'image';
-        insertIntoTextarea(textarea, '![' + alt + '](' + url + ')');
+        insertCommentMedia(textarea, url, type);
         if (input) {
           input.value = '';
         }

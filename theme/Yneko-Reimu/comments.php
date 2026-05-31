@@ -80,7 +80,7 @@ $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 							'url'    => '<p class="comment-form-url"><label class="screen-reader-text" for="url">' . esc_html__( '网址（可选）', 'yneko-reimu' ) . '</label><input id="url" name="url" type="url" placeholder="' . esc_attr__( '网址（可选）', 'yneko-reimu' ) . '" value="' . esc_attr( wp_get_current_commenter()['comment_author_url'] ) . '" size="30"></p></div>',
 							'cookies' => '<input type="hidden" name="wp-comment-cookies-consent" value="yes">',
 						),
-						'comment_field'         => '<p class="comment-form-comment"><label class="screen-reader-text" for="comment">' . esc_html__( '评论', 'yneko-reimu' ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" placeholder="' . esc_attr__( '欢迎评论', 'yneko-reimu' ) . '" required></textarea><input type="hidden" name="redirect_to" value="' . esc_url( get_permalink( $reimu_display_post_id ) . '#comments' ) . '"></p>',
+						'comment_field'         => '<p class="comment-form-comment"><label class="screen-reader-text" for="comment">' . esc_html__( '评论', 'yneko-reimu' ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" placeholder="' . esc_attr__( '欢迎评论', 'yneko-reimu' ) . '" required></textarea><input type="hidden" name="redirect_to" value="' . esc_url( get_permalink( $reimu_display_post_id ) . '#comments' ) . '"></p><div class="reimu-comment-preview-panel" data-comment-preview-panel hidden><h4>' . esc_html__( '预览:', 'yneko-reimu' ) . '</h4><div class="reimu-comment-preview-content wl-content"></div></div>',
 					),
 					$reimu_canonical_post_id
 				);

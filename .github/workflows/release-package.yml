@@ -76,9 +76,14 @@ jobs:
           TAG_NAME: ${{ github.ref_name }}
           ZIP_PATH: releases/${{ steps.version.outputs.zip_name }}
         run: |
-          gh api repos/${{ github.repository }}/releases/generate-notes \
-            -f tag_name="$TAG_NAME" \
-            --jq .body > release-notes.md
+          NOTES_PATH="docs/release-notes-$TAG_NAME.md"
+          if [ -f "$NOTES_PATH" ]; then
+            cp "$NOTES_PATH" release-notes.md
+          else
+            gh api repos/${{ github.repository }}/releases/generate-notes \
+              -f tag_name="$TAG_NAME" \
+              --jq .body > release-notes.md
+          fi
 
           if gh release view "$TAG_NAME" >/dev/null 2>&1; then
             gh release edit "$TAG_NAME" --title "$TAG_NAME" --notes-file release-notes.md

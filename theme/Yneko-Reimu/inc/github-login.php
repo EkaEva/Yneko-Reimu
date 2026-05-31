@@ -178,12 +178,13 @@ function yneko_reimu_github_login_render_button( $redirect_to = '' ) {
 function yneko_reimu_github_login_render_reimu_button() {
 	$redirect_to = is_singular() ? get_permalink() : home_url( '/' );
 	$button      = yneko_reimu_github_login_render_button( $redirect_to );
+	$divider     = get_option( 'users_can_register' ) ? '<div class="reimu-login-divider"><span>' . esc_html__( '或使用 WordPress 账号', 'yneko-reimu' ) . '</span></div>' : '';
 
 	if ( ! $button ) {
 		return;
 	}
 
-	echo '<div class="reimu-login-social">' . $button . '<div class="reimu-login-divider"><span>' . esc_html__( '或使用 WordPress 账号', 'yneko-reimu' ) . '</span></div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<div class="reimu-login-social">' . $button . $divider . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'yneko_reimu_login_modal_social', 'yneko_reimu_github_login_render_reimu_button' );
 add_action( 'reimu_wp_login_modal_social', 'yneko_reimu_github_login_render_reimu_button' );
