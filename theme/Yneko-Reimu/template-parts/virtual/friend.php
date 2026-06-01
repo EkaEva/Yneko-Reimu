@@ -4,12 +4,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $reimu_friends = yneko_reimu_friend_items();
+$reimu_site_friend = function_exists( 'yneko_reimu_settings_site_friend_info' ) ? yneko_reimu_settings_site_friend_info() : array(
+	'name'  => get_bloginfo( 'name' ),
+	'url'   => home_url( '/' ),
+	'desc'  => get_bloginfo( 'description' ),
+	'image' => yneko_reimu_get_default_avatar_url(),
+);
 $reimu_site_yml = sprintf(
 	"- name: %s\n  url: %s\n  desc: %s\n  image: %s",
-	get_bloginfo( 'name' ),
-	home_url( '/' ),
-	get_bloginfo( 'description' ),
-	yneko_reimu_get_default_avatar_url()
+	$reimu_site_friend['name'],
+	$reimu_site_friend['url'],
+	$reimu_site_friend['desc'],
+	$reimu_site_friend['image']
 );
 $reimu_is_english = function_exists( 'yneko_reimu_i18n_is_english_request' ) && yneko_reimu_i18n_is_english_request();
 $reimu_apply_yml  = $reimu_is_english
@@ -44,7 +50,7 @@ $reimu_apply_yml  = $reimu_is_english
 						<div class="friend-item-wrap">
 							<a href="<?php echo esc_url( $friend['url'] ); ?>" rel="nofollow noopener noreferrer" target="_blank"></a>
 							<div class="friend-icon-wrap">
-								<img class="no-lightbox lazyload" src="<?php echo esc_url( $friend['image'] ); ?>" data-src="<?php echo esc_url( $friend['image'] ); ?>" alt="<?php echo esc_attr( $friend['name'] ); ?>">
+								<img class="no-lightbox lazyload" src="<?php echo esc_url( $friend['image'] ); ?>" data-src="<?php echo esc_url( $friend['image'] ); ?>" alt="<?php echo esc_attr( $friend['name'] ); ?>" onerror="this.onerror=null;this.src='<?php echo esc_url( yneko_reimu_get_default_avatar_url() ); ?>';this.removeAttribute('data-src');">
 							</div>
 							<div class="friend-info-wrap">
 								<div class="friend-name"><?php echo esc_html( $friend['name'] ); ?></div>

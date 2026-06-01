@@ -10,6 +10,23 @@ body,
   min-height: 100vh;
 }
 
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #container,
+html[data-theme="dark"] #wrap,
+html[data-theme="dark"] #content {
+  background-color: var(--color-background);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] #footer {
+  background: var(--color-footer-background) !important;
+  color: var(--color-default);
+}
+
 #header picture img,
 #header > img:first-of-type {
   object-position: 50% 50%;

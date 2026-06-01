@@ -59,7 +59,7 @@ Yneko-Reimu 在此基础上完成了 WordPress 主题化，包括 PHP 模板、W
 - 归档 / 关于 / 友链 / 项目虚拟页面：未创建真实页面时自动提供主题页面；真实页面可按 WordPress “允许评论”设置显示评论区。
 - GitHub 项目页：根据后台配置的 GitHub 主页拉取用户项目和 Star 项目。
 - 本地 JSON 搜索：支持生成 WordPress 本地搜索索引。
-- PJAX / 软导航：减少站内切换时的整页刷新断档。
+- PJAX / 软导航：减少站内切换时的整页刷新断档，并保持文章页目录/导航侧栏滚动状态。
 - 音乐播放器：基于 APlayer，曲目、歌词和封面从 WordPress 媒体库配置。
 - WordPress 原生评论视觉增强：支持 AJAX 无刷新提交、审核、回复、分页和登录弹窗。
 - 评论区图片 / GIF 上传：登录用户可上传，编辑器中以媒体占位符展示，先进入临时目录，评论通过后才正式入库。
@@ -217,6 +217,10 @@ wp-content/uploads/yneko-reimu-comments/YYYY/MM/
 - 链接
 - 描述
 - 头像
+
+友链设置开头提供独立的“本站友链信息”配置区，用于友链页“本站信息”代码块。可配置本站名称、链接、描述和 `image`。其中 `image` 仅接受 WebP 或 PNG；建议使用正方形 `512x512`，体积控制在 `200KB` 以内。
+
+如果没有配置“本站友链信息 image”，主题会依次使用站点头像、作者头像和主题内置头像。
 
 主题默认提供三条来源相关示例友链：主题作者、hexo-theme-reimu 原作者、鼠标指针作者。用户可以自行删除或修改。
 
@@ -376,7 +380,7 @@ theme/Yneko-Reimu/template-parts/
 vendor-src/reimu-upstream/
 ```
 
-打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、仓库级上游源码镜像、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-v0.1.10.zip`，不是 GitHub 仓库根目录的 ZIP。
+打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、仓库级上游源码镜像、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-v0.1.11.zip`，不是 GitHub 仓库根目录的 ZIP。
 
 ## GitHub Actions 自动打包
 
@@ -521,6 +525,7 @@ If you redistribute, commercialize, or replace these cursor assets, please confi
 - GitHub project page that fetches user repositories and starred repositories from the configured GitHub profile.
 - Local JSON search index for WordPress posts.
 - PJAX-style soft navigation for smoother in-site transitions.
+- PJAX-style soft navigation that keeps article TOC/navigation sidebar scrolling usable after in-site transitions.
 - APlayer music player with audio, cover, and LRC lyrics configured from the WordPress Media Library.
 - Enhanced WordPress native comment visuals with AJAX submission, moderation, replies, pagination, and the login modal.
 - Comment image/GIF uploads for logged-in users, shown as media tokens in the editor, using temporary files first and promoting them only after comment approval.
@@ -656,6 +661,10 @@ Friend links:
 - URL
 - Description
 - Avatar
+
+The Friend Links settings tab includes a dedicated Site friend-link info section for the Site info code block on the friend-links page. It lets you configure the site name, URL, description, and `image`. The `image` field accepts WebP or PNG only; a square `512x512` image under `200KB` is recommended.
+
+When the Site friend-link image is empty, the theme falls back to the site avatar, then the author avatar, then the bundled theme avatar.
 
 The theme ships with three credit-related example links: the theme author, the original hexo-theme-reimu author, and the cursor creator. Users may delete or edit them.
 

@@ -17,6 +17,7 @@ function yneko_reimu_settings_defaults() {
 			'avatar_max_mb'=> 1,
 		),
 		'github_url'        => '',
+		'friend_site'       => yneko_reimu_default_site_friend_info(),
 		'friends'           => yneko_reimu_default_friend_items(),
 		'sponsor_qr_url'    => '',
 		'github_oauth'      => array(
@@ -33,6 +34,15 @@ function yneko_reimu_settings_defaults() {
 			'en_label'  => 'English',
 		),
 		'music'             => array(),
+	);
+}
+
+function yneko_reimu_default_site_friend_info() {
+	return array(
+		'name'  => get_bloginfo( 'name' ),
+		'url'   => home_url( '/' ),
+		'desc'  => get_bloginfo( 'description' ),
+		'image' => '',
 	);
 }
 
@@ -62,6 +72,36 @@ function yneko_reimu_default_friend_items() {
 function yneko_reimu_normalize_settings_url( $url ) {
 	$url = trim( (string) $url );
 	return '' === $url ? '' : esc_url_raw( $url );
+}
+
+function yneko_reimu_normalize_png_webp_url( $url ) {
+	$url = yneko_reimu_normalize_settings_url( $url );
+	if ( '' === $url ) {
+		return '';
+	}
+
+	$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+	if ( ! preg_match( '/\.(?:png|webp)$/i', $path ) ) {
+		return '';
+	}
+
+	return $url;
+}
+
+function yneko_reimu_sanitize_site_friend_info( $item ) {
+	$item     = is_array( $item ) ? $item : array();
+	$defaults = yneko_reimu_default_site_friend_info();
+	$name     = sanitize_text_field( $item['name'] ?? $defaults['name'] );
+	$url      = yneko_reimu_normalize_settings_url( $item['url'] ?? $defaults['url'] );
+	$desc     = sanitize_text_field( $item['desc'] ?? $defaults['desc'] );
+	$image    = yneko_reimu_normalize_png_webp_url( $item['image'] ?? '' );
+
+	return array(
+		'name'  => '' !== $name ? $name : $defaults['name'],
+		'url'   => $url ? $url : $defaults['url'],
+		'desc'  => $desc,
+		'image' => $image,
+	);
 }
 
 function yneko_reimu_sanitize_friend_items( $items ) {
@@ -162,6 +202,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 			'avatar_max_mb'=> max( 1, min( 10, absint( $upload['avatar_max_mb'] ?? 1 ) ) ),
 		),
 		'github_url'        => yneko_reimu_normalize_settings_url( $input['github_url'] ?? '' ),
+		'friend_site'       => yneko_reimu_sanitize_site_friend_info( $input['friend_site'] ?? array() ),
 		'friends'           => yneko_reimu_sanitize_friend_items( array_key_exists( 'friends', $input ) ? $input['friends'] : array() ),
 		'sponsor_qr_url'    => yneko_reimu_normalize_settings_url( $input['sponsor_qr_url'] ?? '' ),
 		'github_oauth'      => array(
@@ -256,6 +297,17 @@ function yneko_reimu_settings_friend_items() {
 	return yneko_reimu_default_friend_items();
 }
 
+function yneko_reimu_settings_site_friend_info() {
+	$settings = yneko_reimu_settings();
+	$site     = yneko_reimu_sanitize_site_friend_info( $settings['friend_site'] ?? array() );
+
+	if ( ! $site['image'] ) {
+		$site['image'] = yneko_reimu_get_default_avatar_url();
+	}
+
+	return $site;
+}
+
 function yneko_reimu_settings_music_items() {
 	$raw = get_option( 'yneko_reimu_settings', null );
 	if ( is_array( $raw ) && array_key_exists( 'music', $raw ) ) {
@@ -337,10 +389,10 @@ function yneko_reimu_register_settings_page() {
 }
 add_action( 'admin_menu', 'yneko_reimu_register_settings_page' );
 
-function yneko_reimu_admin_media_field( $name, $value, $label ) {
+function yneko_reimu_admin_media_field( $name, $value, $label, $accept = '' ) {
 	?>
 	<div class="yneko-reimu-media-field">
-		<input type="url" class="regular-text yneko-reimu-media-url" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+		<input type="url" class="regular-text yneko-reimu-media-url" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>"<?php echo $accept ? ' data-accept="' . esc_attr( $accept ) . '"' : ''; ?>>
 		<button type="button" class="button yneko-reimu-media-button"><?php echo wp_kses_post( $label ); ?></button>
 	</div>
 	<?php
@@ -590,6 +642,30 @@ function yneko_reimu_render_settings_page() {
 			<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="friends" hidden>
 				<h2><?php yneko_reimu_admin_bilingual_heading( '友链设置', 'Friend link settings' ); ?></h2>
 				<?php yneko_reimu_admin_bilingual_description( '用于友链页面的卡片列表，支持名称、链接、描述和头像。', 'Cards shown on the friend-links page. Each item supports a name, URL, description, and avatar.' ); ?>
+				<?php $site_friend = yneko_reimu_sanitize_site_friend_info( $settings['friend_site'] ?? array() ); ?>
+				<h3><?php yneko_reimu_admin_bilingual_heading( '本站友链信息', 'Site friend-link info' ); ?></h3>
+				<?php yneko_reimu_admin_bilingual_description( '用于友链页“本站信息”代码块。未配置图片时，将依次使用站点头像、作者头像和主题内置头像。', 'Used by the Site info code block on the friend-links page. When image is empty, the site avatar, author avatar, and bundled theme avatar are used in order.' ); ?>
+				<table class="form-table yneko-reimu-site-friend-table" role="presentation">
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '名称', 'Name' ); ?></th>
+						<td><input type="text" class="regular-text" name="yneko_reimu_settings[friend_site][name]" value="<?php echo esc_attr( $site_friend['name'] ); ?>"></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '链接', 'URL' ); ?></th>
+						<td><input type="url" class="regular-text" name="yneko_reimu_settings[friend_site][url]" value="<?php echo esc_attr( $site_friend['url'] ); ?>"></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '描述', 'Description' ); ?></th>
+						<td><input type="text" class="regular-text" name="yneko_reimu_settings[friend_site][desc]" value="<?php echo esc_attr( $site_friend['desc'] ); ?>"></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( 'Image', 'Image' ); ?></th>
+						<td>
+							<?php yneko_reimu_admin_media_field( 'yneko_reimu_settings[friend_site][image]', $site_friend['image'], yneko_reimu_admin_bilingual_text( '选择图片', 'Choose image' ), 'image/png,image/webp' ); ?>
+							<?php yneko_reimu_admin_bilingual_description( '仅建议使用 WebP 或 PNG，推荐正方形 512×512，体积控制在 200KB 以内。', 'Use WebP or PNG. A square 512x512 image under 200KB is recommended.' ); ?>
+						</td>
+					</tr>
+				</table>
 				<div class="yneko-reimu-repeatable" data-repeatable="friends">
 					<div class="yneko-reimu-repeatable-list">
 						<?php foreach ( yneko_reimu_sanitize_friend_items( $settings['friends'] ) as $index => $friend ) : ?>
@@ -878,6 +954,7 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 		'locale'          => yneko_reimu_admin_prefers_zh() ? 'zh' : 'en',
 		'mediaTitle'      => array( 'zh' => '选择媒体', 'en' => 'Select media' ),
 		'useMedia'        => array( 'zh' => '使用此媒体', 'en' => 'Use this media' ),
+		'invalidImage'    => array( 'zh' => '本站友链 image 仅支持 WebP 或 PNG。', 'en' => 'Site friend-link image only supports WebP or PNG.' ),
 		'choose'          => array( 'zh' => '选择', 'en' => 'Choose' ),
 		'remove'          => array( 'zh' => '删除', 'en' => 'Remove' ),
 		'deleteUpload'    => array( 'zh' => '确定删除这个评论上传文件吗？', 'en' => 'Delete this comment upload file?' ),
@@ -897,7 +974,7 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 	wp_add_inline_script(
 		'yneko-reimu-admin-settings',
 		'window.YNEKO_REIMU_ADMIN_I18N=' . wp_json_encode( $admin_i18n ) . ';' .
-		"(function(){var labels=window.YNEKO_REIMU_ADMIN_I18N||{};var locale=labels.locale==='zh'?'zh':'en';var counters={friend:Date.now(),music:Date.now()+1000};function esc(value){return String(value||'').replace(/[&<>\"']/g,function(chr){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#039;'}[chr];});}function plain(key,zh,en){var item=labels[key]||{};return item[locale]||(locale==='zh'?zh:en);}function labelText(key,zh,en){return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,zh,en))+'</span>';}function fieldLabel(key,zh,en,control){return '<label>'+labelText(key,zh,en)+control+'</label>';}function rowHeading(type){return '<div class=\"yneko-reimu-row-heading\" data-row-label=\"'+type+'\"><span class=\"yneko-reimu-row-number\"></span></div>';}function rowTitle(type,index){var key=type==='music'?'musicItem':'friendItem';var fallbackZh=type==='music'?'曲目':'友链';var fallbackEn=type==='music'?'Track':'Friend';return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,fallbackZh,fallbackEn))+' #'+index+'</span>';}function activateTab(name){var tabs=document.querySelectorAll('[data-yneko-settings-tab]');var panels=document.querySelectorAll('[data-yneko-settings-panel]');var exists=false;tabs.forEach(function(tab){if(tab.getAttribute('data-yneko-settings-tab')===name){exists=true;}});if(!exists){name='general';}tabs.forEach(function(tab){var active=tab.getAttribute('data-yneko-settings-tab')===name;tab.classList.toggle('nav-tab-active',active);tab.setAttribute('aria-selected',active?'true':'false');});panels.forEach(function(panel){var active=panel.getAttribute('data-yneko-settings-panel')===name;panel.hidden=!active;panel.classList.toggle('is-active',active);});try{window.localStorage.setItem('ynekoReimuSettingsTab',name);}catch(error){}if(window.location.hash!=='#'+name){try{history.replaceState(null,'','#'+name);}catch(error){}}}function initTabs(){var initial=(window.location.hash||'').replace(/^#/,'');if(!initial){try{initial=window.localStorage.getItem('ynekoReimuSettingsTab')||'';}catch(error){}}activateTab(initial||'general');document.querySelectorAll('[data-yneko-settings-tab]').forEach(function(tab){tab.addEventListener('click',function(event){event.preventDefault();activateTab(tab.getAttribute('data-yneko-settings-tab')||'general');});});window.addEventListener('hashchange',function(){activateTab((window.location.hash||'').replace(/^#/,''));});}function refreshNumbers(root){(root||document).querySelectorAll('.yneko-reimu-repeatable').forEach(function(section){var type=section.dataset.repeatable==='music'?'music':'friend';section.querySelectorAll('.yneko-reimu-repeatable-row').forEach(function(row,index){var heading=row.querySelector('.yneko-reimu-row-heading');if(!heading){heading=document.createElement('div');heading.className='yneko-reimu-row-heading';heading.setAttribute('data-row-label',type);heading.innerHTML='<span class=\"yneko-reimu-row-number\"></span>';row.insertBefore(heading,row.firstChild);}var number=heading.querySelector('.yneko-reimu-row-number');if(number){number.innerHTML=rowTitle(type,index+1);}});});}function media(button){var field=button.closest('.yneko-reimu-inline-media')||button.closest('.yneko-reimu-media-field');var input=field?field.querySelector('.yneko-reimu-media-url'):null;if(!input||!window.wp||!wp.media){return;}var frame=wp.media({title:plain('mediaTitle','选择媒体','Select media'),button:{text:plain('useMedia','使用此媒体','Use this media')},multiple:false});frame.on('select',function(){var attachment=frame.state().get('selection').first().toJSON();input.value=attachment.url||'';input.dispatchEvent(new Event('change',{bubbles:true}));});frame.open();}function pickButton(){return '<button type=\"button\" class=\"button yneko-reimu-media-button\">'+labelText('choose','选择','Choose')+'</button>';}function mediaInput(name){return '<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"'+name+'\">'+pickButton()+'</span>';}function friendTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('friend')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-friend\">'+fieldLabel('name','名称','Name','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][name]\">')+fieldLabel('url','链接','URL','<input type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][url]\">')+fieldLabel('description','描述','Description','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][desc]\">')+fieldLabel('avatar','头像','Avatar','<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][image]\">'+pickButton()+'</span>')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}function musicTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('music')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-music\">'+fieldLabel('trackTitle','歌名','Track title','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][name]\">')+fieldLabel('artist','作者','Artist','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][artist]\">')+fieldLabel('audio','音频','Audio',mediaInput('yneko_reimu_settings[music]['+i+'][url]'))+fieldLabel('cover','封面','Cover',mediaInput('yneko_reimu_settings[music]['+i+'][cover]'))+fieldLabel('lyrics','歌词 LRC','Lyrics LRC',mediaInput('yneko_reimu_settings[music]['+i+'][lrc]'))+fieldLabel('themeColor','主题色','Theme color','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][theme]\" value=\"#ff5252\">')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}document.addEventListener('click',function(event){var target=event.target;if(target.closest('[data-yneko-upload-delete]')&&!window.confirm(plain('deleteUpload','确定删除这个评论上传文件吗？','Delete this comment upload file?'))){event.preventDefault();return;}if(target.closest('.yneko-reimu-media-button')){event.preventDefault();media(target.closest('.yneko-reimu-media-button'));}if(target.closest('.yneko-reimu-remove-row')){event.preventDefault();var repeatable=target.closest('.yneko-reimu-repeatable');target.closest('.yneko-reimu-repeatable-row').remove();refreshNumbers(repeatable||document);}var add=target.closest('.yneko-reimu-add-row');if(add){event.preventDefault();var type=add.dataset.template;var repeatable=add.closest('.yneko-reimu-repeatable');var list=repeatable.querySelector('.yneko-reimu-repeatable-list');var i=counters[type]++;list.insertAdjacentHTML('beforeend',type==='friend'?friendTemplate(i):musicTemplate(i));refreshNumbers(repeatable);}});initTabs();refreshNumbers();}());"
+		"(function(){var labels=window.YNEKO_REIMU_ADMIN_I18N||{};var locale=labels.locale==='zh'?'zh':'en';var counters={friend:Date.now(),music:Date.now()+1000};function esc(value){return String(value||'').replace(/[&<>\"']/g,function(chr){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#039;'}[chr];});}function plain(key,zh,en){var item=labels[key]||{};return item[locale]||(locale==='zh'?zh:en);}function labelText(key,zh,en){return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,zh,en))+'</span>';}function fieldLabel(key,zh,en,control){return '<label>'+labelText(key,zh,en)+control+'</label>';}function rowHeading(type){return '<div class=\"yneko-reimu-row-heading\" data-row-label=\"'+type+'\"><span class=\"yneko-reimu-row-number\"></span></div>';}function rowTitle(type,index){var key=type==='music'?'musicItem':'friendItem';var fallbackZh=type==='music'?'曲目':'友链';var fallbackEn=type==='music'?'Track':'Friend';return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,fallbackZh,fallbackEn))+' #'+index+'</span>';}function isAccepted(input,url){var accept=(input&&input.dataset?input.dataset.accept:'')||'';if(!accept){return true;}if(/image\\/png/.test(accept)||/image\\/webp/.test(accept)){return /\\.(png|webp)(?:[?#].*)?$/i.test(url||'');}return true;}function activateTab(name){var tabs=document.querySelectorAll('[data-yneko-settings-tab]');var panels=document.querySelectorAll('[data-yneko-settings-panel]');var exists=false;tabs.forEach(function(tab){if(tab.getAttribute('data-yneko-settings-tab')===name){exists=true;}});if(!exists){name='general';}tabs.forEach(function(tab){var active=tab.getAttribute('data-yneko-settings-tab')===name;tab.classList.toggle('nav-tab-active',active);tab.setAttribute('aria-selected',active?'true':'false');});panels.forEach(function(panel){var active=panel.getAttribute('data-yneko-settings-panel')===name;panel.hidden=!active;panel.classList.toggle('is-active',active);});try{window.localStorage.setItem('ynekoReimuSettingsTab',name);}catch(error){}if(window.location.hash!=='#'+name){try{history.replaceState(null,'','#'+name);}catch(error){}}}function initTabs(){var initial=(window.location.hash||'').replace(/^#/,'');if(!initial){try{initial=window.localStorage.getItem('ynekoReimuSettingsTab')||'';}catch(error){}}activateTab(initial||'general');document.querySelectorAll('[data-yneko-settings-tab]').forEach(function(tab){tab.addEventListener('click',function(event){event.preventDefault();activateTab(tab.getAttribute('data-yneko-settings-tab')||'general');});});window.addEventListener('hashchange',function(){activateTab((window.location.hash||'').replace(/^#/,''));});}function refreshNumbers(root){(root||document).querySelectorAll('.yneko-reimu-repeatable').forEach(function(section){var type=section.dataset.repeatable==='music'?'music':'friend';section.querySelectorAll('.yneko-reimu-repeatable-row').forEach(function(row,index){var heading=row.querySelector('.yneko-reimu-row-heading');if(!heading){heading=document.createElement('div');heading.className='yneko-reimu-row-heading';heading.setAttribute('data-row-label',type);heading.innerHTML='<span class=\"yneko-reimu-row-number\"></span>';row.insertBefore(heading,row.firstChild);}var number=heading.querySelector('.yneko-reimu-row-number');if(number){number.innerHTML=rowTitle(type,index+1);}});});}function media(button){var field=button.closest('.yneko-reimu-inline-media')||button.closest('.yneko-reimu-media-field');var input=field?field.querySelector('.yneko-reimu-media-url'):null;if(!input||!window.wp||!wp.media){return;}var accept=(input.dataset&&input.dataset.accept)||'';var frame=wp.media({title:plain('mediaTitle','选择媒体','Select media'),button:{text:plain('useMedia','使用此媒体','Use this media')},library:accept?{type:accept.split(',')}:undefined,multiple:false});frame.on('select',function(){var attachment=frame.state().get('selection').first().toJSON();var url=attachment.url||'';if(!isAccepted(input,url)){window.alert(plain('invalidImage','本站友链 image 仅支持 WebP 或 PNG。','Site friend-link image only supports WebP or PNG.'));return;}input.value=url;input.dispatchEvent(new Event('change',{bubbles:true}));});frame.open();}function pickButton(){return '<button type=\"button\" class=\"button yneko-reimu-media-button\">'+labelText('choose','选择','Choose')+'</button>';}function mediaInput(name){return '<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"'+name+'\">'+pickButton()+'</span>';}function friendTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('friend')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-friend\">'+fieldLabel('name','名称','Name','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][name]\">')+fieldLabel('url','链接','URL','<input type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][url]\">')+fieldLabel('description','描述','Description','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][desc]\">')+fieldLabel('avatar','头像','Avatar','<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][image]\">'+pickButton()+'</span>')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}function musicTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('music')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-music\">'+fieldLabel('trackTitle','歌名','Track title','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][name]\">')+fieldLabel('artist','作者','Artist','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][artist]\">')+fieldLabel('audio','音频','Audio',mediaInput('yneko_reimu_settings[music]['+i+'][url]'))+fieldLabel('cover','封面','Cover',mediaInput('yneko_reimu_settings[music]['+i+'][cover]'))+fieldLabel('lyrics','歌词 LRC','Lyrics LRC',mediaInput('yneko_reimu_settings[music]['+i+'][lrc]'))+fieldLabel('themeColor','主题色','Theme color','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][theme]\" value=\"#ff5252\">')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}document.addEventListener('change',function(event){var input=event.target&&event.target.matches&&event.target.matches('.yneko-reimu-media-url[data-accept]')?event.target:null;if(input&&input.value&&!isAccepted(input,input.value)){window.alert(plain('invalidImage','本站友链 image 仅支持 WebP 或 PNG。','Site friend-link image only supports WebP or PNG.'));input.value='';}});document.addEventListener('click',function(event){var target=event.target;if(target.closest('[data-yneko-upload-delete]')&&!window.confirm(plain('deleteUpload','确定删除这个评论上传文件吗？','Delete this comment upload file?'))){event.preventDefault();return;}if(target.closest('.yneko-reimu-media-button')){event.preventDefault();media(target.closest('.yneko-reimu-media-button'));}if(target.closest('.yneko-reimu-remove-row')){event.preventDefault();var repeatable=target.closest('.yneko-reimu-repeatable');target.closest('.yneko-reimu-repeatable-row').remove();refreshNumbers(repeatable||document);}var add=target.closest('.yneko-reimu-add-row');if(add){event.preventDefault();var type=add.dataset.template;var repeatable=add.closest('.yneko-reimu-repeatable');var list=repeatable.querySelector('.yneko-reimu-repeatable-list');var i=counters[type]++;list.insertAdjacentHTML('beforeend',type==='friend'?friendTemplate(i):musicTemplate(i));refreshNumbers(repeatable);}});initTabs();refreshNumbers();}());"
 	);
 }
 add_action( 'admin_enqueue_scripts', 'yneko_reimu_enqueue_settings_admin_assets' );
