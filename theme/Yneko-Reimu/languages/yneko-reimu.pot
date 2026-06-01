@@ -12,6 +12,18 @@ msgstr ""
 msgid "(无标题)"
 msgstr ""
 
+#: inc/comments.php
+msgid "[%s] 密码重置验证码"
+msgstr ""
+
+#: inc/comments.php
+msgid "[%s] 邮箱修改验证码"
+msgstr ""
+
+#: inc/comments.php
+msgid "[%s] 注册验证码"
+msgstr ""
+
 #: inc/customizer.php
 msgid "%1$s %2$d"
 msgstr ""
@@ -30,6 +42,10 @@ msgstr ""
 
 #: inc/view-count.php
 msgid "%s 留言"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "%s 秒后重发"
 msgstr ""
 
 #: comments.php inc/comments.php
@@ -88,6 +104,10 @@ msgstr ""
 msgid "保持参考站侧栏作者卡下方的 Reimu 标签云区域；不启用 WordPress 原生小工具。"
 msgstr ""
 
+#: inc/comments.php
+msgid "保存"
+msgstr ""
+
 #: template-parts/meta/post-copyright.php
 msgid "本博客所有文章除特别声明外，均采用 %s 许可协议。转载请注明出处！"
 msgstr ""
@@ -124,6 +144,10 @@ msgstr ""
 msgid "编辑"
 msgstr ""
 
+#: inc/comments.php
+msgid "编辑个人资料"
+msgstr ""
+
 #: template-parts/layout/sidebar-common.php
 msgid "标签"
 msgstr ""
@@ -154,6 +178,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "播放顺序"
+msgstr ""
+
+#: inc/settings.php
+msgid "驳回并删除"
 msgstr ""
 
 #: inc/customizer.php
@@ -208,6 +236,14 @@ msgstr ""
 msgid "代码块折叠高度"
 msgstr ""
 
+#: inc/comments.php
+msgid "当前未开放注册。"
+msgstr ""
+
+#: inc/comments.php
+msgid "当前未开启头像上传。"
+msgstr ""
+
 #: inc/settings.php
 msgid "当前账户已绑定 GitHub：%s"
 msgstr ""
@@ -224,19 +260,15 @@ msgstr ""
 msgid "导航文字：%s"
 msgstr ""
 
-#: comments.php inc/enqueue.php template-parts/virtual/projects.php
+#: inc/enqueue.php template-parts/virtual/projects.php
 msgid "到底了..."
 msgstr ""
 
-#: comments.php inc/comments.php
+#: comments.php inc/comments.php inc/enqueue.php
 msgid "登录"
 msgstr ""
 
-#: inc/enqueue.php
-msgid "登录成功，正在刷新..."
-msgstr ""
-
-#: inc/comments.php
+#: inc/comments.php inc/enqueue.php
 msgid "登录成功。"
 msgstr ""
 
@@ -252,6 +284,10 @@ msgstr ""
 msgid "登录失败，请检查账号和密码。"
 msgstr ""
 
+#: inc/comments.php
+msgid "登录信息已过期，请重试。"
+msgstr ""
+
 #: inc/enqueue.php
 msgid "登录中..."
 msgstr ""
@@ -262,6 +298,18 @@ msgstr ""
 
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
+msgstr ""
+
+#: inc/comments.php
+msgid "发送验证码"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "发送中..."
+msgstr ""
+
+#: inc/comments.php
+msgid "返回登录"
 msgstr ""
 
 #: template-parts/layout/sidebar-common.php
@@ -288,12 +336,48 @@ msgstr ""
 msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr ""
 
+#: inc/comments.php
+msgid "该验证码将在 %2$d 分钟后失效。"
+msgstr ""
+
+#: inc/comments.php
+msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请忽略这封邮件。"
+msgstr ""
+
+#: inc/comments.php
+msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请立即检查账号安全。"
+msgstr ""
+
+#: inc/comments.php
+msgid "该用户未注册。"
+msgstr ""
+
+#: inc/comments.php
+msgid "该邮箱已被注册。"
+msgstr ""
+
 #: inc/customizer.php
 msgid "歌词模式"
 msgstr ""
 
 #: inc/customizer.php
 msgid "歌单、专辑、歌曲或用户 ID。使用 auto URL 时可留空。"
+msgstr ""
+
+#: inc/comments.php
+msgid "个人主页"
+msgstr ""
+
+#: inc/comments.php
+msgid "个人资料"
+msgstr ""
+
+#: inc/comments.php
+msgid "个人资料已保存，头像审核中。"
+msgstr ""
+
+#: inc/comments.php
+msgid "个人资料已保存。"
 msgstr ""
 
 #: inc/post-meta.php
@@ -326,6 +410,10 @@ msgstr ""
 
 #: inc/comments.php
 msgid "关闭登录窗口"
+msgstr ""
+
+#: inc/comments.php
+msgid "关闭个人资料窗口"
 msgstr ""
 
 #: template-parts/layout/search-popup.php
@@ -409,7 +497,7 @@ msgid "回复评论"
 msgstr ""
 
 #: inc/github-login.php
-msgid "或使用 WordPress 账号"
+msgid "或使用 GitHub 登录"
 msgstr ""
 
 #: template-parts/layout/site-footer.php
@@ -484,6 +572,10 @@ msgstr ""
 msgid "开启后桌面端点击页面会显示鼠标烟花效果。"
 msgstr ""
 
+#: inc/comments.php
+msgid "开启认证器两步验证"
+msgstr ""
+
 #: inc/customizer.php
 msgid "开启时隐藏 WordPress 小工具区，只保留 Reimu 作者卡、统计、社交和菜单。"
 msgstr ""
@@ -520,6 +612,18 @@ msgstr ""
 msgid "莉莉概念光标作者"
 msgstr ""
 
+#: inc/comments.php
+msgid "两步验证码"
+msgstr ""
+
+#: inc/comments.php
+msgid "两步验证码不正确。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "两次输入的密码不一致。"
+msgstr ""
+
 #: inc/customizer.php
 msgid "留空时使用主题自动生成的 /search.json。"
 msgstr ""
@@ -530,6 +634,18 @@ msgstr ""
 
 #: inc/comments.php
 msgid "密码"
+msgstr ""
+
+#: inc/comments.php
+msgid "密码错误。"
+msgstr ""
+
+#: inc/comments.php
+msgid "密码已重置，请返回登录。"
+msgstr ""
+
+#: inc/comments.php
+msgid "密码至少需要 8 个字符。"
 msgstr ""
 
 #: inc/customizer.php
@@ -556,8 +672,24 @@ msgstr ""
 msgid "默认折叠播放列表"
 msgstr ""
 
-#: comments.php
+#: comments.php inc/comments.php
 msgid "昵称"
+msgstr ""
+
+#: inc/comments.php
+msgid "昵称不能超过 50 个字符。"
+msgstr ""
+
+#: inc/comments.php
+msgid "您的密码重置验证码是：%1$s"
+msgstr ""
+
+#: inc/comments.php
+msgid "您的邮箱修改验证码是：%1$s"
+msgstr ""
+
+#: inc/comments.php
+msgid "您的注册验证码是：%1$s"
 msgstr ""
 
 #: template-parts/virtual/projects.php
@@ -570,6 +702,10 @@ msgstr ""
 
 #: inc/settings.php
 msgid "批准入库"
+msgstr ""
+
+#: inc/settings.php
+msgid "批准头像"
 msgstr ""
 
 #: template-parts/layout/site-footer.php
@@ -668,12 +804,44 @@ msgstr ""
 msgid "请稍后再来或联系管理员处理。"
 msgstr ""
 
+#: inc/comments.php
+msgid "请输入 1 到 50 个字符的昵称。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请输入 6 位邮箱验证码。"
+msgstr ""
+
 #: inc/enqueue.php
 msgid "请输入 http(s) 图片地址"
 msgstr ""
 
 #: inc/comments.php
-msgid "请输入用户名和密码。"
+msgid "请输入两步验证码。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请输入邮箱和密码。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请输入有效的昵称。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请输入有效的邮箱地址。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请输入注册邮箱。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请先登录。"
+msgstr ""
+
+#: inc/comments.php
+msgid "请先生成认证器密钥。"
 msgstr ""
 
 #: inc/enqueue.php
@@ -692,8 +860,16 @@ msgstr ""
 msgid "请选择要上传的文件。"
 msgstr ""
 
+#: inc/enqueue.php
+msgid "请用认证器扫码，并输入 6 位验证码后保存。"
+msgstr ""
+
 #: template-parts/virtual/projects.php
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
+msgstr ""
+
+#: inc/comments.php
+msgid "取消"
 msgstr ""
 
 #: comments.php inc/enqueue.php
@@ -704,11 +880,27 @@ msgstr ""
 msgid "权限不足。"
 msgstr ""
 
+#: inc/comments.php
+msgid "确认新密码"
+msgstr ""
+
+#: inc/comments.php
+msgid "认证器验证码"
+msgstr ""
+
+#: inc/comments.php
+msgid "认证器验证码不正确。"
+msgstr ""
+
+#: inc/settings.php
+msgid "删除头像"
+msgstr ""
+
 #: inc/settings.php
 msgid "删除文件"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments.php inc/enqueue.php
 msgid "上传"
 msgstr ""
 
@@ -760,16 +952,12 @@ msgstr ""
 msgid "申请方法"
 msgstr ""
 
+#: inc/comments.php
+msgid "生成密钥"
+msgstr ""
+
 #: inc/github-login.php
 msgid "使用 GitHub 登录"
-msgstr ""
-
-#: inc/comments.php
-msgid "使用 GitHub 登录后即可评论。"
-msgstr ""
-
-#: inc/comments.php
-msgid "使用 WordPress 账号登录后即可评论。"
 msgstr ""
 
 #: inc/customizer.php
@@ -860,6 +1048,22 @@ msgstr ""
 msgid "跳到内容"
 msgstr ""
 
+#: inc/comments.php
+msgid "头像链接"
+msgstr ""
+
+#: inc/comments.php
+msgid "头像上传失败。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php inc/settings.php
+msgid "头像审核中"
+msgstr ""
+
+#: inc/comments.php
+msgid "头像文件超过大小限制。"
+msgstr ""
+
 #: inc/settings.php
 msgid "图片"
 msgstr ""
@@ -888,11 +1092,15 @@ msgstr ""
 msgid "推荐在“外观 -> Yneko-Reimu 设置”中管理友链。这里保留为旧配置兼容入口。"
 msgstr ""
 
+#: inc/comments.php
+msgid "退出登录"
+msgstr ""
+
 #: comments.php
 msgid "网址（可选）"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments.php inc/enqueue.php
 msgid "忘记密码？"
 msgstr ""
 
@@ -902,6 +1110,10 @@ msgstr ""
 
 #: inc/customizer.php template-parts/layout/loader.php
 msgid "未来有你..."
+msgstr ""
+
+#: inc/comments.php
+msgid "未找到匹配的用户。"
 msgstr ""
 
 #: inc/settings.php
@@ -1004,6 +1216,10 @@ msgstr ""
 msgid "显示过期提示"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "显示密码"
+msgstr ""
+
 #: inc/customizer.php
 msgid "显示评论数"
 msgstr ""
@@ -1044,6 +1260,22 @@ msgstr ""
 msgid "小伙伴们"
 msgstr ""
 
+#: inc/comments.php
+msgid "新密码"
+msgstr ""
+
+#: inc/comments.php
+msgid "新邮箱"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "新邮箱地址不要与原邮箱地址重复。"
+msgstr ""
+
+#: inc/comments.php
+msgid "新邮箱验证码"
+msgstr ""
+
 #: inc/customizer.php
 msgid "需要填写 Meting auto URL，或同时填写 ID、server、type；配置为空时不输出播放器。"
 msgstr ""
@@ -1074,6 +1306,46 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "严格复刻时显示标签云小组件"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码不正确。"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码错误次数过多，请重新获取。"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码会发送到您的邮箱，5 分钟内有效。"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码会发送到账号邮箱，5 分钟内有效。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "验证码已发送，请检查您的邮箱。"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码已发送，请稍后再试。"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码已失效，请重新获取。"
+msgstr ""
+
+#: inc/comments.php
+msgid "验证码邮件发送失败，请稍后重试。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "验证邮箱后即可创建账号。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "验证邮箱后即可重置密码。"
 msgstr ""
 
 #: inc/customizer.php
@@ -1112,8 +1384,12 @@ msgstr ""
 msgid "已上传 %d 个 GIF，部分文件未成功。"
 msgstr ""
 
-#: comments.php
-msgid "以 <strong>%1$s</strong> 登录。<a href=\"%2$s\">退出</a>"
+#: inc/comments.php
+msgid "已退出登录。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已应用头像"
 msgstr ""
 
 #: inc/template-tags.php
@@ -1124,8 +1400,8 @@ msgstr ""
 msgid "隐藏"
 msgstr ""
 
-#: inc/comments.php
-msgid "用户名或邮箱"
+#: inc/enqueue.php
+msgid "隐藏密码"
 msgstr ""
 
 #: inc/settings.php
@@ -1156,8 +1432,16 @@ msgstr ""
 msgid "用于加载 waifu.css、live2d.min.js、waifu-tips.js 和 waifu-tips.json。默认使用 stevenjoezhang/live2d-widget CDN。"
 msgstr ""
 
-#: comments.php
+#: comments.php inc/comments.php
 msgid "邮箱"
+msgstr ""
+
+#: inc/comments.php
+msgid "邮箱验证码"
+msgstr ""
+
+#: inc/comments.php
+msgid "邮箱验证码不正确或已失效。"
 msgstr ""
 
 #: inc/template-tags.php
@@ -1224,6 +1508,10 @@ msgstr ""
 msgid "暂无评论图片或 GIF 上传。"
 msgstr ""
 
+#: inc/settings.php
+msgid "暂无用户上传头像。"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "赞助"
 msgstr ""
@@ -1284,6 +1572,14 @@ msgstr ""
 msgid "重点"
 msgstr ""
 
+#: inc/comments.php
+msgid "重置密码"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "重置中..."
+msgstr ""
+
 #: template-parts/layout/site-header.php
 msgid "主导航"
 msgstr ""
@@ -1294,6 +1590,18 @@ msgstr ""
 
 #: archive.php index.php page.php single.php virtual-page.php
 msgid "主要内容"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "注册"
+msgstr ""
+
+#: inc/comments.php
+msgid "注册成功，请返回登录。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "注册中..."
 msgstr ""
 
 #: inc/post-meta.php
@@ -1438,6 +1746,14 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "Giscus"
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub 登录成功"
+msgstr ""
+
+#: inc/github-login.php
+msgid "GitHub 登录成功，正在返回评论区..."
 msgstr ""
 
 #: inc/template-tags.php

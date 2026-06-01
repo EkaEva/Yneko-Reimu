@@ -166,9 +166,10 @@ function yneko_reimu_github_login_render_button( $redirect_to = '' ) {
 	}
 
 	$url = yneko_reimu_github_login_start_url( $redirect_to ? $redirect_to : home_url( add_query_arg( array(), $GLOBALS['wp']->request ?? '' ) ) );
+	$url = add_query_arg( 'popup', '1', $url );
 
 	return sprintf(
-		'<a class="yneko-reimu-button" href="%1$s" data-no-pjax><span class="yneko-reimu-icon" aria-hidden="true">%2$s</span><span>%3$s</span></a>',
+		'<a class="yneko-reimu-button" href="%1$s" data-reimu-github-popup data-no-pjax><span class="yneko-reimu-icon" aria-hidden="true">%2$s</span><span>%3$s</span></a>',
 		esc_url( $url ),
 		yneko_reimu_github_login_icon(),
 		esc_html__( '使用 GitHub 登录', 'yneko-reimu' )
@@ -178,13 +179,13 @@ function yneko_reimu_github_login_render_button( $redirect_to = '' ) {
 function yneko_reimu_github_login_render_reimu_button() {
 	$redirect_to = is_singular() ? get_permalink() : home_url( '/' );
 	$button      = yneko_reimu_github_login_render_button( $redirect_to );
-	$divider     = get_option( 'users_can_register' ) ? '<div class="reimu-login-divider"><span>' . esc_html__( '或使用 WordPress 账号', 'yneko-reimu' ) . '</span></div>' : '';
+	$divider     = '<div class="reimu-login-divider"><span>' . esc_html__( '或使用 GitHub 登录', 'yneko-reimu' ) . '</span></div>';
 
 	if ( ! $button ) {
 		return;
 	}
 
-	echo '<div class="reimu-login-social">' . $button . $divider . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<div class="reimu-login-social">' . $divider . $button . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'yneko_reimu_login_modal_social', 'yneko_reimu_github_login_render_reimu_button' );
 add_action( 'reimu_wp_login_modal_social', 'yneko_reimu_github_login_render_reimu_button' );
@@ -194,8 +195,16 @@ function yneko_reimu_github_login_icon() {
 }
 
 function yneko_reimu_github_login_enqueue_styles() {
+	$login_logo = get_site_icon_url( 96 );
+	if ( ! $login_logo ) {
+		$custom_logo_id = get_theme_mod( 'custom_logo' );
+		$login_logo     = $custom_logo_id ? wp_get_attachment_image_url( $custom_logo_id, 'thumbnail' ) : '';
+	}
+	if ( ! $login_logo ) {
+		$login_logo = YNEKO_REIMU_URI . '/assets/images/avatar.svg';
+	}
 	$css = '
-		.reimu-login-social { margin: 0 0 18px; }
+		.reimu-login-social { margin: 0; }
 		.yneko-reimu-button {
 			display: inline-flex;
 			width: 100%;
@@ -224,7 +233,7 @@ function yneko_reimu_github_login_enqueue_styles() {
 			display: flex;
 			align-items: center;
 			gap: 12px;
-			margin: 16px 0 4px;
+			margin: 0 0 10px;
 			color: #999;
 			font-size: 13px;
 		}
@@ -234,6 +243,218 @@ function yneko_reimu_github_login_enqueue_styles() {
 			height: 1px;
 			flex: 1;
 			background: rgba(255, 82, 82, .18);
+		}
+		html,
+		body.login {
+			min-height: 100%;
+			background: #eee !important;
+		}
+		body.login {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			margin: 0;
+			padding: 32px 16px;
+			box-sizing: border-box;
+		}
+		body.login #login {
+			width: min(560px, 100%);
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body.login h1 a {
+			width: 68px;
+			height: 68px;
+			margin: 0 auto 18px;
+			background-image: url("' . esc_url( $login_logo ) . '") !important;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			border-radius: 50%;
+			filter: drop-shadow(0 8px 18px rgba(255, 82, 82, .12));
+		}
+		body.login #loginform,
+		body.login #lostpasswordform,
+		body.login #registerform {
+			margin-top: 0;
+			padding: 34px 44px 30px;
+			background: #fff;
+			border: 1px solid rgba(255, 82, 82, .36);
+			border-radius: 12px;
+			box-shadow: 0 22px 60px rgba(0, 0, 0, .12);
+		}
+		body.login form p {
+			margin: 0 0 18px;
+		}
+		body.login form p.submit {
+			display: flex;
+			justify-content: flex-end;
+			margin: 24px 0 0;
+			padding: 0;
+		}
+		body.login .user-pass-wrap {
+			margin-bottom: 18px;
+		}
+		body.login label {
+			color: #ff5252;
+			font-weight: 700;
+		}
+		body.login form .input,
+		body.login input[type="text"],
+		body.login input[type="email"],
+		body.login input[type="password"] {
+			width: 100%;
+			min-height: 42px;
+			margin-top: 8px;
+			padding: 0 14px;
+			box-sizing: border-box;
+			color: #444;
+			background: #f5f5f5;
+			border: 1px solid rgba(255, 82, 82, .34);
+			border-radius: 8px;
+			box-shadow: none;
+			font-size: 16px;
+		}
+		body.login form .input:focus,
+		body.login input[type="text"]:focus,
+		body.login input[type="email"]:focus,
+		body.login input[type="password"]:focus {
+			border-color: rgba(255, 82, 82, .72);
+			box-shadow: 0 0 0 3px rgba(255, 82, 82, .10);
+			outline: none;
+		}
+		body.login .button,
+		body.login .button-secondary,
+		body.login .button-primary,
+		body.login .wp-generate-pw,
+		body.login .wp-cancel-pw,
+		body.login .reset-pass-submit .button {
+			display: inline-flex !important;
+			min-height: 40px;
+			align-items: center;
+			justify-content: center;
+			padding: 0 22px;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 700;
+			line-height: 40px;
+			text-decoration: none;
+			box-shadow: none;
+		}
+		body.login .button-primary {
+			min-height: 40px;
+			padding: 0 22px;
+			background: #1fbf75;
+			border: 0;
+			border-radius: 8px;
+			box-shadow: 0 8px 18px rgba(31, 191, 117, .18);
+			font-weight: 700;
+			line-height: 40px;
+		}
+		body.login .button-secondary,
+		body.login .wp-generate-pw,
+		body.login .wp-cancel-pw {
+			color: #2f64ff;
+			background: #fff;
+			border: 1px solid rgba(47, 100, 255, .38);
+		}
+		body.login .reset-pass-submit {
+			display: flex;
+			justify-content: flex-end;
+			gap: 10px;
+			margin-top: 24px;
+		}
+		body.login .wp-pwd {
+			display: block;
+		}
+		body.login .wp-hide-pw {
+			top: 9px;
+			right: 8px;
+			color: #ff5252;
+		}
+		body.login .button-primary:hover,
+		body.login .button-primary:focus {
+			background: #1fbf75;
+			box-shadow: 0 10px 22px rgba(31, 191, 117, .24);
+			opacity: .92;
+		}
+		body.login .button-secondary:hover,
+		body.login .button-secondary:focus,
+		body.login .wp-generate-pw:hover,
+		body.login .wp-generate-pw:focus,
+		body.login .wp-cancel-pw:hover,
+		body.login .wp-cancel-pw:focus {
+			color: #2f64ff;
+			background: #fff;
+			border-color: rgba(47, 100, 255, .55);
+			box-shadow: 0 10px 22px rgba(47, 100, 255, .12);
+			opacity: .92;
+		}
+		body.login #nav,
+		body.login #backtoblog {
+			margin: 16px 0 0;
+			text-align: center;
+		}
+		body.login #nav a,
+		body.login #backtoblog a,
+		body.login .privacy-policy-page-link a {
+			color: #ff5252;
+			text-decoration: none;
+		}
+		body.login .message,
+		body.login .notice,
+		body.login #login_error {
+			width: 100%;
+			margin: 0 0 18px;
+			padding: 14px 18px;
+			box-sizing: border-box;
+			background: #fff;
+			border-left-color: #ff5252;
+			border-radius: 8px;
+		}
+		body.login .language-switcher {
+			width: min(560px, 100%);
+			margin: 18px auto 0;
+			padding: 0;
+			text-align: center;
+		}
+		body.login .language-switcher form {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			margin: 0;
+			padding: 0;
+			background: transparent;
+			border: 0;
+			box-shadow: none;
+		}
+		body.login .language-switcher select {
+			min-height: 38px;
+			border-color: rgba(255, 82, 82, .28);
+			border-radius: 8px;
+		}
+		body.login .language-switcher .button {
+			min-height: 38px;
+			border-color: rgba(255, 82, 82, .28);
+			border-radius: 8px;
+			color: #ff5252;
+			background: #fff;
+		}
+		body.login .privacy-policy-page-link {
+			width: min(560px, 100%);
+			margin: 14px auto 0;
+			text-align: center;
+		}
+		@media screen and (max-width: 560px) {
+			body.login {
+				padding: 20px 12px;
+			}
+			body.login #loginform,
+			body.login #lostpasswordform,
+			body.login #registerform {
+				padding: 28px 22px 24px;
+			}
 		}
 	';
 
@@ -275,6 +496,7 @@ function yneko_reimu_github_login_begin_oauth( $bind_current_user = false ) {
 			'redirect_to'  => $redirect_to,
 			'link_user_id' => $bind_current_user ? get_current_user_id() : 0,
 			'mode'         => $bind_current_user ? 'bind' : 'login',
+			'popup'        => ! empty( $_GET['popup'] ) ? '1' : '0', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			'created_at'   => time(),
 		),
 		10 * MINUTE_IN_SECONDS
@@ -345,11 +567,50 @@ function yneko_reimu_github_login_callback() {
 	wp_set_auth_cookie( $user_id, true, is_ssl() );
 	do_action( 'wp_login', $user->user_login, $user );
 
+	if ( ! empty( $payload['popup'] ) && '1' === (string) $payload['popup'] ) {
+		yneko_reimu_github_login_popup_done( wp_validate_redirect( $payload['redirect_to'] ?? home_url( '/' ), home_url( '/' ) ) );
+	}
+
 	wp_safe_redirect( wp_validate_redirect( $payload['redirect_to'] ?? home_url( '/' ), home_url( '/' ) ) );
 	exit;
 }
 add_action( 'login_form_yneko_reimu_github_callback', 'yneko_reimu_github_login_callback' );
 add_action( 'login_form_yneko_github_callback', 'yneko_reimu_github_login_callback' );
+
+function yneko_reimu_github_login_popup_done( $redirect_to ) {
+	$origin = wp_parse_url( home_url( '/' ), PHP_URL_SCHEME ) . '://' . wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+	$port   = wp_parse_url( home_url( '/' ), PHP_URL_PORT );
+	if ( $port ) {
+		$origin .= ':' . $port;
+	}
+
+	nocache_headers();
+	?>
+	<!doctype html>
+	<html <?php language_attributes(); ?>>
+	<head>
+		<meta charset="<?php bloginfo( 'charset' ); ?>">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title><?php esc_html_e( 'GitHub 登录成功', 'yneko-reimu' ); ?></title>
+	</head>
+	<body>
+		<p><?php esc_html_e( 'GitHub 登录成功，正在返回评论区...', 'yneko-reimu' ); ?></p>
+		<script>
+			(function() {
+				var payload = { type: 'yneko-reimu-github-login', success: true, redirectTo: <?php echo wp_json_encode( esc_url_raw( $redirect_to ) ); ?> };
+				if (window.opener && !window.opener.closed) {
+					window.opener.postMessage(payload, <?php echo wp_json_encode( $origin ); ?>);
+					window.close();
+				} else {
+					window.location.href = payload.redirectTo || <?php echo wp_json_encode( home_url( '/' ) ); ?>;
+				}
+			}());
+		</script>
+	</body>
+	</html>
+	<?php
+	exit;
+}
 
 function yneko_reimu_github_login_exchange_code( $code ) {
 	$options = yneko_reimu_github_login_get_options();
@@ -540,6 +801,15 @@ function yneko_reimu_github_login_avatar_data( $args, $id_or_email ) {
 		return $args;
 	}
 
+	if ( function_exists( 'yneko_reimu_user_avatar_url' ) ) {
+		$custom_avatar = yneko_reimu_user_avatar_url( $user_id );
+		if ( $custom_avatar ) {
+			$args['url']          = $custom_avatar;
+			$args['found_avatar'] = true;
+			return $args;
+		}
+	}
+
 	if ( yneko_reimu_github_login_user_has_local_avatar( $user_id ) ) {
 		return $args;
 	}
@@ -560,6 +830,19 @@ function yneko_reimu_github_login_avatar_html( $avatar, $id_or_email, $size, $de
 	$user_id = yneko_reimu_github_login_resolve_user_id( $id_or_email );
 	if ( ! $user_id ) {
 		return $avatar;
+	}
+
+	if ( function_exists( 'yneko_reimu_user_avatar_url' ) ) {
+		$custom_avatar = yneko_reimu_user_avatar_url( $user_id );
+		if ( $custom_avatar ) {
+			return sprintf(
+				'<img alt="%1$s" src="%2$s" class="%3$s" height="%4$d" width="%4$d" loading="lazy" decoding="async">',
+				esc_attr( $alt ),
+				esc_url( $custom_avatar ),
+				esc_attr( 'avatar avatar-' . absint( $size ) . ' photo yneko-user-avatar' ),
+				absint( $size )
+			);
+		}
 	}
 
 	if ( yneko_reimu_github_login_user_has_local_avatar( $user_id ) ) {

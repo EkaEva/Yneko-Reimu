@@ -25,7 +25,7 @@ get_header();
 				}
 				?>
 				<?php
-				if ( ( ! $reimu_special_page_slug || in_array( $reimu_special_page_slug, array( 'about', 'friend' ), true ) ) && yneko_reimu_should_show_comments( get_the_ID() ) ) {
+				if ( ( ! $reimu_special_page_slug || in_array( $reimu_special_page_slug, array( 'about', 'friend', 'projects' ), true ) ) && yneko_reimu_should_show_comments( get_the_ID() ) ) {
 					comments_template();
 				}
 				?>

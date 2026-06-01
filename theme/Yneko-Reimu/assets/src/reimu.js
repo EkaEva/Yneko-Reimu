@@ -22,6 +22,30 @@
     return i18n[key] || fallback;
   }
 
+  function storageGet(key) {
+    try {
+      return window.localStorage ? localStorage.getItem(key) || '' : '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function storageSet(key, value) {
+    try {
+      if (window.localStorage) {
+        localStorage.setItem(key, value || '');
+      }
+    } catch (error) {}
+  }
+
+  function storageRemove(key) {
+    try {
+      if (window.localStorage) {
+        localStorage.removeItem(key);
+      }
+    } catch (error) {}
+  }
+
   function qs(selector, parent) {
     return (parent || document).querySelector(selector);
   }
@@ -2302,6 +2326,49 @@
     dispatchInputEvent(textarea);
   }
 
+  function commentMediaStore(textarea) {
+    if (!textarea._reimuCommentMedia) {
+      textarea._reimuCommentMedia = {
+        index: 0,
+        items: {}
+      };
+    }
+    return textarea._reimuCommentMedia;
+  }
+
+  function commentMediaToken(textarea, url, type) {
+    var store = commentMediaStore(textarea);
+    store.index += 1;
+    var kind = type === 'gif' ? 'GIF' : 'IMAGE';
+    var token = '[' + kind + ':' + store.index + ']';
+    store.items[token] = {
+      url: url,
+      type: type === 'gif' ? 'gif' : 'image'
+    };
+    return token;
+  }
+
+  function resolveCommentMediaTokens(value, textarea) {
+    var store = textarea && textarea._reimuCommentMedia ? textarea._reimuCommentMedia.items : {};
+    return String(value || '').replace(/\[(GIF|IMAGE):(\d+)\]/g, function (token, kind) {
+      var item = store[token];
+      if (!item || !item.url) {
+        return token;
+      }
+      return '![' + (kind === 'GIF' ? 'GIF' : 'image') + '](' + item.url + ')';
+    });
+  }
+
+  function commentTextForCount(value) {
+    return String(value || '')
+      .replace(/\[(?:GIF|IMAGE):\d+\]/g, '')
+      .replace(/!\[[^\]]*\]\((?:https?:)?\/\/[^)\s]+\)/gi, '')
+      .replace(/\[[^\]]+\]\((?:https?:)?\/\/[^)\s]+\)/gi, function (_, label) {
+        return label || '';
+      })
+      .trim();
+  }
+
   function markdownToHtml(text) {
     var blocks = [];
     var source = String(text || '').replace(/\r\n?/g, '\n').replace(/```([a-z0-9_-]+)?\n?([\s\S]*?)```/gi, function (_, lang, code) {
@@ -2398,13 +2465,12 @@
   function updateCommentPreview(form, textarea) {
     var preview = qs('[data-comment-preview-panel] .reimu-comment-preview-content', form);
     if (preview) {
-      preview.innerHTML = markdownToHtml(textarea.value);
+      preview.innerHTML = markdownToHtml(resolveCommentMediaTokens(textarea.value, textarea));
     }
   }
 
   function insertCommentMedia(textarea, url, type) {
-    var alt = type === 'gif' ? 'GIF' : 'image';
-    insertIntoTextarea(textarea, '![' + alt + '](' + url + ')');
+    insertIntoTextarea(textarea, commentMediaToken(textarea, url, type));
   }
 
   function initCommentGifLibrary(form, textarea) {
@@ -2539,7 +2605,9 @@
       }
       button.dataset.commentToolReady = 'true';
       button.setAttribute('aria-expanded', 'false');
-      button.addEventListener('click', function () {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
         var tool = button.getAttribute('data-comment-tool');
         if (tool === 'preview') {
           var panel = qs('[data-comment-preview-panel]', form);
@@ -2556,7 +2624,9 @@
         toggleCommentPopover(form, tool);
         var input = qs('[data-comment-popover="' + tool + '"] input', form);
         if (input && !input.hidden) {
-          input.focus();
+          window.setTimeout(function () {
+            input.focus();
+          }, 0);
         }
       });
     });
@@ -2609,7 +2679,7 @@
     textarea.addEventListener('input', function () {
       var preview = qs('[data-comment-popover="preview"]:not([hidden]) .reimu-comment-preview-content', form);
       if (preview) {
-        preview.innerHTML = markdownToHtml(textarea.value);
+        preview.innerHTML = markdownToHtml(resolveCommentMediaTokens(textarea.value, textarea));
       }
     });
   }
@@ -2645,13 +2715,13 @@
     });
     if (button) {
       var hasMore = visible < items.length;
-      button.hidden = false;
+      button.hidden = !hasMore;
       button.disabled = !hasMore;
       button.classList.toggle('is-end', !hasMore);
-      button.textContent = hasMore ? (button.dataset.labelMore || t('loadMore', '加载更多...')) : (button.dataset.labelEnd || t('loadEnd', '到底了...'));
+      button.textContent = button.dataset.labelMore || t('loadMore', '加载更多...');
       button.setAttribute('aria-disabled', hasMore ? 'false' : 'true');
       if (buttonWrap) {
-        buttonWrap.hidden = false;
+        buttonWrap.hidden = !hasMore;
       }
     }
   }
@@ -2725,6 +2795,12 @@
     var textarea = qs('textarea[name="comment"]', form);
     if (textarea) {
       textarea.value = '';
+      if (textarea._reimuCommentMedia) {
+        textarea._reimuCommentMedia = {
+          index: 0,
+          items: {}
+        };
+      }
       dispatchInputEvent(textarea);
     }
     qsa('[data-comment-upload-status]', form).forEach(function (status) {
@@ -2801,6 +2877,9 @@
       }
       var originalText = submit ? submit.textContent : '';
       var formData = new FormData(form);
+      if (textarea) {
+        formData.set('comment', resolveCommentMediaTokens(textarea.value, textarea));
+      }
       formData.append('action', 'yneko_reimu_submit_comment');
       formData.append('nonce', config.comments.nonce || '');
       if (submit) {
@@ -2949,6 +3028,14 @@
       body.classList.toggle('reimu-login-on', !!open);
     }
     if (open) {
+      initLoginModal();
+      var activePanel = qs('[data-login-panel].is-active', modal);
+      var isLoginPanel = !activePanel || activePanel.getAttribute('data-login-panel') === 'login';
+      if (!isLoginPanel && modal._reimuSetLoginPanel) {
+        modal._reimuSetLoginPanel('login');
+      } else if (modal._reimuClearAuthMessages) {
+        modal._reimuClearAuthMessages();
+      }
       var input = qs('#reimu-login-user', modal);
       if (input && input.focus) {
         window.setTimeout(function () {
@@ -2965,30 +3052,140 @@
     }
     modal.dataset.loginModalReady = 'true';
     var form = qs('[data-reimu-login-form]', modal);
+    var registerForm = qs('[data-reimu-register-form]', modal);
+    var lostForm = qs('[data-reimu-lost-form]', modal);
     var message = qs('[data-login-message]', modal);
     var submit = qs('.reimu-login-submit', modal);
+    var registerCodeTimer = null;
+    var lostCodeTimer = null;
+
+    function clearAuthMessages() {
+      qsa('.reimu-login-message', modal).forEach(function (item) {
+        item.textContent = '';
+        item.classList.remove('error', 'success');
+      });
+      qsa('[data-login-2fa]', modal).forEach(function (item) {
+        item.hidden = true;
+        var input = qs('[name="two_factor_code"]', item);
+        if (input) {
+          input.value = '';
+        }
+      });
+      qsa('[data-password-toggle]', modal).forEach(function (button) {
+        var wrap = button.closest('.reimu-login-password-row');
+        var input = wrap ? qs('input', wrap) : null;
+        if (input) {
+          input.type = 'password';
+        }
+        button.classList.remove('is-visible');
+        button.setAttribute('aria-label', t('showPassword', '显示密码'));
+      });
+    }
+    modal._reimuClearAuthMessages = clearAuthMessages;
+
+    function setPanel(name) {
+      name = name || 'login';
+      if (name === 'register' && !registerForm) {
+        name = 'login';
+      }
+      if (name === 'lost' && !lostForm) {
+        name = 'login';
+      }
+      qsa('[data-login-panel]', modal).forEach(function (panel) {
+        var active = panel.getAttribute('data-login-panel') === name;
+        panel.hidden = !active;
+        panel.classList.toggle('is-active', active);
+      });
+      clearAuthMessages();
+      var login2fa = qs('[data-login-2fa]', modal);
+      if (login2fa && name !== 'login') {
+        login2fa.hidden = true;
+      }
+      var title = qs('#reimu-login-title', modal);
+      var desc = qs('.reimu-login-modal__desc', modal);
+      if (title) {
+        title.textContent = name === 'register' ? t('register', '注册') : (name === 'lost' ? t('lostPassword', '忘记密码？') : t('login', '登录'));
+      }
+      if (desc) {
+        desc.textContent = name === 'register'
+          ? t('registerDesc', '验证邮箱后即可创建账号。')
+          : (name === 'lost' ? t('lostPasswordDesc', '验证邮箱后即可重置密码。') : desc.getAttribute('data-login-desc') || desc.textContent);
+        desc.hidden = name === 'login' && !(desc.getAttribute('data-login-desc') || '').trim();
+      }
+      if (name === 'login') {
+        var social = qs('.reimu-login-social', modal);
+        if (social) {
+          social.hidden = false;
+        }
+      } else {
+        var socialPanel = qs('.reimu-login-social', modal);
+        if (socialPanel) {
+          socialPanel.hidden = true;
+        }
+      }
+    }
+    modal._reimuSetLoginPanel = setPanel;
+
+    var descNode = qs('.reimu-login-modal__desc', modal);
+    if (descNode && !descNode.getAttribute('data-login-desc')) {
+      descNode.setAttribute('data-login-desc', descNode.textContent);
+    }
 
     qsa('[data-login-close]', modal).forEach(function (button) {
       button.addEventListener('click', function () {
         setLoginModalOpen(false);
+        setPanel('login');
+      });
+    });
+
+    qsa('[data-login-panel-trigger]', modal).forEach(function (button) {
+      button.addEventListener('click', function () {
+        setPanel(button.getAttribute('data-login-panel-trigger') || 'login');
       });
     });
 
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && modal.classList.contains('show')) {
         setLoginModalOpen(false);
+        setPanel('login');
       }
     });
 
     if (form) {
+      var savedEmail = storageGet('yneko_reimu_login_email');
+      var loginEmailInput = qs('[name="log"]', form);
+      var rememberInput = qs('[name="rememberme"]', form);
+      if (savedEmail && loginEmailInput && !loginEmailInput.value) {
+        loginEmailInput.value = savedEmail;
+      }
+      if (savedEmail && rememberInput) {
+        rememberInput.checked = true;
+      }
       form.addEventListener('submit', function (event) {
         event.preventDefault();
         if (!config.login || !config.login.ajaxUrl) {
           return;
         }
-        var formData = new FormData(form);
-        formData.append('action', 'yneko_reimu_login');
-        formData.append('nonce', config.login.nonce || '');
+        function requestLogin(retried) {
+          var formData = new FormData(form);
+          formData.append('action', 'yneko_reimu_login');
+          formData.append('nonce', config.login.nonce || '');
+          return fetch(config.login.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+          }).then(function (response) {
+            return response.json().catch(function () {
+              return { success: false, data: { message: config.login.failedText || t('loginFailed', '登录失败。') } };
+            });
+          }).then(function (payload) {
+            if (!retried && payload && !payload.success && payload.data && payload.data.loginNonce && config.login) {
+              config.login.nonce = payload.data.loginNonce;
+              return requestLogin(true);
+            }
+            return payload;
+          });
+        }
         if (message) {
           message.textContent = config.login.loadingText || t('loginLoading', '登录中...');
           message.classList.remove('error', 'success');
@@ -2996,28 +3193,59 @@
         if (submit) {
           submit.disabled = true;
         }
-        fetch(config.login.ajaxUrl, {
-          method: 'POST',
-          credentials: 'same-origin',
-          body: formData
-        }).then(function (response) {
-          return response.json().catch(function () {
-            return { success: false, data: { message: config.login.failedText || t('loginFailed', '登录失败。') } };
-          });
-        }).then(function (payload) {
+        requestLogin(false).then(function (payload) {
+          var twoFactor = qs('[data-login-2fa]', form);
+          if (payload && payload.data && payload.data.loginNonce && config.login) {
+            config.login.nonce = payload.data.loginNonce;
+          }
           if (payload && payload.success) {
+            var submittedEmail = qs('[name="log"]', form);
+            var submittedRemember = qs('[name="rememberme"]', form);
+            if (submittedRemember && submittedRemember.checked && submittedEmail) {
+              storageSet('yneko_reimu_login_email', submittedEmail.value || '');
+            } else {
+              storageRemove('yneko_reimu_login_email');
+            }
             if (message) {
-              message.textContent = config.login.successText || t('loginSuccess', '登录成功，正在刷新...');
+              message.textContent = config.login.successText || t('loginSuccess', '登录成功。');
               message.classList.add('success');
             }
-            window.setTimeout(function () {
-              window.location.reload();
-            }, 600);
+            refreshCommentLoginState().then(function (updated) {
+              if (updated) {
+                if (form) {
+                  form.reset();
+                }
+                var twoFactor = qs('[data-login-2fa]', form);
+                if (twoFactor) {
+                  twoFactor.hidden = true;
+                }
+                setLoginModalOpen(false);
+                return;
+              }
+              window.setTimeout(function () {
+                window.location.reload();
+              }, 380);
+            });
             return;
           }
           var text = payload && payload.data && payload.data.message ? payload.data.message : (config.login.failedText || t('loginFailed', '登录失败。'));
+          if (payload && payload.data && payload.data.requires2fa) {
+            if (twoFactor) {
+              twoFactor.hidden = false;
+              var twoFactorInput = qs('[name="two_factor_code"]', twoFactor);
+              if (twoFactorInput && twoFactorInput.focus) {
+                twoFactorInput.focus();
+              }
+            }
+          } else if (twoFactor) {
+            twoFactor.hidden = true;
+            var hiddenInput = qs('[name="two_factor_code"]', twoFactor);
+            if (hiddenInput) {
+              hiddenInput.value = '';
+            }
+          }
           if (message) {
-            message.innerHTML = text;
+            message.textContent = text;
             message.classList.add('error');
           }
         }).catch(function () {
@@ -3032,6 +3260,745 @@
         });
       });
     }
+
+    qsa('[data-password-toggle]', modal).forEach(function (button) {
+      if (button.dataset.passwordToggleReady) {
+        return;
+      }
+      button.dataset.passwordToggleReady = 'true';
+      button.addEventListener('click', function () {
+        var wrap = button.closest('.reimu-login-password-row');
+        var input = wrap ? qs('input', wrap) : null;
+        if (!input) {
+          return;
+        }
+        var visible = input.type === 'text';
+        input.type = visible ? 'password' : 'text';
+        button.classList.toggle('is-visible', !visible);
+        button.setAttribute('aria-label', !visible ? t('hidePassword', '隐藏密码') : t('showPassword', '显示密码'));
+      });
+    });
+
+    function setCodeCountdown(button, seconds, timerSetter) {
+      var remaining = Number(seconds || 60);
+      var timer = null;
+      if (!button) {
+        return;
+      }
+      button.disabled = true;
+      function render() {
+        button.textContent = String(t('registerCodeWait', '%s 秒后重发')).replace('%s', remaining);
+        remaining -= 1;
+        if (remaining < 0) {
+          window.clearInterval(timer);
+          timerSetter(null);
+          button.disabled = false;
+          button.textContent = button.getAttribute('data-label') || t('sendCode', '发送验证码');
+        }
+      }
+      render();
+      timer = window.setInterval(render, 1000);
+      timerSetter(timer);
+    }
+
+    function bindCodeButton(authForm, selector, action, nonceKey, fields, messageSelector, timerName) {
+      if (!authForm) {
+        return;
+      }
+      var button = qs(selector, authForm);
+      var authMessage = qs(messageSelector, authForm);
+      if (!button || button.dataset.registerCodeReady) {
+        return;
+      }
+      button.dataset.registerCodeReady = 'true';
+      button.setAttribute('data-label', button.textContent);
+      button.addEventListener('click', function () {
+        if (!config.login || !config.login.ajaxUrl || button.disabled) {
+          return;
+        }
+        var formData = new FormData();
+        formData.append('action', action);
+        formData.append('nonce', config.login[nonceKey] || '');
+        fields.forEach(function (fieldName) {
+          var field = qs('[name="' + fieldName + '"]', authForm);
+          formData.append(fieldName, field ? field.value || '' : '');
+        });
+        button.disabled = true;
+        button.textContent = t('registerCodeSending', '发送中...');
+        if (authMessage) {
+          authMessage.textContent = '';
+          authMessage.classList.remove('error', 'success');
+        }
+        fetch(config.login.ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: formData
+        }).then(function (response) {
+          return response.json().catch(function () {
+            return { success: false, data: { message: config.login.failedText || t('loginFailed', '操作失败。') } };
+          });
+        }).then(function (payload) {
+          var text = payload && payload.data && payload.data.message ? payload.data.message : t('registerCodeSent', '验证码已发送，请检查您的邮箱。');
+          if (authMessage) {
+            authMessage.innerHTML = text;
+            authMessage.classList.toggle('success', !!(payload && payload.success));
+            authMessage.classList.toggle('error', !(payload && payload.success));
+          }
+          if (payload && payload.success) {
+            if (timerName === 'lost') {
+              window.clearInterval(lostCodeTimer);
+              setCodeCountdown(button, 60, function (timer) {
+                lostCodeTimer = timer;
+              });
+            } else {
+              window.clearInterval(registerCodeTimer);
+              setCodeCountdown(button, 60, function (timer) {
+                registerCodeTimer = timer;
+              });
+            }
+            return;
+          }
+          button.disabled = false;
+          button.textContent = button.getAttribute('data-label') || t('sendCode', '发送验证码');
+        }).catch(function () {
+          if (authMessage) {
+            authMessage.textContent = config.login.failedText || t('loginFailed', '操作失败。');
+            authMessage.classList.add('error');
+          }
+          button.disabled = false;
+          button.textContent = button.getAttribute('data-label') || t('sendCode', '发送验证码');
+        });
+      });
+    }
+
+    function bindSimpleAuthForm(authForm, action, nonceKey, messageSelector) {
+      if (!authForm) {
+        return;
+      }
+      var authMessage = qs(messageSelector, authForm);
+      var authSubmit = qs('[type="submit"]', authForm);
+      authForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!config.login || !config.login.ajaxUrl) {
+          return;
+        }
+        var formData = new FormData(authForm);
+        formData.append('action', action);
+        formData.append('nonce', config.login[nonceKey] || '');
+        if (authMessage) {
+          var loadingText = authForm.getAttribute('data-loading-text') || '';
+          if (!loadingText) {
+            loadingText = action === 'yneko_reimu_register'
+              ? t('registerLoading', '注册中...')
+              : (action === 'yneko_reimu_lostpassword' ? t('resetLoading', '重置中...') : (config.login.loadingText || t('loginLoading', '处理中...')));
+          }
+          authMessage.textContent = loadingText;
+          authMessage.classList.remove('error', 'success');
+        }
+        if (authSubmit) {
+          authSubmit.disabled = true;
+        }
+        fetch(config.login.ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: formData
+        }).then(function (response) {
+          return response.json().catch(function () {
+            return { success: false, data: { message: config.login.failedText || t('loginFailed', '操作失败。') } };
+          });
+        }).then(function (payload) {
+          var text = payload && payload.data && payload.data.message ? payload.data.message : (config.login.failedText || t('loginFailed', '操作失败。'));
+          if (authMessage) {
+            authMessage.innerHTML = text;
+            authMessage.classList.toggle('success', !!(payload && payload.success));
+            authMessage.classList.toggle('error', !(payload && payload.success));
+          }
+          if (payload && payload.success && (action === 'yneko_reimu_register' || action === 'yneko_reimu_lostpassword')) {
+            var registeredEmail = qs('[name="user_email"]', authForm);
+            var registeredPassword = qs('[name="user_password"]', authForm);
+            var registeredEmailValue = registeredEmail ? registeredEmail.value || '' : '';
+            var registeredPasswordValue = registeredPassword ? registeredPassword.value || '' : '';
+            var loginEmail = qs('[name="log"]', form);
+            var loginPassword = qs('[name="pwd"]', form);
+            if (action === 'yneko_reimu_register') {
+              if (loginEmail) {
+                loginEmail.value = registeredEmailValue;
+              }
+              if (loginPassword) {
+                loginPassword.value = registeredPasswordValue;
+              }
+            }
+            authForm.reset();
+            window.setTimeout(function () {
+              setPanel('login');
+              if (action === 'yneko_reimu_register') {
+                if (loginEmail) {
+                  loginEmail.value = registeredEmailValue;
+                }
+                if (loginPassword) {
+                  loginPassword.value = registeredPasswordValue;
+                }
+              }
+            }, 900);
+          }
+        }).catch(function () {
+          if (authMessage) {
+            authMessage.textContent = config.login.failedText || t('loginFailed', '操作失败。');
+            authMessage.classList.add('error');
+          }
+        }).finally(function () {
+          if (authSubmit) {
+            authSubmit.disabled = false;
+          }
+        });
+      });
+    }
+
+    bindCodeButton(registerForm, '[data-register-code-send]', 'yneko_reimu_register_code', 'registerCodeNonce', ['display_name', 'user_email'], '[data-register-message]', 'register');
+    bindCodeButton(lostForm, '[data-lost-code-send]', 'yneko_reimu_lostpassword_code', 'lostCodeNonce', ['user_login'], '[data-lost-message]', 'lost');
+    bindSimpleAuthForm(registerForm, 'yneko_reimu_register', 'registerNonce', '[data-register-message]');
+    bindSimpleAuthForm(lostForm, 'yneko_reimu_lostpassword', 'lostNonce', '[data-lost-message]');
+  }
+
+  function initProfileModal() {
+    var modal = qs('#reimu-profile-modal');
+    if (!modal || modal.dataset.profileReady) {
+      return;
+    }
+    modal.dataset.profileReady = 'true';
+    var form = qs('[data-reimu-profile-form]', modal);
+    var message = qs('[data-profile-message]', modal);
+    var emailTimer = null;
+
+    function setOpen(open) {
+      modal.classList.toggle('show', !!open);
+      modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+      if (body) {
+        body.classList.toggle('reimu-login-on', !!open);
+      }
+      if (open) {
+        if (message) {
+          message.textContent = '';
+          message.classList.remove('error', 'success');
+        }
+        refreshProfile();
+      } else if (form) {
+        form.reset();
+        validateProfilePasswords();
+        var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
+        if (avatarUploadButton) {
+          avatarUploadButton.textContent = t('upload', '上传');
+        }
+      }
+    }
+    modal._reimuSetProfileOpen = setOpen;
+
+    function setMessage(text, ok) {
+      if (!message) {
+        return;
+      }
+      message.textContent = text || '';
+      message.classList.toggle('success', !!ok);
+      message.classList.toggle('error', !ok && !!text);
+    }
+
+    function normalizeUrlInput(input) {
+      if (!input) {
+        return;
+      }
+      var value = String(input.value || '').trim();
+      if (value && !/^[a-z][a-z0-9+.-]*:\/\//i.test(value) && /^[^\s/@]+\.[^\s]+/.test(value)) {
+        input.value = 'https://' + value;
+      }
+    }
+
+    function validateProfilePasswords() {
+      if (!form) {
+        return true;
+      }
+      var password = qs('[name="new_password"]', form);
+      var confirm = qs('[name="new_password_confirm"]', form);
+      var messageText = t('passwordMismatch', '两次输入的密码不一致。');
+      var invalid = !!(password && confirm && confirm.value && password.value !== confirm.value);
+      if (confirm) {
+        confirm.classList.toggle('is-invalid', invalid);
+        confirm.setCustomValidity(invalid ? messageText : '');
+      }
+      if (password) {
+        password.classList.toggle('is-invalid', invalid);
+      }
+      return !invalid;
+    }
+
+    function fillProfile(data) {
+      if (!data || !form) {
+        return;
+      }
+      var fields = {
+        display_name: data.displayName,
+        current_email: data.email,
+        user_email: '',
+        avatar_url: data.avatarUrl,
+        profile_url: data.profileUrl
+      };
+      Object.keys(fields).forEach(function (name) {
+        var input = qs('[name="' + name + '"]', form);
+        if (input) {
+          input.value = fields[name] || '';
+        }
+      });
+      var twoFactor = qs('[name="totp_enabled"]', form);
+      if (twoFactor) {
+        twoFactor.checked = !!data.twoFactor;
+      }
+      var preview = qs('[data-profile-avatar-preview]', form);
+      if (preview && data.avatarUrl) {
+        preview.src = data.avatarUrl;
+      }
+      var status = qs('[data-profile-avatar-status]', form);
+      if (status) {
+        status.hidden = !data.avatarPending;
+        status.textContent = data.avatarPending ? t('avatarPending', '头像审核中') : '';
+      }
+      var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
+      if (avatarUploadButton) {
+        avatarUploadButton.textContent = t('upload', '上传');
+      }
+      var avatarFileInput = qs('[data-profile-avatar-file]', form);
+      if (avatarFileInput) {
+        avatarFileInput.value = '';
+      }
+      validateProfilePasswords();
+    }
+
+    function refreshProfile() {
+      if (!config.login || !config.login.ajaxUrl || !config.login.profileNonce) {
+        return;
+      }
+      var data = new FormData();
+      data.append('action', 'yneko_reimu_profile_get');
+      data.append('nonce', config.login.profileNonce || '');
+      fetch(config.login.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+        .then(function (response) { return response.json(); })
+        .then(function (payload) {
+          if (payload && payload.success) {
+            if (payload.data && config.login) {
+              config.login.profileNonce = payload.data.profileNonce || config.login.profileNonce;
+              config.login.logoutNonce = payload.data.logoutNonce || config.login.logoutNonce;
+            }
+            fillProfile(payload.data);
+          }
+        }).catch(function () {});
+    }
+
+    function postProfileAction(action, data) {
+      data = data || new FormData();
+      data.append('action', action);
+      data.append('nonce', config.login.profileNonce || '');
+      return fetch(config.login.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+        .then(function (response) {
+          return response.json().catch(function () {
+            return { success: false, data: { message: config.login.failedText || t('loginFailed', '操作失败。') } };
+          });
+        }).then(function (payload) {
+          if (payload && payload.data && config.login) {
+            config.login.profileNonce = payload.data.profileNonce || config.login.profileNonce;
+            config.login.logoutNonce = payload.data.logoutNonce || config.login.logoutNonce;
+          }
+          return payload;
+        });
+    }
+
+    qsa('[data-profile-close]', modal).forEach(function (button) {
+      button.addEventListener('click', function () {
+        setOpen(false);
+      });
+    });
+
+    document.addEventListener('click', function (event) {
+      var trigger = event.target && event.target.closest ? event.target.closest('[data-reimu-profile-open]') : null;
+      if (!trigger) {
+        return;
+      }
+      event.preventDefault();
+      setOpen(true);
+    });
+
+    qsa('[data-password-toggle]', modal).forEach(function (button) {
+      button.addEventListener('click', function () {
+        var wrap = button.closest('.reimu-login-password-row');
+        var input = wrap ? qs('input', wrap) : null;
+        if (!input) {
+          return;
+        }
+        var visible = input.type === 'text';
+        input.type = visible ? 'password' : 'text';
+        button.classList.toggle('is-visible', !visible);
+        button.setAttribute('aria-label', !visible ? t('hidePassword', '隐藏密码') : t('showPassword', '显示密码'));
+      });
+    });
+
+    var avatarUrlInput = qs('[name="avatar_url"]', form);
+    if (avatarUrlInput) {
+      avatarUrlInput.addEventListener('input', function () {
+        var preview = qs('[data-profile-avatar-preview]', form);
+        if (preview && avatarUrlInput.value) {
+          preview.src = avatarUrlInput.value;
+        }
+      });
+    }
+    var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
+    var avatarFileInput = qs('[data-profile-avatar-file]', form);
+    if (avatarUploadButton && avatarFileInput) {
+      avatarUploadButton.addEventListener('click', function () {
+        avatarFileInput.click();
+      });
+      avatarFileInput.addEventListener('change', function () {
+        var file = avatarFileInput.files && avatarFileInput.files[0] ? avatarFileInput.files[0] : null;
+        if (!file) {
+          avatarUploadButton.textContent = t('upload', '上传');
+          return;
+        }
+        avatarUploadButton.textContent = file.name.length > 10 ? file.name.slice(0, 9) + '...' : file.name;
+        var preview = qs('[data-profile-avatar-preview]', form);
+        if (preview && window.URL && window.URL.createObjectURL) {
+          preview.src = window.URL.createObjectURL(file);
+        }
+      });
+    }
+
+    qsa('[name="new_password"], [name="new_password_confirm"]', form).forEach(function (input) {
+      input.addEventListener('input', validateProfilePasswords);
+    });
+
+    var emailCodeButton = qs('[data-profile-email-code-send]', form);
+    if (emailCodeButton) {
+      emailCodeButton.addEventListener('click', function () {
+        if (emailCodeButton.disabled) {
+          return;
+        }
+        var data = new FormData();
+        var email = qs('[name="user_email"]', form);
+        var currentEmail = qs('[name="current_email"]', form);
+        var newEmail = email ? String(email.value || '').trim() : '';
+        var oldEmail = currentEmail ? String(currentEmail.value || '').trim() : '';
+        if (!newEmail || newEmail.toLowerCase() === oldEmail.toLowerCase()) {
+          setMessage(t('emailDuplicate', '新邮箱地址不要与原邮箱地址重复。'), false);
+          if (email && email.focus) {
+            email.focus();
+          }
+          return;
+        }
+        data.append('user_email', newEmail);
+        emailCodeButton.disabled = true;
+        emailCodeButton.textContent = t('registerCodeSending', '发送中...');
+        postProfileAction('yneko_reimu_profile_email_code', data).then(function (payload) {
+          setMessage(payload && payload.data && payload.data.message ? payload.data.message : '', payload && payload.success);
+          if (!payload || !payload.success) {
+            emailCodeButton.disabled = false;
+            emailCodeButton.textContent = emailCodeButton.getAttribute('data-label') || t('sendCode', '发送验证码');
+            return;
+          }
+          var remaining = 60;
+          emailCodeButton.setAttribute('data-label', emailCodeButton.getAttribute('data-label') || emailCodeButton.textContent);
+          window.clearInterval(emailTimer);
+          emailTimer = window.setInterval(function () {
+            emailCodeButton.textContent = String(t('registerCodeWait', '%s 秒后重发')).replace('%s', remaining);
+            remaining -= 1;
+            if (remaining < 0) {
+              window.clearInterval(emailTimer);
+              emailCodeButton.disabled = false;
+              emailCodeButton.textContent = emailCodeButton.getAttribute('data-label') || t('sendCode', '发送验证码');
+            }
+          }, 1000);
+        }).catch(function () {
+          setMessage(config.login.failedText || t('loginFailed', '操作失败。'), false);
+          emailCodeButton.disabled = false;
+          emailCodeButton.textContent = emailCodeButton.getAttribute('data-label') || t('sendCode', '发送验证码');
+        });
+      });
+    }
+
+    var twoFactorToggle = qs('[data-profile-2fa-toggle]', form);
+    var twoFactorSetup = qs('[data-profile-2fa-setup]', form);
+    if (twoFactorToggle && twoFactorSetup) {
+      twoFactorSetup.hidden = !twoFactorToggle.checked;
+      twoFactorToggle.addEventListener('change', function () {
+        twoFactorSetup.hidden = !twoFactorToggle.checked;
+      });
+    }
+
+    var generate2fa = qs('[data-profile-2fa-generate]', form);
+    if (generate2fa) {
+      generate2fa.addEventListener('click', function () {
+        postProfileAction('yneko_reimu_profile_totp_generate').then(function (payload) {
+          if (!payload || !payload.success) {
+            setMessage(payload && payload.data && payload.data.message ? payload.data.message : config.login.failedText, false);
+            return;
+          }
+          var secret = qs('[data-profile-2fa-secret]', form);
+          var qr = qs('[data-profile-2fa-qr]', form);
+          if (secret) {
+            secret.textContent = payload.data.secret || '';
+          }
+          if (qr) {
+            qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(payload.data.uri || '');
+            qr.hidden = false;
+          }
+          setMessage(t('profile2faGenerated', '请用认证器扫码，并输入 6 位验证码后保存。'), true);
+        });
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        normalizeUrlInput(qs('[name="profile_url"]', form));
+        normalizeUrlInput(qs('[name="avatar_url"]', form));
+        if (!validateProfilePasswords()) {
+          var confirm = qs('[name="new_password_confirm"]', form);
+          setMessage(t('passwordMismatch', '两次输入的密码不一致。'), false);
+          if (confirm && confirm.reportValidity) {
+            confirm.reportValidity();
+          }
+          return;
+        }
+        var data = new FormData(form);
+        postProfileAction('yneko_reimu_profile_save', data).then(function (payload) {
+          setMessage(payload && payload.data && payload.data.message ? payload.data.message : '', payload && payload.success);
+          if (payload && payload.success) {
+            fillProfile(payload.data);
+            setOpen(false);
+            refreshCommentLoginState();
+          } else if (payload && payload.data && payload.data.message) {
+            setMessage(payload.data.message, false);
+          }
+        }).catch(function () {
+          setMessage(config.login.failedText || t('loginFailed', '操作失败。'), false);
+        });
+      });
+    }
+  }
+
+  function applyCommentLoggedInState(data) {
+    if (!data || !data.loggedIn || !data.identity) {
+      return false;
+    }
+    if (config.comments) {
+      config.comments.nonce = data.commentNonce || config.comments.nonce;
+    }
+    if (config.commentUploads) {
+      config.commentUploads.isLoggedIn = true;
+      config.commentUploads.nonce = data.commentUploadNonce || config.commentUploads.nonce;
+    }
+    if (config.login) {
+      config.login.logoutNonce = data.logoutNonce || config.login.logoutNonce;
+      config.login.profileNonce = data.profileNonce || config.login.profileNonce;
+    }
+    qsa('.reimu-comment-form').forEach(function (form) {
+      form.classList.add('reimu-comment-form--logged-in');
+      qsa('.reimu-comment-form__fields input', form).forEach(function (input) {
+        input.value = '';
+      });
+      qsa('.reimu-comment-form__fields', form).forEach(function (fields) {
+        fields.hidden = true;
+      });
+      var current = qs('.reimu-comment-current-user', form);
+      if (current) {
+        current.outerHTML = data.identity;
+      } else {
+        var toolbar = qs('.reimu-comment-toolbar', form);
+        if (toolbar) {
+          toolbar.insertAdjacentHTML('beforebegin', data.identity);
+        }
+      }
+      qsa('.reimu-comment-login', form).forEach(function (login) {
+        login.remove();
+      });
+      qsa('[data-comment-upload-login]', form).forEach(function (notice) {
+        notice.hidden = true;
+      });
+    });
+    if (data.profileModal && !qs('#reimu-profile-modal')) {
+      document.body.insertAdjacentHTML('beforeend', data.profileModal);
+    }
+    if (data.loginModal && !qs('#reimu-login-modal')) {
+      document.body.insertAdjacentHTML('beforeend', data.loginModal);
+    }
+    initProfileModal();
+    initLoginModal();
+    initCommentAjaxLogout();
+    return true;
+  }
+
+  function applyCommentLoggedOutState(data) {
+    qsa('.reimu-comment-form').forEach(function (form) {
+      form.classList.remove('reimu-comment-form--logged-in');
+      qsa('.reimu-comment-form__fields', form).forEach(function (fields) {
+        fields.hidden = false;
+      });
+      var identity = qs('.reimu-comment-current-user', form);
+      if (identity) {
+        identity.remove();
+      }
+      var actions = qs('.reimu-comment-actions', form);
+      if (actions && !qs('.reimu-comment-login', actions)) {
+        var wordCount = qs('.reimu-comment-word-count', actions);
+        var loginUrl = data && data.loginUrl ? data.loginUrl : '#reimu-login-modal';
+        var loginText = t('login', '登录');
+        var replacement = document.createElement('span');
+        replacement.className = 'reimu-comment-login';
+        replacement.innerHTML = '<a class="reimu-comment-login-link" href="' + escapeHtml(loginUrl) + '">' + escapeHtml(loginText) + '</a>';
+        if (wordCount) {
+          actions.insertBefore(replacement, wordCount.nextSibling);
+        } else {
+          actions.insertBefore(replacement, actions.firstChild);
+        }
+      }
+      qsa('[data-comment-upload-login]', form).forEach(function (notice) {
+        notice.hidden = false;
+      });
+    });
+    if (config.commentUploads) {
+      config.commentUploads.isLoggedIn = false;
+    }
+    initCommentLoginTriggers();
+    return true;
+  }
+
+  function initProfileOpenDelegation() {
+    if (document.documentElement.dataset.profileOpenDelegationReady) {
+      return;
+    }
+    document.documentElement.dataset.profileOpenDelegationReady = 'true';
+    document.addEventListener('click', function (event) {
+      var trigger = event.target && event.target.closest ? event.target.closest('[data-reimu-profile-open]') : null;
+      if (!trigger) {
+        return;
+      }
+      event.preventDefault();
+      function openModal() {
+        var modal = qs('#reimu-profile-modal');
+        if (!modal) {
+          return false;
+        }
+        initProfileModal();
+        if (modal._reimuSetProfileOpen) {
+          modal._reimuSetProfileOpen(true);
+        } else {
+          modal.classList.add('show');
+          modal.setAttribute('aria-hidden', 'false');
+        }
+        return true;
+      }
+      if (openModal()) {
+        return;
+      }
+      refreshCommentLoginState().then(openModal);
+    });
+  }
+
+  function refreshCommentLoginState() {
+    if (!config.login || !config.login.ajaxUrl) {
+      return Promise.resolve(false);
+    }
+    var formData = new FormData();
+    formData.append('action', 'yneko_reimu_login_state');
+    formData.append('redirect_to', window.location.href || '');
+    return fetch(config.login.ajaxUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: formData
+    }).then(function (response) {
+      return response.json().catch(function () {
+        return { success: false };
+      });
+    }).then(function (payload) {
+      var updated = false;
+      if (payload && payload.success && payload.data) {
+        updated = payload.data.loggedIn ? applyCommentLoggedInState(payload.data) : applyCommentLoggedOutState(payload.data);
+      }
+      return updated;
+    }).catch(function () {
+      return false;
+    });
+  }
+
+  function openAuthPopup(url, name, width, height) {
+    width = width || 560;
+    height = height || 720;
+    var left = Math.max(0, Math.round((window.screen.width - width) / 2));
+    var top = Math.max(0, Math.round((window.screen.height - height) / 2));
+    var features = [
+      'popup=yes',
+      'width=' + width,
+      'height=' + height,
+      'left=' + left,
+      'top=' + top,
+      'resizable=yes',
+      'scrollbars=yes'
+    ].join(',');
+    var popup = window.open(url, name || 'yneko_reimu_auth', features);
+    if (popup && popup.focus) {
+      popup.focus();
+      return true;
+    }
+    return false;
+  }
+
+  function initGithubPopupLogin() {
+    if (document.documentElement.dataset.githubPopupLoginReady) {
+      return;
+    }
+    document.documentElement.dataset.githubPopupLoginReady = 'true';
+
+    window.addEventListener('message', function (event) {
+      var expectedOrigin = window.location.origin;
+      if (event.origin !== expectedOrigin) {
+        return;
+      }
+      var data = event.data || {};
+      if (!data || data.type !== 'yneko-reimu-github-login') {
+        return;
+      }
+      setLoginModalOpen(false);
+      refreshCommentLoginState().then(function (updated) {
+        showTooltip(t('loginSuccess', updated ? '登录成功。' : '登录成功，正在刷新...'));
+        if (!updated) {
+          window.setTimeout(function () {
+            window.location.reload();
+          }, 380);
+        }
+      });
+    });
+
+    document.addEventListener('click', function (event) {
+      var link = event.target && event.target.closest ? event.target.closest('[data-reimu-github-popup]') : null;
+      if (!link) {
+        return;
+      }
+      event.preventDefault();
+      if (!openAuthPopup(link.href, 'yneko_reimu_github_login', 560, 720)) {
+        window.location.href = link.href;
+      }
+    });
+  }
+
+  function initAuthPopupLinks() {
+    if (document.documentElement.dataset.authPopupLinksReady) {
+      return;
+    }
+    document.documentElement.dataset.authPopupLinksReady = 'true';
+    document.addEventListener('click', function (event) {
+      var link = event.target && event.target.closest ? event.target.closest('[data-reimu-auth-popup]') : null;
+      if (!link) {
+        return;
+      }
+      event.preventDefault();
+      if (!openAuthPopup(link.href, 'yneko_reimu_wp_auth', 520, 680)) {
+        window.location.href = link.href;
+      }
+    });
   }
 
   function initCommentLoginTriggers() {
@@ -3047,6 +4014,62 @@
         }
         event.preventDefault();
         setLoginModalOpen(true);
+      });
+    });
+  }
+
+  function initCommentAjaxLogout() {
+    qsa('[data-reimu-ajax-logout]').forEach(function (link) {
+      if (link.dataset.ajaxLogoutReady) {
+        return;
+      }
+      link.dataset.ajaxLogoutReady = 'true';
+      link.addEventListener('click', function (event) {
+        if (!config.login || !config.login.ajaxUrl || !config.login.logoutNonce) {
+          return;
+        }
+        event.preventDefault();
+        if (link.classList.contains('is-loading')) {
+          return;
+        }
+        link.classList.add('is-loading');
+        var formData = new FormData();
+        formData.append('action', 'yneko_reimu_logout');
+        formData.append('nonce', config.login.logoutNonce || '');
+        formData.append('redirect_to', window.location.href || '');
+        fetch(config.login.ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: formData
+        }).then(function (response) {
+          return response.json().catch(function () {
+            return { success: false };
+          });
+        }).then(function (payload) {
+          if (!payload || !payload.success) {
+            window.location.href = link.href;
+            return;
+          }
+          applyCommentLoggedOutState(payload.data || {});
+          document.body.classList.remove('logged-in', 'admin-bar');
+          var profileModal = qs('#reimu-profile-modal');
+          if (profileModal) {
+            profileModal.remove();
+          }
+          if (payload.data && payload.data.loginModal && !qs('#reimu-login-modal')) {
+            document.body.insertAdjacentHTML('beforeend', payload.data.loginModal);
+          }
+          qsa('.reimu-comment-form__fields', document).forEach(function (fields) {
+            fields.hidden = false;
+          });
+          initLoginModal();
+          initCommentLoginTriggers();
+          showTooltip(payload.data && payload.data.message ? payload.data.message : t('logoutSuccess', '已退出登录。'));
+        }).catch(function () {
+          window.location.href = link.href;
+        }).finally(function () {
+          link.classList.remove('is-loading');
+        });
       });
     });
   }
@@ -3142,12 +4165,13 @@
       var counter = qs('[data-comment-word-count]', form);
       if (textarea && counter) {
         var updateCount = function () {
-          counter.textContent = String((textarea.value || '').trim().length);
+          counter.textContent = String(commentTextForCount(textarea.value).length);
         };
         textarea.addEventListener('input', updateCount);
         textarea.addEventListener('change', updateCount);
         updateCount();
       }
+      initProfileOpenDelegation();
       initCommentTools(form);
       initAjaxCommentSubmit(form);
     });
@@ -3156,7 +4180,12 @@
     initCommentSorting();
     initCommentLikes();
     initLoginModal();
+    initProfileOpenDelegation();
+    initProfileModal();
+    initGithubPopupLogin();
+    initAuthPopupLinks();
     initCommentLoginTriggers();
+    initCommentAjaxLogout();
 
     qsa('#comments .comment-reply-link').forEach(function (link) {
       if (link.dataset.reimuReplyReady) {

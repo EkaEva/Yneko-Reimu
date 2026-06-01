@@ -12,6 +12,9 @@ function yneko_reimu_settings_defaults() {
 			'enabled'      => '1',
 			'image_max_mb' => 1,
 			'gif_max_mb'   => 1,
+			'avatar_enabled'=> '0',
+			'avatar_review'=> '0',
+			'avatar_max_mb'=> 1,
 		),
 		'github_url'        => '',
 		'friends'           => yneko_reimu_default_friend_items(),
@@ -154,6 +157,9 @@ function yneko_reimu_sanitize_settings( $input ) {
 			'enabled'      => ! empty( $upload['enabled'] ) ? '1' : '0',
 			'image_max_mb' => max( 1, min( 20, absint( $upload['image_max_mb'] ?? 1 ) ) ),
 			'gif_max_mb'   => max( 1, min( 30, absint( $upload['gif_max_mb'] ?? 1 ) ) ),
+			'avatar_enabled'=> ! empty( $upload['avatar_enabled'] ) ? '1' : '0',
+			'avatar_review'=> ! empty( $upload['avatar_review'] ) ? '1' : '0',
+			'avatar_max_mb'=> max( 1, min( 10, absint( $upload['avatar_max_mb'] ?? 1 ) ) ),
 		),
 		'github_url'        => yneko_reimu_normalize_settings_url( $input['github_url'] ?? '' ),
 		'friends'           => yneko_reimu_sanitize_friend_items( array_key_exists( 'friends', $input ) ? $input['friends'] : array() ),
@@ -227,6 +233,9 @@ function yneko_reimu_settings_comment_upload() {
 			'enabled'      => '1',
 			'image_max_mb' => 1,
 			'gif_max_mb'   => 1,
+			'avatar_enabled'=> '0',
+			'avatar_review'=> '0',
+			'avatar_max_mb'=> 1,
 		)
 	);
 }
@@ -388,6 +397,7 @@ function yneko_reimu_render_settings_page() {
 				<button type="button" class="nav-tab" data-yneko-settings-tab="github"><?php yneko_reimu_admin_bilingual_label( 'GitHub 登录设置', 'GitHub login' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="i18n"><?php yneko_reimu_admin_bilingual_label( '多语言设置', 'Multilingual' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="comments"><?php yneko_reimu_admin_bilingual_label( '评论设置', 'Comments' ); ?></button>
+				<button type="button" class="nav-tab" data-yneko-settings-tab="users"><?php yneko_reimu_admin_bilingual_label( '用户设置', 'Users' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="friends"><?php yneko_reimu_admin_bilingual_label( '友链设置', 'Friend links' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="music"><?php yneko_reimu_admin_bilingual_label( '曲目设置', 'Music' ); ?></button>
 			</nav>
@@ -552,6 +562,29 @@ function yneko_reimu_render_settings_page() {
 				<?php yneko_reimu_admin_bilingual_description( '登录用户上传的图片和 GIF 会集中显示在这里。图片可删除；GIF 会先进入待审核，批准后游客和登录用户都能在评论区 GIF 面板中选择使用。', 'Images and GIFs uploaded by logged-in users are listed here. Images can be deleted; GIFs stay pending first and appear in the public comment GIF picker after approval.' ); ?>
 				<?php yneko_reimu_render_admin_comment_gif_upload(); ?>
 				<?php yneko_reimu_render_comment_upload_admin(); ?>
+			</section>
+
+			<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="users" hidden>
+				<h2><?php yneko_reimu_admin_bilingual_heading( '用户设置', 'User settings' ); ?></h2>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '用户头像上传', 'User avatar uploads' ); ?></th>
+						<td>
+							<?php $comment_upload = yneko_reimu_settings_comment_upload(); ?>
+							<p>
+								<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][avatar_enabled]" value="1" <?php checked( '1', $comment_upload['avatar_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许用户上传个人头像', 'Allow users to upload profile avatars' ); ?></label>
+							</p>
+							<p>
+								<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][avatar_review]" value="1" <?php checked( '1', $comment_upload['avatar_review'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '用户头像审核', 'Review user avatars' ); ?></label>
+								&nbsp;
+								<label><?php yneko_reimu_admin_bilingual_label( '头像上限 MB', 'Avatar max MB' ); ?> <input class="small-text" type="number" min="1" max="10" name="yneko_reimu_settings[comment_upload][avatar_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['avatar_max_mb'] ) ); ?>"></label>
+							</p>
+							<?php yneko_reimu_admin_bilingual_description( '未开启上传时，用户仍可填写头像图片链接。开启审核后，新上传头像先进入临时目录，批准后才会应用。', 'When upload is disabled, users can still use an avatar image URL. When review is enabled, new uploads go to a temporary directory and apply only after approval.' ); ?>
+						</td>
+					</tr>
+				</table>
+				<h2><?php yneko_reimu_admin_bilingual_heading( '用户头像管理', 'User avatar manager' ); ?></h2>
+				<?php yneko_reimu_render_user_avatar_admin(); ?>
 			</section>
 
 			<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="friends" hidden>
@@ -767,6 +800,62 @@ function yneko_reimu_render_comment_upload_admin() {
 			</div>
 		</div>
 		<?php endforeach; ?>
+	<?php
+}
+
+function yneko_reimu_render_user_avatar_admin() {
+	$users = get_users(
+		array(
+			'number'     => 120,
+			'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'relation' => 'OR',
+				array(
+					'key'     => '_yneko_reimu_avatar_url',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_yneko_reimu_avatar_pending_url',
+					'compare' => 'EXISTS',
+				),
+			),
+		)
+	);
+	if ( ! $users ) {
+		echo '<p class="description">' . esc_html__( '暂无用户上传头像。', 'yneko-reimu' ) . '</p>';
+		return;
+	}
+	?>
+	<div class="yneko-reimu-upload-admin-grid yneko-reimu-user-avatar-grid">
+		<?php foreach ( $users as $user ) : ?>
+			<?php
+			$user_id = absint( $user->ID );
+			$current = (string) get_user_meta( $user_id, '_yneko_reimu_avatar_url', true );
+			$pending = (string) get_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', true );
+			$status  = (string) get_user_meta( $user_id, '_yneko_reimu_avatar_status', true );
+			$shown   = $pending ? $pending : $current;
+			if ( ! $shown ) {
+				continue;
+			}
+			?>
+			<div class="yneko-reimu-upload-admin-card">
+				<img src="<?php echo esc_url( $shown ); ?>" alt="">
+				<div class="yneko-reimu-upload-admin-meta">
+					<strong><?php echo esc_html( $user->display_name ? $user->display_name : $user->user_login ); ?></strong>
+					<span><?php echo esc_html( $user->user_email ); ?></span>
+					<span><?php echo 'pending' === $status ? esc_html__( '头像审核中', 'yneko-reimu' ) : esc_html__( '已应用头像', 'yneko-reimu' ); ?></span>
+				</div>
+				<div class="yneko-reimu-upload-admin-actions">
+					<?php if ( $pending ) : ?>
+						<a class="button button-small" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'yneko_avatar_action' => 'approve', 'user_id' => $user_id ) ), 'yneko_reimu_avatar_approve_' . $user_id ) ); ?>"><?php esc_html_e( '批准头像', 'yneko-reimu' ); ?></a>
+						<a class="button button-small button-link-delete" data-yneko-upload-delete href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'yneko_avatar_action' => 'reject', 'user_id' => $user_id ) ), 'yneko_reimu_avatar_reject_' . $user_id ) ); ?>"><?php esc_html_e( '驳回并删除', 'yneko-reimu' ); ?></a>
+					<?php endif; ?>
+					<?php if ( $current ) : ?>
+						<a class="button button-small button-link-delete" data-yneko-upload-delete href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'yneko_avatar_action' => 'delete', 'user_id' => $user_id ) ), 'yneko_reimu_avatar_delete_' . $user_id ) ); ?>"><?php esc_html_e( '删除头像', 'yneko-reimu' ); ?></a>
+					<?php endif; ?>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	</div>
 	<?php
 }
 

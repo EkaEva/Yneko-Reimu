@@ -56,14 +56,15 @@ Yneko-Reimu 在此基础上完成了 WordPress 主题化，包括 PHP 模板、W
 
 - Reimu 风格首页：顶部导航、头图、文章卡片、置顶文章、分类胶囊。
 - Reimu 风格侧栏：作者头像、站点统计、社交入口、菜单按钮、标签云。
-- 归档 / 关于 / 友链 / 项目虚拟页面：未创建真实页面时自动提供主题页面。
+- 归档 / 关于 / 友链 / 项目虚拟页面：未创建真实页面时自动提供主题页面；真实页面可按 WordPress “允许评论”设置显示评论区。
 - GitHub 项目页：根据后台配置的 GitHub 主页拉取用户项目和 Star 项目。
 - 本地 JSON 搜索：支持生成 WordPress 本地搜索索引。
 - PJAX / 软导航：减少站内切换时的整页刷新断档。
 - 音乐播放器：基于 APlayer，曲目、歌词和封面从 WordPress 媒体库配置。
-- WordPress 原生评论视觉增强：保留原生评论提交、审核、回复、分页能力。
-- 评论区图片 / GIF 上传：登录用户可上传，先进入临时目录，评论通过后才正式入库。
+- WordPress 原生评论视觉增强：支持 AJAX 无刷新提交、审核、回复、分页和登录弹窗。
+- 评论区图片 / GIF 上传：登录用户可上传，编辑器中以媒体占位符展示，先进入临时目录，评论通过后才正式入库。
 - 评论 GIF 表情库：管理员可上传公共 GIF，用户评论 GIF 经审核后也可加入表情库。
+- 评论区账户面板：支持站内登录、邮箱验证码注册、邮箱验证码重置密码、GitHub 弹窗登录和登录后个人资料弹窗。
 - 内置中英双语系统：中文使用原地址，英文使用 `/en/` 前缀，文章/页面可互相关联翻译。
 - GitHub OAuth 登录：主题内置登录模块，可在后台配置 Client ID / Secret。
 - 自定义鼠标指针：桌面端使用莉莉概念光标 PNG，移动端自动回退。
@@ -83,10 +84,10 @@ Yneko-Reimu 在此基础上完成了 WordPress 主题化，包括 PHP 模板、W
 
 ### 方式一：后台上传 ZIP
 
-1. 下载 Release 附件或本地打包得到 `releases/Yneko-Reimu.zip`。
+1. 下载 Release 附件或本地打包得到 `releases/Yneko-Reimu-vX.Y.Z.zip`。
 2. 进入 WordPress 后台。
 3. 打开 `外观 -> 主题 -> 添加新主题 -> 上传主题`。
-4. 上传 `releases/Yneko-Reimu.zip`。
+4. 上传 `releases/Yneko-Reimu-vX.Y.Z.zip`。
 5. 安装并启用主题。
 
 ### 方式二：手动放入主题目录
@@ -106,7 +107,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 ### 1. 外观 -> Yneko-Reimu 设置
 
-这里保存的是站点数据型配置，内容会进入 WordPress 数据库，不会写入主题源码。
+这里保存的是站点数据型配置，内容会进入 WordPress 数据库，不会写入主题源码。设置页按“常规设置 / GitHub 登录设置 / 多语言设置 / 评论设置 / 用户设置 / 友链设置 / 曲目设置”分为标签页，底部提供悬浮保存按钮；后台界面语言跟随当前 WordPress 用户语言，中文环境显示中文，其它语言显示英文。
 
 #### 站点资料
 
@@ -153,7 +154,22 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 普通 GitHub 登录只用于登录或自动创建订阅者用户，不会绑定当前已登录的 WordPress 用户。管理员如需绑定或重新绑定 GitHub，请使用设置页中明确的“绑定/重新绑定 GitHub”入口。
 
-如果 WordPress 后台未开启“任何人都可以注册”，前台评论登录弹窗只显示 GitHub 登录入口，不再显示 WordPress 用户名/密码登录表单。
+评论区登录弹窗会显示站内账号登录表单和 GitHub 登录入口。站内登录使用邮箱和密码；当 WordPress 后台开启“任何人都可以注册”时，登录弹窗会额外显示注册入口。注册和忘记密码都使用邮箱验证码，验证码 5 分钟内有效。GitHub 登录在小授权窗口中完成，登录成功后会回写当前页面状态。
+
+登录成功后，评论区左侧显示用户头像和名称，头像右上角的关闭按钮可无刷新退出登录；点击头像会打开站内“个人资料”弹窗。
+
+#### 用户设置
+
+用户设置标签页管理评论区站内用户相关能力：
+
+- 是否允许用户上传个人头像。
+- 头像上传大小上限，默认 `1MB`。
+- 头像审核开关，默认关闭。
+- 用户头像管理区，可查看、批准、拒绝或删除用户上传头像。
+
+前台个人资料弹窗支持修改头像链接或上传头像、昵称、邮箱、个人主页、密码和 TOTP 认证器两步验证。修改邮箱需要向新邮箱发送验证码；个人主页允许填写 `https://example.com`，也允许填写 `example.com` 这种纯域名，主题会自动规范化。两步验证默认关闭，用户可自行开启。
+
+如果启用头像审核，用户上传并保存头像后会先进入待审核状态；审核通过后才会应用到前台，审核不通过会清理对应文件。
 
 #### 评论上传
 
@@ -165,7 +181,9 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - 管理员上传公共 GIF。
 - 评论上传管理区。
 
-登录用户在评论区上传图片或 GIF 时，文件会先保存到：
+登录用户在评论区上传图片或 GIF 时，编辑器里只显示 `[IMAGE:1]` 或 `[GIF:1]` 这类占位符，不直接暴露真实存储 URL；预览和提交时主题会自动转换为对应媒体。字数统计会忽略图片、GIF 和媒体占位符。
+
+文件会先保存到：
 
 ```text
 wp-content/uploads/yneko-reimu-comments/tmp/
@@ -251,7 +269,7 @@ wp-content/uploads/yneko-reimu-comments/YYYY/MM/
 | `/friend/` | 友链页 |
 | `/projects/` | GitHub 项目页 |
 
-如果你创建了同名 WordPress 页面，主题会优先显示真实页面正文，并保留主题页面样式。
+如果你创建了同名 WordPress 页面，主题会优先显示真实页面正文，并保留主题页面样式。项目页等真实页面是否显示评论区，取决于该页面编辑界面“讨论”里的“允许评论”是否勾选。
 
 ## 本地搜索配置
 
@@ -281,7 +299,10 @@ wp-content/uploads/yneko-reimu-comments/YYYY/MM/
 - 嵌套回复
 - 评论分页
 - 加载更多
+- AJAX 无刷新发布评论
 - GitHub 登录入口，可选
+- 站内邮箱登录、验证码注册、验证码重置密码
+- 登录用户个人资料弹窗
 - 登录用户图片 / GIF 上传
 - 公共 GIF 表情库
 - 评论上传临时文件清理
@@ -323,7 +344,7 @@ npm run package
 - `npm run build`：生成语言文件、光标 PNG，并通过 Vite 压缩输出 `assets/dist/`。
 - `npm run lint:php`：通过 Composer 调用 PHPCS/WPCS 检查 PHP 代码。
 - `npm run check`：依次执行 JS 检查、构建和 PHP 规范检查。
-- `npm run package`：先构建，再按白名单生成 `releases/Yneko-Reimu.zip`。
+- `npm run package`：先构建，再按白名单生成 `releases/Yneko-Reimu.zip`；发布版本建议使用下方带版本号的打包脚本。
 
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
@@ -355,7 +376,7 @@ theme/Yneko-Reimu/template-parts/
 vendor-src/reimu-upstream/
 ```
 
-打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、仓库级上游源码镜像、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/Yneko-Reimu.zip`，不是 GitHub 仓库根目录的 ZIP。
+打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、仓库级上游源码镜像、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-v0.1.10.zip`，不是 GitHub 仓库根目录的 ZIP。
 
 ## GitHub Actions 自动打包
 
@@ -496,14 +517,15 @@ If you redistribute, commercialize, or replace these cursor assets, please confi
 
 - Reimu-style home page with navigation, hero image, post cards, sticky posts, and category capsules.
 - Reimu-style sidebar with author avatar, site stats, social links, menu buttons, and tag cloud.
-- Virtual pages for About, Archives, Friend Links, and Projects when no real page with the same slug exists.
+- Virtual pages for About, Archives, Friend Links, and Projects when no real page with the same slug exists; real pages can show comments according to the WordPress discussion setting.
 - GitHub project page that fetches user repositories and starred repositories from the configured GitHub profile.
 - Local JSON search index for WordPress posts.
 - PJAX-style soft navigation for smoother in-site transitions.
 - APlayer music player with audio, cover, and LRC lyrics configured from the WordPress Media Library.
-- Enhanced WordPress native comment visuals while keeping native submission, moderation, replies, and pagination.
-- Comment image/GIF uploads for logged-in users, using temporary files first and promoting them only after comment approval.
+- Enhanced WordPress native comment visuals with AJAX submission, moderation, replies, pagination, and the login modal.
+- Comment image/GIF uploads for logged-in users, shown as media tokens in the editor, using temporary files first and promoting them only after comment approval.
 - Comment GIF picker with administrator-uploaded GIFs and approved user-submitted GIFs.
+- Comment account panel with site-account login, email-code registration, email-code password reset, GitHub popup login, and a profile modal after login.
 - Built-in Chinese/English multilingual system: Chinese uses normal URLs, English uses the `/en/` prefix, and posts/pages can be linked as translations.
 - Built-in GitHub OAuth login configured from the WordPress admin.
 - Custom Lily concept cursors on desktop with graceful mobile fallback.
@@ -522,10 +544,10 @@ If you redistribute, commercialize, or replace these cursor assets, please confi
 
 #### Upload ZIP From WordPress Admin
 
-1. Download a Release asset or build `releases/Yneko-Reimu.zip` locally.
+1. Download a Release asset or build `releases/Yneko-Reimu-vX.Y.Z.zip` locally.
 2. Open the WordPress admin.
 3. Go to `Appearance -> Themes -> Add New -> Upload Theme`.
-4. Upload `releases/Yneko-Reimu.zip`.
+4. Upload `releases/Yneko-Reimu-vX.Y.Z.zip`.
 5. Install and activate the theme.
 
 #### Manual Installation
@@ -544,7 +566,7 @@ After activation, configure two admin areas.
 
 #### Appearance -> Yneko-Reimu Settings
 
-These settings are stored in the WordPress database and are not written into the theme source.
+These settings are stored in the WordPress database and are not written into the theme source. The settings page is organized into tabs for General, GitHub Login, Multilingual, Comments, Users, Friend Links, and Tracks, with a floating save button. The admin UI follows the current WordPress user language: Chinese for Chinese locales and English for other locales.
 
 Site profile:
 
@@ -583,7 +605,20 @@ Client Secret is stored only in the WordPress database. Do not commit it to GitH
 
 Normal GitHub login only signs users in or creates subscriber accounts when enabled. It does not bind GitHub to the currently logged-in WordPress user. Administrators should use the explicit bind/rebind entry in the settings page when they need to link their own GitHub account.
 
-If WordPress registration is disabled, the front-end comment login modal shows only the GitHub login entry and hides the WordPress username/password form.
+The comment login modal shows the site-account login form and the GitHub login entry. Site-account login uses email and password. When WordPress registration is enabled, the modal also shows a registration entry. Registration and password reset both use email verification codes, valid for 5 minutes. GitHub login opens in a small authorization popup and updates the current page state after success.
+
+After login, the comment area shows the user avatar and name on the left, with a small logout button on the avatar corner. Clicking the avatar opens the profile modal.
+
+User settings:
+
+- Allow or disallow user avatar uploads.
+- Avatar upload size limit, default `1MB`.
+- Avatar review toggle, off by default.
+- Avatar manager for reviewing, approving, rejecting, or deleting uploaded user avatars.
+
+The front-end profile modal lets users update avatar URL/uploaded avatar, nickname, email, personal website, password, and authenticator-app TOTP 2FA. Email changes require a verification code sent to the new address. Personal website accepts both full URLs like `https://example.com` and bare domains like `example.com`; the theme normalizes them automatically. Two-factor authentication is off by default and can be enabled by each user.
+
+When avatar review is enabled, uploaded avatars are kept pending after the user saves the profile. The avatar is applied only after administrator approval; rejected avatars are cleaned up.
 
 Comment uploads:
 
@@ -592,6 +627,8 @@ Comment uploads:
 - GIF upload limit defaults to `1MB`.
 - Administrators can upload public GIFs.
 - The upload manager groups items into admin GIFs, user comment GIFs, and user comment images.
+
+When logged-in users upload images or GIFs in the comment editor, the editor shows tokens such as `[IMAGE:1]` or `[GIF:1]` instead of exposing the real storage URL. Preview and submission convert those tokens into the proper media output. The character counter ignores images, GIFs, and media tokens.
 
 Front-end uploads are first stored under:
 
@@ -641,7 +678,7 @@ If no real WordPress page with the same slug exists, the theme displays virtual 
 | `/friend/` | Friend links |
 | `/projects/` | GitHub projects |
 
-If you create a real page with the same slug, WordPress page content is used first while keeping the theme styling.
+If you create a real page with the same slug, WordPress page content is used first while keeping the theme styling. Whether a real page such as Projects shows the comment area depends on the page editor’s WordPress Discussion setting, `Allow comments`.
 
 ### Local Search
 
@@ -675,7 +712,7 @@ Scripts:
 - `npm run build`: generates language files, cursor PNGs, and minified Vite assets.
 - `npm run lint:php`: runs PHPCS/WPCS through Composer.
 - `npm run check`: runs JS checks, build, and PHP coding standards.
-- `npm run package`: builds first, then creates `releases/Yneko-Reimu.zip` from a whitelist.
+- `npm run package`: builds first, then creates `releases/Yneko-Reimu.zip` from a whitelist. For releases, use the versioned packaging command below.
 
 To build a versioned package:
 

@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function yneko_reimu_comments_canonical_post_id( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : absint( get_queried_object_id() );
+	if ( ! $post_id && function_exists( 'yneko_reimu_is_virtual_page' ) && yneko_reimu_is_virtual_page( 'projects' ) ) {
+		$post_id = yneko_reimu_comments_virtual_page_post_id( 'projects' );
+	}
 	if ( ! $post_id ) {
 		return 0;
 	}
@@ -21,8 +24,82 @@ function yneko_reimu_comments_canonical_post_id( $post_id = 0 ) {
 
 function yneko_reimu_comments_current_display_post_id() {
 	$post_id = absint( get_queried_object_id() );
+	if ( ! $post_id && function_exists( 'yneko_reimu_is_virtual_page' ) && yneko_reimu_is_virtual_page( 'projects' ) ) {
+		$post_id = yneko_reimu_comments_virtual_page_post_id( 'projects' );
+	}
 	return $post_id ? $post_id : get_the_ID();
 }
+
+function yneko_reimu_comments_virtual_page_post_id( $slug ) {
+	$slug = sanitize_title( $slug );
+	if ( ! $slug ) {
+		return 0;
+	}
+
+	$page = get_page_by_path( $slug, OBJECT, 'page' );
+	if ( $page && 'publish' === get_post_status( $page ) ) {
+		return absint( $page->ID );
+	}
+
+	if ( 'projects' === $slug ) {
+		$carrier_id = absint( get_option( 'yneko_reimu_projects_comment_post_id' ) );
+		$carrier    = $carrier_id ? get_post( $carrier_id ) : null;
+		if ( $carrier && 'trash' !== get_post_status( $carrier ) ) {
+			return $carrier_id;
+		}
+
+		$existing_carrier = get_page_by_path( 'yneko-reimu-projects-comments', OBJECT, 'page' );
+		if ( $existing_carrier && 'trash' !== get_post_status( $existing_carrier ) ) {
+			$carrier_id = absint( $existing_carrier->ID );
+		} else {
+			$carrier_id = wp_insert_post(
+				array(
+					'post_title'     => 'Yneko Reimu Projects Comments',
+					'post_name'      => 'yneko-reimu-projects-comments',
+					'post_type'      => 'page',
+					'post_status'    => 'publish',
+					'post_content'   => '',
+					'comment_status' => 'open',
+					'ping_status'    => 'closed',
+				),
+				true
+			);
+			$carrier_id = is_wp_error( $carrier_id ) ? 0 : absint( $carrier_id );
+		}
+
+		if ( $carrier_id ) {
+			update_option( 'yneko_reimu_projects_comment_post_id', $carrier_id, false );
+			return $carrier_id;
+		}
+	}
+
+	$fallback_id = absint( get_option( 'page_on_front' ) );
+	if ( ! $fallback_id ) {
+		$fallback_id = absint( get_option( 'page_for_posts' ) );
+	}
+
+	return $fallback_id;
+}
+
+function yneko_reimu_default_open_projects_comments( $post_id, $post, $update ) {
+	if ( $update || 'page' !== $post->post_type || 'projects' !== $post->post_name ) {
+		return;
+	}
+
+	if ( 'open' === $post->comment_status ) {
+		return;
+	}
+
+	remove_action( 'wp_insert_post', 'yneko_reimu_default_open_projects_comments', 10 );
+	wp_update_post(
+		array(
+			'ID'             => absint( $post_id ),
+			'comment_status' => 'open',
+		)
+	);
+	add_action( 'wp_insert_post', 'yneko_reimu_default_open_projects_comments', 10, 3 );
+}
+add_action( 'wp_insert_post', 'yneko_reimu_default_open_projects_comments', 10, 3 );
 
 function yneko_reimu_waline_icon( $name ) {
 	$icons = array(
@@ -38,7 +115,7 @@ function yneko_reimu_waline_icon( $name ) {
 	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';
 }
 
-function yneko_reimu_comment_toolbar( $logged_in_as ) {
+function yneko_reimu_comment_toolbar( $logged_in_as, $identity = '' ) {
 	$emoji_items = array(
 		'😀', '😄', '😁', '😆', '🤣', '😂', '🙂', '🙃', '😉', '😊', '🥰', '😍',
 		'😘', '😋', '😜', '🤪', '🤔', '🫡', '😐', '😶', '😏', '😴', '😭', '🥺',
@@ -53,7 +130,7 @@ function yneko_reimu_comment_toolbar( $logged_in_as ) {
 		$emoji_buttons .= '<button type="button" class="reimu-comment-popover-item" data-comment-insert="' . esc_attr( $emoji ) . '">' . esc_html( $emoji ) . '</button>';
 	}
 
-	return '<div class="reimu-comment-toolbar">' .
+	return $identity . '<div class="reimu-comment-toolbar">' .
 		'<div class="reimu-comment-tools wl-actions">' .
 			'<a href="https://guides.github.com/features/mastering-markdown/" class="reimu-comment-tool wl-action reimu-comment-tool--markdown" title="Markdown Guide" aria-label="' . esc_attr__( 'Markdown is supported', 'yneko-reimu' ) . '" target="_blank" rel="noopener noreferrer">' . yneko_reimu_waline_icon( 'markdown' ) . '</a>' .
 			'<button type="button" class="reimu-comment-tool wl-action" title="' . esc_attr__( '表情', 'yneko-reimu' ) . '" aria-label="' . esc_attr__( '表情', 'yneko-reimu' ) . '" data-comment-tool="emoji">' . yneko_reimu_waline_icon( 'emoji' ) . '</button>' .
@@ -70,28 +147,237 @@ function yneko_reimu_comment_toolbar( $logged_in_as ) {
 	'</div>';
 }
 
+function yneko_reimu_comment_user_profile_url( $user_id ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return '';
+	}
+
+	foreach ( array( '_yneko_reimu_github_url', '_yneko_github_url' ) as $meta_key ) {
+		$url = get_user_meta( $user_id, $meta_key, true );
+		if ( $url ) {
+			return esc_url_raw( $url );
+		}
+	}
+
+	$user = get_userdata( $user_id );
+	if ( $user && ! empty( $user->user_url ) ) {
+		return esc_url_raw( $user->user_url );
+	}
+
+	return '';
+}
+
+function yneko_reimu_normalize_user_url( $url ) {
+	$url = trim( (string) $url );
+	if ( '' === $url ) {
+		return '';
+	}
+
+	if ( ! preg_match( '#^[a-z][a-z0-9+.-]*://#i', $url ) && preg_match( '#^[^\s/@]+\.[^\s]+#', $url ) ) {
+		$url = 'https://' . $url;
+	}
+
+	return esc_url_raw( $url );
+}
+
+function yneko_reimu_user_avatar_url( $user_id ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return '';
+	}
+
+	$custom = get_user_meta( $user_id, '_yneko_reimu_avatar_url', true );
+	return $custom ? esc_url_raw( $custom ) : '';
+}
+
+function yneko_reimu_avatar_upload_enabled() {
+	$settings = function_exists( 'yneko_reimu_settings_comment_upload' ) ? yneko_reimu_settings_comment_upload() : array();
+	return '1' === (string) ( $settings['avatar_enabled'] ?? '0' );
+}
+
+function yneko_reimu_avatar_review_enabled() {
+	$settings = function_exists( 'yneko_reimu_settings_comment_upload' ) ? yneko_reimu_settings_comment_upload() : array();
+	return '1' === (string) ( $settings['avatar_review'] ?? '0' );
+}
+
+function yneko_reimu_avatar_upload_limit() {
+	$settings = function_exists( 'yneko_reimu_settings_comment_upload' ) ? yneko_reimu_settings_comment_upload() : array();
+	return max( 1, absint( $settings['avatar_max_mb'] ?? 1 ) ) * MB_IN_BYTES;
+}
+
+function yneko_reimu_avatar_upload_dir( $dirs ) {
+	$pending = ! empty( $GLOBALS['yneko_reimu_avatar_upload_pending'] );
+	$subdir  = ( $pending ? '/yneko-reimu-avatars-pending' : '/yneko-reimu-avatars' ) . gmdate( '/Y/m' );
+	$dirs['subdir'] = $subdir;
+	$dirs['path']   = $dirs['basedir'] . $subdir;
+	$dirs['url']    = $dirs['baseurl'] . $subdir;
+	return $dirs;
+}
+
+function yneko_reimu_comment_current_user_identity( $redirect_post_id = 0 ) {
+	if ( ! is_user_logged_in() ) {
+		return '';
+	}
+
+	$redirect = $redirect_post_id ? get_permalink( $redirect_post_id ) : home_url( add_query_arg( array(), $GLOBALS['wp']->request ?? '' ) );
+	return yneko_reimu_comment_current_user_identity_html( $redirect );
+}
+
+function yneko_reimu_comment_current_user_identity_html( $redirect = '' ) {
+	if ( ! is_user_logged_in() ) {
+		return '';
+	}
+
+	$user         = wp_get_current_user();
+	$user_id      = absint( $user->ID );
+	$display_name = $user->display_name ? $user->display_name : $user->user_login;
+	$profile_url  = yneko_reimu_comment_user_profile_url( $user_id );
+	$redirect     = $redirect ? wp_validate_redirect( $redirect, home_url( '/' ) ) : home_url( '/' );
+	$logout_url   = wp_logout_url( $redirect );
+	$avatar_url   = yneko_reimu_user_avatar_url( $user_id );
+	$avatar       = $avatar_url ? '<img alt="' . esc_attr( $display_name ) . '" src="' . esc_url( $avatar_url ) . '" class="avatar avatar-56 photo yneko-user-avatar" height="56" width="56" loading="lazy" decoding="async">' : get_avatar( $user_id, 56, '', $display_name );
+	$name_html    = esc_html( $display_name );
+
+	if ( $profile_url ) {
+		$name_html = '<a class="reimu-comment-current-user__name" href="' . esc_url( $profile_url ) . '" target="_blank" rel="noopener noreferrer nofollow">' . esc_html( $display_name ) . '</a>';
+	} else {
+		$name_html = '<span class="reimu-comment-current-user__name">' . esc_html( $display_name ) . '</span>';
+	}
+
+	return '<div class="reimu-comment-current-user">' .
+		'<div class="reimu-comment-current-user__avatar-wrap">' .
+			'<button type="button" class="reimu-comment-current-user__avatar" data-reimu-profile-open aria-label="' . esc_attr__( '编辑个人资料', 'yneko-reimu' ) . '">' . $avatar . '</button>' .
+			'<a class="reimu-comment-current-user__logout" href="' . esc_url( $logout_url ) . '" data-reimu-ajax-logout data-no-pjax aria-label="' . esc_attr__( '退出登录', 'yneko-reimu' ) . '"></a>' .
+		'</div>' .
+		$name_html .
+	'</div>';
+}
+
+function yneko_reimu_user_profile_payload( $user_id = 0 ) {
+	$user_id = $user_id ? absint( $user_id ) : get_current_user_id();
+	$user    = $user_id ? get_userdata( $user_id ) : null;
+	if ( ! $user ) {
+		return array();
+	}
+
+	$settings = function_exists( 'yneko_reimu_settings_comment_upload' ) ? yneko_reimu_settings_comment_upload() : array();
+	return array(
+		'displayName' => $user->display_name ? $user->display_name : $user->user_login,
+		'email'       => $user->user_email,
+		'avatarUrl'   => yneko_reimu_user_avatar_url( $user_id ),
+		'pendingAvatarUrl' => (string) get_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', true ),
+		'avatarPending' => 'pending' === (string) get_user_meta( $user_id, '_yneko_reimu_avatar_status', true ),
+		'profileUrl'  => $user->user_url,
+		'twoFactor'   => yneko_reimu_user_2fa_enabled( $user_id ),
+		'avatarUploadEnabled' => '1' === (string) ( $settings['avatar_enabled'] ?? '0' ),
+		'avatarReviewEnabled' => '1' === (string) ( $settings['avatar_review'] ?? '0' ),
+		'avatarMaxMb' => max( 1, absint( $settings['avatar_max_mb'] ?? 1 ) ),
+	);
+}
+
+function yneko_reimu_ajax_login_state() {
+	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' );
+	$redirect = wp_validate_redirect( $redirect, home_url( '/' ) );
+
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_success(
+			array(
+			'loggedIn' => false,
+			'loginUrl' => wp_login_url( $redirect ),
+			'loginModal' => yneko_reimu_login_modal_html(),
+			)
+		);
+	}
+
+	wp_send_json_success(
+		array(
+			'loggedIn'          => true,
+			'identity'          => yneko_reimu_comment_current_user_identity_html( $redirect ),
+			'profileModal'      => yneko_reimu_profile_modal_html(),
+			'loginModal'        => yneko_reimu_login_modal_html(),
+			'commentNonce'      => wp_create_nonce( 'yneko_reimu_submit_comment' ),
+			'commentUploadNonce'=> wp_create_nonce( 'yneko_reimu_comment_upload' ),
+			'profileNonce'      => wp_create_nonce( 'yneko_reimu_profile' ),
+			'logoutNonce'       => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_login_state', 'yneko_reimu_ajax_login_state' );
+add_action( 'wp_ajax_nopriv_yneko_reimu_login_state', 'yneko_reimu_ajax_login_state' );
+
+function yneko_reimu_ajax_logout() {
+	check_ajax_referer( 'yneko_reimu_ajax_logout', 'nonce' );
+	wp_logout();
+
+	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
+	wp_send_json_success(
+		array(
+			'message'  => esc_html__( '已退出登录。', 'yneko-reimu' ),
+			'loginUrl' => '#reimu-login-modal',
+			'loginModal' => yneko_reimu_login_modal_html(),
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_logout', 'yneko_reimu_ajax_logout' );
+
+function yneko_reimu_comment_author_link_html( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return '';
+	}
+
+	$author = get_comment_author( $comment );
+	$url    = '';
+
+	if ( ! empty( $comment->user_id ) ) {
+		$url = yneko_reimu_comment_user_profile_url( $comment->user_id );
+	}
+
+	if ( ! $url ) {
+		$url = get_comment_author_url( $comment );
+	}
+
+	if ( $url ) {
+		return '<a class="reimu-comment__author-link" href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer nofollow">' . esc_html( $author ) . '</a>';
+	}
+
+	return '<span class="reimu-comment__author-name">' . esc_html( $author ) . '</span>';
+}
+
 function yneko_reimu_login_modal() {
 	if ( is_user_logged_in() ) {
+		yneko_reimu_profile_modal();
 		return;
 	}
-	$show_wp_login = (bool) get_option( 'users_can_register' );
+	echo yneko_reimu_login_modal_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+function yneko_reimu_login_modal_html() {
+	if ( is_user_logged_in() ) {
+		return '';
+	}
+	$allow_registration = (bool) get_option( 'users_can_register' );
+	ob_start();
 	?>
 	<div class="reimu-login-modal" id="reimu-login-modal" aria-hidden="true">
 		<div class="reimu-login-modal__mask" data-login-close></div>
 		<div class="reimu-login-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="reimu-login-title">
 			<button type="button" class="reimu-login-modal__close popup-btn-close" data-login-close aria-label="<?php esc_attr_e( '关闭登录窗口', 'yneko-reimu' ); ?>"></button>
 			<h2 id="reimu-login-title"><?php esc_html_e( '登录', 'yneko-reimu' ); ?></h2>
-			<p class="reimu-login-modal__desc"><?php echo esc_html( $show_wp_login ? __( '使用 WordPress 账号登录后即可评论。', 'yneko-reimu' ) : __( '使用 GitHub 登录后即可评论。', 'yneko-reimu' ) ); ?></p>
-			<?php do_action( 'yneko_reimu_login_modal_social' ); ?>
-			<?php if ( $show_wp_login ) : ?>
-			<form class="reimu-login-form" data-reimu-login-form>
+			<p class="reimu-login-modal__desc" hidden></p>
+			<form class="reimu-login-form reimu-login-panel is-active" data-reimu-login-form data-login-panel="login">
 				<p>
-					<label for="reimu-login-user"><?php esc_html_e( '用户名或邮箱', 'yneko-reimu' ); ?></label>
-					<input id="reimu-login-user" name="log" type="text" autocomplete="username" required>
+					<label for="reimu-login-user"><?php esc_html_e( '邮箱', 'yneko-reimu' ); ?></label>
+					<input id="reimu-login-user" name="log" type="email" autocomplete="email" required>
 				</p>
 				<p>
 					<label for="reimu-login-password"><?php esc_html_e( '密码', 'yneko-reimu' ); ?></label>
-					<input id="reimu-login-password" name="pwd" type="password" autocomplete="current-password" required>
+					<span class="reimu-login-password-row"><input id="reimu-login-password" name="pwd" type="password" autocomplete="current-password" required><button type="button" class="reimu-password-toggle" data-password-toggle aria-label="<?php esc_attr_e( '显示密码', 'yneko-reimu' ); ?>"></button></span>
+				</p>
+				<p class="reimu-login-2fa" data-login-2fa hidden>
+					<label for="reimu-login-2fa"><?php esc_html_e( '两步验证码', 'yneko-reimu' ); ?></label>
+					<input id="reimu-login-2fa" name="two_factor_code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
 				</p>
 				<label class="reimu-login-remember">
 					<input name="rememberme" type="checkbox" value="forever">
@@ -99,51 +385,806 @@ function yneko_reimu_login_modal() {
 				</label>
 				<div class="reimu-login-message" data-login-message role="status" aria-live="polite"></div>
 				<div class="reimu-login-actions">
-					<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" data-no-pjax><?php esc_html_e( '忘记密码？', 'yneko-reimu' ); ?></a>
+					<button class="reimu-login-help-link" type="button" data-login-panel-trigger="lost"><?php esc_html_e( '忘记密码？', 'yneko-reimu' ); ?></button>
+					<?php if ( $allow_registration ) : ?>
+						<button class="reimu-login-register-button" type="button" data-login-panel-trigger="register"><?php esc_html_e( '注册', 'yneko-reimu' ); ?></button>
+					<?php endif; ?>
 					<button type="submit" class="reimu-login-submit"><?php esc_html_e( '登录', 'yneko-reimu' ); ?></button>
 				</div>
 			</form>
+			<?php if ( $allow_registration ) : ?>
+				<form class="reimu-login-form reimu-login-panel" data-reimu-register-form data-login-panel="register" data-loading-text="<?php esc_attr_e( '注册中...', 'yneko-reimu' ); ?>" hidden>
+					<p>
+						<label for="reimu-register-display-name"><?php esc_html_e( '昵称', 'yneko-reimu' ); ?></label>
+						<input id="reimu-register-display-name" name="display_name" type="text" autocomplete="nickname" required>
+					</p>
+					<p>
+						<label for="reimu-register-email"><?php esc_html_e( '邮箱', 'yneko-reimu' ); ?></label>
+						<input id="reimu-register-email" name="user_email" type="email" autocomplete="email" required>
+					</p>
+					<p>
+						<label for="reimu-register-password"><?php esc_html_e( '密码', 'yneko-reimu' ); ?></label>
+						<span class="reimu-login-password-row"><input id="reimu-register-password" name="user_password" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="reimu-password-toggle" data-password-toggle aria-label="<?php esc_attr_e( '显示密码', 'yneko-reimu' ); ?>"></button></span>
+					</p>
+					<p>
+						<label for="reimu-register-code"><?php esc_html_e( '邮箱验证码', 'yneko-reimu' ); ?></label>
+						<span class="reimu-login-code-row">
+							<input id="reimu-register-code" name="verify_code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+							<button class="reimu-login-code-button" type="button" data-register-code-send><?php esc_html_e( '发送验证码', 'yneko-reimu' ); ?></button>
+						</span>
+					</p>
+					<p class="reimu-login-note"><?php esc_html_e( '验证码会发送到您的邮箱，5 分钟内有效。', 'yneko-reimu' ); ?></p>
+					<div class="reimu-login-message" data-register-message role="status" aria-live="polite"></div>
+					<div class="reimu-login-actions">
+						<button class="reimu-login-help-link" type="button" data-login-panel-trigger="login"><?php esc_html_e( '返回登录', 'yneko-reimu' ); ?></button>
+						<button type="submit" class="reimu-login-submit"><?php esc_html_e( '注册', 'yneko-reimu' ); ?></button>
+					</div>
+				</form>
 			<?php endif; ?>
+			<form class="reimu-login-form reimu-login-panel" data-reimu-lost-form data-login-panel="lost" data-loading-text="<?php esc_attr_e( '重置中...', 'yneko-reimu' ); ?>" hidden>
+				<p>
+					<label for="reimu-lost-user"><?php esc_html_e( '邮箱', 'yneko-reimu' ); ?></label>
+					<input id="reimu-lost-user" name="user_login" type="email" autocomplete="email" required>
+				</p>
+				<p>
+					<label for="reimu-lost-password"><?php esc_html_e( '新密码', 'yneko-reimu' ); ?></label>
+					<span class="reimu-login-password-row"><input id="reimu-lost-password" name="user_password" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="reimu-password-toggle" data-password-toggle aria-label="<?php esc_attr_e( '显示密码', 'yneko-reimu' ); ?>"></button></span>
+				</p>
+				<p>
+					<label for="reimu-lost-code"><?php esc_html_e( '邮箱验证码', 'yneko-reimu' ); ?></label>
+					<span class="reimu-login-code-row">
+						<input id="reimu-lost-code" name="verify_code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+						<button class="reimu-login-code-button" type="button" data-lost-code-send><?php esc_html_e( '发送验证码', 'yneko-reimu' ); ?></button>
+					</span>
+				</p>
+				<p class="reimu-login-note"><?php esc_html_e( '验证码会发送到账号邮箱，5 分钟内有效。', 'yneko-reimu' ); ?></p>
+				<div class="reimu-login-message" data-lost-message role="status" aria-live="polite"></div>
+				<div class="reimu-login-actions">
+					<button class="reimu-login-help-link" type="button" data-login-panel-trigger="login"><?php esc_html_e( '返回登录', 'yneko-reimu' ); ?></button>
+					<button type="submit" class="reimu-login-submit"><?php esc_html_e( '重置密码', 'yneko-reimu' ); ?></button>
+				</div>
+			</form>
+			<?php do_action( 'yneko_reimu_login_modal_social' ); ?>
 		</div>
 	</div>
 	<?php
+	return ob_get_clean();
+}
+
+function yneko_reimu_profile_modal() {
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+	echo yneko_reimu_profile_modal_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+function yneko_reimu_profile_modal_html() {
+	if ( ! is_user_logged_in() ) {
+		return '';
+	}
+	$profile = yneko_reimu_user_profile_payload();
+	ob_start();
+	?>
+	<div class="reimu-profile-modal" id="reimu-profile-modal" aria-hidden="true">
+		<div class="reimu-profile-modal__mask" data-profile-close></div>
+		<div class="reimu-profile-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="reimu-profile-title">
+			<button type="button" class="reimu-login-modal__close popup-btn-close" data-profile-close aria-label="<?php esc_attr_e( '关闭个人资料窗口', 'yneko-reimu' ); ?>"></button>
+			<h2 id="reimu-profile-title"><?php esc_html_e( '个人资料', 'yneko-reimu' ); ?></h2>
+			<form class="reimu-profile-form" data-reimu-profile-form>
+				<div class="reimu-profile-avatar-preview"><img data-profile-avatar-preview src="<?php echo esc_url( $profile['avatarUrl'] ? $profile['avatarUrl'] : get_avatar_url( get_current_user_id(), array( 'size' => 96 ) ) ); ?>" alt=""></div>
+				<p class="reimu-profile-avatar-field">
+					<label for="reimu-profile-avatar-url"><?php esc_html_e( '头像链接', 'yneko-reimu' ); ?></label>
+					<span class="reimu-profile-avatar-row">
+						<input id="reimu-profile-avatar-url" name="avatar_url" type="url" value="<?php echo esc_attr( $profile['avatarUrl'] ); ?>">
+						<?php if ( ! empty( $profile['avatarUploadEnabled'] ) ) : ?>
+							<button class="reimu-profile-avatar-upload" type="button" data-profile-avatar-upload><?php esc_html_e( '上传', 'yneko-reimu' ); ?></button>
+							<input id="reimu-profile-avatar-file" name="avatar_file" type="file" accept="image/jpeg,image/png,image/webp" data-profile-avatar-file hidden>
+						<?php endif; ?>
+					</span>
+				</p>
+				<p>
+					<label for="reimu-profile-display-name"><?php esc_html_e( '昵称', 'yneko-reimu' ); ?></label>
+					<input id="reimu-profile-display-name" name="display_name" type="text" value="<?php echo esc_attr( $profile['displayName'] ); ?>" required>
+				</p>
+				<p>
+					<label for="reimu-profile-url"><?php esc_html_e( '个人主页', 'yneko-reimu' ); ?></label>
+					<input id="reimu-profile-url" name="profile_url" type="text" inputmode="url" value="<?php echo esc_attr( $profile['profileUrl'] ); ?>">
+				</p>
+				<p>
+					<label for="reimu-profile-email"><?php esc_html_e( '邮箱', 'yneko-reimu' ); ?></label>
+					<input id="reimu-profile-email" name="current_email" type="email" value="<?php echo esc_attr( $profile['email'] ); ?>" readonly data-profile-current-email>
+				</p>
+				<p>
+					<label for="reimu-profile-new-email"><?php esc_html_e( '新邮箱', 'yneko-reimu' ); ?></label>
+					<input id="reimu-profile-new-email" name="user_email" type="email" autocomplete="email" data-profile-new-email>
+				</p>
+				<p>
+					<label for="reimu-profile-email-code"><?php esc_html_e( '新邮箱验证码', 'yneko-reimu' ); ?></label>
+					<span class="reimu-login-code-row">
+						<input id="reimu-profile-email-code" name="email_code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
+						<button class="reimu-login-code-button" type="button" data-profile-email-code-send><?php esc_html_e( '发送验证码', 'yneko-reimu' ); ?></button>
+					</span>
+				</p>
+				<?php if ( ! empty( $profile['avatarPending'] ) ) : ?>
+					<p class="reimu-profile-avatar-status" data-profile-avatar-status><?php esc_html_e( '头像审核中', 'yneko-reimu' ); ?></p>
+				<?php else : ?>
+					<p class="reimu-profile-avatar-status" data-profile-avatar-status hidden></p>
+				<?php endif; ?>
+				<p>
+					<label for="reimu-profile-password"><?php esc_html_e( '新密码', 'yneko-reimu' ); ?></label>
+					<span class="reimu-login-password-row"><input id="reimu-profile-password" name="new_password" type="password" autocomplete="new-password" minlength="8"><button type="button" class="reimu-password-toggle" data-password-toggle aria-label="<?php esc_attr_e( '显示密码', 'yneko-reimu' ); ?>"></button></span>
+				</p>
+				<p>
+					<label for="reimu-profile-password-confirm"><?php esc_html_e( '确认新密码', 'yneko-reimu' ); ?></label>
+					<span class="reimu-login-password-row"><input id="reimu-profile-password-confirm" name="new_password_confirm" type="password" autocomplete="new-password" minlength="8"><button type="button" class="reimu-password-toggle" data-password-toggle aria-label="<?php esc_attr_e( '显示密码', 'yneko-reimu' ); ?>"></button></span>
+				</p>
+				<div class="reimu-profile-2fa">
+					<label class="reimu-login-remember"><input name="totp_enabled" type="checkbox" value="1" <?php checked( ! empty( $profile['twoFactor'] ) ); ?> data-profile-2fa-toggle><span><?php esc_html_e( '开启认证器两步验证', 'yneko-reimu' ); ?></span></label>
+					<div class="reimu-profile-2fa-setup" data-profile-2fa-setup hidden>
+						<button class="reimu-login-code-button" type="button" data-profile-2fa-generate><?php esc_html_e( '生成密钥', 'yneko-reimu' ); ?></button>
+						<div class="reimu-profile-2fa-secret" data-profile-2fa-secret></div>
+						<img data-profile-2fa-qr alt="" hidden>
+						<p>
+							<label for="reimu-profile-2fa-code"><?php esc_html_e( '认证器验证码', 'yneko-reimu' ); ?></label>
+							<input id="reimu-profile-2fa-code" name="totp_code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
+						</p>
+					</div>
+				</div>
+				<div class="reimu-login-message" data-profile-message role="status" aria-live="polite"></div>
+				<div class="reimu-login-actions">
+					<button class="reimu-login-help-link" type="button" data-profile-close><?php esc_html_e( '取消', 'yneko-reimu' ); ?></button>
+					<button type="submit" class="reimu-login-submit"><?php esc_html_e( '保存', 'yneko-reimu' ); ?></button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<?php
+	return ob_get_clean();
 }
 
 function yneko_reimu_ajax_login() {
-	check_ajax_referer( 'yneko_reimu_ajax_login', 'nonce' );
-
-	$credentials = array(
-		'user_login'    => isset( $_POST['log'] ) ? sanitize_text_field( wp_unslash( $_POST['log'] ) ) : '',
-		'user_password' => isset( $_POST['pwd'] ) ? (string) wp_unslash( $_POST['pwd'] ) : '',
-		'remember'      => ! empty( $_POST['rememberme'] ),
-	);
-
-	if ( '' === $credentials['user_login'] || '' === $credentials['user_password'] ) {
+	if ( ! check_ajax_referer( 'yneko_reimu_ajax_login', 'nonce', false ) ) {
 		wp_send_json_error(
 			array(
-				'message' => esc_html__( '请输入用户名和密码。', 'yneko-reimu' ),
-			),
-			400
-		);
-	}
-
-	$user = wp_signon( $credentials, is_ssl() );
-	if ( is_wp_error( $user ) ) {
-		wp_send_json_error(
-			array(
-				'message' => $user->get_error_message(),
+				'message'    => esc_html__( '登录信息已过期，请重试。', 'yneko-reimu' ),
+				'loginNonce' => wp_create_nonce( 'yneko_reimu_ajax_login' ),
 			),
 			403
 		);
 	}
 
+	$email    = isset( $_POST['log'] ) ? sanitize_email( wp_unslash( $_POST['log'] ) ) : '';
+	$password = isset( $_POST['pwd'] ) ? (string) wp_unslash( $_POST['pwd'] ) : '';
+	$remember = ! empty( $_POST['rememberme'] );
+	$two_factor_code = isset( $_POST['two_factor_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['two_factor_code'] ) ) : '';
+
+	if ( '' === $email || ! is_email( $email ) || '' === $password ) {
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( '请输入邮箱和密码。', 'yneko-reimu' ),
+			),
+			400
+		);
+	}
+
+	$user = get_user_by( 'email', $email );
+	if ( ! $user ) {
+		wp_send_json_error( array( 'message' => esc_html__( '该用户未注册。', 'yneko-reimu' ) ), 404 );
+	}
+
+	if ( ! wp_check_password( $password, $user->user_pass, $user->ID ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '密码错误。', 'yneko-reimu' ) ), 403 );
+	}
+
+	if ( yneko_reimu_user_2fa_enabled( $user->ID ) ) {
+		if ( ! preg_match( '/^\d{6}$/', $two_factor_code ) ) {
+			wp_send_json_error(
+				array(
+					'message'     => esc_html__( '请输入两步验证码。', 'yneko-reimu' ),
+					'requires2fa' => true,
+				),
+				401
+			);
+		}
+		if ( ! yneko_reimu_totp_verify( yneko_reimu_user_2fa_secret( $user->ID ), $two_factor_code ) ) {
+			wp_send_json_error(
+				array(
+					'message'     => esc_html__( '两步验证码不正确。', 'yneko-reimu' ),
+					'requires2fa' => true,
+				),
+				403
+			);
+		}
+	}
+
+	wp_set_current_user( $user->ID );
+	wp_set_auth_cookie( $user->ID, $remember, is_ssl() );
+	do_action( 'wp_login', $user->user_login, $user );
+
 	wp_send_json_success(
 		array(
 			'message' => esc_html__( '登录成功。', 'yneko-reimu' ),
+			'loginNonce' => wp_create_nonce( 'yneko_reimu_ajax_login' ),
 		)
 	);
 }
 add_action( 'wp_ajax_nopriv_yneko_reimu_login', 'yneko_reimu_ajax_login' );
+
+function yneko_reimu_user_2fa_secret( $user_id ) {
+	return (string) get_user_meta( absint( $user_id ), '_yneko_reimu_totp_secret', true );
+}
+
+function yneko_reimu_user_2fa_enabled( $user_id ) {
+	return '1' === (string) get_user_meta( absint( $user_id ), '_yneko_reimu_totp_enabled', true ) && '' !== yneko_reimu_user_2fa_secret( $user_id );
+}
+
+function yneko_reimu_totp_base32_chars() {
+	return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+}
+
+function yneko_reimu_totp_generate_secret( $length = 20 ) {
+	$chars  = yneko_reimu_totp_base32_chars();
+	$secret = '';
+	for ( $i = 0; $i < $length; $i++ ) {
+		$secret .= $chars[ random_int( 0, strlen( $chars ) - 1 ) ];
+	}
+	return $secret;
+}
+
+function yneko_reimu_totp_base32_decode( $secret ) {
+	$secret = strtoupper( preg_replace( '/[^A-Z2-7]/', '', (string) $secret ) );
+	$chars  = yneko_reimu_totp_base32_chars();
+	$bits   = '';
+	$bytes  = '';
+
+	for ( $i = 0; $i < strlen( $secret ); $i++ ) {
+		$index = strpos( $chars, $secret[ $i ] );
+		if ( false === $index ) {
+			continue;
+		}
+		$bits .= str_pad( decbin( $index ), 5, '0', STR_PAD_LEFT );
+	}
+
+	for ( $i = 0; $i + 8 <= strlen( $bits ); $i += 8 ) {
+		$bytes .= chr( bindec( substr( $bits, $i, 8 ) ) );
+	}
+
+	return $bytes;
+}
+
+function yneko_reimu_totp_code( $secret, $time_slice = null ) {
+	$time_slice = null === $time_slice ? floor( time() / 30 ) : (int) $time_slice;
+	$key        = yneko_reimu_totp_base32_decode( $secret );
+	if ( '' === $key ) {
+		return '';
+	}
+
+	$counter = pack( 'N*', 0 ) . pack( 'N*', $time_slice );
+	$hash    = hash_hmac( 'sha1', $counter, $key, true );
+	$offset  = ord( substr( $hash, -1 ) ) & 0x0f;
+	$value   = unpack( 'N', substr( $hash, $offset, 4 ) )[1] & 0x7fffffff;
+	return str_pad( (string) ( $value % 1000000 ), 6, '0', STR_PAD_LEFT );
+}
+
+function yneko_reimu_totp_verify( $secret, $code ) {
+	$code = preg_replace( '/\D+/', '', (string) $code );
+	if ( ! preg_match( '/^\d{6}$/', $code ) || '' === $secret ) {
+		return false;
+	}
+
+	$slice = floor( time() / 30 );
+	for ( $i = -1; $i <= 1; $i++ ) {
+		if ( hash_equals( yneko_reimu_totp_code( $secret, $slice + $i ), $code ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function yneko_reimu_totp_uri( $user_id, $secret ) {
+	$user  = get_userdata( absint( $user_id ) );
+	$email = $user ? $user->user_email : '';
+	$label = rawurlencode( wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) . ':' . $email );
+	return 'otpauth://totp/' . $label . '?secret=' . rawurlencode( $secret ) . '&issuer=' . rawurlencode( wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) ) . '&algorithm=SHA1&digits=6&period=30';
+}
+
+function yneko_reimu_ajax_profile_get() {
+	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( '请先登录。', 'yneko-reimu' ),
+			),
+			401
+		);
+	}
+
+	wp_send_json_success(
+		array_merge(
+			yneko_reimu_user_profile_payload(),
+			array(
+				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+				'logoutNonce'  => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+			)
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_profile_get', 'yneko_reimu_ajax_profile_get' );
+
+function yneko_reimu_ajax_profile_email_code() {
+	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请先登录。', 'yneko-reimu' ) ), 401 );
+	}
+
+	$user      = wp_get_current_user();
+	$new_email_input = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+	$new_email = $new_email_input ? $new_email_input : $user->user_email;
+	if ( '' === $new_email || ! is_email( $new_email ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入有效的邮箱地址。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( strtolower( $new_email ) === strtolower( $user->user_email ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '新邮箱地址不要与原邮箱地址重复。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( email_exists( $new_email ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '该邮箱已被注册。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$cooldown_key = yneko_reimu_auth_code_cooldown_transient_key( 'profile_email', (string) get_current_user_id(), $new_email );
+	if ( get_transient( $cooldown_key ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码已发送，请稍后再试。', 'yneko-reimu' ) ), 429 );
+	}
+
+	$code  = (string) random_int( 100000, 999999 );
+	$title = sprintf( __( '[%s] 邮箱修改验证码', 'yneko-reimu' ), wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) );
+	$message = sprintf(
+		__( '您的邮箱修改验证码是：%1$s', 'yneko-reimu' ) . "\n\n" . __( '该验证码将在 %2$d 分钟后失效。', 'yneko-reimu' ),
+		$code,
+		5
+	);
+	if ( ! wp_mail( $new_email, wp_specialchars_decode( $title ), $message ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码邮件发送失败，请稍后重试。', 'yneko-reimu' ) ), 500 );
+	}
+
+	set_transient(
+		yneko_reimu_auth_code_transient_key( 'profile_email', (string) get_current_user_id(), $new_email ),
+		array(
+			'code_hash' => wp_hash_password( $code ),
+			'attempts'  => 0,
+		),
+		5 * MINUTE_IN_SECONDS
+	);
+	set_transient( $cooldown_key, 1, MINUTE_IN_SECONDS );
+	wp_send_json_success(
+		array(
+			'message'      => esc_html__( '验证码已发送，请检查您的邮箱。', 'yneko-reimu' ),
+			'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+			'logoutNonce'  => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_profile_email_code', 'yneko_reimu_ajax_profile_email_code' );
+
+function yneko_reimu_ajax_profile_totp_generate() {
+	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请先登录。', 'yneko-reimu' ) ), 401 );
+	}
+
+	$secret = yneko_reimu_totp_generate_secret();
+	update_user_meta( get_current_user_id(), '_yneko_reimu_totp_pending_secret', $secret );
+	wp_send_json_success(
+		array(
+			'secret' => $secret,
+			'uri'    => yneko_reimu_totp_uri( get_current_user_id(), $secret ),
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_profile_totp_generate', 'yneko_reimu_ajax_profile_totp_generate' );
+
+function yneko_reimu_ajax_profile_save() {
+	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请先登录。', 'yneko-reimu' ) ), 401 );
+	}
+
+	$user_id      = get_current_user_id();
+	$user         = wp_get_current_user();
+	$display_name = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
+	$profile_url  = isset( $_POST['profile_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['profile_url'] ) ) : '';
+	$avatar_url   = isset( $_POST['avatar_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['avatar_url'] ) ) : '';
+	$new_email_input = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+	$new_email    = $new_email_input ? $new_email_input : $user->user_email;
+	$email_code   = isset( $_POST['email_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['email_code'] ) ) : '';
+	$new_password = isset( $_POST['new_password'] ) ? (string) wp_unslash( $_POST['new_password'] ) : '';
+	$new_password_confirm = isset( $_POST['new_password_confirm'] ) ? (string) wp_unslash( $_POST['new_password_confirm'] ) : '';
+	$totp_enabled = ! empty( $_POST['totp_enabled'] );
+	$totp_code    = isset( $_POST['totp_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['totp_code'] ) ) : '';
+
+	if ( '' === $display_name || mb_strlen( $display_name ) > 50 ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入 1 到 50 个字符的昵称。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( '' === $new_email || ! is_email( $new_email ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入有效的邮箱地址。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$update = array(
+		'ID'           => $user_id,
+		'display_name' => $display_name,
+		'nickname'     => $display_name,
+		'user_url'     => $profile_url,
+	);
+
+	if ( strtolower( $new_email ) !== strtolower( $user->user_email ) ) {
+		if ( email_exists( $new_email ) ) {
+			wp_send_json_error( array( 'message' => esc_html__( '该邮箱已被注册。', 'yneko-reimu' ) ), 400 );
+		}
+		$code_key = yneko_reimu_auth_code_transient_key( 'profile_email', (string) $user_id, $new_email );
+		$code_data = get_transient( $code_key );
+		if ( ! is_array( $code_data ) || empty( $code_data['code_hash'] ) || ! wp_check_password( $email_code, $code_data['code_hash'] ) ) {
+			wp_send_json_error( array( 'message' => esc_html__( '邮箱验证码不正确或已失效。', 'yneko-reimu' ) ), 400 );
+		}
+		$update['user_email'] = $new_email;
+		delete_transient( $code_key );
+		delete_transient( yneko_reimu_auth_code_cooldown_transient_key( 'profile_email', (string) $user_id, $new_email ) );
+	}
+
+	if ( '' !== $new_password || '' !== $new_password_confirm ) {
+		if ( $new_password !== $new_password_confirm ) {
+			wp_send_json_error( array( 'message' => esc_html__( '两次输入的密码不一致。', 'yneko-reimu' ) ), 400 );
+		}
+		if ( strlen( $new_password ) < 8 ) {
+			wp_send_json_error( array( 'message' => esc_html__( '密码至少需要 8 个字符。', 'yneko-reimu' ) ), 400 );
+		}
+	}
+
+	if ( isset( $_FILES['avatar_file'] ) && ! empty( $_FILES['avatar_file']['name'] ) ) {
+		if ( ! yneko_reimu_avatar_upload_enabled() ) {
+			wp_send_json_error( array( 'message' => esc_html__( '当前未开启头像上传。', 'yneko-reimu' ) ), 403 );
+		}
+		if ( ! empty( $_FILES['avatar_file']['size'] ) && absint( $_FILES['avatar_file']['size'] ) > yneko_reimu_avatar_upload_limit() ) {
+			wp_send_json_error( array( 'message' => esc_html__( '头像文件超过大小限制。', 'yneko-reimu' ) ), 400 );
+		}
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		if ( yneko_reimu_avatar_review_enabled() ) {
+			$GLOBALS['yneko_reimu_avatar_upload_pending'] = true;
+		}
+		add_filter( 'upload_dir', 'yneko_reimu_avatar_upload_dir' );
+		$upload = wp_handle_upload(
+			$_FILES['avatar_file'],
+			array(
+				'test_form' => false,
+				'mimes'     => array(
+					'jpg|jpeg' => 'image/jpeg',
+					'png'      => 'image/png',
+					'webp'     => 'image/webp',
+				),
+			)
+		);
+		remove_filter( 'upload_dir', 'yneko_reimu_avatar_upload_dir' );
+		unset( $GLOBALS['yneko_reimu_avatar_upload_pending'] );
+		if ( empty( $upload['url'] ) || ! empty( $upload['error'] ) ) {
+			wp_send_json_error( array( 'message' => ! empty( $upload['error'] ) ? $upload['error'] : esc_html__( '头像上传失败。', 'yneko-reimu' ) ), 400 );
+		}
+		$avatar_url = esc_url_raw( $upload['url'] );
+	}
+
+	$avatar_pending = false;
+	if ( $avatar_url && yneko_reimu_avatar_review_enabled() && isset( $_FILES['avatar_file'] ) && ! empty( $_FILES['avatar_file']['name'] ) ) {
+		update_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', $avatar_url );
+		update_user_meta( $user_id, '_yneko_reimu_avatar_status', 'pending' );
+		$avatar_pending = true;
+	} elseif ( $avatar_url ) {
+		update_user_meta( $user_id, '_yneko_reimu_avatar_url', $avatar_url );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+	} else {
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_url' );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+	}
+
+	if ( $totp_enabled ) {
+		$current_secret = yneko_reimu_user_2fa_secret( $user_id );
+		$pending_secret = (string) get_user_meta( $user_id, '_yneko_reimu_totp_pending_secret', true );
+		$secret = $current_secret ? $current_secret : $pending_secret;
+		if ( '' === $secret ) {
+			wp_send_json_error( array( 'message' => esc_html__( '请先生成认证器密钥。', 'yneko-reimu' ) ), 400 );
+		}
+		if ( ! yneko_reimu_totp_verify( $secret, $totp_code ) ) {
+			wp_send_json_error( array( 'message' => esc_html__( '认证器验证码不正确。', 'yneko-reimu' ) ), 400 );
+		}
+		update_user_meta( $user_id, '_yneko_reimu_totp_secret', $secret );
+		update_user_meta( $user_id, '_yneko_reimu_totp_enabled', '1' );
+		delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
+	} else {
+		delete_user_meta( $user_id, '_yneko_reimu_totp_enabled' );
+		delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
+	}
+
+	$result = wp_update_user( $update );
+	if ( is_wp_error( $result ) ) {
+		wp_send_json_error( array( 'message' => $result->get_error_message() ), 400 );
+	}
+	if ( '' !== $new_password ) {
+		wp_set_password( $new_password, $user_id );
+		wp_set_current_user( $user_id );
+		wp_set_auth_cookie( $user_id, true, is_ssl() );
+	}
+
+	wp_send_json_success(
+		array_merge(
+			array(
+				'message' => $avatar_pending ? esc_html__( '个人资料已保存，头像审核中。', 'yneko-reimu' ) : esc_html__( '个人资料已保存。', 'yneko-reimu' ),
+				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+				'logoutNonce' => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+			),
+			yneko_reimu_user_profile_payload( $user_id )
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_profile_save', 'yneko_reimu_ajax_profile_save' );
+
+function yneko_reimu_auth_code_transient_key( $scope, $identifier, $email ) {
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	return 'yneko_reimu_' . sanitize_key( $scope ) . '_code_' . hash( 'sha256', strtolower( $identifier ) . '|' . strtolower( $email ) . '|' . $ip );
+}
+
+function yneko_reimu_auth_code_cooldown_transient_key( $scope, $identifier, $email ) {
+	return 'yneko_reimu_' . sanitize_key( $scope ) . '_cooldown_' . hash( 'sha256', strtolower( $identifier ) . '|' . strtolower( $email ) );
+}
+
+function yneko_reimu_generate_unique_login_from_email( $email ) {
+	$base = sanitize_user( current( explode( '@', $email ) ), true );
+	if ( '' === $base ) {
+		$base = 'user';
+	}
+
+	$user_login = $base;
+	$suffix     = 1;
+	while ( username_exists( $user_login ) ) {
+		$suffix++;
+		$user_login = $base . $suffix;
+	}
+
+	return $user_login;
+}
+
+function yneko_reimu_find_user_for_password_reset( $identifier ) {
+	$identifier = trim( (string) $identifier );
+	if ( '' === $identifier || ! is_email( $identifier ) ) {
+		return null;
+	}
+
+	return get_user_by( 'email', $identifier );
+}
+
+function yneko_reimu_validate_registration_fields( $display_name, $user_email, $user_password = '', $check_password = false ) {
+	$errors = new WP_Error();
+	$name   = trim( wp_strip_all_tags( (string) $display_name ) );
+
+	if ( '' === $name ) {
+		$errors->add( 'invalid_display_name', __( '请输入有效的昵称。', 'yneko-reimu' ) );
+	} elseif ( mb_strlen( $name ) > 50 ) {
+		$errors->add( 'display_name_too_long', __( '昵称不能超过 50 个字符。', 'yneko-reimu' ) );
+	}
+
+	if ( '' === $user_email || ! is_email( $user_email ) ) {
+		$errors->add( 'invalid_email', __( '请输入有效的邮箱地址。', 'yneko-reimu' ) );
+	} elseif ( email_exists( $user_email ) ) {
+		$errors->add( 'email_exists', __( '该邮箱已被注册。', 'yneko-reimu' ) );
+	}
+
+	if ( $check_password && strlen( $user_password ) < 8 ) {
+		$errors->add( 'weak_password', __( '密码至少需要 8 个字符。', 'yneko-reimu' ) );
+	}
+
+	return $errors;
+}
+
+function yneko_reimu_ajax_send_register_code() {
+	check_ajax_referer( 'yneko_reimu_ajax_register_code', 'nonce' );
+
+	if ( ! get_option( 'users_can_register' ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '当前未开放注册。', 'yneko-reimu' ) ), 403 );
+	}
+
+	$display_name = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
+	$user_email   = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+	$errors       = yneko_reimu_validate_registration_fields( $display_name, $user_email );
+
+	if ( $errors->has_errors() ) {
+		wp_send_json_error( array( 'message' => $errors->get_error_message() ), 400 );
+	}
+
+	$cooldown_key = yneko_reimu_auth_code_cooldown_transient_key( 'reg', $display_name, $user_email );
+	if ( get_transient( $cooldown_key ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码已发送，请稍后再试。', 'yneko-reimu' ) ), 429 );
+	}
+
+	$code  = (string) random_int( 100000, 999999 );
+	$title = sprintf(
+		/* translators: %s: site title. */
+		__( '[%s] 注册验证码', 'yneko-reimu' ),
+		wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES )
+	);
+	$message = sprintf(
+		__( '您的注册验证码是：%1$s', 'yneko-reimu' ) . "\n\n" . __( '该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请忽略这封邮件。', 'yneko-reimu' ),
+		$code,
+		5
+	);
+
+	if ( ! wp_mail( $user_email, wp_specialchars_decode( $title ), $message ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码邮件发送失败，请稍后重试。', 'yneko-reimu' ) ), 500 );
+	}
+
+	set_transient(
+		yneko_reimu_auth_code_transient_key( 'reg', $display_name, $user_email ),
+		array(
+			'code_hash' => wp_hash_password( $code ),
+			'attempts'  => 0,
+		),
+		5 * MINUTE_IN_SECONDS
+	);
+	set_transient( $cooldown_key, 1, MINUTE_IN_SECONDS );
+
+	wp_send_json_success( array( 'message' => esc_html__( '验证码已发送，请检查您的邮箱。', 'yneko-reimu' ) ) );
+}
+add_action( 'wp_ajax_nopriv_yneko_reimu_register_code', 'yneko_reimu_ajax_send_register_code' );
+
+function yneko_reimu_ajax_register() {
+	check_ajax_referer( 'yneko_reimu_ajax_register', 'nonce' );
+
+	if ( ! get_option( 'users_can_register' ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '当前未开放注册。', 'yneko-reimu' ) ), 403 );
+	}
+
+	$display_name  = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
+	$user_email    = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+	$user_password = isset( $_POST['user_password'] ) ? (string) wp_unslash( $_POST['user_password'] ) : '';
+	$verify_code   = isset( $_POST['verify_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['verify_code'] ) ) : '';
+	$errors        = yneko_reimu_validate_registration_fields( $display_name, $user_email, $user_password, true );
+
+	if ( $errors->has_errors() ) {
+		wp_send_json_error( array( 'message' => $errors->get_error_message() ), 400 );
+	}
+	if ( ! preg_match( '/^\d{6}$/', $verify_code ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入 6 位邮箱验证码。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$code_key  = yneko_reimu_auth_code_transient_key( 'reg', $display_name, $user_email );
+	$code_data = get_transient( $code_key );
+	if ( ! is_array( $code_data ) || empty( $code_data['code_hash'] ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码已失效，请重新获取。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$attempts = isset( $code_data['attempts'] ) ? absint( $code_data['attempts'] ) : 0;
+	if ( $attempts >= 5 ) {
+		delete_transient( $code_key );
+		wp_send_json_error( array( 'message' => esc_html__( '验证码错误次数过多，请重新获取。', 'yneko-reimu' ) ), 429 );
+	}
+
+	if ( ! wp_check_password( $verify_code, $code_data['code_hash'] ) ) {
+		$code_data['attempts'] = $attempts + 1;
+		set_transient( $code_key, $code_data, 5 * MINUTE_IN_SECONDS );
+		wp_send_json_error( array( 'message' => esc_html__( '验证码不正确。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$user_login = yneko_reimu_generate_unique_login_from_email( $user_email );
+	$user_id = wp_create_user( $user_login, $user_password, $user_email );
+	if ( is_wp_error( $user_id ) ) {
+		wp_send_json_error( array( 'message' => $user_id->get_error_message() ), 400 );
+	}
+	wp_update_user(
+		array(
+			'ID'           => $user_id,
+			'display_name' => $display_name,
+			'nickname'     => $display_name,
+		)
+	);
+
+	delete_transient( $code_key );
+	delete_transient( yneko_reimu_auth_code_cooldown_transient_key( 'reg', $display_name, $user_email ) );
+	wp_new_user_notification( $user_id, null, 'admin' );
+	wp_send_json_success( array( 'message' => esc_html__( '注册成功，请返回登录。', 'yneko-reimu' ) ) );
+}
+add_action( 'wp_ajax_nopriv_yneko_reimu_register', 'yneko_reimu_ajax_register' );
+
+function yneko_reimu_ajax_send_lostpassword_code() {
+	check_ajax_referer( 'yneko_reimu_ajax_lostpassword_code', 'nonce' );
+
+	$identifier = isset( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : '';
+	if ( '' === $identifier || ! is_email( $identifier ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入注册邮箱。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$user = yneko_reimu_find_user_for_password_reset( $identifier );
+	if ( ! $user ) {
+		wp_send_json_error( array( 'message' => esc_html__( '未找到匹配的用户。', 'yneko-reimu' ) ), 404 );
+	}
+
+	$cooldown_key = yneko_reimu_auth_code_cooldown_transient_key( 'lost', $identifier, $user->user_email );
+	if ( get_transient( $cooldown_key ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码已发送，请稍后再试。', 'yneko-reimu' ) ), 429 );
+	}
+
+	$code  = (string) random_int( 100000, 999999 );
+	$title = sprintf(
+		/* translators: %s: site title. */
+		__( '[%s] 密码重置验证码', 'yneko-reimu' ),
+		wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES )
+	);
+	$message = sprintf(
+		__( '您的密码重置验证码是：%1$s', 'yneko-reimu' ) . "\n\n" . __( '该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请立即检查账号安全。', 'yneko-reimu' ),
+		$code,
+		5
+	);
+
+	if ( ! wp_mail( $user->user_email, wp_specialchars_decode( $title ), $message ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码邮件发送失败，请稍后重试。', 'yneko-reimu' ) ), 500 );
+	}
+
+	set_transient(
+		yneko_reimu_auth_code_transient_key( 'lost', $identifier, $user->user_email ),
+		array(
+			'code_hash' => wp_hash_password( $code ),
+			'attempts'  => 0,
+			'user_id'   => absint( $user->ID ),
+		),
+		5 * MINUTE_IN_SECONDS
+	);
+	set_transient( $cooldown_key, 1, MINUTE_IN_SECONDS );
+
+	wp_send_json_success( array( 'message' => esc_html__( '验证码已发送，请检查您的邮箱。', 'yneko-reimu' ) ) );
+}
+add_action( 'wp_ajax_nopriv_yneko_reimu_lostpassword_code', 'yneko_reimu_ajax_send_lostpassword_code' );
+
+function yneko_reimu_ajax_lostpassword() {
+	check_ajax_referer( 'yneko_reimu_ajax_lostpassword', 'nonce' );
+
+	$identifier    = isset( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : '';
+	$user_password = isset( $_POST['user_password'] ) ? (string) wp_unslash( $_POST['user_password'] ) : '';
+	$verify_code   = isset( $_POST['verify_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['verify_code'] ) ) : '';
+	if ( '' === $identifier || ! is_email( $identifier ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入注册邮箱。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( strlen( $user_password ) < 8 ) {
+		wp_send_json_error( array( 'message' => esc_html__( '密码至少需要 8 个字符。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( ! preg_match( '/^\d{6}$/', $verify_code ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请输入 6 位邮箱验证码。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$user = yneko_reimu_find_user_for_password_reset( $identifier );
+	if ( ! $user ) {
+		wp_send_json_error( array( 'message' => esc_html__( '未找到匹配的用户。', 'yneko-reimu' ) ), 404 );
+	}
+
+	$code_key  = yneko_reimu_auth_code_transient_key( 'lost', $identifier, $user->user_email );
+	$code_data = get_transient( $code_key );
+	if ( ! is_array( $code_data ) || empty( $code_data['code_hash'] ) || absint( $code_data['user_id'] ?? 0 ) !== absint( $user->ID ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '验证码已失效，请重新获取。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$attempts = isset( $code_data['attempts'] ) ? absint( $code_data['attempts'] ) : 0;
+	if ( $attempts >= 5 ) {
+		delete_transient( $code_key );
+		wp_send_json_error( array( 'message' => esc_html__( '验证码错误次数过多，请重新获取。', 'yneko-reimu' ) ), 429 );
+	}
+
+	if ( ! wp_check_password( $verify_code, $code_data['code_hash'] ) ) {
+		$code_data['attempts'] = $attempts + 1;
+		set_transient( $code_key, $code_data, 5 * MINUTE_IN_SECONDS );
+		wp_send_json_error( array( 'message' => esc_html__( '验证码不正确。', 'yneko-reimu' ) ), 400 );
+	}
+
+	wp_set_password( $user_password, $user->ID );
+	delete_transient( $code_key );
+	delete_transient( yneko_reimu_auth_code_cooldown_transient_key( 'lost', $identifier, $user->user_email ) );
+
+	wp_send_json_success( array( 'message' => esc_html__( '密码已重置，请返回登录。', 'yneko-reimu' ) ) );
+}
+add_action( 'wp_ajax_nopriv_yneko_reimu_lostpassword', 'yneko_reimu_ajax_lostpassword' );
 
 function yneko_reimu_ajax_comment_like() {
 	$comment_id = isset( $_POST['comment_id'] ) ? absint( wp_unslash( $_POST['comment_id'] ) ) : 0;
@@ -947,6 +1988,59 @@ function yneko_reimu_comment_upload_admin_action() {
 }
 add_action( 'admin_init', 'yneko_reimu_comment_upload_admin_action' );
 
+function yneko_reimu_delete_upload_by_url( $url ) {
+	$url = (string) $url;
+	if ( '' === $url ) {
+		return;
+	}
+	$uploads = wp_get_upload_dir();
+	if ( empty( $uploads['baseurl'] ) || empty( $uploads['basedir'] ) || 0 !== strpos( $url, $uploads['baseurl'] ) ) {
+		return;
+	}
+	$path = $uploads['basedir'] . str_replace( '/', DIRECTORY_SEPARATOR, substr( $url, strlen( $uploads['baseurl'] ) ) );
+	if ( is_file( $path ) ) {
+		wp_delete_file( $path );
+	}
+}
+
+function yneko_reimu_avatar_admin_action() {
+	$action  = isset( $_GET['yneko_avatar_action'] ) ? sanitize_key( wp_unslash( $_GET['yneko_avatar_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$user_id = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( ! $action || ! $user_id ) {
+		return;
+	}
+	if ( ! in_array( $action, array( 'approve', 'reject', 'delete' ), true ) ) {
+		return;
+	}
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( '权限不足。', 'yneko-reimu' ), 403 );
+	}
+	check_admin_referer( 'yneko_reimu_avatar_' . $action . '_' . $user_id );
+
+	$pending = (string) get_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', true );
+	$current = (string) get_user_meta( $user_id, '_yneko_reimu_avatar_url', true );
+
+	if ( 'approve' === $action && $pending ) {
+		if ( $current && $current !== $pending ) {
+			yneko_reimu_delete_upload_by_url( $current );
+		}
+		update_user_meta( $user_id, '_yneko_reimu_avatar_url', $pending );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+	} elseif ( 'reject' === $action && $pending ) {
+		yneko_reimu_delete_upload_by_url( $pending );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+	} elseif ( 'delete' === $action ) {
+		yneko_reimu_delete_upload_by_url( $current );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_url' );
+	}
+
+	wp_safe_redirect( remove_query_arg( array( 'yneko_avatar_action', 'user_id', '_wpnonce' ) ) );
+	exit;
+}
+add_action( 'admin_init', 'yneko_reimu_avatar_admin_action' );
+
 function yneko_reimu_get_comment_avatar( $comment, $size = 56 ) {
 	$default = function_exists( 'yneko_reimu_get_default_comment_avatar_url' ) ? yneko_reimu_get_default_comment_avatar_url() : '';
 
@@ -1155,7 +2249,7 @@ function yneko_reimu_comment_callback( $comment, $args, $depth ) {
 			<div class="reimu-comment__content">
 				<header class="reimu-comment__meta">
 					<span class="reimu-comment__headline">
-						<span class="reimu-comment__author"><?php comment_author_link(); ?></span>
+						<span class="reimu-comment__author"><?php echo yneko_reimu_comment_author_link_html( $comment ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<a class="reimu-comment__date" href="<?php echo esc_url( $comment_link ); ?>">
 							<time datetime="<?php echo esc_attr( get_comment_date( DATE_W3C, $comment ) ); ?>"><?php echo esc_html( get_comment_date( 'Y-m-d', $comment ) ); ?></time>
 						</a>

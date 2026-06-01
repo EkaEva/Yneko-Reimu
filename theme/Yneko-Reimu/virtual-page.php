@@ -17,6 +17,11 @@ get_header();
 			get_template_part( 'template-parts/content/content-none' );
 		}
 		?>
+		<?php
+		if ( 'projects' === $reimu_virtual_slug && function_exists( 'yneko_reimu_should_show_comments' ) && yneko_reimu_should_show_comments( yneko_reimu_comments_virtual_page_post_id( 'projects' ) ) ) {
+			comments_template();
+		}
+		?>
 	</section>
 </div>
 <?php

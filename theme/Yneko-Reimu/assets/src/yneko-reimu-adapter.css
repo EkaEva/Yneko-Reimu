@@ -845,7 +845,7 @@ body.error404[data-theme="dark"] #header::after {
 }
 
 .reimu-button-ghost {
-  color: var(--red-1);
+  color: rgba(120, 120, 120, .82);
   background: var(--red-5);
 }
 
@@ -1811,6 +1811,11 @@ html[lang="en-US"] .article-copyright p {
   transition: color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 
+.reimu-load-more[hidden],
+.reimu-load-more-wrap[hidden] {
+  display: none !important;
+}
+
 .reimu-load-more:hover {
   color: var(--red-1);
   border-color: var(--red-3);
@@ -2344,6 +2349,8 @@ html[lang="en-US"] .article-copyright p {
 .reimu-login-modal__dialog {
   position: relative;
   width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
   padding: 34px 36px 30px;
   color: var(--color-default);
   background: var(--color-wrap);
@@ -2381,6 +2388,10 @@ html[lang="en-US"] .article-copyright p {
   line-height: 1.6;
 }
 
+.reimu-login-panel[hidden] {
+  display: none !important;
+}
+
 .reimu-login-form p {
   margin: 0 0 14px;
 }
@@ -2394,6 +2405,7 @@ html[lang="en-US"] .article-copyright p {
 }
 
 .reimu-login-form input[type="text"],
+.reimu-login-form input[type="email"],
 .reimu-login-form input[type="password"] {
   box-sizing: border-box;
   width: 100%;
@@ -2408,9 +2420,112 @@ html[lang="en-US"] .article-copyright p {
 }
 
 .reimu-login-form input[type="text"]:focus,
+.reimu-login-form input[type="email"]:focus,
 .reimu-login-form input[type="password"]:focus {
   border-color: rgba(255, 82, 82, .52);
   box-shadow: 0 0 0 3px rgba(255, 82, 82, .08);
+}
+
+.reimu-login-password-row {
+  position: relative;
+  display: block;
+}
+
+.reimu-login-password-row input {
+  padding-right: 46px !important;
+}
+
+.reimu-login-password-row input::-ms-reveal,
+.reimu-login-password-row input::-ms-clear {
+  display: none;
+}
+
+.reimu-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  color: var(--red-1);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  cursor: var(--cursor-pointer) !important;
+  transition: color .2s ease, background .2s ease;
+}
+
+.reimu-password-toggle:hover {
+  color: var(--red-1);
+  background: rgba(255, 82, 82, .08);
+}
+
+.reimu-password-toggle::before {
+  width: 19px;
+  height: 19px;
+  content: "";
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M354.9 511.8c0 2.8 0.7 5.3 0.8 8.1l165.6-165.6c-2.7-0.1-5.3-0.8-8.1-0.8-87.3 0-158.3 71.1-158.3 158.3zM513.2 670.2c87.3 0 158.3-71 158.3-158.3 0-2.8-0.7-5.3-0.8-8.1L505.2 669.3c2.7 0.2 5.3 0.9 8 0.9zM378.6 696.3l50.8-50.8L647 427.9l50.8-50.8L797.9 277l66-66c6.3-6.3 6.3-16.5 0-22.7l-27.1-27.1c-6.3-6.3-16.5-6.3-22.7 0L160.6 814.7c-6.3 6.3-6.3 16.5 0 22.7l27.1 27.1c6.3 6.3 16.5 6.3 22.7 0l78.5-78.5 89.7-89.7z'/%3E%3Cpath d='M850.4 324.1l-119 119c11.1 35 14 73.6 6.2 113.6-17.4 89.8-89.9 162.3-179.8 179.5-39.9 7.7-78.4 4.7-113.3-6.3l-86.9 86.9c48.7 17.2 101 26.7 155.6 26.7 209 0 385.8-137.3 445.6-326.5 1.1-3.4 1.1-7.1 0-10.5-21.8-69.1-59.4-131.3-108.4-182.4zM295.1 580.6c-11.1-35-14-73.6-6.2-113.6 17.4-89.9 89.9-162.3 179.8-179.6 39.9-7.7 78.4-4.7 113.3 6.3l86.9-86.9c-48.7-17.2-101-26.7-155.6-26.7-209 0-385.8 137.3-445.6 326.5-1.1 3.4-1.1 7.1 0 10.5 21.8 69.2 59.4 131.4 108.4 182.5l119-119z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M354.9 511.8c0 2.8 0.7 5.3 0.8 8.1l165.6-165.6c-2.7-0.1-5.3-0.8-8.1-0.8-87.3 0-158.3 71.1-158.3 158.3zM513.2 670.2c87.3 0 158.3-71 158.3-158.3 0-2.8-0.7-5.3-0.8-8.1L505.2 669.3c2.7 0.2 5.3 0.9 8 0.9zM378.6 696.3l50.8-50.8L647 427.9l50.8-50.8L797.9 277l66-66c6.3-6.3 6.3-16.5 0-22.7l-27.1-27.1c-6.3-6.3-16.5-6.3-22.7 0L160.6 814.7c-6.3 6.3-6.3 16.5 0 22.7l27.1 27.1c6.3 6.3 16.5 6.3 22.7 0l78.5-78.5 89.7-89.7z'/%3E%3Cpath d='M850.4 324.1l-119 119c11.1 35 14 73.6 6.2 113.6-17.4 89.8-89.9 162.3-179.8 179.5-39.9 7.7-78.4 4.7-113.3-6.3l-86.9 86.9c48.7 17.2 101 26.7 155.6 26.7 209 0 385.8-137.3 445.6-326.5 1.1-3.4 1.1-7.1 0-10.5-21.8-69.1-59.4-131.3-108.4-182.4zM295.1 580.6c-11.1-35-14-73.6-6.2-113.6 17.4-89.9 89.9-162.3 179.8-179.6 39.9-7.7 78.4-4.7 113.3 6.3l86.9-86.9c-48.7-17.2-101-26.7-155.6-26.7-209 0-385.8 137.3-445.6 326.5-1.1 3.4-1.1 7.1 0 10.5 21.8 69.2 59.4 131.4 108.4 182.5l119-119z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.reimu-password-toggle::after {
+  display: none;
+}
+
+.reimu-password-toggle.is-visible {
+  color: var(--red-1);
+}
+
+.reimu-password-toggle.is-visible::before {
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M512.1 180.1c-209 0-385.8 137.3-445.6 326.5-1.1 3.4-1.1 7.1 0 10.5 59.7 189.3 236.6 326.5 445.6 326.5s385.8-137.3 445.6-326.5c1.1-3.4 1.1-7.1 0-10.5-59.8-189.3-236.6-326.5-445.6-326.5z m0 560.5C386 740.6 283.3 638 283.3 511.8S386 283.1 512.1 283.1s228.7 102.6 228.7 228.8-102.6 228.7-228.7 228.7z'/%3E%3Cpath d='M353.8 511.8a158.3 158.3 0 1 0 316.6 0 158.3 158.3 0 1 0-316.6 0Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M512.1 180.1c-209 0-385.8 137.3-445.6 326.5-1.1 3.4-1.1 7.1 0 10.5 59.7 189.3 236.6 326.5 445.6 326.5s385.8-137.3 445.6-326.5c1.1-3.4 1.1-7.1 0-10.5-59.8-189.3-236.6-326.5-445.6-326.5z m0 560.5C386 740.6 283.3 638 283.3 511.8S386 283.1 512.1 283.1s228.7 102.6 228.7 228.8-102.6 228.7-228.7 228.7z'/%3E%3Cpath d='M353.8 511.8a158.3 158.3 0 1 0 316.6 0 158.3 158.3 0 1 0-316.6 0Z'/%3E%3C/svg%3E");
+}
+
+.reimu-login-code-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.reimu-login-code-row input {
+  min-width: 0;
+  flex: 1;
+  letter-spacing: 4px;
+}
+
+.reimu-login-code-button {
+  display: inline-flex;
+  min-width: 116px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  color: var(--red-1);
+  background: rgba(255, 82, 82, .08);
+  border: 1px solid rgba(255, 82, 82, .28);
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(255, 82, 82, .08);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: var(--cursor-pointer) !important;
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.reimu-login-code-button:hover {
+  opacity: .92;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(255, 82, 82, .14);
+}
+
+.reimu-login-code-button:disabled {
+  opacity: .65;
+  transform: none;
+  cursor: not-allowed !important;
 }
 
 .reimu-login-remember {
@@ -2438,18 +2553,31 @@ html[lang="en-US"] .article-copyright p {
   color: #1fbf75;
 }
 
+.reimu-login-note {
+  color: var(--grey-9);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
 .reimu-login-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 16px;
+  margin: 4px 0 26px;
 }
 
-.reimu-login-actions a {
+.reimu-login-help-link {
+  margin-right: auto;
   color: var(--color-link);
+  background: transparent;
+  border: 0;
+  font: inherit;
   text-decoration: none;
+  cursor: var(--cursor-pointer) !important;
 }
 
+.reimu-login-register-button,
 .reimu-login-submit {
   display: inline-flex;
   min-width: 92px;
@@ -2462,9 +2590,21 @@ html[lang="en-US"] .article-copyright p {
   border: 0;
   border-radius: 8px;
   box-shadow: 0 8px 18px rgba(31, 191, 117, .18);
+  font-size: 14px;
   font-weight: 700;
+  line-height: 40px;
   cursor: var(--cursor-pointer) !important;
   transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.reimu-login-register-button {
+  min-width: 82px;
+  padding: 0 18px;
+  color: var(--red-1) !important;
+  background: var(--red-5-5);
+  border: 1px solid rgba(255, 82, 82, .32);
+  box-shadow: 0 8px 18px rgba(255, 82, 82, .10);
+  text-decoration: none !important;
 }
 
 .reimu-login-submit:hover {
@@ -2473,9 +2613,242 @@ html[lang="en-US"] .article-copyright p {
   box-shadow: 0 10px 22px rgba(31, 191, 117, .24);
 }
 
+.reimu-login-register-button:hover {
+  opacity: .92;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(255, 82, 82, .16);
+}
+
 .reimu-login-submit:disabled {
   opacity: .68;
   transform: none;
+}
+
+.reimu-profile-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+
+.reimu-profile-modal.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.reimu-profile-modal__mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, .42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.reimu-profile-modal__dialog {
+  position: relative;
+  width: min(620px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  padding: 34px 36px 30px;
+  color: var(--color-default);
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .24);
+  border-radius: 12px;
+  box-shadow: 0 22px 70px rgba(40, 40, 40, .28);
+}
+
+.reimu-profile-modal h2 {
+  margin: 0 0 20px;
+  color: var(--color-default);
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.reimu-profile-form p {
+  margin: 0 0 14px;
+}
+
+.reimu-profile-form label:not(.reimu-login-remember) {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-link);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.reimu-profile-form input[type="text"],
+.reimu-profile-form input[type="email"],
+.reimu-profile-form input[type="url"],
+.reimu-profile-form input[type="password"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--color-default);
+  background: var(--color-background);
+  border: 1px solid rgba(255, 82, 82, .22);
+  border-radius: 8px;
+  outline: none;
+}
+
+.reimu-profile-form input.is-invalid {
+  border-color: rgba(255, 82, 82, .78) !important;
+  background: rgba(255, 82, 82, .06);
+  box-shadow: 0 0 0 3px rgba(255, 82, 82, .10);
+}
+
+.reimu-profile-avatar-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.reimu-profile-avatar-row input {
+  min-width: 0;
+  flex: 1;
+}
+
+.reimu-profile-avatar-upload {
+  flex: 0 0 auto;
+  min-width: 78px;
+  min-height: 44px;
+  padding: 0 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--red-1), var(--red-2));
+  border: 1px solid rgba(255, 82, 82, .32);
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(255, 82, 82, .18);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: var(--cursor-pointer) !important;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+.reimu-profile-avatar-upload:hover {
+  opacity: .94;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(255, 82, 82, .24);
+}
+
+.reimu-profile-avatar-status {
+  margin: -2px 0 14px;
+  padding: 9px 12px;
+  color: var(--red-1);
+  background: rgba(255, 82, 82, .06);
+  border: 1px solid rgba(255, 82, 82, .16);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reimu-profile-avatar-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.reimu-profile-avatar-preview img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 82, 82, .22);
+  border-radius: 50%;
+}
+
+.reimu-profile-2fa {
+  margin: 8px 0 14px;
+  padding: 12px;
+  background: rgba(255, 82, 82, .04);
+  border: 1px solid rgba(255, 82, 82, .14);
+  border-radius: 8px;
+}
+
+.reimu-profile-2fa-setup[hidden] {
+  display: none !important;
+}
+
+.reimu-profile-2fa-secret {
+  margin: 10px 0;
+  color: var(--color-default);
+  font-family: monospace;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.reimu-profile-2fa img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  margin: 10px auto;
+  background: #fff;
+  border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+  .reimu-login-modal {
+    padding: 18px 14px;
+  }
+
+  .reimu-login-modal__dialog {
+    width: min(420px, calc(100vw - 28px));
+    max-height: calc(100dvh - 36px);
+    padding: 30px 26px 26px;
+  }
+
+  .reimu-login-modal h2 {
+    font-size: 22px;
+  }
+
+  .reimu-login-modal__desc {
+    margin: 6px 0 18px;
+  }
+
+  .reimu-login-actions {
+    gap: 10px;
+  }
+
+  .reimu-login-help-link {
+    flex: 1 1 auto;
+    margin-right: 0;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .reimu-login-register-button,
+  .reimu-login-submit {
+    min-width: 68px;
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 13px;
+    line-height: 38px;
+  }
+
+  .reimu-login-code-row {
+    flex-direction: column;
+  }
+
+  .reimu-login-code-button {
+    width: 100%;
+  }
+
+  .reimu-profile-modal {
+    padding: 18px 14px;
+  }
+
+  .reimu-profile-modal__dialog {
+    width: min(420px, calc(100vw - 28px));
+    max-height: calc(100dvh - 36px);
+    padding: 30px 26px 26px;
+  }
 }
 
 .reimu-comment-form {
@@ -2489,6 +2862,15 @@ html[lang="en-US"] .article-copyright p {
   border-radius: 12px;
   box-shadow: none;
   transition: border-color .3s ease, box-shadow .3s ease;
+}
+
+.reimu-comment-form--logged-in {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  grid-template-areas:
+    "identity comment"
+    "identity preview"
+    "identity toolbar";
 }
 
 .reimu-comment-form:focus-within {
@@ -2540,6 +2922,14 @@ html[lang="en-US"] .article-copyright p {
   padding: 6px 8px 8px;
 }
 
+.reimu-comment-form--logged-in .comment-form-comment {
+  grid-area: comment;
+}
+
+.reimu-comment-form--logged-in .reimu-comment-form__fields {
+  display: none !important;
+}
+
 .reimu-comment-form__fields p + p {
   border-left: 1px solid rgba(255, 82, 82, .16);
 }
@@ -2575,6 +2965,10 @@ html[lang="en-US"] .article-copyright p {
   padding: 4px 14px;
   box-sizing: border-box;
   border-top: 1px dashed rgba(255, 82, 82, .18);
+}
+
+.reimu-comment-form--logged-in .reimu-comment-toolbar {
+  grid-area: toolbar;
 }
 
 .reimu-comment-tools,
@@ -2767,6 +3161,10 @@ html[lang="en-US"] .article-copyright p {
   animation: reimu-comment-preview-in .18s ease-out;
 }
 
+.reimu-comment-form--logged-in .reimu-comment-preview-panel {
+  grid-area: preview;
+}
+
 .reimu-comment-preview-panel[hidden] {
   display: none !important;
 }
@@ -2892,6 +3290,112 @@ html[lang="en-US"] .article-copyright p {
   color: var(--red-1) !important;
   border-color: rgba(255, 82, 82, .36);
   box-shadow: 0 6px 16px rgba(255, 82, 82, .10);
+}
+
+.reimu-comment-current-user {
+  grid-area: identity;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px 8px 10px 12px;
+  border-right: 1px dashed rgba(255, 82, 82, .18);
+  box-sizing: border-box;
+}
+
+.reimu-comment-current-user__avatar-wrap {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.reimu-comment-current-user__avatar {
+  display: block;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 82, 82, .22);
+  box-sizing: border-box;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-comment-current-user__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.reimu-comment-current-user__logout {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  color: #fff !important;
+  background: var(--red-1);
+  border: 2px solid var(--color-wrap);
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(255, 82, 82, .26);
+  text-decoration: none;
+  cursor: var(--cursor-pointer) !important;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.reimu-comment-current-user__logout::before,
+.reimu-comment-current-user__logout::after {
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  content: "";
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.reimu-comment-current-user__logout::before {
+  transform: rotate(45deg);
+}
+
+.reimu-comment-current-user__logout::after {
+  transform: rotate(-45deg);
+}
+
+.reimu-comment-current-user__logout:hover {
+  transform: scale(1.08);
+  box-shadow: 0 7px 14px rgba(255, 82, 82, .32);
+}
+
+.reimu-comment-current-user__logout.is-loading {
+  opacity: .7;
+  pointer-events: none;
+}
+
+.reimu-comment-current-user__name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-default) !important;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+a.reimu-comment-current-user__name:hover,
+.reimu-comment__author-link:hover {
+  color: var(--red-1) !important;
 }
 
 .comment-form-cookies-consent {
@@ -4154,6 +4658,24 @@ body #sidebar > #aplayer.aplayer .aplayer-list.reimu-scroll-zone-dragging ol::-w
 
   .reimu-comment-toolbar {
     gap: 10px;
+  }
+
+  .reimu-comment-form--logged-in {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .reimu-comment-current-user {
+    padding: 14px 6px 10px 8px;
+  }
+
+  .reimu-comment-current-user__avatar-wrap,
+  .reimu-comment-current-user__avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .reimu-comment-current-user__name {
+    font-size: 11px;
   }
 
   .reimu-comment-popovers {
