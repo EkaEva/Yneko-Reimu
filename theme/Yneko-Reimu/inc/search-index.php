@@ -45,21 +45,28 @@ function yneko_reimu_search_index_item( $post_id ) {
 
 	$categories = wp_get_post_terms( $post_id, 'category', array( 'fields' => 'names' ) );
 	$tags       = wp_get_post_terms( $post_id, 'post_tag', array( 'fields' => 'names' ) );
-	$content    = wp_strip_all_tags( strip_shortcodes( $post->post_content ) );
-	$excerpt    = has_excerpt( $post_id ) ? get_the_excerpt( $post_id ) : wp_trim_words( $content, 90, '...' );
+	$content      = wp_strip_all_tags( strip_shortcodes( $post->post_content ) );
+	$excerpt      = has_excerpt( $post_id ) ? get_the_excerpt( $post_id ) : wp_trim_words( $content, 90, '...' );
+	$search       = function_exists( 'yneko_reimu_settings_search' ) ? yneko_reimu_settings_search() : array();
+	$include_full = (bool) apply_filters( 'yneko_reimu_search_index_include_full_content', '1' === (string) ( $search['index_full_content'] ?? '0' ), $post_id );
 
-	return array(
+	$item = array(
 		'id'         => absint( $post_id ),
 		'language'   => function_exists( 'yneko_reimu_i18n_post_language' ) ? yneko_reimu_i18n_post_language( $post_id ) : 'zh_CN',
 		'title'      => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
 		'url'        => get_permalink( $post_id ),
 		'path'       => wp_make_link_relative( get_permalink( $post_id ) ),
 		'date'       => get_the_date( DATE_W3C, $post_id ),
-		'content'    => html_entity_decode( $content, ENT_QUOTES, get_bloginfo( 'charset' ) ),
 		'excerpt'    => html_entity_decode( wp_strip_all_tags( $excerpt ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
 		'categories' => is_wp_error( $categories ) ? array() : array_values( $categories ),
 		'tags'       => is_wp_error( $tags ) ? array() : array_values( $tags ),
 	);
+
+	if ( $include_full ) {
+		$item['content'] = html_entity_decode( $content, ENT_QUOTES, get_bloginfo( 'charset' ) );
+	}
+
+	return $item;
 }
 
 function yneko_reimu_search_index_data( $language = '' ) {

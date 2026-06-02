@@ -12,7 +12,8 @@ if ( ! yneko_reimu_should_show_sidebar( $reimu_sidebar_post_id ) ) {
 $reimu_player_enabled  = yneko_reimu_player_enabled();
 $reimu_player_position = yneko_reimu_player_position();
 $reimu_has_toc         = is_singular( 'post' ) && yneko_reimu_post_has_toc( get_the_ID() );
-$reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_enabled ) {
+$reimu_player_settings = function_exists( 'yneko_reimu_settings_player' ) ? yneko_reimu_settings_player() : array();
+$reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_enabled, $reimu_player_settings ) {
 	if ( ! $reimu_player_enabled ) {
 		return;
 	}
@@ -26,13 +27,13 @@ $reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_ena
 			<?php if ( $reimu_meting_config['server'] ) : ?>server="<?php echo esc_attr( $reimu_meting_config['server'] ); ?>"<?php endif; ?>
 			<?php if ( $reimu_meting_config['type'] ) : ?>type="<?php echo esc_attr( $reimu_meting_config['type'] ); ?>"<?php endif; ?>
 			<?php if ( $reimu_meting_config['auto'] ) : ?>auto="<?php echo esc_url( $reimu_meting_config['auto'] ); ?>"<?php endif; ?>
-			fixed="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_fixed', false ) ? 'true' : 'false' ); ?>"
-			autoplay="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_autoplay', false ) ? 'true' : 'false' ); ?>"
-			loop="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_loop', 'all' ) ); ?>"
-			order="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_order', 'list' ) ); ?>"
-			preload="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_preload', 'auto' ) ); ?>"
-			volume="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_volume', '0.7' ) ); ?>"
-			mutex="<?php echo esc_attr( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_mutex', true ) ? 'true' : 'false' ); ?>"
+			fixed="<?php echo esc_attr( '1' === (string) ( $reimu_player_settings['fixed'] ?? '0' ) ? 'true' : 'false' ); ?>"
+			autoplay="<?php echo esc_attr( '1' === (string) ( $reimu_player_settings['autoplay'] ?? '0' ) ? 'true' : 'false' ); ?>"
+			loop="<?php echo esc_attr( $reimu_player_settings['loop'] ?? 'all' ); ?>"
+			order="<?php echo esc_attr( $reimu_player_settings['order'] ?? 'list' ); ?>"
+			preload="<?php echo esc_attr( $reimu_player_settings['preload'] ?? 'metadata' ); ?>"
+			volume="<?php echo esc_attr( $reimu_player_settings['volume'] ?? '0.7' ); ?>"
+			mutex="<?php echo esc_attr( '1' === (string) ( $reimu_player_settings['mutex'] ?? '1' ) ? 'true' : 'false' ); ?>"
 			data-aos="fade-up"
 		></meting-js>
 	<?php else : ?>
@@ -62,15 +63,7 @@ $reimu_render_player   = static function ( $class = '' ) use ( $reimu_player_ena
 		<?php endif; ?>
 		<div class="sidebar-widget">
 			<?php if ( ! is_singular( 'post' ) ) : ?>
-				<?php if ( yneko_reimu_should_show_clone_widgets() ) : ?>
-					<?php get_template_part( 'template-parts/widgets/default-widgets', null, array( 'clone_only' => true ) ); ?>
-				<?php elseif ( yneko_reimu_should_show_wp_widgets() ) : ?>
-					<?php if ( is_active_sidebar( 'sidebar-1' ) ) : ?>
-						<?php dynamic_sidebar( 'sidebar-1' ); ?>
-					<?php else : ?>
-						<?php get_template_part( 'template-parts/widgets/default-widgets' ); ?>
-					<?php endif; ?>
-				<?php endif; ?>
+				<?php get_template_part( 'template-parts/widgets/default-widgets' ); ?>
 			<?php endif; ?>
 		</div>
 		<?php if ( 'after_widget' === $reimu_player_position ) : ?>

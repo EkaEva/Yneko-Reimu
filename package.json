@@ -1,6 +1,6 @@
 {
   "name": "yneko-reimu",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": true,
   "description": "WordPress classic hybrid port of hexo-theme-reimu.",
   "scripts": {
@@ -10,7 +10,7 @@
     "check:js": "node --check theme/Yneko-Reimu/assets/src/reimu.js && node --check tools/build-reimu.mjs && node --check tools/build-lily-cursor.mjs && node --check tools/build-i18n.mjs",
     "lint:php": "composer run lint:php",
     "check": "npm run check:js && npm run build && npm run lint:php",
-    "package": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File tools/package-theme.ps1"
+    "package": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -Command \"& './tools/package-theme.ps1' -Version ('v' + $env:npm_package_version)\""
   },
   "license": "MIT",
   "devDependencies": {

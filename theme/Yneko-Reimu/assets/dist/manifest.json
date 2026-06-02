@@ -1,14 +1,14 @@
 {
-  "builtAt": "2026-06-01T12:34:58.751Z",
+  "builtAt": "2026-06-02T08:31:12.025Z",
   "builder": "vite",
   "upstream": {
-    "name": "hexo-theme-reimu",
-    "version": "1.12.5",
-    "repository": "git+https://github.com/D-Sketon/hexo-theme-reimu.git",
+    "name": "Yneko-Reimu CSS reference snapshot",
+    "version": "local",
+    "repository": "https://github.com/D-Sketon/hexo-theme-reimu",
     "license": "MIT"
   },
   "cssSources": [
-    "assets/src/reimu-upstream.css",
+    "assets/src/yneko-reimu-base.css",
     "assets/src/yneko-reimu-adapter.css"
   ],
   "outputs": [
@@ -18,7 +18,7 @@
   ],
   "outputStats": {
     "assets/dist/loader.css": 1753,
-    "assets/dist/reimu.js": 88950,
-    "assets/dist/reimu.css": 195954
+    "assets/dist/reimu.js": 97801,
+    "assets/dist/reimu.css": 197445
   }
 }

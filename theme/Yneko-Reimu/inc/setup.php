@@ -47,7 +47,7 @@ function yneko_reimu_setup() {
 	);
 
 	add_image_size( 'reimu-card', 900, 560, true );
-	add_image_size( 'reimu-hero', 1920, 720, true );
+	add_image_size( 'yneko-reimu-banner', 1920, 720, true );
 }
 add_action( 'after_setup_theme', 'yneko_reimu_setup' );
 

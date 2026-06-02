@@ -252,6 +252,105 @@ function yneko_reimu_migrate_unified_settings() {
 		}
 	}
 
+	if ( empty( $current['search'] ) ) {
+		$settings['search'] = array(
+			'algolia_enable'     => ! empty( $mods['yneko_reimu_algolia_enable'] ) ? '1' : '0',
+			'algolia_app_id'     => (string) ( $mods['yneko_reimu_algolia_app_id'] ?? '' ),
+			'algolia_api_key'    => (string) ( $mods['yneko_reimu_algolia_api_key'] ?? '' ),
+			'algolia_index_name' => (string) ( $mods['yneko_reimu_algolia_index_name'] ?? '' ),
+			'local_enable'       => array_key_exists( 'yneko_reimu_generator_search_enable', $mods ) && empty( $mods['yneko_reimu_generator_search_enable'] ) ? '0' : '1',
+			'local_json_url'     => (string) ( $mods['yneko_reimu_local_search_json'] ?? '' ),
+			'index_full_content' => ! empty( $mods['yneko_reimu_search_index_full_content'] ) ? '1' : '0',
+		);
+	}
+
+	if ( empty( $current['features'] ) ) {
+		foreach (
+			array(
+				'preloader_enable' => array( 'yneko_reimu_preloader_enable', true ),
+				'top_enable'       => array( 'yneko_reimu_top_enable', true ),
+				'triangle_badge'   => array( 'yneko_reimu_triangle_badge', true ),
+				'firework_enable'  => array( 'yneko_reimu_firework_enable', false ),
+				'pjax_enable'      => array( 'yneko_reimu_pjax_enable', false ),
+				'busuanzi_enable'  => array( 'yneko_reimu_busuanzi_enable', false ),
+				'katex_enable'     => array( 'yneko_reimu_katex_enable', false ),
+				'photoswipe_enable'=> array( 'yneko_reimu_photoswipe_enable', false ),
+				'mermaid_enable'   => array( 'yneko_reimu_mermaid_enable', false ),
+				'custom_cursor'    => array( 'yneko_reimu_custom_cursor', false ),
+			) as $setting_key => $legacy
+		) {
+			$settings['features'][ $setting_key ] = array_key_exists( $legacy[0], $mods ) ? ( ! empty( $mods[ $legacy[0] ] ) ? '1' : '0' ) : ( $legacy[1] ? '1' : '0' );
+		}
+	}
+
+	if ( empty( $current['player'] ) ) {
+		$settings['player'] = array_merge(
+			$settings['player'],
+			array(
+				'aplayer_enable'  => ! empty( $mods['yneko_reimu_player_aplayer_enable'] ) ? '1' : '0',
+				'meting_enable'   => ! empty( $mods['yneko_reimu_player_meting_enable'] ) ? '1' : '0',
+				'fixed'           => ! empty( $mods['yneko_reimu_aplayer_fixed'] ) ? '1' : '0',
+				'autoplay'        => ! empty( $mods['yneko_reimu_aplayer_autoplay'] ) ? '1' : '0',
+				'mutex'           => array_key_exists( 'yneko_reimu_aplayer_mutex', $mods ) && empty( $mods['yneko_reimu_aplayer_mutex'] ) ? '0' : '1',
+				'list_folded'     => array_key_exists( 'yneko_reimu_aplayer_list_folded', $mods ) && empty( $mods['yneko_reimu_aplayer_list_folded'] ) ? '0' : '1',
+				'loop'            => (string) ( $mods['yneko_reimu_aplayer_loop'] ?? 'all' ),
+				'order'           => (string) ( $mods['yneko_reimu_aplayer_order'] ?? 'list' ),
+				'preload'         => (string) ( $mods['yneko_reimu_aplayer_preload'] ?? 'metadata' ),
+				'volume'          => (string) ( $mods['yneko_reimu_aplayer_volume'] ?? '0.7' ),
+				'list_max_height' => (string) ( $mods['yneko_reimu_aplayer_list_max_height'] ?? '320px' ),
+				'lrc_type'        => absint( $mods['yneko_reimu_aplayer_lrc_type'] ?? 3 ),
+				'meting_id'       => (string) ( $mods['yneko_reimu_meting_id'] ?? '' ),
+				'meting_server'   => (string) ( $mods['yneko_reimu_meting_server'] ?? '' ),
+				'meting_type'     => (string) ( $mods['yneko_reimu_meting_type'] ?? '' ),
+				'meting_auto'     => (string) ( $mods['yneko_reimu_meting_auto'] ?? '' ),
+			)
+		);
+	}
+
+	if ( empty( $current['third_party'] ) ) {
+		$settings['third_party'] = array_merge(
+			$settings['third_party'],
+			array(
+				'live2d_enable'       => ! empty( $mods['yneko_reimu_live2d_widgets_enable'] ) ? '1' : '0',
+				'live2d_base_url'     => (string) ( $mods['yneko_reimu_live2d_base_url'] ?? $settings['third_party']['live2d_base_url'] ),
+				'live2d_api_base_url' => (string) ( $mods['yneko_reimu_live2d_api_base_url'] ?? $settings['third_party']['live2d_api_base_url'] ),
+				'vendor_cdn_base'     => (string) ( $mods['yneko_reimu_vendor_cdn_base'] ?? $settings['third_party']['vendor_cdn_base'] ),
+			)
+		);
+	}
+
+	if ( empty( $current['external_comments'] ) ) {
+		foreach (
+			array(
+				'giscus_enable',
+				'utterances_enable',
+				'disqus_enable',
+				'waline_enable',
+				'twikoo_enable',
+				'valine_enable',
+			) as $setting_key
+		) {
+			$settings['external_comments'][ $setting_key ] = ! empty( $mods[ 'yneko_reimu_' . $setting_key ] ) ? '1' : '0';
+		}
+		foreach (
+			array(
+				'giscus_repo',
+				'giscus_repo_id',
+				'giscus_category',
+				'giscus_category_id',
+				'utterances_repo',
+				'disqus_shortname',
+				'waline_server_url',
+				'twikoo_env_id',
+				'valine_app_id',
+				'valine_app_key',
+				'valine_server_url',
+			) as $setting_key
+		) {
+			$settings['external_comments'][ $setting_key ] = (string) ( $mods[ 'yneko_reimu_' . $setting_key ] ?? '' );
+		}
+	}
+
 	if ( $oauth && function_exists( 'yneko_reimu_merge_github_oauth_fallback' ) ) {
 		$settings['github_oauth'] = yneko_reimu_merge_github_oauth_fallback( $settings['github_oauth'], $oauth );
 	}
@@ -300,3 +399,11 @@ function yneko_reimu_run_migration() {
 	update_option( 'yneko_reimu_migrated_010', '1', false );
 }
 add_action( 'after_switch_theme', 'yneko_reimu_run_migration' );
+
+function yneko_reimu_run_settings_console_migration() {
+	if ( is_admin() && '1' !== get_option( 'yneko_reimu_migrated_settings_console_012', '' ) ) {
+		yneko_reimu_migrate_unified_settings();
+		update_option( 'yneko_reimu_migrated_settings_console_012', '1', false );
+	}
+}
+add_action( 'admin_init', 'yneko_reimu_run_settings_console_migration' );

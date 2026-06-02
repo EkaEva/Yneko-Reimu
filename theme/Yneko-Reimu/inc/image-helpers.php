@@ -17,60 +17,11 @@ function yneko_reimu_get_default_banner_url() {
 		return yneko_reimu_asset_uri( 'assets/images/banner.webp' );
 	}
 
-	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner.png' ) ) {
-		return yneko_reimu_asset_uri( 'assets/images/banner.png' );
-	}
-
 	return '';
 }
 
 function yneko_reimu_get_banner_srcset( $banner = '' ) {
 	$src = $banner ? esc_url_raw( $banner ) : yneko_reimu_get_default_banner_url();
-
-	$custom = yneko_reimu_get_theme_mod( 'yneko_reimu_default_banner', '' );
-	if ( $custom ) {
-		return array(
-			array(
-				'media' => '(max-width: 479px)',
-				'src'   => $src,
-			),
-			array(
-				'media' => '(max-width: 799px)',
-				'src'   => $src,
-			),
-			array(
-				'media' => '(min-width: 800px)',
-				'src'   => $src,
-			),
-		);
-	}
-
-	$sources = array();
-
-	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner-600w.webp' ) ) {
-		$sources[] = array(
-			'media' => '(max-width: 479px)',
-			'src'   => yneko_reimu_asset_uri( 'assets/images/banner-600w.webp' ),
-		);
-	}
-
-	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner-800w.webp' ) ) {
-		$sources[] = array(
-			'media' => '(max-width: 799px)',
-			'src'   => yneko_reimu_asset_uri( 'assets/images/banner-800w.webp' ),
-		);
-	}
-
-	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/banner.webp' ) ) {
-		$sources[] = array(
-			'media' => '(min-width: 800px)',
-			'src'   => yneko_reimu_asset_uri( 'assets/images/banner.webp' ),
-		);
-	}
-
-	if ( $sources ) {
-		return $sources;
-	}
 
 	return array(
 		array(
@@ -98,14 +49,14 @@ function yneko_reimu_get_default_cover_url() {
 }
 
 function yneko_reimu_get_default_avatar_url() {
-	$settings_avatar = yneko_reimu_setting( 'author_avatar_url', '' );
-	if ( $settings_avatar ) {
-		return esc_url_raw( $settings_avatar );
-	}
-
 	$custom = yneko_reimu_get_theme_mod( 'yneko_reimu_default_avatar', '' );
 	if ( $custom ) {
 		return esc_url_raw( $custom );
+	}
+
+	$settings_avatar = yneko_reimu_setting( 'author_avatar_url', '' );
+	if ( $settings_avatar ) {
+		return esc_url_raw( $settings_avatar );
 	}
 
 	$site_logo = yneko_reimu_get_site_logo_url();
@@ -135,14 +86,12 @@ function yneko_reimu_get_default_comment_avatar_url() {
 }
 
 function yneko_reimu_get_site_logo_url() {
-	$settings_logo = yneko_reimu_setting( 'site_avatar_url', '' );
-	if ( $settings_logo ) {
-		return esc_url_raw( $settings_logo );
-	}
-
 	$custom_logo_id = absint( yneko_reimu_get_theme_mod( 'custom_logo', 0 ) );
 	if ( $custom_logo_id ) {
 		$custom_logo = wp_get_attachment_image_url( $custom_logo_id, 'full' );
+		if ( ! $custom_logo && 'image/svg+xml' === get_post_mime_type( $custom_logo_id ) ) {
+			$custom_logo = wp_get_attachment_url( $custom_logo_id );
+		}
 		if ( $custom_logo ) {
 			return esc_url_raw( $custom_logo );
 		}
@@ -151,9 +100,17 @@ function yneko_reimu_get_site_logo_url() {
 	$site_icon_id = absint( get_option( 'site_icon', 0 ) );
 	if ( $site_icon_id ) {
 		$site_icon = wp_get_attachment_image_url( $site_icon_id, 'full' );
+		if ( ! $site_icon && 'image/svg+xml' === get_post_mime_type( $site_icon_id ) ) {
+			$site_icon = wp_get_attachment_url( $site_icon_id );
+		}
 		if ( $site_icon ) {
 			return esc_url_raw( $site_icon );
 		}
+	}
+
+	$settings_logo = yneko_reimu_setting( 'site_avatar_url', '' );
+	if ( $settings_logo ) {
+		return esc_url_raw( $settings_logo );
 	}
 
 	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/avatar.svg' ) ) {
@@ -175,10 +132,6 @@ function yneko_reimu_get_search_bg_url() {
 
 	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/search-bg.webp' ) ) {
 		return yneko_reimu_asset_uri( 'assets/images/search-bg.webp' );
-	}
-
-	if ( file_exists( YNEKO_REIMU_DIR . '/assets/images/search-bg.png' ) ) {
-		return yneko_reimu_asset_uri( 'assets/images/search-bg.png' );
 	}
 
 	return yneko_reimu_get_default_avatar_url();
@@ -258,7 +211,7 @@ function yneko_reimu_get_post_banner_url( $post_id = 0 ) {
 	}
 
 	if ( has_post_thumbnail( $post_id ) ) {
-		$image = get_the_post_thumbnail_url( $post_id, 'reimu-hero' );
+		$image = get_the_post_thumbnail_url( $post_id, 'yneko-reimu-banner' );
 		if ( $image ) {
 			return esc_url_raw( $image );
 		}
@@ -272,7 +225,7 @@ function yneko_reimu_get_post_banner_url( $post_id = 0 ) {
 		}
 
 		if ( has_post_thumbnail( $source_id ) ) {
-			$image = get_the_post_thumbnail_url( $source_id, 'reimu-hero' );
+			$image = get_the_post_thumbnail_url( $source_id, 'yneko-reimu-banner' );
 			if ( $image ) {
 				return esc_url_raw( $image );
 			}

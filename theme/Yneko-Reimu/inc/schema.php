@@ -4,6 +4,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_schema_is_enabled() {
+	if ( function_exists( 'yneko_reimu_should_output_theme_meta' ) && ! yneko_reimu_should_output_theme_meta() ) {
+		return false;
+	}
+
 	return (bool) apply_filters( 'yneko_reimu_schema_enabled', true );
 }
 

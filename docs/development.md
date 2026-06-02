@@ -1,6 +1,6 @@
 # Development
 
-Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in `theme/Yneko-Reimu`; repository-level tooling and upstream mirrors stay outside that runtime tree.
+Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in `theme/Yneko-Reimu`; repository-level tooling stays outside that runtime tree.
 
 ## Commands
 
@@ -24,7 +24,6 @@ npm run lint:php
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.
 - `theme/Yneko-Reimu/assets/dist/` contains runtime assets loaded by WordPress.
-- `vendor-src/reimu-upstream/` contains the upstream Reimu reference mirror for development and attribution.
 - `tools/` contains i18n, cursor, asset, and package scripts.
 
 ## Performance Defaults

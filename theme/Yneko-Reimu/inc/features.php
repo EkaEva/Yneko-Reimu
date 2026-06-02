@@ -21,7 +21,7 @@ function yneko_reimu_feature_defaults() {
 			'yneko_reimu_mermaid_enable'         => false,
 			'yneko_reimu_algolia_enable'         => false,
 			'yneko_reimu_generator_search_enable' => true,
-			'yneko_reimu_custom_cursor'          => true,
+			'yneko_reimu_custom_cursor'          => false,
 		)
 	);
 }
@@ -33,6 +33,10 @@ function yneko_reimu_feature_default( $name, $fallback = false ) {
 
 function yneko_reimu_feature_enabled( $name, $fallback = false ) {
 	$key = 0 === strpos( $name, 'yneko_reimu_' ) ? $name : 'yneko_reimu_' . $name;
+	if ( function_exists( 'yneko_reimu_settings_feature_enabled' ) ) {
+		return yneko_reimu_settings_feature_enabled( $key, yneko_reimu_feature_default( $key, $fallback ) );
+	}
+
 	return (bool) yneko_reimu_get_theme_mod( $key, yneko_reimu_feature_default( $key, $fallback ) );
 }
 
@@ -53,10 +57,11 @@ function yneko_reimu_aplayer_enabled( $audio = null ) {
 }
 
 function yneko_reimu_meting_config() {
-	$auto   = trim( (string) yneko_reimu_get_theme_mod( 'yneko_reimu_meting_auto', '' ) );
-	$id     = trim( (string) yneko_reimu_get_theme_mod( 'yneko_reimu_meting_id', '' ) );
-	$server = trim( (string) yneko_reimu_get_theme_mod( 'yneko_reimu_meting_server', '' ) );
-	$type   = trim( (string) yneko_reimu_get_theme_mod( 'yneko_reimu_meting_type', '' ) );
+	$player = function_exists( 'yneko_reimu_settings_player' ) ? yneko_reimu_settings_player() : array();
+	$auto   = trim( (string) ( $player['meting_auto'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_meting_auto', '' ) ) );
+	$id     = trim( (string) ( $player['meting_id'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_meting_id', '' ) ) );
+	$server = trim( (string) ( $player['meting_server'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_meting_server', '' ) ) );
+	$type   = trim( (string) ( $player['meting_type'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_meting_type', '' ) ) );
 
 	if ( '' === $auto && ( '' === $id || '' === $server || '' === $type ) ) {
 		return array();

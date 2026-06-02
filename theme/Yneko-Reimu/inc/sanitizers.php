@@ -30,3 +30,23 @@ function yneko_reimu_sanitize_url_base_or_empty( $value ) {
 
 	return esc_url_raw( untrailingslashit( $value ) );
 }
+
+function yneko_reimu_sanitize_sidebar_widget_order( $value ) {
+	$allowed = array( 'tagcloud', 'projects', 'recent_posts', 'categories', 'archives', 'recent_comments' );
+	$items   = array();
+
+	foreach ( explode( ',', (string) $value ) as $item ) {
+		$item = sanitize_key( trim( $item ) );
+		if ( in_array( $item, $allowed, true ) && ! in_array( $item, $items, true ) ) {
+			$items[] = $item;
+		}
+	}
+
+	foreach ( $allowed as $item ) {
+		if ( ! in_array( $item, $items, true ) ) {
+			$items[] = $item;
+		}
+	}
+
+	return implode( ',', $items );
+}

@@ -422,6 +422,10 @@ body.error404[data-theme="dark"] #header::after {
   line-height: inherit;
 }
 
+.yneko-banner {
+  position: relative;
+}
+
 .main-nav-link-wrap .icon,
 .sidebar-menu-link-wrap .icon {
   font-family: iconfont;
@@ -2081,7 +2085,8 @@ html[lang="en-US"] .article-copyright p {
   overflow-x: auto;
   margin: 12px 0;
   padding: 12px;
-  background: var(--highlight-background);
+  color: #f3f4f6;
+  background: #0f1117;
   border-radius: 8px;
 }
 
@@ -2095,7 +2100,7 @@ html[lang="en-US"] .article-copyright p {
 
 .comment-text pre code,
 .reimu-comment-preview-content pre code {
-  color: var(--highlight-foreground);
+  color: #f3f4f6;
   background: transparent;
   padding: 0;
 }
@@ -2139,6 +2144,96 @@ html[lang="en-US"] .article-copyright p {
   color: #888;
   font-size: 13px;
   text-decoration: none;
+}
+
+.reimu-comment-owner-action {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #565b66;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: var(--cursor-pointer) !important;
+  transition: color .2s ease, transform .2s ease, opacity .2s ease;
+}
+
+.reimu-comment-owner-action svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+}
+
+.reimu-comment-owner-action:hover {
+  color: var(--red-1);
+  background: transparent;
+  transform: translateY(-1px);
+}
+
+.reimu-comment-owner-action--delete {
+  color: #d63638;
+}
+
+.reimu-comment-owner-action:disabled {
+  opacity: .45;
+  cursor: default !important;
+  transform: none;
+}
+
+.reimu-comment-edit-form {
+  margin: 10px 0 4px;
+}
+
+.reimu-comment-edit-textarea {
+  display: block;
+  width: 100%;
+  min-height: 108px;
+  padding: 12px 14px;
+  color: var(--color-default);
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .24);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .04);
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.reimu-comment-edit-textarea:focus {
+  outline: none;
+  border-color: var(--red-1);
+  box-shadow: 0 0 0 3px rgba(255, 82, 82, .12);
+}
+
+.reimu-comment-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.reimu-comment-edit-save,
+.reimu-comment-edit-cancel {
+  min-height: 32px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 82, 82, .28);
+  border-radius: 6px;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-comment-edit-save {
+  color: #fff;
+  background: var(--red-1);
+  border-color: var(--red-1);
+}
+
+.reimu-comment-edit-cancel {
+  color: var(--color-default);
+  background: transparent;
 }
 
 .reimu-comment-like,

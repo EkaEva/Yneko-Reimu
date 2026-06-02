@@ -47,7 +47,7 @@ $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 				if ( is_user_logged_in() ) {
 					$reimu_identity = function_exists( 'yneko_reimu_comment_current_user_identity' ) ? yneko_reimu_comment_current_user_identity( $reimu_display_post_id ) : '';
 				} else {
-					$reimu_logged_in_as = '<a class="reimu-comment-login-link" href="' . esc_url( wp_login_url( get_permalink( $reimu_display_post_id ) ) ) . '">' . esc_html__( '登录', 'yneko-reimu' ) . '</a>';
+					$reimu_logged_in_as = function_exists( 'yneko_reimu_comment_login_link_html' ) ? yneko_reimu_comment_login_link_html( get_permalink( $reimu_display_post_id ) ) : '<a class="reimu-comment-login-link" href="' . esc_url( wp_login_url( get_permalink( $reimu_display_post_id ) ) ) . '">' . esc_html__( '登录', 'yneko-reimu' ) . '</a>';
 				}
 				$reimu_logged_in_as = str_replace( '%', '%%', $reimu_logged_in_as );
 				$reimu_identity     = str_replace( '%', '%%', $reimu_identity );
@@ -71,9 +71,7 @@ $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 						'submit_button'         => '<button name="%1$s" type="submit" id="%2$s" class="%3$s">%4$s</button>',
 						'submit_field'          => yneko_reimu_comment_toolbar( $reimu_logged_in_as, $reimu_identity ),
 						'fields'                => array(
-							'author' => '<div class="reimu-comment-form__fields"><p class="comment-form-author"><label class="screen-reader-text" for="author">' . esc_html__( '昵称', 'yneko-reimu' ) . '</label><input id="author" name="author" type="text" placeholder="' . esc_attr__( '昵称', 'yneko-reimu' ) . '" value="' . esc_attr( wp_get_current_commenter()['comment_author'] ) . '" size="30"></p>',
-							'email'  => '<p class="comment-form-email"><label class="screen-reader-text" for="email">' . esc_html__( '邮箱', 'yneko-reimu' ) . '</label><input id="email" name="email" type="email" placeholder="' . esc_attr__( '邮箱', 'yneko-reimu' ) . '" value="' . esc_attr( wp_get_current_commenter()['comment_author_email'] ) . '" size="30"></p>',
-							'url'    => '<p class="comment-form-url"><label class="screen-reader-text" for="url">' . esc_html__( '网址（可选）', 'yneko-reimu' ) . '</label><input id="url" name="url" type="url" placeholder="' . esc_attr__( '网址（可选）', 'yneko-reimu' ) . '" value="' . esc_attr( wp_get_current_commenter()['comment_author_url'] ) . '" size="30"></p></div>',
+							'author' => function_exists( 'yneko_reimu_comment_guest_fields_html' ) ? yneko_reimu_comment_guest_fields_html() : '',
 							'cookies' => '<input type="hidden" name="wp-comment-cookies-consent" value="yes">',
 						),
 						'comment_field'         => '<p class="comment-form-comment"><label class="screen-reader-text" for="comment">' . esc_html__( '评论', 'yneko-reimu' ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" placeholder="' . esc_attr__( '欢迎评论', 'yneko-reimu' ) . '" required></textarea><input type="hidden" name="redirect_to" value="' . esc_url( get_permalink( $reimu_display_post_id ) . '#comments' ) . '"></p><div class="reimu-comment-preview-panel" data-comment-preview-panel hidden><h4>' . esc_html__( '预览:', 'yneko-reimu' ) . '</h4><div class="reimu-comment-preview-content wl-content"></div></div>',

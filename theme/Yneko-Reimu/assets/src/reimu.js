@@ -311,15 +311,39 @@
     var header = qs('#header-nav');
     var toggle = qs('#main-nav-toggle');
     var mask = qs('#mask');
+    var mobileNav = qs('#mobile-nav');
     var lastY = window.scrollY;
+
+    function setMobileNavOpen(open) {
+      body = document.body || body;
+      if (body) {
+        body.classList.toggle('mobile-nav-on', !!open);
+      }
+      if (mobileNav) {
+        mobileNav.setAttribute('aria-hidden', open ? 'false' : 'true');
+        mobileNav.inert = !open;
+      }
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      if (mask) {
+        mask.classList.toggle('hide', !open);
+        if (!open) {
+          mask.dataset.mode = '';
+        }
+      }
+    }
+
+    if (mobileNav && !body.classList.contains('mobile-nav-on')) {
+      mobileNav.setAttribute('aria-hidden', 'true');
+      mobileNav.inert = true;
+    }
 
     if (toggle && !toggle.dataset.navReady) {
       toggle.dataset.navReady = 'true';
+      toggle.setAttribute('aria-expanded', body.classList.contains('mobile-nav-on') ? 'true' : 'false');
       toggle.addEventListener('click', function () {
-        body.classList.toggle('mobile-nav-on');
-        if (mask) {
-          mask.classList.toggle('hide', !body.classList.contains('mobile-nav-on'));
-        }
+        setMobileNavOpen(!body.classList.contains('mobile-nav-on'));
       });
     }
 
@@ -329,9 +353,7 @@
         if (body.classList.contains('search-popup-on')) {
           return;
         }
-        body.classList.remove('mobile-nav-on');
-        mask.classList.add('hide');
-        mask.dataset.mode = '';
+        setMobileNavOpen(false);
       });
     }
 
@@ -1283,6 +1305,12 @@
       return;
     }
 
+    if (!popup.classList.contains('show')) {
+      wrapper.setAttribute('aria-hidden', 'true');
+      wrapper.hidden = true;
+      popup.inert = true;
+    }
+
     var unlockSearchBackground = function () {
       var liveBody = document.body;
       var mask = qs('#mask');
@@ -1368,6 +1396,9 @@
       if (body) {
         body.classList.remove('mobile-nav-on');
       }
+      liveWrapper.hidden = false;
+      liveWrapper.setAttribute('aria-hidden', 'false');
+      livePopup.inert = false;
       liveWrapper.classList.add('active');
       livePopup.classList.add('show');
       lockSearchBackground();
@@ -1387,6 +1418,15 @@
       }
       if (livePopup) {
         livePopup.classList.remove('show');
+        livePopup.inert = true;
+      }
+      if (liveWrapper) {
+        liveWrapper.setAttribute('aria-hidden', 'true');
+        window.setTimeout(function () {
+          if (!liveWrapper.classList.contains('active')) {
+            liveWrapper.hidden = true;
+          }
+        }, 220);
       }
       unlockSearchBackground();
       document.removeEventListener('keydown', trapSearchFocus);
@@ -2033,6 +2073,38 @@
     });
   }
 
+  function patchAPlayerAccessibility(player) {
+    if (!player) {
+      return;
+    }
+    var labels = [
+      ['.aplayer-icon-play', t('aplayerPlay', '播放')],
+      ['.aplayer-icon-pause', t('aplayerPause', '暂停')],
+      ['.aplayer-icon-back', t('aplayerPrevious', '上一首')],
+      ['.aplayer-icon-forward', t('aplayerNext', '下一首')],
+      ['.aplayer-icon-menu', t('aplayerPlaylist', '播放列表')],
+      ['.aplayer-icon-lrc', t('aplayerLyrics', '歌词')],
+      ['.aplayer-icon-volume-down', t('aplayerVolume', '音量')],
+      ['.aplayer-icon-volume-up', t('aplayerVolume', '音量')],
+      ['.aplayer-icon-order', t('aplayerOrder', '播放顺序')],
+      ['.aplayer-icon-loop', t('aplayerLoop', '循环模式')],
+      ['.aplayer-icon-miniswitcher', t('aplayerMini', '迷你模式')]
+    ];
+    labels.forEach(function (item) {
+      qsa(item[0], player).forEach(function (button) {
+        button.setAttribute('aria-label', item[1]);
+        if (!button.getAttribute('title')) {
+          button.setAttribute('title', item[1]);
+        }
+      });
+    });
+    qsa('.aplayer-volume-bar-wrap, .aplayer-bar-wrap', player).forEach(function (control) {
+      if (!control.getAttribute('aria-label')) {
+        control.setAttribute('aria-label', control.classList.contains('aplayer-volume-bar-wrap') ? t('aplayerVolume', '音量') : t('aplayerProgress', '播放进度'));
+      }
+    });
+  }
+
   function bindAPlayerLayoutSync() {
     var player = getLiveAPlayer();
     if (!player) {
@@ -2041,6 +2113,7 @@
     setupAPlayerScrollCursorZone(player);
     positionAPlayerVolumeControl(player);
     syncAPlayerLrcOverflow(player);
+    patchAPlayerAccessibility(player);
     if (player.dataset.reimuLayoutReady) {
       return;
     }
@@ -2276,7 +2349,7 @@
           autoplay: !!config.aplayer.autoplay,
           loop: config.aplayer.loop || 'all',
           order: config.aplayer.order || 'list',
-          preload: config.aplayer.preload || 'auto',
+          preload: config.aplayer.preload || 'metadata',
           volume: Number(config.aplayer.volume || .7),
           mutex: config.aplayer.mutex !== false,
           listFolded: !!config.aplayer.listFolded,
@@ -2382,7 +2455,7 @@
 
   function markdownToHtml(text) {
     var blocks = [];
-    var source = String(text || '').replace(/\r\n?/g, '\n').replace(/```([a-z0-9_-]+)?\n?([\s\S]*?)```/gi, function (_, lang, code) {
+    var source = String(text || '').replace(/\r\n?/g, '\n').replace(/```\s*(?:[a-z0-9_-]+)?[^\n]*\n?([\s\S]*?)```/gi, function (_, code) {
       var key = '%%REIMU_COMMENT_CODE_' + blocks.length + '%%';
       blocks.push({
         key: key,
@@ -2452,6 +2525,12 @@
     popover.hidden = !shouldOpen;
     button.classList.toggle('active', shouldOpen);
     button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    if (shouldOpen) {
+      var status = qs('[data-comment-upload-status="' + name + '"]', form);
+      if (status) {
+        status.textContent = '';
+      }
+    }
   }
 
   function initCommentPopoverOutsideClose() {
@@ -2514,14 +2593,44 @@
   }
 
   function initCommentUploadRows(form, textarea) {
-    var uploads = config.commentUploads || {};
-    var canUpload = !!(uploads.enabled && uploads.isLoggedIn && uploads.nonce && config.login && config.login.ajaxUrl);
+    function uploadState(type) {
+      var uploads = config.commentUploads || {};
+      var enabledKey = type === 'gif' ? 'gifEnabled' : 'imageEnabled';
+      return {
+        uploads: uploads,
+        enabled: !!(uploads.enabled && uploads[enabledKey]),
+        canUpload: !!(uploads.enabled && uploads[enabledKey] && uploads.isLoggedIn && uploads.nonce && config.login && config.login.ajaxUrl)
+      };
+    }
 
     qsa('[data-comment-upload-row]', form).forEach(function (row) {
-      row.hidden = !canUpload;
+      var type = row.getAttribute('data-comment-upload-row') === 'gif' ? 'gif' : 'image';
+      row.hidden = !uploadState(type).canUpload;
     });
     qsa('[data-comment-upload-login]', form).forEach(function (note) {
-      note.hidden = canUpload;
+      var type = note.getAttribute('data-comment-upload-login') === 'gif' ? 'gif' : 'image';
+      var state = uploadState(type);
+      note.hidden = state.canUpload || !state.enabled;
+      note.textContent = state.enabled ? t(type === 'gif' ? 'commentUploadGifLogin' : 'commentUploadLogin', type === 'gif' ? '登录后可上传 GIF。' : '登录后可上传图片。') : t(type === 'gif' ? 'commentUploadGifDisabled' : 'commentUploadImageDisabled', type === 'gif' ? '评论 GIF 上传已关闭。' : '评论图片上传已关闭。');
+    });
+    qsa('[data-comment-upload-button]', form).forEach(function (button) {
+      var type = button.getAttribute('data-comment-upload-button') === 'gif' ? 'gif' : 'image';
+      button.hidden = !uploadState(type).enabled;
+    });
+    qsa('[data-comment-upload-input]', form).forEach(function (input) {
+      var type = input.getAttribute('data-comment-upload-input') === 'gif' ? 'gif' : 'image';
+      var state = uploadState(type);
+      input.disabled = !state.canUpload;
+      if (!state.canUpload) {
+        input.value = '';
+      }
+    });
+    qsa('[data-comment-upload-status]', form).forEach(function (status) {
+      var type = status.getAttribute('data-comment-upload-status') === 'gif' ? 'gif' : 'image';
+      var state = uploadState(type);
+      if (!state.enabled || state.canUpload) {
+        status.textContent = '';
+      }
     });
 
     qsa('[data-comment-upload-button]', form).forEach(function (button) {
@@ -2535,13 +2644,26 @@
         input.dataset.commentUploadInputReady = 'true';
         input.addEventListener('change', function () {
           if (input.files && input.files[0]) {
+            if (!uploadState(type).canUpload) {
+              input.value = '';
+              showTooltip(t(type === 'gif' ? 'commentUploadGifLogin' : 'commentUploadLogin', type === 'gif' ? '登录后可上传 GIF。' : '登录后可上传图片。'));
+              initCommentUploadRows(form, textarea);
+              return;
+            }
             uploadCommentFile(type, input, button, textarea, form);
           }
         });
       }
       button.addEventListener('click', function () {
-        if (!canUpload) {
-          showTooltip(t('commentUploadLogin', '登录后可上传图片。'));
+        var state = uploadState(type);
+        if (!state.enabled) {
+          showTooltip(t(type === 'gif' ? 'commentUploadGifDisabled' : 'commentUploadImageDisabled', type === 'gif' ? '评论 GIF 上传已关闭。' : '评论图片上传已关闭。'));
+          initCommentUploadRows(form, textarea);
+          return;
+        }
+        if (!state.canUpload) {
+          showTooltip(t(type === 'gif' ? 'commentUploadGifLogin' : 'commentUploadLogin', type === 'gif' ? '登录后可上传 GIF。' : '登录后可上传图片。'));
+          initCommentUploadRows(form, textarea);
           return;
         }
         if (input) {
@@ -2551,8 +2673,9 @@
     });
 
     function uploadCommentFile(type, input, button, textarea, form) {
-      if (!canUpload) {
-        showTooltip(t('commentUploadLogin', '登录后可上传图片。'));
+      var state = uploadState(type);
+      if (!state.canUpload) {
+        showTooltip(t(type === 'gif' ? 'commentUploadGifLogin' : 'commentUploadLogin', type === 'gif' ? '登录后可上传 GIF。' : '登录后可上传图片。'));
         return;
       }
 
@@ -2564,7 +2687,7 @@
 
       var formData = new FormData();
       formData.append('action', 'yneko_reimu_comment_upload');
-      formData.append('nonce', uploads.nonce || '');
+      formData.append('nonce', state.uploads.nonce || '');
       formData.append('type', type);
       formData.append('file', input.files[0]);
       button.disabled = true;
@@ -2594,10 +2717,14 @@
         if (status) {
           status.textContent = Object.prototype.hasOwnProperty.call(payload.data, 'message') ? payload.data.message : t('commentUploadDone', '已插入评论。');
         }
+        if (payload.data.requiresReview && payload.data.message) {
+          showTooltip(payload.data.message);
+        }
       }).catch(function () {
         if (status) {
           status.textContent = t('commentUploadFailed', '上传失败。');
         }
+        showTooltip(t('commentUploadFailed', '上传失败。'));
       }).finally(function () {
         button.disabled = false;
       });
@@ -2861,6 +2988,7 @@
       sortCommentList(getActiveCommentSortMode());
     }
     initCommentLikes();
+    initCommentOwnerActions();
     initWordPressCommentForm();
     syncLoadMoreRoot(list);
     return item;
@@ -2904,6 +3032,13 @@
         credentials: 'same-origin',
         body: formData
       }).then(function (response) {
+        var contentType = response.headers && response.headers.get ? response.headers.get('content-type') || '' : '';
+        if (contentType.indexOf('application/json') === -1) {
+          return response.text().then(function (text) {
+            var message = String(text || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            return { success: false, data: { message: message || t('commentSubmitFailed', '评论提交失败。') } };
+          });
+        }
         return response.json().catch(function () {
           return { success: false, data: { message: t('commentSubmitFailed', '评论提交失败。') } };
         });
@@ -3012,6 +3147,148 @@
     });
   }
 
+  function resetCommentEdit(commentItem) {
+    if (!commentItem) {
+      return;
+    }
+    var form = qs('.reimu-comment-edit-form', commentItem);
+    var text = qs('.comment-text', commentItem);
+    if (form) {
+      form.remove();
+    }
+    if (text) {
+      text.hidden = false;
+    }
+  }
+
+  function initCommentOwnerActions() {
+    qsa('#comments [data-comment-edit]').forEach(function (button) {
+      if (button.dataset.commentEditReady) {
+        return;
+      }
+      button.dataset.commentEditReady = 'true';
+      button.addEventListener('click', function () {
+        var commentItem = button.closest('.reimu-comment');
+        var commentId = button.getAttribute('data-comment-edit') || '';
+        var text = commentItem ? qs('.comment-text', commentItem) : null;
+        if (!commentItem || !commentId || !text || qs('.reimu-comment-edit-form', commentItem)) {
+          return;
+        }
+        var raw = text.getAttribute('data-comment-raw') || text.textContent || '';
+        text.hidden = true;
+        var form = document.createElement('form');
+        form.className = 'reimu-comment-edit-form';
+        form.innerHTML = '<textarea class="reimu-comment-edit-textarea" rows="4"></textarea><div class="reimu-comment-edit-actions"><button type="submit" class="reimu-comment-edit-save">' + escapeHtml(t('commentEditSave', '保存')) + '</button><button type="button" class="reimu-comment-edit-cancel">' + escapeHtml(t('commentEditCancel', '取消')) + '</button></div>';
+        var textarea = qs('textarea', form);
+        if (textarea) {
+          textarea.value = raw;
+        }
+        text.insertAdjacentElement('afterend', form);
+        if (textarea && textarea.focus) {
+          textarea.focus();
+        }
+        qs('.reimu-comment-edit-cancel', form).addEventListener('click', function () {
+          resetCommentEdit(commentItem);
+        });
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          if (!config.login || !config.login.ajaxUrl || !textarea || button.disabled) {
+            return;
+          }
+          var next = textarea.value.trim();
+          if (!next) {
+            showTooltip(t('commentEmpty', '还没有评论，来抢一张小板凳吧。'));
+            textarea.focus();
+            return;
+          }
+          var submit = qs('[type="submit"]', form);
+          var formData = new FormData();
+          formData.append('action', 'yneko_reimu_edit_comment');
+          formData.append('comment_id', commentId);
+          formData.append('comment', next);
+          formData.append('nonce', button.getAttribute('data-comment-manage-nonce') || '');
+          button.disabled = true;
+          if (submit) {
+            submit.disabled = true;
+          }
+          fetch(config.login.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+          }).then(function (response) {
+            return response.json().catch(function () {
+              return { success: false, data: { message: t('commentEditFailed', '评论更新失败。') } };
+            });
+          }).then(function (payload) {
+            if (!payload || !payload.success || !payload.data) {
+              showTooltip(payload && payload.data && payload.data.message ? payload.data.message : t('commentEditFailed', '评论更新失败。'));
+              return;
+            }
+            text.innerHTML = payload.data.html || '';
+            text.setAttribute('data-comment-raw', payload.data.raw || next);
+            resetCommentEdit(commentItem);
+            showTooltip(payload.data.message || t('commentSubmitSuccess', '评论已发布。'));
+          }).catch(function () {
+            showTooltip(t('commentEditFailed', '评论更新失败。'));
+          }).finally(function () {
+            button.disabled = false;
+            if (submit) {
+              submit.disabled = false;
+            }
+          });
+        });
+      });
+    });
+
+    qsa('#comments [data-comment-delete]').forEach(function (button) {
+      if (button.dataset.commentDeleteReady) {
+        return;
+      }
+      button.dataset.commentDeleteReady = 'true';
+      button.addEventListener('click', function () {
+        var commentItem = button.closest('.reimu-comment');
+        var commentId = button.getAttribute('data-comment-delete') || '';
+        if (!commentItem || !commentId || button.disabled || !window.confirm(t('commentDeleteConfirm', '确定删除这条评论吗？'))) {
+          return;
+        }
+        var formData = new FormData();
+        formData.append('action', 'yneko_reimu_delete_comment');
+        formData.append('comment_id', commentId);
+        formData.append('nonce', button.getAttribute('data-comment-manage-nonce') || '');
+        button.disabled = true;
+        fetch(config.login.ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: formData
+        }).then(function (response) {
+          return response.json().catch(function () {
+            return { success: false, data: { message: t('commentDeleteFailed', '评论删除失败。') } };
+          });
+        }).then(function (payload) {
+          if (!payload || !payload.success || !payload.data) {
+            showTooltip(payload && payload.data && payload.data.message ? payload.data.message : t('commentDeleteFailed', '评论删除失败。'));
+            return;
+          }
+          var parentList = commentItem.parentNode;
+          commentItem.remove();
+          updateCommentCount(payload.data.count, payload.data.count_label);
+          if (parentList && parentList.classList && parentList.classList.contains('children') && !parentList.children.length) {
+            parentList.remove();
+          }
+          var rootList = qs('#comments .reimu-comment-list');
+          if (rootList) {
+            syncLoadMoreRoot(rootList);
+          }
+          showTooltip(payload.data.message || t('commentDeleteFailed', '评论删除失败。'));
+        }).catch(function () {
+          showTooltip(t('commentDeleteFailed', '评论删除失败。'));
+        }).finally(function () {
+          button.disabled = false;
+        });
+      });
+    });
+  }
+
   function initCommentSorting() {
     qsa('#comments [data-comment-sort]').forEach(function (button) {
       if (button.dataset.commentSortReady) {
@@ -3035,6 +3312,8 @@
     }
     modal.classList.toggle('show', !!open);
     modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+    modal.hidden = !open;
+    modal.inert = !open;
     if (body) {
       body.classList.toggle('reimu-login-on', !!open);
     }
@@ -3062,6 +3341,10 @@
       return;
     }
     modal.dataset.loginModalReady = 'true';
+    if (!modal.classList.contains('show')) {
+      modal.hidden = true;
+      modal.inert = true;
+    }
     var form = qs('[data-reimu-login-form]', modal);
     var registerForm = qs('[data-reimu-register-form]', modal);
     var lostForm = qs('[data-reimu-lost-form]', modal);
@@ -3330,6 +3613,7 @@
         var formData = new FormData();
         formData.append('action', action);
         formData.append('nonce', config.login[nonceKey] || '');
+        formData.append('redirect_to', window.location.href || '');
         fields.forEach(function (fieldName) {
           var field = qs('[name="' + fieldName + '"]', authForm);
           formData.append(fieldName, field ? field.value || '' : '');
@@ -3396,6 +3680,7 @@
         var formData = new FormData(authForm);
         formData.append('action', action);
         formData.append('nonce', config.login[nonceKey] || '');
+        formData.append('redirect_to', window.location.href || '');
         if (authMessage) {
           var loadingText = authForm.getAttribute('data-loading-text') || '';
           if (!loadingText) {
@@ -3484,6 +3769,8 @@
     function setOpen(open) {
       modal.classList.toggle('show', !!open);
       modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+      modal.hidden = !open;
+      modal.inert = !open;
       if (body) {
         body.classList.toggle('reimu-login-on', !!open);
       }
@@ -3589,6 +3876,7 @@
       var data = new FormData();
       data.append('action', 'yneko_reimu_profile_get');
       data.append('nonce', config.login.profileNonce || '');
+      data.append('redirect_to', window.location.href || '');
       fetch(config.login.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
         .then(function (response) { return response.json(); })
         .then(function (payload) {
@@ -3606,6 +3894,7 @@
       data = data || new FormData();
       data.append('action', action);
       data.append('nonce', config.login.profileNonce || '');
+      data.append('redirect_to', window.location.href || '');
       return fetch(config.login.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
         .then(function (response) {
           return response.json().catch(function () {
@@ -3799,8 +4088,9 @@
       config.comments.nonce = data.commentNonce || config.comments.nonce;
     }
     if (config.commentUploads) {
+      Object.assign(config.commentUploads, data.commentUploads || {});
       config.commentUploads.isLoggedIn = true;
-      config.commentUploads.nonce = data.commentUploadNonce || config.commentUploads.nonce;
+      config.commentUploads.nonce = data.commentUploadNonce || config.commentUploads.nonce || '';
     }
     if (config.login) {
       config.login.logoutNonce = data.logoutNonce || config.login.logoutNonce;
@@ -3829,6 +4119,10 @@
       qsa('[data-comment-upload-login]', form).forEach(function (notice) {
         notice.hidden = true;
       });
+      var textarea = qs('textarea[name="comment"]', form);
+      if (textarea) {
+        initCommentUploadRows(form, textarea);
+      }
     });
     if (data.profileModal && !qs('#reimu-profile-modal')) {
       document.body.insertAdjacentHTML('beforeend', data.profileModal);
@@ -3845,6 +4139,20 @@
   function applyCommentLoggedOutState(data) {
     qsa('.reimu-comment-form').forEach(function (form) {
       form.classList.remove('reimu-comment-form--logged-in');
+      var guestFieldsHtml = data && data.guestFieldsHtml ? String(data.guestFieldsHtml) : '';
+      if (guestFieldsHtml) {
+        var existingFields = qs('.reimu-comment-form__fields', form);
+        if (existingFields) {
+          existingFields.outerHTML = guestFieldsHtml;
+        } else {
+          var commentField = qs('.comment-form-comment', form);
+          if (commentField) {
+            commentField.insertAdjacentHTML('beforebegin', guestFieldsHtml);
+          } else {
+            form.insertAdjacentHTML('afterbegin', guestFieldsHtml);
+          }
+        }
+      }
       qsa('.reimu-comment-form__fields', form).forEach(function (fields) {
         fields.hidden = false;
       });
@@ -3853,26 +4161,37 @@
         identity.remove();
       }
       var actions = qs('.reimu-comment-actions', form);
-      if (actions && !qs('.reimu-comment-login', actions)) {
+      if (actions) {
+        var existingLogin = qs('.reimu-comment-login', actions);
         var wordCount = qs('.reimu-comment-word-count', actions);
         var loginUrl = data && data.loginUrl ? data.loginUrl : '#reimu-login-modal';
-        var loginText = t('login', '登录');
+        var loginHtml = data && data.loginHtml ? String(data.loginHtml) : '<a class="reimu-comment-login-link" href="' + escapeHtml(loginUrl) + '">' + escapeHtml(t('login', '登录')) + '</a>';
         var replacement = document.createElement('span');
         replacement.className = 'reimu-comment-login';
-        replacement.innerHTML = '<a class="reimu-comment-login-link" href="' + escapeHtml(loginUrl) + '">' + escapeHtml(loginText) + '</a>';
-        if (wordCount) {
+        replacement.innerHTML = loginHtml;
+        if (existingLogin) {
+          existingLogin.replaceWith(replacement);
+        } else if (wordCount) {
           actions.insertBefore(replacement, wordCount.nextSibling);
         } else {
           actions.insertBefore(replacement, actions.firstChild);
         }
       }
       qsa('[data-comment-upload-login]', form).forEach(function (notice) {
-        notice.hidden = false;
+        notice.hidden = true;
       });
     });
     if (config.commentUploads) {
+      Object.assign(config.commentUploads, data && data.commentUploads ? data.commentUploads : {});
       config.commentUploads.isLoggedIn = false;
+      config.commentUploads.nonce = '';
     }
+    qsa('.reimu-comment-form').forEach(function (form) {
+      var textarea = qs('textarea[name="comment"]', form);
+      if (textarea) {
+        initCommentUploadRows(form, textarea);
+      }
+    });
     initCommentLoginTriggers();
     return true;
   }
@@ -3899,6 +4218,8 @@
         } else {
           modal.classList.add('show');
           modal.setAttribute('aria-hidden', 'false');
+          modal.hidden = false;
+          modal.inert = false;
         }
         return true;
       }
@@ -4070,9 +4391,6 @@
           if (payload.data && payload.data.loginModal && !qs('#reimu-login-modal')) {
             document.body.insertAdjacentHTML('beforeend', payload.data.loginModal);
           }
-          qsa('.reimu-comment-form__fields', document).forEach(function (fields) {
-            fields.hidden = false;
-          });
           initLoginModal();
           initCommentLoginTriggers();
           showTooltip(payload.data && payload.data.message ? payload.data.message : t('logoutSuccess', '已退出登录。'));
@@ -4190,6 +4508,7 @@
 
     initCommentSorting();
     initCommentLikes();
+    initCommentOwnerActions();
     initLoginModal();
     initProfileOpenDelegation();
     initProfileModal();
@@ -4510,7 +4829,45 @@
     }
   }
 
+  function getAuthModalState() {
+    var loginModal = qs('#reimu-login-modal');
+    var profileModal = qs('#reimu-profile-modal');
+    var activePanel = loginModal ? qs('[data-login-panel].is-active', loginModal) : null;
+    return {
+      loginOpen: !!(loginModal && loginModal.classList.contains('show')),
+      loginPanel: activePanel ? activePanel.getAttribute('data-login-panel') || 'login' : 'login',
+      profileOpen: !!(profileModal && profileModal.classList.contains('show'))
+    };
+  }
+
+  function restoreAuthModalState(state) {
+    if (!state) {
+      return;
+    }
+    initLoginModal();
+    initProfileModal();
+    var loginModal = qs('#reimu-login-modal');
+    if (loginModal && state.loginOpen) {
+      setLoginModalOpen(true);
+      if (loginModal._reimuSetLoginPanel) {
+        loginModal._reimuSetLoginPanel(state.loginPanel || 'login');
+      }
+    }
+    var profileModal = qs('#reimu-profile-modal');
+    if (profileModal && state.profileOpen) {
+      if (profileModal._reimuSetProfileOpen) {
+        profileModal._reimuSetProfileOpen(true);
+      } else {
+        profileModal.classList.add('show');
+        profileModal.setAttribute('aria-hidden', 'false');
+        profileModal.hidden = false;
+        profileModal.inert = false;
+      }
+    }
+  }
+
   function replacePageContent(nextDoc) {
+    var authModalState = getAuthModalState();
     var preservedAPlayer = preserveAPlayer();
     if (preservedAPlayer && preservedAPlayer.parentNode) {
       preservedAPlayer.parentNode.removeChild(preservedAPlayer);
@@ -4533,6 +4890,8 @@
     replaceElement('#mobile-nav', nextDoc, { appendTo: qs('#container') || document.body });
     replaceElement('.site-search', nextDoc, { appendTo: qs('#container') || document.body });
     replaceElement('#footer', nextDoc);
+    replaceElement('#reimu-login-modal', nextDoc, { appendTo: qs('#container') || document.body });
+    replaceElement('#reimu-profile-modal', nextDoc, { appendTo: qs('#container') || document.body, keepMissing: true });
 
     if (preservedAPlayer) {
       placeAPlayerInSlot(preservedAPlayer);
@@ -4562,6 +4921,7 @@
     document.body.setAttribute('aria-busy', 'true');
     syncHeadMetadata(nextDoc);
     syncInlineConfig(nextDoc);
+    restoreAuthModalState(authModalState);
   }
 
   function navigateTo(url, options) {

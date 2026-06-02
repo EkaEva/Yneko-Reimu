@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! yneko_reimu_feature_enabled( 'preloader_enable', true ) ) {
+if ( ! yneko_reimu_feature_enabled( 'preloader_enable', false ) ) {
 	return;
 }
 ?>

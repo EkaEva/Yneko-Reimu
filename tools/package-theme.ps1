@@ -32,7 +32,8 @@ if ($OutputName.Trim()) {
   if ($versionLabel -notmatch '^[vV]') {
     $versionLabel = "v$versionLabel"
   }
-  $zipFileName = "Yneko-Reimu-$versionLabel.zip"
+  $timestamp = Get-Date -Format 'yyyyMMdd-HHmm'
+  $zipFileName = "Yneko-Reimu-$versionLabel-$timestamp.zip"
 } else {
   $zipFileName = 'Yneko-Reimu.zip'
 }

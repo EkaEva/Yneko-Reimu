@@ -4,8 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <?php
-$even = isset( $args['even'] ) ? (bool) $args['even'] : true;
-$side = $even ? 'left' : 'right';
+$even      = isset( $args['even'] ) ? (bool) $args['even'] : true;
+$side      = $even ? 'left' : 'right';
+$cover_url = yneko_reimu_get_post_cover_url( get_the_ID() );
 ?>
 <div class="post-wrapper">
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'post-wrap ' . $side ); ?> data-aos="fade-up">
@@ -14,7 +15,7 @@ $side = $even ? 'left' : 'right';
 			<div class="post-sticky"><?php echo esc_html( function_exists( 'yneko_reimu_i18n_frontend_text' ) ? yneko_reimu_i18n_frontend_text( '置顶' ) : __( '置顶', 'yneko-reimu' ) ); ?></div>
 		<?php endif; ?>
 		<div class="post-cover <?php echo esc_attr( $side ); ?>">
-			<img src="<?php echo esc_url( yneko_reimu_get_post_cover_url( get_the_ID() ) ); ?>" data-src="<?php echo esc_url( yneko_reimu_get_post_cover_url( get_the_ID() ) ); ?>" data-sizes="auto" alt="<?php the_title_attribute(); ?>" class="lazyload">
+			<img src="<?php echo esc_url( $cover_url ); ?>" data-src="<?php echo esc_url( $cover_url ); ?>" data-sizes="auto" alt="<?php the_title_attribute(); ?>" class="lazyload" loading="lazy" decoding="async" width="900" height="560">
 		</div>
 		<div class="post-info">
 			<?php get_template_part( 'template-parts/meta/post-meta' ); ?>

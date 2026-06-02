@@ -4,7 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_vendor_base_url() {
-	$base = yneko_reimu_get_theme_mod( 'yneko_reimu_vendor_cdn_base', 'https://cdn.jsdelivr.net/npm' );
+	$third_party = function_exists( 'yneko_reimu_settings_third_party' ) ? yneko_reimu_settings_third_party() : array();
+	$base = $third_party['vendor_cdn_base'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_vendor_cdn_base', 'https://cdn.jsdelivr.net/npm' );
 	$base = esc_url_raw( trim( (string) $base ) );
 
 	return $base ? untrailingslashit( $base ) : 'https://cdn.jsdelivr.net/npm';
@@ -48,14 +49,16 @@ function yneko_reimu_normalize_aplayer_audio( $audio ) {
 }
 
 function yneko_reimu_live2d_base_url() {
-	$base = yneko_reimu_get_theme_mod( 'yneko_reimu_live2d_base_url', 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest' );
+	$third_party = function_exists( 'yneko_reimu_settings_third_party' ) ? yneko_reimu_settings_third_party() : array();
+	$base = $third_party['live2d_base_url'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_live2d_base_url', 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest' );
 	$base = esc_url_raw( trim( (string) $base ) );
 
 	return $base ? untrailingslashit( $base ) . '/' : 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/';
 }
 
 function yneko_reimu_live2d_api_base_url() {
-	$base = yneko_reimu_get_theme_mod( 'yneko_reimu_live2d_api_base_url', 'https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/' );
+	$third_party = function_exists( 'yneko_reimu_settings_third_party' ) ? yneko_reimu_settings_third_party() : array();
+	$base = $third_party['live2d_api_base_url'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_live2d_api_base_url', 'https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/' );
 	$base = esc_url_raw( trim( (string) $base ) );
 
 	return $base ? untrailingslashit( $base ) . '/' : 'https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/';
@@ -172,7 +175,10 @@ function yneko_reimu_enqueue_assets() {
 
 	$current_language   = function_exists( 'yneko_reimu_i18n_current_language' ) ? yneko_reimu_i18n_current_language() : get_locale();
 	$builtin_search_url = function_exists( 'yneko_reimu_search_json_url' ) ? yneko_reimu_search_json_url( $current_language ) : '';
-	$local_search_url   = yneko_reimu_get_theme_mod( 'yneko_reimu_local_search_json', '' );
+	$search_settings    = function_exists( 'yneko_reimu_settings_search' ) ? yneko_reimu_settings_search() : array();
+	$player_settings    = function_exists( 'yneko_reimu_settings_player' ) ? yneko_reimu_settings_player() : array();
+	$external_comments  = function_exists( 'yneko_reimu_settings_external_comments' ) ? yneko_reimu_settings_external_comments() : array();
+	$local_search_url   = $search_settings['local_json_url'] ?? yneko_reimu_get_theme_mod( 'yneko_reimu_local_search_json', '' );
 	$local_search_url   = $local_search_url ? $local_search_url : $builtin_search_url;
 	$search             = array(
 		'type'    => 'wordpress',
@@ -181,12 +187,12 @@ function yneko_reimu_enqueue_assets() {
 		'language' => $current_language,
 	);
 
-	if ( yneko_reimu_feature_enabled( 'yneko_reimu_algolia_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_api_key', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_index_name', '' ) ) {
+	if ( yneko_reimu_feature_enabled( 'yneko_reimu_algolia_enable', false ) && ! empty( $search_settings['algolia_app_id'] ) && ! empty( $search_settings['algolia_api_key'] ) && ! empty( $search_settings['algolia_index_name'] ) ) {
 		$search = array(
 			'type'      => 'algolia',
-			'appId'     => yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_app_id', '' ),
-			'apiKey'    => yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_api_key', '' ),
-			'indexName' => yneko_reimu_get_theme_mod( 'yneko_reimu_algolia_index_name', '' ),
+			'appId'     => $search_settings['algolia_app_id'],
+			'apiKey'    => $search_settings['algolia_api_key'],
+			'indexName' => $search_settings['algolia_index_name'],
 			'perPage'   => 10,
 		);
 		wp_enqueue_script( 'yneko-reimu-algoliasearch', yneko_reimu_vendor_url( 'algoliasearch@4.24.0/dist/algoliasearch-lite.umd.js' ), array(), '4.24.0', true );
@@ -219,6 +225,9 @@ function yneko_reimu_enqueue_assets() {
 		'commentPreviewEmpty'   => esc_html__( '还没有内容。', 'yneko-reimu' ),
 		'invalidImageUrl'       => esc_html__( '请输入 http(s) 图片地址', 'yneko-reimu' ),
 		'commentUploadLogin'    => esc_html__( '登录后可上传图片。', 'yneko-reimu' ),
+		'commentUploadGifLogin' => esc_html__( '登录后可上传 GIF。', 'yneko-reimu' ),
+		'commentUploadImageDisabled'=> esc_html__( '评论图片上传已关闭。', 'yneko-reimu' ),
+		'commentUploadGifDisabled'=> esc_html__( '评论 GIF 上传已关闭。', 'yneko-reimu' ),
 		'commentUploadChoose'   => esc_html__( '请先选择文件。', 'yneko-reimu' ),
 		'commentUploadChooseFile'=> esc_html__( '选择文件', 'yneko-reimu' ),
 		'commentUploadUploading'=> esc_html__( '上传中...', 'yneko-reimu' ),
@@ -229,6 +238,11 @@ function yneko_reimu_enqueue_assets() {
 		'commentSubmitFailed'   => esc_html__( '评论提交失败。', 'yneko-reimu' ),
 		'commentSubmitSuccess'  => esc_html__( '评论已发布。', 'yneko-reimu' ),
 		'commentSubmitPending'  => esc_html__( '评论已提交，正在等待审核。', 'yneko-reimu' ),
+		'commentEditSave'       => esc_html__( '保存', 'yneko-reimu' ),
+		'commentEditCancel'     => esc_html__( '取消', 'yneko-reimu' ),
+		'commentEditFailed'     => esc_html__( '评论更新失败。', 'yneko-reimu' ),
+		'commentDeleteConfirm'  => esc_html__( '确定删除这条评论吗？', 'yneko-reimu' ),
+		'commentDeleteFailed'   => esc_html__( '评论删除失败。', 'yneko-reimu' ),
 		'commentEmpty'          => esc_html__( '还没有评论，来抢一张小板凳吧。', 'yneko-reimu' ),
 		'cancelReply'           => esc_html__( '取消回复', 'yneko-reimu' ),
 		'replyComment'          => esc_html__( '回复评论', 'yneko-reimu' ),
@@ -302,6 +316,8 @@ function yneko_reimu_enqueue_assets() {
 		),
 		'commentUploads'  => array(
 			'enabled'    => function_exists( 'yneko_reimu_comment_upload_enabled' ) ? yneko_reimu_comment_upload_enabled() : true,
+			'imageEnabled'=> function_exists( 'yneko_reimu_comment_upload_type_enabled' ) ? yneko_reimu_comment_upload_type_enabled( 'image' ) : true,
+			'gifEnabled' => function_exists( 'yneko_reimu_comment_upload_type_enabled' ) ? yneko_reimu_comment_upload_type_enabled( 'gif' ) : true,
 			'isLoggedIn' => is_user_logged_in(),
 			'nonce'      => wp_create_nonce( 'yneko_reimu_comment_upload' ),
 			'gifs'       => function_exists( 'yneko_reimu_comment_gif_library' ) ? yneko_reimu_comment_gif_library( 24, false ) : array(),
@@ -311,16 +327,16 @@ function yneko_reimu_enqueue_assets() {
 		),
 		'aplayer'         => array(
 			'audio'    => $aplayer_audio,
-			'fixed'    => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_fixed', false ),
-			'autoplay' => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_autoplay', false ),
-			'loop'     => yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_loop', 'all' ),
-			'order'    => yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_order', 'list' ),
-			'preload'  => yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_preload', 'auto' ),
-			'volume'   => (float) yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_volume', '0.7' ),
-			'mutex'    => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_mutex', true ),
-			'listFolded' => (bool) yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_list_folded', true ),
-			'listMaxHeight' => yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_list_max_height', '320px' ),
-			'lrcType'    => absint( yneko_reimu_get_theme_mod( 'yneko_reimu_aplayer_lrc_type', 3 ) ),
+			'fixed'    => '1' === (string) ( $player_settings['fixed'] ?? '0' ),
+			'autoplay' => '1' === (string) ( $player_settings['autoplay'] ?? '0' ),
+			'loop'     => $player_settings['loop'] ?? 'all',
+			'order'    => $player_settings['order'] ?? 'list',
+			'preload'  => $player_settings['preload'] ?? 'metadata',
+			'volume'   => (float) ( $player_settings['volume'] ?? '0.7' ),
+			'mutex'    => '1' === (string) ( $player_settings['mutex'] ?? '1' ),
+			'listFolded' => '1' === (string) ( $player_settings['list_folded'] ?? '1' ),
+			'listMaxHeight' => $player_settings['list_max_height'] ?? '320px',
+			'lrcType'    => absint( $player_settings['lrc_type'] ?? 3 ),
 		),
 	);
 	if ( yneko_reimu_feature_enabled( 'yneko_reimu_firework_enable', false ) ) {
@@ -373,16 +389,16 @@ function yneko_reimu_enqueue_assets() {
 		$main_script_deps[] = 'yneko-reimu-mermaid';
 	}
 
-	if ( yneko_reimu_feature_enabled( 'yneko_reimu_waline_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_waline_server_url', '' ) ) {
+	if ( ! empty( $external_comments['waline_enable'] ) && '1' === (string) $external_comments['waline_enable'] && ! empty( $external_comments['waline_server_url'] ) ) {
 		wp_enqueue_style( 'yneko-reimu-waline', yneko_reimu_vendor_url( '@waline/client@2.15.8/dist/waline.css' ), array(), '2.15.8' );
 		wp_enqueue_script( 'yneko-reimu-waline', yneko_reimu_vendor_url( '@waline/client@2.15.8/dist/waline.js' ), array(), '2.15.8', true );
 	}
 
-	if ( yneko_reimu_feature_enabled( 'yneko_reimu_twikoo_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_twikoo_env_id', '' ) ) {
+	if ( ! empty( $external_comments['twikoo_enable'] ) && '1' === (string) $external_comments['twikoo_enable'] && ! empty( $external_comments['twikoo_env_id'] ) ) {
 		wp_enqueue_script( 'yneko-reimu-twikoo', yneko_reimu_vendor_url( 'twikoo@1.6.42/dist/twikoo.all.min.js' ), array(), '1.6.42', true );
 	}
 
-	if ( yneko_reimu_feature_enabled( 'yneko_reimu_valine_enable', false ) && yneko_reimu_get_theme_mod( 'yneko_reimu_valine_app_id', '' ) && yneko_reimu_get_theme_mod( 'yneko_reimu_valine_app_key', '' ) ) {
+	if ( ! empty( $external_comments['valine_enable'] ) && '1' === (string) $external_comments['valine_enable'] && ! empty( $external_comments['valine_app_id'] ) && ! empty( $external_comments['valine_app_key'] ) ) {
 		wp_enqueue_script( 'yneko-reimu-valine', yneko_reimu_vendor_url( 'valine@1.5.3/dist/Valine.min.js' ), array(), '1.5.3', true );
 	}
 
@@ -412,6 +428,10 @@ function yneko_reimu_favicon() {
 add_action( 'wp_head', 'yneko_reimu_favicon', 5 );
 
 function yneko_reimu_front_matter_meta() {
+	if ( function_exists( 'yneko_reimu_should_output_theme_meta' ) && ! yneko_reimu_should_output_theme_meta() ) {
+		return;
+	}
+
 	$post_id     = is_singular() ? get_queried_object_id() : 0;
 	$title       = wp_get_document_title();
 	$description = get_bloginfo( 'description' );

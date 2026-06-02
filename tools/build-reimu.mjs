@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 const cssSources = [
-  'assets/src/reimu-upstream.css',
+  'assets/src/yneko-reimu-base.css',
   'assets/src/yneko-reimu-adapter.css'
 ];
 const outputs = [
@@ -29,8 +29,8 @@ await mkdir(dirname(loaderOutput), { recursive: true });
 await writeFile(loaderOutput, `${minifyCss(loaderSource)}\n`);
 
 let upstreamPkg = {
-  name: 'hexo-theme-reimu',
-  version: '1.11.0',
+  name: 'Yneko-Reimu CSS reference snapshot',
+  version: 'local',
   repository: {
     url: 'https://github.com/D-Sketon/hexo-theme-reimu'
   },
@@ -40,8 +40,7 @@ let upstreamPkg = {
 try {
   upstreamPkg = JSON.parse(await readFile(resolve(root, 'vendor-src/reimu-upstream/package.json'), 'utf8'));
 } catch (error) {
-  // The upload ZIP intentionally excludes upstream source files; local builds can still
-  // run from the bundled CSS snapshot when the source mirror is absent.
+  // Local builds use the bundled CSS reference snapshot when the upstream mirror is absent.
 }
 const outputStats = Object.fromEntries(
   await Promise.all(

@@ -7,8 +7,8 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_panel(
 		'yneko_reimu_panel',
 		array(
-			'title'       => __( 'Yneko-Reimu 主题设置', 'yneko-reimu' ),
-			'description' => __( '控制 Yneko-Reimu 的视觉、文章和社交入口。', 'yneko-reimu' ),
+			'title'       => __( 'Yneko-Reimu 视觉预览', 'yneko-reimu' ),
+			'description' => __( '这里作为视觉预览工作台，保留能通过右侧预览判断效果的项目；搜索、音乐、友链、OAuth 和第三方服务请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
 			'priority'    => 30,
 		)
 	);
@@ -16,8 +16,8 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_clone_preset',
 		array(
-			'title'       => __( 'Reimu 复刻预设', 'yneko-reimu' ),
-			'description' => __( '默认按 D-Sketon 演示站首页输出固定导航、语言入口、左侧个人卡和两个首页胶囊。', 'yneko-reimu' ),
+			'title'       => __( '预设', 'yneko-reimu' ),
+			'description' => __( '管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。', 'yneko-reimu' ),
 			'panel'       => 'yneko_reimu_panel',
 			'priority'    => 1,
 		)
@@ -33,25 +33,8 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_control(
 		'yneko_reimu_strict_clone',
 		array(
-			'label'       => __( '启用严格复刻侧栏', 'yneko-reimu' ),
-			'description' => __( '开启时隐藏 WordPress 小工具区，只保留 Reimu 作者卡、统计、社交和菜单。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_clone_preset',
-			'type'        => 'checkbox',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_clone_tagcloud',
-		array(
-			'default'           => true,
-			'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_clone_tagcloud',
-		array(
-			'label'       => __( '严格复刻时显示标签云小组件', 'yneko-reimu' ),
-			'description' => __( '保持参考站侧栏作者卡下方的 Reimu 标签云区域；不启用 WordPress 原生小工具。', 'yneko-reimu' ),
+			'label'       => __( '使用主题内置侧栏', 'yneko-reimu' ),
+			'description' => __( '开启后侧栏由主题自动生成，显示作者卡、站点统计、社交链接和菜单。', 'yneko-reimu' ),
 			'section'     => 'yneko_reimu_clone_preset',
 			'type'        => 'checkbox',
 		)
@@ -176,10 +159,95 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	);
 
 	$wp_customize->add_section(
+		'yneko_reimu_sidebar_widgets',
+		array(
+			'title'       => __( '侧栏小组件', 'yneko-reimu' ),
+			'description' => __( '控制侧栏作者卡下方的主题内置小组件。标签云默认开启，其它默认关闭；搜索入口已在顶部导航中提供。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
+			'priority'    => 2,
+		)
+	);
+
+	$sidebar_widget_toggles = array(
+		'tagcloud'        => array( __( '标签云', 'yneko-reimu' ), true ),
+		'projects'        => array( __( '项目', 'yneko-reimu' ), false ),
+		'recent_posts'    => array( __( '近期文章', 'yneko-reimu' ), false ),
+		'recent_comments' => array( __( '近期评论', 'yneko-reimu' ), false ),
+		'archives'        => array( __( '归档', 'yneko-reimu' ), false ),
+		'categories'      => array( __( '分类', 'yneko-reimu' ), false ),
+	);
+	foreach ( $sidebar_widget_toggles as $key => $setting ) {
+		$wp_customize->add_setting(
+			'yneko_reimu_sidebar_widget_' . $key,
+			array(
+				'default'           => $setting[1],
+				'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
+			)
+		);
+		$wp_customize->add_control(
+			'yneko_reimu_sidebar_widget_' . $key,
+			array(
+				'label'   => $setting[0],
+				'section' => 'yneko_reimu_sidebar_widgets',
+				'type'    => 'checkbox',
+			)
+		);
+	}
+
+	$wp_customize->add_setting(
+		'yneko_reimu_sidebar_widget_order',
+		array(
+			'default'           => 'tagcloud,projects,recent_posts,categories,archives,recent_comments',
+			'sanitize_callback' => 'yneko_reimu_sanitize_sidebar_widget_order',
+		)
+	);
+	$wp_customize->add_control(
+		'yneko_reimu_sidebar_widget_order',
+		array(
+			'label'       => __( '小组件排序', 'yneko-reimu' ),
+			'description' => __( '使用英文逗号分隔：tagcloud, projects, recent_posts, categories, archives, recent_comments。', 'yneko-reimu' ),
+			'section'     => 'yneko_reimu_sidebar_widgets',
+			'type'        => 'text',
+		)
+	);
+
+	foreach (
+		array(
+			'projects'        => array( __( '项目数量', 'yneko-reimu' ), 5 ),
+			'recent_posts'    => array( __( '近期文章数量', 'yneko-reimu' ), 5 ),
+			'recent_comments' => array( __( '近期评论数量', 'yneko-reimu' ), 5 ),
+			'archives'        => array( __( '归档数量', 'yneko-reimu' ), 8 ),
+			'categories'      => array( __( '分类数量', 'yneko-reimu' ), 8 ),
+		) as $key => $setting
+	) {
+		$wp_customize->add_setting(
+			'yneko_reimu_sidebar_widget_' . $key . '_limit',
+			array(
+				'default'           => $setting[1],
+				'sanitize_callback' => 'yneko_reimu_sanitize_positive_int',
+			)
+		);
+		$wp_customize->add_control(
+			'yneko_reimu_sidebar_widget_' . $key . '_limit',
+			array(
+				'label'       => $setting[0],
+				'section'     => 'yneko_reimu_sidebar_widgets',
+				'type'        => 'number',
+				'input_attrs' => array(
+					'min'  => 1,
+					'max'  => 20,
+					'step' => 1,
+				),
+			)
+		);
+	}
+
+	$wp_customize->add_section(
 		'yneko_reimu_visual',
 		array(
-			'title' => __( '视觉主题', 'yneko-reimu' ),
-			'panel' => 'yneko_reimu_panel',
+			'title'       => __( '视觉主题', 'yneko-reimu' ),
+			'description' => __( '颜色、暗色模式和导航布局适合在这里实时预览；第三方脚本与装饰扩展请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
 		)
 	);
 
@@ -248,7 +316,6 @@ function yneko_reimu_customize_register( $wp_customize ) {
 		'yneko_reimu_sticky_nav'        => array( __( '固定导航', 'yneko-reimu' ), true ),
 		'yneko_reimu_nav_hide'          => array( __( '导航滚动隐藏', 'yneko-reimu' ), true ),
 		'yneko_reimu_show_taichi'       => array( __( '显示太极装饰', 'yneko-reimu' ), true ),
-		'yneko_reimu_custom_cursor'     => array( __( '自定义鼠标指针', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_custom_cursor', false ) ),
 	);
 
 	foreach ( $visual_booleans as $id => $setting ) {
@@ -272,8 +339,9 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_images',
 		array(
-			'title' => __( '横幅与图片', 'yneko-reimu' ),
-			'panel' => 'yneko_reimu_panel',
+			'title'       => __( '横幅与图片', 'yneko-reimu' ),
+			'description' => __( '横幅、封面、作者头像和搜索背景会立即体现在预览中；评论头像审核等用户数据请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
 		)
 	);
 
@@ -307,8 +375,9 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_cards',
 		array(
-			'title' => __( '博客卡片', 'yneko-reimu' ),
-			'panel' => 'yneko_reimu_panel',
+			'title'       => __( '博客卡片', 'yneko-reimu' ),
+			'description' => __( '控制首页与归档卡片的可见信息，方便在预览中检查密度和排版。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
 		)
 	);
 
@@ -361,8 +430,9 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_articles',
 		array(
-			'title' => __( '文章页', 'yneko-reimu' ),
-			'panel' => 'yneko_reimu_panel',
+			'title'       => __( '文章页', 'yneko-reimu' ),
+			'description' => __( '控制文章页可见模块。评论上传、外部评论和登录服务请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
 		)
 	);
 
@@ -434,14 +504,14 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_social',
 		array(
-			'title' => __( '社交链接', 'yneko-reimu' ),
-			'panel' => 'yneko_reimu_panel',
+			'title'       => __( '社交链接', 'yneko-reimu' ),
+			'description' => __( '这里只保留可直接预览的社交展示链接；GitHub 主页和 OAuth 请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
 		)
 	);
 
 	foreach (
 		array(
-			'yneko_reimu_social_github'   => array( 'GitHub URL', '' ),
 			'yneko_reimu_social_x'        => array( 'X URL', '' ),
 			'yneko_reimu_social_email'    => array( __( 'Email URL 或 mailto:', 'yneko-reimu' ), '' ),
 			'yneko_reimu_social_rss'      => array( 'RSS URL', '' ),
@@ -467,8 +537,9 @@ function yneko_reimu_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_footer',
 		array(
-			'title' => __( '页脚', 'yneko-reimu' ),
-			'panel' => 'yneko_reimu_panel',
+			'title'       => __( '页脚', 'yneko-reimu' ),
+			'description' => __( '页脚文本适合通过右侧预览确认；赞助二维码请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
+			'panel'       => 'yneko_reimu_panel',
 		)
 	);
 
@@ -476,7 +547,7 @@ function yneko_reimu_customize_register( $wp_customize ) {
 		'yneko_reimu_virtual_pages',
 		array(
 			'title'       => __( '关于与友链', 'yneko-reimu' ),
-			'description' => __( '只有在没有同 slug 的真实 WordPress 页面时，主题才会输出这些虚拟页面内容。', 'yneko-reimu' ),
+			'description' => __( '这里只保留可预览的虚拟页面文案；友链列表请到“外观 -> Yneko-Reimu 设置”。', 'yneko-reimu' ),
 			'panel'       => 'yneko_reimu_panel',
 		)
 	);
@@ -494,41 +565,6 @@ function yneko_reimu_customize_register( $wp_customize ) {
 			'label'   => __( '关于页简介', 'yneko-reimu' ),
 			'section' => 'yneko_reimu_virtual_pages',
 			'type'    => 'textarea',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_friend_links',
-		array(
-			'default'           => '',
-			'sanitize_callback' => 'sanitize_textarea_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_friend_links',
-		array(
-			'label'       => __( '友链列表', 'yneko-reimu' ),
-			'description' => __( '推荐在“外观 -> Yneko-Reimu 设置”中管理友链。这里保留为旧配置兼容入口。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_virtual_pages',
-			'type'        => 'textarea',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_sponsor_qr',
-		array(
-			'default'           => '',
-			'sanitize_callback' => 'yneko_reimu_sanitize_url_or_empty',
-		)
-	);
-	$wp_customize->add_control(
-		new WP_Customize_Image_Control(
-			$wp_customize,
-			'yneko_reimu_sponsor_qr',
-			array(
-				'label'   => __( '赞助二维码', 'yneko-reimu' ),
-				'section' => 'yneko_reimu_virtual_pages',
-			)
 		)
 	);
 
@@ -565,415 +601,6 @@ function yneko_reimu_customize_register( $wp_customize ) {
 		)
 	);
 
-	$wp_customize->add_section(
-		'yneko_reimu_reimu_features',
-		array(
-			'title'       => __( 'Reimu 扩展功能', 'yneko-reimu' ),
-			'description' => __( '扩展默认关闭。需要配置的扩展会在配置完整后才输出前台 DOM 和外部脚本，避免空播放器或无效入口。', 'yneko-reimu' ),
-			'panel'       => 'yneko_reimu_panel',
-		)
-	);
-
-	foreach (
-		array(
-			'yneko_reimu_preloader_enable'     => array( __( '加载动画', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_preloader_enable', true ), __( '开启后在首屏加载与 PJAX 切换时显示加载层。', 'yneko-reimu' ) ),
-			'yneko_reimu_top_enable'           => array( __( '回到顶部太极按钮', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_top_enable', true ), __( '开启后侧栏显示回到顶部按钮。', 'yneko-reimu' ) ),
-			'yneko_reimu_triangle_badge'       => array( __( '右上角 GitHub 三角标', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_triangle_badge', true ), __( '需要在 Yneko-Reimu 设置中填写 GitHub 主页链接。', 'yneko-reimu' ) ),
-			'yneko_reimu_firework_enable'      => array( __( '鼠标烟花', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_firework_enable', false ), __( '开启后桌面端点击页面会显示鼠标烟花效果。', 'yneko-reimu' ) ),
-			'yneko_reimu_pjax_enable'          => array( __( 'PJAX 软导航', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_pjax_enable', false ), __( '开启后站内页面切换不整页刷新，并保留播放器状态。', 'yneko-reimu' ) ),
-			'yneko_reimu_busuanzi_enable'      => array( __( '不蒜子统计', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_busuanzi_enable', false ), __( '开启后页脚与文章阅读量输出 Busuanzi 统计节点，并加载不蒜子脚本；关闭时使用本地计数。', 'yneko-reimu' ) ),
-			'yneko_reimu_player_aplayer_enable'=> array( __( 'APlayer 播放器', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_player_aplayer_enable', false ), __( '需要先在“外观 -> Yneko-Reimu 设置”的音乐列表中添加曲目。没有曲目时不输出播放器。', 'yneko-reimu' ) ),
-			'yneko_reimu_player_meting_enable' => array( __( 'Meting 歌单', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_player_meting_enable', false ), __( '需要填写 Meting auto URL，或同时填写 ID、server、type；配置为空时不输出播放器。', 'yneko-reimu' ) ),
-			'yneko_reimu_live2d_widgets_enable'=> array( __( 'Live2D Widgets', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_live2d_widgets_enable', false ), __( '开启后加载 Live2D Widgets CDN 资源，并固定显示在右下角。', 'yneko-reimu' ) ),
-			'yneko_reimu_katex_enable'         => array( __( 'KaTeX 数学公式', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_katex_enable', false ), __( '开启后渲染文章正文中的 $...$、$$...$$、\\(...\\)、\\[...\\] 数学公式。', 'yneko-reimu' ) ),
-			'yneko_reimu_photoswipe_enable'    => array( __( 'PhotoSwipe 图片灯箱', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_photoswipe_enable', false ), __( '开启后文章正文图片会自动获得可点击灯箱效果。', 'yneko-reimu' ) ),
-			'yneko_reimu_mermaid_enable'       => array( __( 'Mermaid 图表', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_mermaid_enable', false ), __( '开启后渲染 class 为 language-mermaid 或 mermaid 的代码块。', 'yneko-reimu' ) ),
-			'yneko_reimu_algolia_enable'       => array( __( 'Algolia 搜索入口', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_algolia_enable', false ), __( '需要完整填写 App ID、Search API Key 和 Index Name；配置不完整时自动回退本地搜索。', 'yneko-reimu' ) ),
-			'yneko_reimu_generator_search_enable' => array( __( '本地搜索入口', 'yneko-reimu' ), yneko_reimu_feature_default( 'yneko_reimu_generator_search_enable', true ), __( '开启后使用主题生成的 search.json 或自定义本地 JSON 搜索。', 'yneko-reimu' ) ),
-		) as $id => $setting
-	) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => $setting[1],
-				'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'       => $setting[0],
-				'description' => $setting[2],
-				'section'     => 'yneko_reimu_reimu_features',
-				'type'        => 'checkbox',
-			)
-		);
-	}
-
-	$wp_customize->add_setting(
-		'yneko_reimu_preloader_text',
-		array(
-			'default'           => __( '未来有你...', 'yneko-reimu' ),
-			'sanitize_callback' => 'sanitize_text_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_preloader_text',
-		array(
-			'label'   => __( '加载动画文案', 'yneko-reimu' ),
-			'section' => 'yneko_reimu_reimu_features',
-			'type'    => 'text',
-		)
-	);
-
-	$wp_customize->add_section(
-		'yneko_reimu_search',
-		array(
-			'title'       => __( 'Reimu 搜索', 'yneko-reimu' ),
-			'description' => __( '搜索优先级：Algolia 配置完整时优先使用 Algolia；否则使用本地 JSON；再否则回退 WordPress REST。', 'yneko-reimu' ),
-			'panel'       => 'yneko_reimu_panel',
-		)
-	);
-
-	foreach (
-		array(
-			'yneko_reimu_algolia_app_id'     => array( __( 'Algolia App ID', 'yneko-reimu' ), 'text', 'sanitize_text_field', __( '开启 Algolia 搜索时必填。', 'yneko-reimu' ) ),
-			'yneko_reimu_algolia_api_key'    => array( __( 'Algolia Search API Key', 'yneko-reimu' ), 'text', 'sanitize_text_field', __( '填写 Algolia Search-Only API Key，不要填写 Admin API Key。', 'yneko-reimu' ) ),
-			'yneko_reimu_algolia_index_name' => array( __( 'Algolia Index Name', 'yneko-reimu' ), 'text', 'sanitize_text_field', __( '开启 Algolia 搜索时必填。', 'yneko-reimu' ) ),
-			'yneko_reimu_local_search_json'  => array( __( '本地搜索 JSON URL', 'yneko-reimu' ), 'url', 'yneko_reimu_sanitize_url_or_empty', __( '留空时使用主题自动生成的 /search.json。', 'yneko-reimu' ) ),
-		) as $id => $setting
-	) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => '',
-				'sanitize_callback' => $setting[2],
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'       => $setting[0],
-				'description' => $setting[3],
-				'section'     => 'yneko_reimu_search',
-				'type'        => $setting[1],
-			)
-		);
-	}
-
-	$wp_customize->add_section(
-		'yneko_reimu_player',
-		array(
-			'title'       => __( 'Reimu 播放器', 'yneko-reimu' ),
-			'description' => __( '支持 Yneko-Reimu 设置里的媒体库曲目或 Meting 歌单；没有曲目或 Meting 配置不完整时不输出空播放器。', 'yneko-reimu' ),
-			'panel'       => 'yneko_reimu_panel',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_aplayer_audio_json',
-		array(
-			'default'           => '',
-			'sanitize_callback' => 'sanitize_textarea_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_aplayer_audio_json',
-		array(
-			'label'       => __( 'APlayer audio JSON', 'yneko-reimu' ),
-			'description' => __( '推荐在“外观 -> Yneko-Reimu 设置”中管理音乐。这里保留为旧配置兼容入口。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_player',
-			'type'        => 'textarea',
-		)
-	);
-
-	foreach (
-		array(
-			'yneko_reimu_aplayer_fixed'   => array( __( '固定播放器', 'yneko-reimu' ), false ),
-			'yneko_reimu_aplayer_autoplay'=> array( __( '自动播放', 'yneko-reimu' ), false ),
-			'yneko_reimu_aplayer_mutex'   => array( __( '播放器互斥', 'yneko-reimu' ), true ),
-			'yneko_reimu_aplayer_list_folded' => array( __( '默认折叠播放列表', 'yneko-reimu' ), true ),
-		) as $id => $setting
-	) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => $setting[1],
-				'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'   => $setting[0],
-				'section' => 'yneko_reimu_player',
-				'type'    => 'checkbox',
-			)
-		);
-	}
-
-	foreach (
-		array(
-			'yneko_reimu_aplayer_loop'    => array(
-				'label'   => __( '循环模式', 'yneko-reimu' ),
-				'default' => 'all',
-				'choices' => array(
-					'all'  => 'all',
-					'one'  => 'one',
-					'none' => 'none',
-				),
-			),
-			'yneko_reimu_aplayer_order'   => array(
-				'label'   => __( '播放顺序', 'yneko-reimu' ),
-				'default' => 'list',
-				'choices' => array(
-					'list'   => 'list',
-					'random' => 'random',
-				),
-			),
-			'yneko_reimu_aplayer_preload' => array(
-				'label'   => __( '预加载', 'yneko-reimu' ),
-				'default' => 'auto',
-				'choices' => array(
-					'auto'     => 'auto',
-					'metadata' => 'metadata',
-					'none'     => 'none',
-				),
-			),
-		) as $id => $setting
-	) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => $setting['default'],
-				'sanitize_callback' => 'yneko_reimu_sanitize_select',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'   => $setting['label'],
-				'section' => 'yneko_reimu_player',
-				'type'    => 'select',
-				'choices' => $setting['choices'],
-			)
-		);
-	}
-
-	$wp_customize->add_setting(
-		'yneko_reimu_aplayer_volume',
-		array(
-			'default'           => '0.7',
-			'sanitize_callback' => 'sanitize_text_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_aplayer_volume',
-		array(
-			'label'       => __( '默认音量 0-1', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_player',
-			'type'        => 'number',
-			'input_attrs' => array(
-				'min'  => 0,
-				'max'  => 1,
-				'step' => 0.1,
-			),
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_aplayer_list_max_height',
-		array(
-			'default'           => '320px',
-			'sanitize_callback' => 'sanitize_text_field',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_aplayer_list_max_height',
-		array(
-			'label'       => __( '播放列表最大高度', 'yneko-reimu' ),
-			'description' => __( '例如 320px。超过高度后列表内部滚动。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_player',
-			'type'        => 'text',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_aplayer_lrc_type',
-		array(
-			'default'           => '3',
-			'sanitize_callback' => 'absint',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_aplayer_lrc_type',
-		array(
-			'label'       => __( '歌词模式', 'yneko-reimu' ),
-			'description' => __( 'APlayer 的 lrcType。默认 3 表示读取 audio.lrc 外部歌词文件。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_player',
-			'type'        => 'number',
-			'input_attrs' => array(
-				'min'  => 0,
-				'max'  => 3,
-				'step' => 1,
-			),
-		)
-	);
-
-	foreach (
-		array(
-			'yneko_reimu_meting_id'     => array( __( 'Meting ID', 'yneko-reimu' ), __( '歌单、专辑、歌曲或用户 ID。使用 auto URL 时可留空。', 'yneko-reimu' ) ),
-			'yneko_reimu_meting_server' => array( __( 'Meting server', 'yneko-reimu' ), __( '例如 netease、tencent、kugou、xiami、baidu。使用 auto URL 时可留空。', 'yneko-reimu' ) ),
-			'yneko_reimu_meting_type'   => array( __( 'Meting type', 'yneko-reimu' ), __( '例如 song、playlist、album、search、artist。使用 auto URL 时可留空。', 'yneko-reimu' ) ),
-			'yneko_reimu_meting_auto'   => array( __( 'Meting auto URL', 'yneko-reimu' ), __( '填入音乐平台链接后，Meting 会自动识别来源；填写此项即可不填 ID/server/type。', 'yneko-reimu' ) ),
-		) as $id => $setting
-	) {
-		$sanitize_callback = 'yneko_reimu_meting_auto' === $id ? 'yneko_reimu_sanitize_url_or_empty' : 'sanitize_text_field';
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => '',
-				'sanitize_callback' => $sanitize_callback,
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'       => $setting[0],
-				'description' => $setting[1],
-				'section'     => 'yneko_reimu_player',
-				'type'        => 'text',
-			)
-		);
-	}
-
-	$wp_customize->add_setting(
-		'yneko_reimu_live2d_base_url',
-		array(
-			'default'           => 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest',
-			'sanitize_callback' => 'yneko_reimu_sanitize_url_base_or_empty',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_live2d_base_url',
-		array(
-			'label'       => __( 'Live2D Widgets 资源地址', 'yneko-reimu' ),
-			'description' => __( '用于加载 waifu.css、live2d.min.js、waifu-tips.js 和 waifu-tips.json。默认使用 stevenjoezhang/live2d-widget CDN。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_player',
-			'type'        => 'url',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_live2d_api_base_url',
-		array(
-			'default'           => 'https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/',
-			'sanitize_callback' => 'yneko_reimu_sanitize_url_base_or_empty',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_live2d_api_base_url',
-		array(
-			'label'       => __( 'Live2D 模型 CDN 地址', 'yneko-reimu' ),
-			'description' => __( '用于读取默认模型列表和模型文件。主题不内置模型资源。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_player',
-			'type'        => 'url',
-		)
-	);
-
-	$wp_customize->add_section(
-		'yneko_reimu_comments_ext',
-		array(
-			'title'       => __( 'Reimu 评论系统', 'yneko-reimu' ),
-			'description' => __( 'WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。', 'yneko-reimu' ),
-			'panel'       => 'yneko_reimu_panel',
-		)
-	);
-
-	foreach (
-		array(
-			'yneko_reimu_giscus_enable'    => __( 'Giscus', 'yneko-reimu' ),
-			'yneko_reimu_utterances_enable'=> __( 'Utterances', 'yneko-reimu' ),
-			'yneko_reimu_disqus_enable'    => __( 'Disqus', 'yneko-reimu' ),
-			'yneko_reimu_waline_enable'    => __( 'Waline', 'yneko-reimu' ),
-			'yneko_reimu_twikoo_enable'    => __( 'Twikoo', 'yneko-reimu' ),
-			'yneko_reimu_valine_enable'    => __( 'Valine', 'yneko-reimu' ),
-		) as $id => $label
-	) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => false,
-				'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'   => $label,
-				'section' => 'yneko_reimu_comments_ext',
-				'type'    => 'checkbox',
-			)
-		);
-	}
-
-	foreach (
-		array(
-			'yneko_reimu_giscus_repo'        => 'Giscus repo',
-			'yneko_reimu_giscus_repo_id'     => 'Giscus repo_id',
-			'yneko_reimu_giscus_category'    => 'Giscus category',
-			'yneko_reimu_giscus_category_id' => 'Giscus category_id',
-			'yneko_reimu_utterances_repo'    => 'Utterances repo',
-			'yneko_reimu_disqus_shortname'   => 'Disqus shortname',
-			'yneko_reimu_waline_server_url'  => 'Waline serverURL',
-			'yneko_reimu_twikoo_env_id'      => 'Twikoo envId',
-			'yneko_reimu_valine_app_id'      => 'Valine appId',
-			'yneko_reimu_valine_app_key'     => 'Valine appKey',
-			'yneko_reimu_valine_server_url'  => 'Valine serverURLs',
-		) as $id => $label
-	) {
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'label'   => $label,
-				'section' => 'yneko_reimu_comments_ext',
-				'type'    => 'text',
-			)
-		);
-	}
-
-	$wp_customize->add_section(
-		'yneko_reimu_vendor',
-		array(
-			'title'       => __( 'Vendor CDN', 'yneko-reimu' ),
-			'description' => __( '用于 Reimu 扩展包的 CDN 前缀，默认使用 jsDelivr；如果你的地区访问不稳定，可以换成自己的 npm CDN。', 'yneko-reimu' ),
-			'panel'       => 'yneko_reimu_panel',
-		)
-	);
-
-	$wp_customize->add_setting(
-		'yneko_reimu_vendor_cdn_base',
-		array(
-			'default'           => 'https://cdn.jsdelivr.net/npm',
-			'sanitize_callback' => 'yneko_reimu_sanitize_url_base_or_empty',
-		)
-	);
-	$wp_customize->add_control(
-		'yneko_reimu_vendor_cdn_base',
-		array(
-			'label'   => __( 'CDN 前缀', 'yneko-reimu' ),
-			'section' => 'yneko_reimu_vendor',
-			'type'    => 'url',
-		)
-	);
-
 	$wp_customize->add_setting(
 		'yneko_reimu_footer_extra_attribution',
 		array(
@@ -986,7 +613,7 @@ function yneko_reimu_customize_register( $wp_customize ) {
 		array(
 			'label'       => __( '页脚额外署名', 'yneko-reimu' ),
 			'description' => __( '主题会始终保留 WordPress 与 hexo-theme-reimu/MIT 署名。', 'yneko-reimu' ),
-			'section'     => 'yneko_reimu_vendor',
+			'section'     => 'yneko_reimu_footer',
 			'type'        => 'text',
 		)
 	);

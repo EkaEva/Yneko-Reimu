@@ -60,7 +60,7 @@ jobs:
 
       - name: Package theme
         shell: pwsh
-        run: ./tools/package-theme.ps1 -Version '${{ steps.version.outputs.version }}'
+        run: ./tools/package-theme.ps1 -OutputName '${{ steps.version.outputs.zip_name }}'
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
