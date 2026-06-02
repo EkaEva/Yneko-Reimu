@@ -3783,6 +3783,7 @@
       } else if (form) {
         form.reset();
         validateProfilePasswords();
+        clearProfileTagError();
         var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
         if (avatarUploadButton) {
           avatarUploadButton.textContent = t('upload', '上传');
@@ -3849,6 +3850,10 @@
       if (twoFactor) {
         twoFactor.checked = !!data.twoFactor;
       }
+      var avatarFrame = qs('[name="avatar_frame_enabled"]', form);
+      if (avatarFrame) {
+        avatarFrame.checked = data.avatarFrameEnabled !== false;
+      }
       var preview = qs('[data-profile-avatar-preview]', form);
       if (preview && data.avatarUrl) {
         preview.src = data.avatarUrl;
@@ -3858,6 +3863,25 @@
         status.hidden = !data.avatarPending;
         status.textContent = data.avatarPending ? t('avatarPending', '头像审核中') : '';
       }
+      var commentTags = Array.isArray(data.commentTags) ? data.commentTags : [];
+      var pendingTags = Array.isArray(data.pendingCommentTags) ? data.pendingCommentTags : [];
+      var customTags = pendingTags.length ? pendingTags : commentTags.filter(function (tag) { return tag && tag.type === 'custom'; });
+      var specialTags = commentTags.filter(function (tag) { return tag && tag.type === 'special' && tag.key; });
+      specialTags.forEach(function (tag) {
+        var specialInput = qs('[name="comment_special_enabled[' + tag.key + ']"]', form);
+        if (specialInput) {
+          specialInput.checked = tag.enabled !== '0';
+        }
+      });
+      qsa('[name="comment_tag_label[]"]', form).forEach(function (input, index) {
+        var tag = customTags[index] || null;
+        input.value = tag && tag.label ? tag.label : '';
+      });
+      qsa('[name="comment_tag_color[]"]', form).forEach(function (input, index) {
+        var tag = customTags[index] || null;
+        input.value = tag && tag.color ? tag.color : '#ff5252';
+      });
+      renderProfileCustomTags(customTags);
       var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
       if (avatarUploadButton) {
         avatarUploadButton.textContent = t('upload', '上传');
@@ -3867,6 +3891,184 @@
         avatarFileInput.value = '';
       }
       validateProfilePasswords();
+    }
+
+    var profileTagMessageTimer = null;
+    function clearProfileTagError() {
+      var message = qs('[data-profile-tags-message]', form);
+      if (message) {
+        message.hidden = true;
+        message.textContent = '';
+      }
+      qsa('[name="comment_tag_label[]"]', form).forEach(function (input) {
+        input.classList.remove('is-invalid');
+      });
+      window.clearTimeout(profileTagMessageTimer);
+    }
+
+    function showProfileTagError(payload) {
+      var data = payload && payload.data ? payload.data : {};
+      var message = qs('[data-profile-tags-message]', form);
+      var inputs = qsa('[name="comment_tag_label[]"]', form);
+      var index = Number.isFinite(Number(data.index)) ? Number(data.index) : -1;
+      clearProfileTagError();
+      if (index >= 0 && inputs[index]) {
+        inputs[index].classList.add('is-invalid');
+        if (inputs[index].focus) {
+          inputs[index].focus();
+        }
+      } else if (data.value) {
+        inputs.some(function (input) {
+          if (String(input.value || '').trim().toLowerCase() === String(data.value || '').trim().toLowerCase()) {
+            input.classList.add('is-invalid');
+            if (input.focus) {
+              input.focus();
+            }
+            return true;
+          }
+          return false;
+        });
+      }
+      if (message) {
+        message.textContent = data.message || (payload && payload.message) || t('loginFailed', '操作失败。');
+        message.hidden = false;
+        profileTagMessageTimer = window.setTimeout(clearProfileTagError, 4200);
+      }
+    }
+
+    function updateCommentBadgesForProfile(data) {
+      if (!data || !data.userId) {
+        return;
+      }
+      var html = data.commentBadgesHtml || '';
+      qsa('.reimu-comment[data-comment-user-id="' + String(data.userId) + '"]').forEach(function (item) {
+        var headline = qs('.reimu-comment__headline', item);
+        if (!headline) {
+          return;
+        }
+        var existing = qs('.reimu-comment-user-tags', headline);
+        if (existing) {
+          if (html) {
+            existing.outerHTML = html;
+          } else {
+            existing.remove();
+          }
+          return;
+        }
+        if (html) {
+          var author = qs('.reimu-comment__author', headline);
+          if (author) {
+            author.insertAdjacentHTML('afterend', html);
+          }
+        }
+      });
+    }
+
+    function updateVisibleProfileLinks(data) {
+      if (!data || !data.userId) {
+        return;
+      }
+      if (data.identity) {
+        qsa('.reimu-comment-current-user').forEach(function (identity) {
+          identity.outerHTML = data.identity;
+        });
+        initCommentAjaxLogout();
+      }
+      var displayName = data.displayName || '';
+      var profileUrl = String(data.publicProfileUrl || '').trim();
+      qsa('.reimu-comment[data-comment-user-id="' + String(data.userId) + '"]').forEach(function (item) {
+        var authorWrap = qs('.reimu-comment__author', item);
+        if (!authorWrap) {
+          return;
+        }
+        if (profileUrl) {
+          authorWrap.innerHTML = '<a class="reimu-comment__author-link" href="' + escapeHtml(profileUrl) + '" target="_blank" rel="noopener noreferrer nofollow">' + escapeHtml(displayName) + '</a>';
+        } else {
+          authorWrap.innerHTML = '<span class="reimu-comment__author-name">' + escapeHtml(displayName) + '</span>';
+        }
+      });
+    }
+
+    function updateVisibleProfileAvatars(data) {
+      if (!data || !data.userId || !data.avatarHtml) {
+        return;
+      }
+      if (data.identity) {
+        qsa('.reimu-comment-current-user').forEach(function (identity) {
+          identity.outerHTML = data.identity;
+        });
+        initCommentAjaxLogout();
+      }
+      qsa('.reimu-comment[data-comment-user-id="' + String(data.userId) + '"] .reimu-comment__avatar').forEach(function (avatar) {
+        avatar.innerHTML = data.avatarHtml;
+      });
+    }
+
+    function profileSpecialCount() {
+      var count = 0;
+      qsa('[name^="comment_special_enabled["]', form).forEach(function (input) {
+        if (input.checked) {
+          count += 1;
+        }
+      });
+      return count;
+    }
+
+    function enforceProfileSpecialLimit(changedInput) {
+      var checked = qsa('[name^="comment_special_enabled["]', form).filter(function (input) {
+        return input.checked;
+      });
+      if (checked.length <= 2) {
+        return;
+      }
+      var toDisable = checked.find(function (input) {
+        return input !== changedInput;
+      }) || checked[0];
+      if (toDisable) {
+        toDisable.checked = false;
+      }
+    }
+
+    function profileCustomTagCapacity() {
+      return Math.max(0, 2 - profileSpecialCount());
+    }
+
+    function syncProfileAddTagState() {
+      var list = qs('[data-profile-tag-list]', form);
+      var add = qs('[data-profile-add-tag]', form);
+      if (!list || !add) {
+        return;
+      }
+      var count = qsa('.reimu-profile-tag-row', list).length;
+      var capacity = profileCustomTagCapacity();
+      list.dataset.maxTags = String(capacity);
+      add.hidden = capacity <= 0;
+      add.disabled = count >= capacity;
+    }
+
+    function profileTagRow(tag) {
+      tag = tag || {};
+      var row = document.createElement('div');
+      row.className = 'reimu-profile-tag-row';
+      row.innerHTML = '<input name="comment_tag_label[]" type="text" maxlength="8" placeholder="' + escapeHtml(t('commentTag', '标签')) + '" value="' + escapeHtml(tag.label || '') + '">' +
+        '<input name="comment_tag_color[]" type="color" value="' + escapeHtml(tag.color || '#ff5252') + '">' +
+        '<button type="button" class="reimu-profile-remove-tag" data-profile-remove-tag aria-label="' + escapeHtml(t('remove', '删除')) + '">×</button>';
+      return row;
+    }
+
+    function renderProfileCustomTags(tags) {
+      var list = qs('[data-profile-tag-list]', form);
+      if (!list) {
+        return;
+      }
+      list.innerHTML = '';
+      tags = Array.isArray(tags) ? tags : [];
+      tags.slice(0, profileCustomTagCapacity()).forEach(function (tag) {
+        if (tag && tag.label) {
+          list.appendChild(profileTagRow(tag));
+        }
+      });
+      syncProfileAddTagState();
     }
 
     function refreshProfile() {
@@ -3947,6 +4149,52 @@
         }
       });
     }
+
+    var addTagButton = qs('[data-profile-add-tag]', form);
+    if (addTagButton) {
+      addTagButton.addEventListener('click', function () {
+        var list = qs('[data-profile-tag-list]', form);
+        if (!list || addTagButton.disabled) {
+          return;
+        }
+        if (qsa('.reimu-profile-tag-row', list).length >= profileCustomTagCapacity()) {
+          syncProfileAddTagState();
+          return;
+        }
+        list.appendChild(profileTagRow({ color: '#ff5252' }));
+        syncProfileAddTagState();
+      });
+    }
+
+    qsa('[name^="comment_special_enabled["]', form).forEach(function (input) {
+      input.addEventListener('change', function () {
+        if (input.checked) {
+          enforceProfileSpecialLimit(input);
+        }
+        var list = qs('[data-profile-tag-list]', form);
+        var capacity = profileCustomTagCapacity();
+        if (list) {
+          qsa('.reimu-profile-tag-row', list).slice(capacity).forEach(function (row) {
+            row.remove();
+          });
+        }
+        syncProfileAddTagState();
+      });
+    });
+
+    form.addEventListener('click', function (event) {
+      var remove = event.target && event.target.closest ? event.target.closest('[data-profile-remove-tag]') : null;
+      if (!remove) {
+        return;
+      }
+      event.preventDefault();
+      var row = remove.closest('.reimu-profile-tag-row');
+      if (row) {
+        row.remove();
+      }
+      syncProfileAddTagState();
+    });
+
     var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
     var avatarFileInput = qs('[data-profile-avatar-file]', form);
     if (avatarUploadButton && avatarFileInput) {
@@ -4067,9 +4315,15 @@
         postProfileAction('yneko_reimu_profile_save', data).then(function (payload) {
           setMessage(payload && payload.data && payload.data.message ? payload.data.message : '', payload && payload.success);
           if (payload && payload.success) {
+            clearProfileTagError();
             fillProfile(payload.data);
+            updateCommentBadgesForProfile(payload.data);
+            updateVisibleProfileLinks(payload.data);
+            updateVisibleProfileAvatars(payload.data);
             setOpen(false);
             refreshCommentLoginState();
+          } else if (payload && payload.data && payload.data.field === 'comment_tag_label') {
+            showProfileTagError(payload);
           } else if (payload && payload.data && payload.data.message) {
             setMessage(payload.data.message, false);
           }

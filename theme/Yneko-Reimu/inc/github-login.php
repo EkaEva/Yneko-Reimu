@@ -793,6 +793,16 @@ function yneko_reimu_github_login_update_user_meta( $user_id, $profile ) {
 	update_user_meta( $user_id, '_yneko_github_login', $values['login'] );
 	update_user_meta( $user_id, '_yneko_github_url', $values['url'] );
 	update_user_meta( $user_id, '_yneko_github_avatar_url', $values['avatar_url'] );
+
+	$user = get_userdata( absint( $user_id ) );
+	if ( $user && '' === (string) $user->user_url && '' === (string) get_user_meta( $user_id, '_yneko_reimu_profile_url_touched', true ) && $values['url'] ) {
+		wp_update_user(
+			array(
+				'ID'       => absint( $user_id ),
+				'user_url' => $values['url'],
+			)
+		);
+	}
 }
 
 function yneko_reimu_github_login_avatar_data( $args, $id_or_email ) {

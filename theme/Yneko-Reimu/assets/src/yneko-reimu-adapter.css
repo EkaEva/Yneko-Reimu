@@ -1880,7 +1880,11 @@ html[lang="en-US"] .article-copyright p {
 }
 
 .reimu-comment__avatar {
-  flex: 0 0 auto;
+  position: relative;
+  display: block;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
   text-decoration: none;
 }
 
@@ -1890,6 +1894,50 @@ html[lang="en-US"] .article-copyright p {
   object-fit: cover;
   border-radius: 50%;
   box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+}
+
+.reimu-avatar-frame {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.reimu-avatar-frame > img,
+.reimu-avatar-frame > .avatar {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+}
+
+.reimu-avatar-frame::after {
+  position: absolute;
+  z-index: 2;
+  inset: -18%;
+  content: "";
+  pointer-events: none;
+  background-image: var(--reimu-avatar-frame);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.reimu-comment__avatar--logged-in::before {
+  display: none;
+}
+
+.reimu-comment__avatar--logged-in::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  right: -5px;
+  bottom: -1px;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  background: url("../images/icons/personal.svg") center / contain no-repeat;
+  filter: drop-shadow(0 4px 10px rgba(255, 82, 82, .28));
 }
 
 .comment-selector {
@@ -2025,7 +2073,7 @@ html[lang="en-US"] .article-copyright p {
 .reimu-comment__headline {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 8px 10px;
+  gap: 5px 6px;
   align-items: baseline;
 }
 
@@ -2125,6 +2173,49 @@ html[lang="en-US"] .article-copyright p {
   font-size: 12px;
   line-height: 1.35;
   white-space: nowrap;
+}
+
+.reimu-comment-user-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  margin-left: 2px;
+}
+
+.reimu-comment-user-tag {
+  display: inline-flex;
+  min-height: 18px;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 82, 82, .18);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.reimu-comment-user-tag--custom {
+  color: var(--reimu-comment-tag-color, var(--red-1));
+  background: color-mix(in srgb, var(--reimu-comment-tag-color, var(--red-1)) 10%, transparent);
+  border-color: color-mix(in srgb, var(--reimu-comment-tag-color, var(--red-1)) 32%, transparent);
+}
+
+.reimu-comment-user-tag--owner,
+.reimu-comment-user-tag--admin,
+.reimu-comment-user-tag--yko {
+  color: var(--red-1);
+  background: var(--red-5-5);
+  border-color: rgba(255, 82, 82, .28);
+  box-shadow: 0 0 8px rgba(255, 82, 82, .10);
+}
+
+.reimu-comment-user-tag--yko {
+  color: #0f9f6e;
+  background: rgba(16, 185, 129, .09);
+  border-color: rgba(16, 185, 129, .22);
 }
 
 .reimu-comment__footer {
@@ -2862,6 +2953,145 @@ html[lang="en-US"] .article-copyright p {
   font-weight: 700;
 }
 
+.reimu-profile-tags {
+  margin: 0 0 14px;
+  padding: 12px;
+  background: rgba(255, 82, 82, .04);
+  border: 1px solid rgba(255, 82, 82, .14);
+  border-radius: 8px;
+}
+
+.reimu-profile-tags__header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.reimu-profile-tags__header span {
+  color: var(--color-link);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.reimu-profile-tags__header small {
+  color: var(--grey-9);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.reimu-profile-tags__message {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  color: #b42318;
+  background: rgba(244, 63, 94, .08);
+  border: 1px solid rgba(244, 63, 94, .24);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.reimu-profile-special-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.reimu-profile-special-tag-toggle {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 7px 10px;
+  color: var(--color-default);
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .18);
+  border-radius: 8px;
+}
+
+.reimu-profile-special-tag-toggle span {
+  color: var(--red-1);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reimu-profile-special-tag-toggle small {
+  color: var(--grey-9);
+  font-size: 12px;
+}
+
+.reimu-profile-tag-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px 34px;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.reimu-profile-form .reimu-profile-tag-row input[type="text"] {
+  min-height: 40px;
+}
+
+.reimu-profile-form .reimu-profile-tag-row input[type="text"].is-invalid {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, .12);
+}
+
+.reimu-profile-tag-row input[type="color"] {
+  width: 44px;
+  height: 40px;
+  padding: 3px;
+  background: var(--color-background);
+  border: 1px solid rgba(255, 82, 82, .22);
+  border-radius: 8px;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-profile-add-tag,
+.reimu-profile-remove-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  color: var(--red-1);
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .22);
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: var(--cursor-pointer) !important;
+  transition: color .2s ease, border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.reimu-profile-add-tag {
+  margin-top: 10px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.reimu-profile-remove-tag {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.reimu-profile-add-tag:hover,
+.reimu-profile-remove-tag:hover {
+  color: #fff;
+  background: var(--red-1);
+  border-color: var(--red-1);
+  transform: translateY(-1px);
+}
+
+.reimu-profile-add-tag:disabled {
+  opacity: .45;
+  cursor: default !important;
+  transform: none;
+}
+
 .reimu-profile-avatar-preview {
   display: flex;
   justify-content: center;
@@ -3428,7 +3658,7 @@ html[lang="en-US"] .article-copyright p {
   width: 50px;
   height: 50px;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
   border-radius: 50%;
   border: 2px solid rgba(255, 82, 82, .22);
@@ -3677,6 +3907,21 @@ a.reimu-comment-current-user__name:hover,
 [data-theme="dark"] .reimu-comment__badge {
   color: #aaa;
   background: rgba(255, 255, 255, .055);
+}
+
+[data-theme="dark"] .reimu-comment__avatar--logged-in::after {
+  border-color: var(--color-wrap);
+}
+
+[data-theme="dark"] .reimu-comment-user-tag--member {
+  color: #9ff2c5;
+  background: linear-gradient(135deg, rgba(34, 197, 94, .16), rgba(45, 212, 191, .24), rgba(34, 197, 94, .16));
+}
+
+[data-theme="dark"] .reimu-profile-tags,
+[data-theme="dark"] .reimu-profile-tag-row input[type="color"] {
+  border-color: rgba(255, 124, 124, .18);
+  background: rgba(255, 255, 255, .035);
 }
 
 [data-theme="dark"] .reimu-comment-popover {

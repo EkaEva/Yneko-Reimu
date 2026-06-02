@@ -69,6 +69,10 @@ msgstr "%s words"
 msgid "© %s. Powered by WordPress."
 msgstr "© %s. Powered by WordPress."
 
+#: inc/comments.php
+msgid "+ 新增自定义标签"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "404（´◔ ₃ ◔`)"
 msgstr "404（´◔ ₃ ◔`)"
@@ -134,6 +138,10 @@ msgid "本站信息"
 msgstr "Site info"
 
 #: inc/comments.php
+msgid "编辑"
+msgstr "Edit"
+
+#: inc/comments.php
 msgid "编辑个人资料"
 msgstr "Edit profile"
 
@@ -160,6 +168,10 @@ msgstr "Stickers"
 #: inc/customizer.php
 msgid "播放器位置"
 msgstr "Player position"
+
+#: inc/settings.php
+msgid "驳回"
+msgstr ""
 
 #: inc/settings.php
 msgid "驳回并删除"
@@ -209,6 +221,10 @@ msgstr "Insert GIF link"
 msgid "插入图片链接"
 msgstr "Insert image link"
 
+#: inc/settings.php
+msgid "撤销"
+msgstr ""
+
 #: template-parts/virtual/about.php
 msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
 msgstr "Create a WordPress page with the slug about, and its content will be shown here automatically."
@@ -216,6 +232,10 @@ msgstr "Create a WordPress page with the slug about, and its content will be sho
 #: inc/customizer.php
 msgid "代码块折叠高度"
 msgstr "Code collapse height"
+
+#: inc/settings.php
+msgid "待审核"
+msgstr ""
 
 #: inc/comments.php
 msgid "当前未开放注册。"
@@ -281,6 +301,10 @@ msgstr "Logging in..."
 msgid "点赞"
 msgstr "Like"
 
+#: inc/comments.php
+msgid "订阅者"
+msgstr ""
+
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr "After publishing posts, archives will be generated here by year."
@@ -326,6 +350,10 @@ msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr "Copy failed (ﾟ⊿ﾟ)ﾂ"
 
 #: inc/comments.php
+msgid "该评论标签为系统保留或屏蔽标签，请换一个。"
+msgstr ""
+
+#: inc/comments.php
 msgid "该验证码将在 %2$d 分钟后失效。"
 msgstr ""
 
@@ -350,6 +378,10 @@ msgid "个人资料"
 msgstr "Profile"
 
 #: inc/comments.php
+msgid "个人资料已保存，评论标签审核中。"
+msgstr ""
+
+#: inc/comments.php
 msgid "个人资料已保存，头像审核中。"
 msgstr "Profile saved. Avatar is pending review."
 
@@ -372,6 +404,10 @@ msgstr "Follow post setting"
 #: inc/customizer.php
 msgid "跟随系统"
 msgstr "Follow system"
+
+#: inc/comments.php
+msgid "贡献者"
+msgstr ""
 
 #: inc/customizer.php
 msgid "固定导航"
@@ -421,9 +457,17 @@ msgstr "About and friends"
 msgid "关于这个站点与作者。"
 msgstr "About this site and author."
 
+#: inc/comments.php
+msgid "管理员"
+msgstr ""
+
 #: inc/customizer.php
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 msgstr "Manages the theme built-in navigation, sidebar author card, home capsules, and player position. Widgets below the sidebar can be controlled separately in Sidebar Widgets."
+
+#: inc/settings.php
+msgid "广告/官方/测试"
+msgstr ""
 
 #: inc/customizer.php inc/template-tags.php template-parts/widgets/default-widgets.php
 msgid "归档"
@@ -630,6 +674,10 @@ msgid "朋友们的站点入口。"
 msgstr "Entry points to friends’ sites."
 
 #: inc/settings.php
+msgid "批准"
+msgstr ""
+
+#: inc/settings.php
 msgid "批准入库"
 msgstr ""
 
@@ -651,6 +699,14 @@ msgstr ""
 
 #: inc/comments.php
 msgid "评论 GIF：%s"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论标签"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论标签最多 8 个字符。"
 msgstr ""
 
 #: inc/comments.php
@@ -981,6 +1037,14 @@ msgstr "Search popup background"
 msgid "搜索文章..."
 msgstr "Search posts..."
 
+#: inc/comments.php
+msgid "特殊标签"
+msgstr ""
+
+#: inc/comments.php
+msgid "特殊标签和自定义标签合计最多 2 个；自定义标签最多 8 个字符，保留标签不可自行设置。"
+msgstr ""
+
 #: comments.php
 msgid "提交"
 msgstr "Submit"
@@ -1181,6 +1245,10 @@ msgstr "Show previous/next post"
 msgid "显示太极装饰"
 msgstr "Show Taichi decoration"
 
+#: inc/comments.php
+msgid "显示我的评论头像框"
+msgstr ""
+
 #: inc/customizer.php
 msgid "显示阅读时间"
 msgstr "Show reading time"
@@ -1309,6 +1377,10 @@ msgstr "Page:"
 msgid "页面内容"
 msgstr "Page content"
 
+#: inc/comments.php
+msgid "一条评论"
+msgstr ""
+
 #: template-parts/layout/mobile-nav.php
 msgid "移动端导航"
 msgstr "Mobile navigation"
@@ -1323,6 +1395,10 @@ msgstr ""
 
 #: inc/settings.php
 msgid "已上传 %d 个 GIF，部分文件未成功。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已通过"
 msgstr ""
 
 #: inc/comments.php
@@ -1344,6 +1420,10 @@ msgstr "Hide"
 #: inc/enqueue.php
 msgid "隐藏密码"
 msgstr "Hide password"
+
+#: inc/comments.php
+msgid "用户标签"
+msgstr ""
 
 #: inc/settings.php
 msgid "用户评论 GIF"
@@ -1433,6 +1513,10 @@ msgstr ""
 msgid "暂无用户上传头像。"
 msgstr ""
 
+#: inc/settings.php
+msgid "暂无用户自定义标签。"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "赞助"
 msgstr "Sponsor"
@@ -1456,6 +1540,10 @@ msgstr "Site header image"
 #: template-parts/layout/site-footer.php
 msgid "站点页脚"
 msgstr "Site footer"
+
+#: inc/comments.php
+msgid "站长"
+msgstr ""
 
 #: inc/enqueue.php
 msgid "找到 {count} 条结果"
@@ -1552,6 +1640,10 @@ msgstr "Total Views"
 #: inc/customizer.php inc/post-meta.php
 msgid "左侧"
 msgstr "Left"
+
+#: inc/comments.php
+msgid "作者"
+msgstr "Artist"
 
 #: inc/template-tags.php
 msgid "About"

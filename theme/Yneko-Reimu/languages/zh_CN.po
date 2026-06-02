@@ -69,6 +69,10 @@ msgstr "%s 字"
 msgid "© %s. Powered by WordPress."
 msgstr "© %s. Powered by WordPress."
 
+#: inc/comments.php
+msgid "+ 新增自定义标签"
+msgstr "+ 新增自定义标签"
+
 #: inc/template-tags.php
 msgid "404（´◔ ₃ ◔`)"
 msgstr "404（´◔ ₃ ◔`)"
@@ -134,6 +138,10 @@ msgid "本站信息"
 msgstr "本站信息"
 
 #: inc/comments.php
+msgid "编辑"
+msgstr "编辑"
+
+#: inc/comments.php
 msgid "编辑个人资料"
 msgstr "编辑个人资料"
 
@@ -160,6 +168,10 @@ msgstr "表情包"
 #: inc/customizer.php
 msgid "播放器位置"
 msgstr "播放器位置"
+
+#: inc/settings.php
+msgid "驳回"
+msgstr "驳回"
 
 #: inc/settings.php
 msgid "驳回并删除"
@@ -209,6 +221,10 @@ msgstr "插入 GIF 链接"
 msgid "插入图片链接"
 msgstr "插入图片链接"
 
+#: inc/settings.php
+msgid "撤销"
+msgstr "撤销"
+
 #: template-parts/virtual/about.php
 msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
 msgstr "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
@@ -216,6 +232,10 @@ msgstr "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你
 #: inc/customizer.php
 msgid "代码块折叠高度"
 msgstr "代码块折叠高度"
+
+#: inc/settings.php
+msgid "待审核"
+msgstr "待审核"
 
 #: inc/comments.php
 msgid "当前未开放注册。"
@@ -281,6 +301,10 @@ msgstr "登录中..."
 msgid "点赞"
 msgstr "点赞"
 
+#: inc/comments.php
+msgid "订阅者"
+msgstr "订阅者"
+
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr "发布文章后，这里会按年份生成归档列表。"
@@ -326,6 +350,10 @@ msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr "复制失败 (ﾟ⊿ﾟ)ﾂ"
 
 #: inc/comments.php
+msgid "该评论标签为系统保留或屏蔽标签，请换一个。"
+msgstr "该评论标签为系统保留或屏蔽标签，请换一个。"
+
+#: inc/comments.php
 msgid "该验证码将在 %2$d 分钟后失效。"
 msgstr "该验证码将在 %2$d 分钟后失效。"
 
@@ -350,6 +378,10 @@ msgid "个人资料"
 msgstr "个人资料"
 
 #: inc/comments.php
+msgid "个人资料已保存，评论标签审核中。"
+msgstr "个人资料已保存，评论标签审核中。"
+
+#: inc/comments.php
 msgid "个人资料已保存，头像审核中。"
 msgstr "个人资料已保存，头像审核中。"
 
@@ -372,6 +404,10 @@ msgstr "跟随文章设置"
 #: inc/customizer.php
 msgid "跟随系统"
 msgstr "跟随系统"
+
+#: inc/comments.php
+msgid "贡献者"
+msgstr "贡献者"
 
 #: inc/customizer.php
 msgid "固定导航"
@@ -421,9 +457,17 @@ msgstr "关于与友链"
 msgid "关于这个站点与作者。"
 msgstr "关于这个站点与作者。"
 
+#: inc/comments.php
+msgid "管理员"
+msgstr "管理员"
+
 #: inc/customizer.php
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 msgstr "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
+
+#: inc/settings.php
+msgid "广告/官方/测试"
+msgstr "广告/官方/测试"
 
 #: inc/customizer.php inc/template-tags.php template-parts/widgets/default-widgets.php
 msgid "归档"
@@ -630,6 +674,10 @@ msgid "朋友们的站点入口。"
 msgstr "朋友们的站点入口。"
 
 #: inc/settings.php
+msgid "批准"
+msgstr "批准"
+
+#: inc/settings.php
 msgid "批准入库"
 msgstr "批准入库"
 
@@ -652,6 +700,14 @@ msgstr "评论 GIF 上传已关闭。"
 #: inc/comments.php
 msgid "评论 GIF：%s"
 msgstr "评论 GIF：%s"
+
+#: inc/comments.php
+msgid "评论标签"
+msgstr "评论标签"
+
+#: inc/comments.php
+msgid "评论标签最多 8 个字符。"
+msgstr "评论标签最多 8 个字符。"
 
 #: inc/comments.php
 msgid "评论不存在。"
@@ -981,6 +1037,14 @@ msgstr "搜索弹窗背景图"
 msgid "搜索文章..."
 msgstr "搜索文章..."
 
+#: inc/comments.php
+msgid "特殊标签"
+msgstr "特殊标签"
+
+#: inc/comments.php
+msgid "特殊标签和自定义标签合计最多 2 个；自定义标签最多 8 个字符，保留标签不可自行设置。"
+msgstr "特殊标签和自定义标签合计最多 2 个；自定义标签最多 8 个字符，保留标签不可自行设置。"
+
 #: comments.php
 msgid "提交"
 msgstr "提交"
@@ -1181,6 +1245,10 @@ msgstr "显示上一篇/下一篇"
 msgid "显示太极装饰"
 msgstr "显示太极装饰"
 
+#: inc/comments.php
+msgid "显示我的评论头像框"
+msgstr "显示我的评论头像框"
+
 #: inc/customizer.php
 msgid "显示阅读时间"
 msgstr "显示阅读时间"
@@ -1309,6 +1377,10 @@ msgstr "页面："
 msgid "页面内容"
 msgstr "页面内容"
 
+#: inc/comments.php
+msgid "一条评论"
+msgstr "一条评论"
+
 #: template-parts/layout/mobile-nav.php
 msgid "移动端导航"
 msgstr "移动端导航"
@@ -1324,6 +1396,10 @@ msgstr "已上传 %d 个 GIF 并加入表情库。"
 #: inc/settings.php
 msgid "已上传 %d 个 GIF，部分文件未成功。"
 msgstr "已上传 %d 个 GIF，部分文件未成功。"
+
+#: inc/settings.php
+msgid "已通过"
+msgstr "已通过"
 
 #: inc/comments.php
 msgid "已退出登录。"
@@ -1344,6 +1420,10 @@ msgstr "隐藏"
 #: inc/enqueue.php
 msgid "隐藏密码"
 msgstr "隐藏密码"
+
+#: inc/comments.php
+msgid "用户标签"
+msgstr "用户标签"
 
 #: inc/settings.php
 msgid "用户评论 GIF"
@@ -1433,6 +1513,10 @@ msgstr "暂无评论图片或 GIF 上传。"
 msgid "暂无用户上传头像。"
 msgstr "暂无用户上传头像。"
 
+#: inc/settings.php
+msgid "暂无用户自定义标签。"
+msgstr "暂无用户自定义标签。"
+
 #: inc/template-tags.php
 msgid "赞助"
 msgstr "赞助"
@@ -1456,6 +1540,10 @@ msgstr "站点头图"
 #: template-parts/layout/site-footer.php
 msgid "站点页脚"
 msgstr "站点页脚"
+
+#: inc/comments.php
+msgid "站长"
+msgstr "站长"
 
 #: inc/enqueue.php
 msgid "找到 {count} 条结果"
@@ -1552,6 +1640,10 @@ msgstr "总访问量"
 #: inc/customizer.php inc/post-meta.php
 msgid "左侧"
 msgstr "左侧"
+
+#: inc/comments.php
+msgid "作者"
+msgstr "作者"
 
 #: inc/template-tags.php
 msgid "About"

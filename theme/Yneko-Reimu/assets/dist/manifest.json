@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-06-02T08:31:12.025Z",
+  "builtAt": "2026-06-02T16:09:21.068Z",
   "builder": "vite",
   "upstream": {
     "name": "Yneko-Reimu CSS reference snapshot",
@@ -18,7 +18,7 @@
   ],
   "outputStats": {
     "assets/dist/loader.css": 1753,
-    "assets/dist/reimu.js": 97801,
-    "assets/dist/reimu.css": 197445
+    "assets/dist/reimu.js": 102364,
+    "assets/dist/reimu.css": 203120
   }
 }

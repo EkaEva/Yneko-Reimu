@@ -135,7 +135,9 @@ if ( ! function_exists( 'yneko_reimu_render_sidebar_recent_comments_widget' ) ) 
 				}
 				echo '<ul class="reimu-sidebar-list reimu-sidebar-recent-comments">';
 				foreach ( $comments as $comment ) {
-					$text = wp_trim_words( wp_strip_all_tags( $comment->comment_content ), 10, '...' );
+					$text = function_exists( 'yneko_reimu_comment_content_summary' )
+						? yneko_reimu_comment_content_summary( $comment->comment_content, 10 )
+						: wp_trim_words( wp_strip_all_tags( $comment->comment_content ), 10, '...' );
 					echo '<li><a href="' . esc_url( get_comment_link( $comment ) ) . '">' . esc_html( $comment->comment_author ) . '</a><span>' . esc_html( $text ) . '</span></li>';
 				}
 				echo '</ul>';

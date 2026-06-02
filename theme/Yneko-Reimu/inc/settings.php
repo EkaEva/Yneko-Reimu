@@ -22,6 +22,60 @@ function yneko_reimu_settings_defaults() {
 			'avatar_review'=> '0',
 			'avatar_max_mb'=> 1,
 		),
+		'user_badges'       => array(
+			'enabled'        => '1',
+			'review_enabled' => '0',
+			'blocklist'      => '',
+			'avatar_frames'  => array(
+				'enabled' => '0',
+				'frames'  => array(
+					'owner'       => yneko_reimu_default_avatar_frame_url(),
+					'admin'       => yneko_reimu_default_avatar_frame_url(),
+					'editor'      => yneko_reimu_default_avatar_frame_url(),
+					'author'      => yneko_reimu_default_avatar_frame_url(),
+					'contributor' => yneko_reimu_default_avatar_frame_url(),
+					'yko'         => yneko_reimu_default_avatar_frame_url(),
+					'subscriber'  => yneko_reimu_default_avatar_frame_url(),
+				),
+			),
+			'special'        => array(
+				'owner' => array(
+					'enabled' => '1',
+					'zh'      => '站长',
+					'en'      => 'Owner',
+				),
+				'admin' => array(
+					'enabled' => '1',
+					'zh'      => '管理员',
+					'en'      => 'Admin',
+				),
+				'yko'   => array(
+					'enabled' => '1',
+					'zh'      => 'Yko',
+					'en'      => 'Yko',
+				),
+				'subscriber' => array(
+					'enabled' => '1',
+					'zh'      => '订阅者',
+					'en'      => 'Subscriber',
+				),
+				'contributor' => array(
+					'enabled' => '1',
+					'zh'      => '贡献者',
+					'en'      => 'Contributor',
+				),
+				'author' => array(
+					'enabled' => '1',
+					'zh'      => '作者',
+					'en'      => 'Author',
+				),
+				'editor' => array(
+					'enabled' => '1',
+					'zh'      => '编辑',
+					'en'      => 'Editor',
+				),
+			),
+		),
 		'github_url'        => '',
 		'friend_site'       => yneko_reimu_default_site_friend_info(),
 		'friends'           => yneko_reimu_default_friend_items(),
@@ -107,6 +161,71 @@ function yneko_reimu_settings_defaults() {
 	);
 }
 
+function yneko_reimu_default_avatar_frame_url() {
+	return function_exists( 'yneko_reimu_asset_uri' ) ? yneko_reimu_asset_uri( 'assets/images/avatar-frame.png' ) : get_template_directory_uri() . '/assets/images/avatar-frame.png';
+}
+
+function yneko_reimu_user_badge_base_definitions() {
+	return array(
+		'owner'       => array(
+			'title_zh' => '站长',
+			'title_en' => 'Owner',
+			'zh'       => '站长',
+			'en'       => 'Owner',
+			'desc_zh'  => '默认分配给站点第一位管理员。',
+			'desc_en'  => 'Assigned to the first administrator by default.',
+		),
+		'admin'       => array(
+			'title_zh' => '管理员',
+			'title_en' => 'Admin',
+			'zh'       => '管理员',
+			'en'       => 'Admin',
+			'desc_zh'  => '默认分配给除站长外的管理员。',
+			'desc_en'  => 'Assigned to administrators except the site owner.',
+		),
+		'editor'      => array(
+			'title_zh' => '编辑',
+			'title_en' => 'Editor',
+			'zh'       => '编辑',
+			'en'       => 'Editor',
+			'desc_zh'  => '默认分配给 WordPress 编辑角色。',
+			'desc_en'  => 'Assigned to the WordPress Editor role.',
+		),
+		'author'      => array(
+			'title_zh' => '作者',
+			'title_en' => 'Author',
+			'zh'       => '作者',
+			'en'       => 'Author',
+			'desc_zh'  => '默认分配给 WordPress 作者角色。',
+			'desc_en'  => 'Assigned to the WordPress Author role.',
+		),
+		'contributor' => array(
+			'title_zh' => '贡献者',
+			'title_en' => 'Contributor',
+			'zh'       => '贡献者',
+			'en'       => 'Contributor',
+			'desc_zh'  => '默认分配给 WordPress 贡献者角色。',
+			'desc_en'  => 'Assigned to the WordPress Contributor role.',
+		),
+		'yko'         => array(
+			'title_zh' => '会员',
+			'title_en' => 'Member',
+			'zh'       => 'Yko',
+			'en'       => 'Yko',
+			'desc_zh'  => '登录用户都会拥有这个基础标签。',
+			'desc_en'  => 'Assigned to every logged-in user.',
+		),
+		'subscriber'  => array(
+			'title_zh' => '订阅者',
+			'title_en' => 'Subscriber',
+			'zh'       => '订阅者',
+			'en'       => 'Subscriber',
+			'desc_zh'  => '默认分配给 WordPress 订阅者角色。',
+			'desc_en'  => 'Assigned to the WordPress Subscriber role.',
+		),
+	);
+}
+
 function yneko_reimu_default_site_friend_info() {
 	return array(
 		'name'  => get_bloginfo( 'name' ),
@@ -166,6 +285,20 @@ function yneko_reimu_normalize_png_jpeg_url( $url ) {
 
 	$path = (string) wp_parse_url( $url, PHP_URL_PATH );
 	if ( ! preg_match( '/\.(?:png|jpe?g)$/i', $path ) ) {
+		return '';
+	}
+
+	return $url;
+}
+
+function yneko_reimu_normalize_avatar_frame_url( $url ) {
+	$url = yneko_reimu_normalize_settings_url( $url );
+	if ( '' === $url ) {
+		return '';
+	}
+
+	$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+	if ( ! preg_match( '/\.(?:png|webp|avif)$/i', $path ) ) {
 		return '';
 	}
 
@@ -285,11 +418,72 @@ function yneko_reimu_settings_theme_mod_text( $key, $default = '' ) {
 	return (string) yneko_reimu_get_theme_mod( $key, $default );
 }
 
+function yneko_reimu_sanitize_user_badge_label( $label ) {
+	$label = trim( wp_strip_all_tags( (string) $label ) );
+	$label = preg_replace( '/[\r\n\t]+/u', ' ', $label );
+	$label = preg_replace( '/\s{2,}/u', ' ', $label );
+	return mb_substr( trim( $label ), 0, 12 );
+}
+
+function yneko_reimu_sanitize_user_badges_settings( $input, $defaults ) {
+	$input = is_array( $input ) ? $input : array();
+	$clean = array(
+		'enabled'        => ! empty( $input['enabled'] ) ? '1' : '0',
+		'review_enabled' => ! empty( $input['review_enabled'] ) ? '1' : '0',
+		'blocklist'      => yneko_reimu_sanitize_user_badge_blocklist( $input['blocklist'] ?? '' ),
+		'avatar_frames'  => array(
+			'enabled' => ! empty( $input['avatar_frames']['enabled'] ) ? '1' : '0',
+			'frames'  => array(),
+		),
+		'special'        => array(),
+	);
+
+	$special_input = isset( $input['special'] ) && is_array( $input['special'] ) ? $input['special'] : array();
+	$frame_input = isset( $input['avatar_frames']['frames'] ) && is_array( $input['avatar_frames']['frames'] ) ? $input['avatar_frames']['frames'] : array();
+	foreach ( array_keys( yneko_reimu_user_badge_base_definitions() ) as $key ) {
+		$definition = yneko_reimu_user_badge_base_definitions()[ $key ];
+		$default    = $defaults['special'][ $key ] ?? array(
+			'enabled' => '1',
+			'zh'      => $definition['zh'],
+			'en'      => $definition['en'],
+		);
+		$row     = isset( $special_input[ $key ] ) && is_array( $special_input[ $key ] ) ? $special_input[ $key ] : array();
+		$zh      = yneko_reimu_sanitize_user_badge_label( $row['zh'] ?? $default['zh'] );
+		$en      = yneko_reimu_sanitize_user_badge_label( $row['en'] ?? $default['en'] );
+		if ( '' === $zh && '' === $en ) {
+			$zh = $default['zh'];
+			$en = $default['en'];
+		}
+		$clean['special'][ $key ] = array(
+			'enabled' => ! empty( $row['enabled'] ) ? '1' : '0',
+			'zh'      => $zh,
+			'en'      => $en,
+		);
+		$frame_url = yneko_reimu_normalize_avatar_frame_url( $frame_input[ $key ] ?? ( $defaults['avatar_frames']['frames'][ $key ] ?? yneko_reimu_default_avatar_frame_url() ) );
+		$clean['avatar_frames']['frames'][ $key ] = $frame_url ? $frame_url : yneko_reimu_default_avatar_frame_url();
+	}
+
+	return $clean;
+}
+
+function yneko_reimu_sanitize_user_badge_blocklist( $value ) {
+	$items = preg_split( '#/+#u', (string) $value );
+	$clean = array();
+	foreach ( $items as $item ) {
+		$item = yneko_reimu_sanitize_user_badge_label( $item );
+		if ( '' !== $item ) {
+			$clean[] = $item;
+		}
+	}
+	return implode( '/', array_values( array_unique( $clean ) ) );
+}
+
 function yneko_reimu_sanitize_settings( $input ) {
 	$defaults = yneko_reimu_settings_defaults();
 	$input    = is_array( $input ) ? $input : array();
 	$oauth    = isset( $input['github_oauth'] ) && is_array( $input['github_oauth'] ) ? $input['github_oauth'] : array();
 	$upload   = isset( $input['comment_upload'] ) && is_array( $input['comment_upload'] ) ? $input['comment_upload'] : array();
+	$user_badges = isset( $input['user_badges'] ) && is_array( $input['user_badges'] ) ? $input['user_badges'] : array();
 	$i18n     = isset( $input['i18n'] ) && is_array( $input['i18n'] ) ? $input['i18n'] : array();
 	$search   = isset( $input['search'] ) && is_array( $input['search'] ) ? $input['search'] : array();
 	$features = isset( $input['features'] ) && is_array( $input['features'] ) ? $input['features'] : array();
@@ -327,6 +521,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 			'avatar_review'=> ! empty( $upload['avatar_review'] ) ? '1' : '0',
 			'avatar_max_mb'=> max( 1, min( 10, absint( $upload['avatar_max_mb'] ?? 1 ) ) ),
 		),
+		'user_badges'       => yneko_reimu_sanitize_user_badges_settings( $user_badges, $defaults['user_badges'] ),
 		'github_url'        => yneko_reimu_normalize_settings_url( $input['github_url'] ?? '' ),
 		'friend_site'       => yneko_reimu_sanitize_site_friend_info( $input['friend_site'] ?? array() ),
 		'friends'           => yneko_reimu_sanitize_friend_items( array_key_exists( 'friends', $input ) ? $input['friends'] : array() ),
@@ -471,6 +666,13 @@ function yneko_reimu_settings_comment_upload() {
 			'avatar_max_mb'=> 1,
 		)
 	);
+}
+
+function yneko_reimu_settings_user_badges() {
+	$settings = yneko_reimu_settings();
+	$defaults = yneko_reimu_settings_defaults();
+	$badges   = isset( $settings['user_badges'] ) && is_array( $settings['user_badges'] ) ? $settings['user_badges'] : array();
+	return yneko_reimu_sanitize_user_badges_settings( wp_parse_args( $badges, $defaults['user_badges'] ), $defaults['user_badges'] );
 }
 
 function yneko_reimu_settings_friend_items() {
@@ -723,6 +925,43 @@ function yneko_reimu_register_settings() {
 	);
 }
 add_action( 'admin_init', 'yneko_reimu_register_settings' );
+
+function yneko_reimu_cleanup_blocked_user_badges_after_settings_save( $old_value, $value, $option ) {
+	unset( $old_value, $option );
+	if ( empty( $value['user_badges'] ) || ! function_exists( 'yneko_reimu_comment_normalize_tag_list' ) ) {
+		return;
+	}
+
+	$users = get_users(
+		array(
+			'number'     => 300,
+			'fields'     => 'ID',
+			'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'relation' => 'OR',
+				array(
+					'key'     => '_yneko_reimu_comment_tags',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_yneko_reimu_comment_tags_pending',
+					'compare' => 'EXISTS',
+				),
+			),
+		)
+	);
+	foreach ( $users as $user_id ) {
+		foreach ( array( '_yneko_reimu_comment_tags', '_yneko_reimu_comment_tags_pending' ) as $meta_key ) {
+			$current = get_user_meta( absint( $user_id ), $meta_key, true );
+			$clean   = yneko_reimu_comment_normalize_tag_list( $current, 2 );
+			if ( $clean ) {
+				update_user_meta( absint( $user_id ), $meta_key, $clean );
+			} else {
+				delete_user_meta( absint( $user_id ), $meta_key );
+			}
+		}
+	}
+}
+add_action( 'updated_option_yneko_reimu_settings', 'yneko_reimu_cleanup_blocked_user_badges_after_settings_save', 10, 3 );
 
 function yneko_reimu_register_settings_page() {
 	add_theme_page(
@@ -991,6 +1230,45 @@ function yneko_reimu_render_settings_page() {
 				<h2><?php yneko_reimu_admin_bilingual_heading( '用户设置', 'User settings' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '用户标签及头像框', 'User badges and avatar frames' ); ?></th>
+						<td>
+							<?php $user_badges = yneko_reimu_settings_user_badges(); ?>
+							<?php $avatar_frames = isset( $user_badges['avatar_frames'] ) && is_array( $user_badges['avatar_frames'] ) ? $user_badges['avatar_frames'] : array(); ?>
+							<p><label><input type="checkbox" name="yneko_reimu_settings[user_badges][enabled]" value="1" <?php checked( '1', $user_badges['enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '开启评论区用户标签', 'Enable comment user badges' ); ?></label></p>
+							<p><label><input type="checkbox" name="yneko_reimu_settings[user_badges][review_enabled]" value="1" <?php checked( '1', $user_badges['review_enabled'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '用户标签审核', 'Review user custom badges' ); ?></label></p>
+							<p><label><input type="checkbox" name="yneko_reimu_settings[user_badges][avatar_frames][enabled]" value="1" <?php checked( '1', $avatar_frames['enabled'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '开启评论区头像框', 'Enable comment avatar frames' ); ?></label></p>
+							<?php yneko_reimu_admin_bilingual_description( '关闭总开关后，除站长/管理员等特殊身份外，普通用户自定义标签不会显示，个人资料中也不显示标签设置区。开启审核后，非管理员的新自定义标签需要在下方批准后才会显示。', 'When the main switch is off, ordinary custom badges are hidden except special identity badges, and profile badge settings are hidden. With review enabled, new custom badges from non-admin users require approval below before they display.' ); ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '特殊标签及用户头像框管理', 'Special badges and avatar frames' ); ?></th>
+						<td>
+							<div class="yneko-reimu-special-badge-table">
+								<?php
+								foreach ( yneko_reimu_user_badge_base_definitions() as $badge_key => $definition ) :
+									$row = $user_badges['special'][ $badge_key ] ?? array( 'enabled' => '1', 'zh' => $definition['zh'], 'en' => $definition['en'] );
+									$frame_url = $avatar_frames['frames'][ $badge_key ] ?? yneko_reimu_default_avatar_frame_url();
+									?>
+									<div class="yneko-reimu-special-badge-row">
+										<label><input type="checkbox" name="yneko_reimu_settings[user_badges][special][<?php echo esc_attr( $badge_key ); ?>][enabled]" value="1" <?php checked( '1', $row['enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( $definition['title_zh'], $definition['title_en'] ); ?></label>
+										<input type="text" name="yneko_reimu_settings[user_badges][special][<?php echo esc_attr( $badge_key ); ?>][zh]" value="<?php echo esc_attr( $row['zh'] ); ?>" placeholder="<?php echo esc_attr( $definition['zh'] ); ?>">
+										<input type="text" name="yneko_reimu_settings[user_badges][special][<?php echo esc_attr( $badge_key ); ?>][en]" value="<?php echo esc_attr( $row['en'] ); ?>" placeholder="<?php echo esc_attr( $definition['en'] ); ?>">
+										<?php yneko_reimu_admin_media_field( 'yneko_reimu_settings[user_badges][avatar_frames][frames][' . $badge_key . ']', $frame_url, yneko_reimu_admin_bilingual_text( '选择头像框', 'Choose frame' ), 'image/png,image/webp,image/avif' ); ?>
+										<span class="description"><?php echo esc_html( yneko_reimu_admin_prefers_zh() ? $definition['desc_zh'] : $definition['desc_en'] ); ?></span>
+									</div>
+								<?php endforeach; ?>
+							</div>
+							<?php yneko_reimu_admin_bilingual_description( '七种基础特殊标签按“站长 > 管理员 > 编辑 > 作者 > 贡献者 > 会员 > 订阅者”排序。标签原名和当前显示名都会作为保留词。头像框支持 PNG、WebP、AVIF；用户同时拥有多个特殊标签时，按这个顺序使用第一个可用头像框。', 'The seven base special badges are ordered by Owner > Admin > Editor > Author > Contributor > Member > Subscriber. Original and current labels are reserved. Avatar frames support PNG, WebP, and AVIF; when a user has multiple special badges, the first available frame in this order is used.' ); ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '自定义标签屏蔽词', 'Custom badge blocklist' ); ?></th>
+						<td>
+							<input class="regular-text" type="text" name="yneko_reimu_settings[user_badges][blocklist]" value="<?php echo esc_attr( $user_badges['blocklist'] ?? '' ); ?>" placeholder="<?php esc_attr_e( '广告/官方/测试', 'yneko-reimu' ); ?>">
+							<?php yneko_reimu_admin_bilingual_description( '用 / 分隔。保存后，匹配屏蔽词或保留词的旧自定义标签会自动停止显示，用户也不能再次设置。', 'Separate words with /. After saving, old custom badges matching blocked or reserved words stop displaying automatically, and users cannot set them again.' ); ?>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php yneko_reimu_admin_bilingual_label( '用户头像上传', 'User avatar uploads' ); ?></th>
 						<td>
 							<?php $comment_upload = yneko_reimu_settings_comment_upload(); ?>
@@ -1006,6 +1284,9 @@ function yneko_reimu_render_settings_page() {
 						</td>
 					</tr>
 				</table>
+				<h2><?php yneko_reimu_admin_bilingual_heading( '用户标签审核', 'User badge review' ); ?></h2>
+				<?php yneko_reimu_admin_bilingual_description( '这里会列出已有和待审核的用户自定义标签。即使未开启审核，也可以在这里单独撤销某个用户的标签。', 'This lists existing and pending user custom badges. Even when review is disabled, you can revoke individual user badges here.' ); ?>
+				<?php yneko_reimu_render_user_badge_admin(); ?>
 				<h2><?php yneko_reimu_admin_bilingual_heading( '用户头像管理', 'User avatar manager' ); ?></h2>
 				<?php yneko_reimu_render_user_avatar_admin(); ?>
 			</section>
@@ -1498,6 +1779,81 @@ function yneko_reimu_render_user_avatar_admin() {
 	<?php
 }
 
+function yneko_reimu_render_user_badge_admin() {
+	$users = get_users(
+		array(
+			'number'     => 200,
+			'orderby'    => 'ID',
+			'order'      => 'ASC',
+			'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'relation' => 'OR',
+				array(
+					'key'     => '_yneko_reimu_comment_tags',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_yneko_reimu_comment_tags_pending',
+					'compare' => 'EXISTS',
+				),
+			),
+		)
+	);
+	if ( ! $users ) {
+		echo '<p class="description">' . esc_html__( '暂无用户自定义标签。', 'yneko-reimu' ) . '</p>';
+		return;
+	}
+	?>
+	<div class="yneko-reimu-user-badge-admin">
+		<?php foreach ( $users as $user ) : ?>
+			<?php
+			$user_id = absint( $user->ID );
+			$active  = get_user_meta( $user_id, '_yneko_reimu_comment_tags', true );
+			$pending = get_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', true );
+			$active  = is_array( $active ) ? array_values( $active ) : array();
+			$pending = is_array( $pending ) ? array_values( $pending ) : array();
+			if ( ! $active && ! $pending ) {
+				continue;
+			}
+			?>
+			<div class="yneko-reimu-user-badge-card">
+				<div class="yneko-reimu-user-badge-card__user">
+					<strong><?php echo esc_html( $user->display_name ? $user->display_name : $user->user_login ); ?></strong>
+					<span><?php echo esc_html( $user->user_email ); ?></span>
+				</div>
+				<div class="yneko-reimu-user-badge-card__tags">
+					<?php foreach ( array( 'pending' => $pending, 'active' => $active ) as $status => $tags ) : ?>
+						<?php foreach ( $tags as $index => $tag ) : ?>
+							<?php
+							if ( ! is_array( $tag ) ) {
+								continue;
+							}
+							$label = function_exists( 'yneko_reimu_sanitize_comment_tag_label' ) ? yneko_reimu_sanitize_comment_tag_label( $tag['label'] ?? '' ) : sanitize_text_field( $tag['label'] ?? '' );
+							$color = sanitize_hex_color( $tag['color'] ?? '' );
+							if ( '' === $label ) {
+								continue;
+							}
+							?>
+							<div class="yneko-reimu-user-badge-item">
+								<span class="yneko-reimu-user-badge-pill" style="<?php echo esc_attr( $color ? '--badge-color:' . $color . ';' : '' ); ?>"><?php echo esc_html( $label ); ?></span>
+								<span class="description"><?php echo 'pending' === $status ? esc_html__( '待审核', 'yneko-reimu' ) : esc_html__( '已通过', 'yneko-reimu' ); ?></span>
+								<div class="yneko-reimu-user-badge-actions">
+									<?php if ( 'pending' === $status ) : ?>
+										<a class="button button-small" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'yneko_user_badge_action' => 'approve', 'user_id' => $user_id, 'tag_index' => absint( $index ) ) ), 'yneko_reimu_user_badge_approve_' . $user_id . '_' . absint( $index ) ) ); ?>"><?php esc_html_e( '批准', 'yneko-reimu' ); ?></a>
+										<a class="button button-small button-link-delete" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'yneko_user_badge_action' => 'reject', 'user_id' => $user_id, 'tag_index' => absint( $index ) ) ), 'yneko_reimu_user_badge_reject_' . $user_id . '_' . absint( $index ) ) ); ?>"><?php esc_html_e( '驳回', 'yneko-reimu' ); ?></a>
+									<?php else : ?>
+										<a class="button button-small button-link-delete" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'yneko_user_badge_action' => 'revoke', 'user_id' => $user_id, 'tag_index' => absint( $index ) ) ), 'yneko_reimu_user_badge_revoke_' . $user_id . '_' . absint( $index ) ) ); ?>"><?php esc_html_e( '撤销', 'yneko-reimu' ); ?></a>
+									<?php endif; ?>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
 function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 	if ( 'appearance_page_yneko-reimu-settings' !== $hook ) {
 		return;
@@ -1508,11 +1864,15 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 	wp_enqueue_style( 'yneko-reimu-admin-settings' );
 	wp_add_inline_style(
 		'yneko-reimu-admin-settings',
-		'.yneko-reimu-settings-page{padding-bottom:96px}.yneko-reimu-settings-tabs{display:flex;flex-wrap:wrap;gap:0;margin-top:20px}.yneko-reimu-settings-tabs .nav-tab{display:inline-flex;align-items:center;min-height:40px;margin-left:0;margin-right:6px;padding:8px 15px;background:#f0f0f1;border-bottom:1px solid #c3c4c7;color:#1d2327;cursor:pointer}.yneko-reimu-settings-tabs .nav-tab-active{background:#fff;border-bottom-color:#fff;color:#2271b1}.yneko-reimu-settings-panel{max-width:1280px;padding-top:4px}.yneko-reimu-settings-panel[hidden]{display:none!important}.yneko-reimu-settings-panel h2:first-child{margin-top:24px}.yneko-reimu-floating-submit{position:fixed;z-index:20;right:20px;bottom:0;left:180px;display:flex;align-items:center;justify-content:flex-end;gap:16px;min-height:64px;padding:12px 24px;background:rgba(240,240,241,.94);border-top:1px solid #dcdcde;box-shadow:0 -8px 24px rgba(0,0,0,.08);backdrop-filter:saturate(140%) blur(8px)}.folded .yneko-reimu-floating-submit{left:56px}.yneko-reimu-floating-submit__hint{color:#646970}.yneko-reimu-settings-page h2{margin-top:32px}.yneko-reimu-admin-text{line-height:1.35}.description.yneko-reimu-admin-text,.yneko-reimu-admin-text.description,.yneko-reimu-settings-page p.yneko-reimu-admin-text{display:block;margin:6px 0 0;color:#646970}.yneko-reimu-settings-page .button .yneko-reimu-admin-text{vertical-align:middle}.yneko-reimu-submit-button .yneko-reimu-admin-text{color:#fff}.yneko-reimu-admin-gif-upload{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0 18px;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-admin-gif-upload label{display:flex;flex-direction:column;gap:6px;font-weight:600}.yneko-reimu-media-field,.yneko-reimu-inline-media{display:flex;gap:8px;align-items:center}.yneko-reimu-inline-media input{flex:1;min-width:0}.yneko-reimu-repeatable-row{margin:14px 0;padding:16px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-row-heading{display:flex;align-items:center;margin:-2px 0 14px}.yneko-reimu-row-number{display:inline-flex;align-items:center;min-height:24px;padding:3px 10px;border-radius:999px;background:#f6f7f7;color:#1d2327;font-weight:600}.yneko-reimu-row-grid{display:grid;gap:12px}.yneko-reimu-row-grid-friend{grid-template-columns:repeat(4,minmax(0,1fr))}.yneko-reimu-row-grid-music{grid-template-columns:repeat(3,minmax(0,1fr))}.yneko-reimu-row-grid label{display:flex;flex-direction:column;gap:5px;font-weight:600}.yneko-reimu-row-grid input{width:100%}.yneko-reimu-row-actions{display:flex;gap:8px;margin-top:12px}.yneko-reimu-upload-admin-section{margin-top:22px}.yneko-reimu-upload-admin-section h3{margin:0 0 10px}.yneko-reimu-upload-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:14px}.yneko-reimu-upload-admin-card{padding:10px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-upload-admin-card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;background:#f6f7f7}.yneko-reimu-upload-admin-meta{display:flex;flex-direction:column;gap:3px;margin:9px 0;color:#646970;font-size:12px}.yneko-reimu-upload-admin-meta strong{color:#1d2327}.yneko-reimu-upload-admin-actions{display:flex;flex-wrap:wrap;gap:6px}@media(max-width:960px){.yneko-reimu-row-grid-friend,.yneko-reimu-row-grid-music{grid-template-columns:1fr}.yneko-reimu-floating-submit{left:0;right:0;justify-content:space-between;padding:10px 14px}}@media(max-width:782px){.yneko-reimu-settings-tabs .nav-tab{flex:1 1 150px;margin-right:4px}.yneko-reimu-floating-submit{min-height:74px}.yneko-reimu-floating-submit__hint{display:none}}'
+		'.yneko-reimu-settings-page{padding-bottom:96px}.yneko-reimu-settings-tabs{display:flex;flex-wrap:wrap;gap:0;margin-top:20px}.yneko-reimu-settings-tabs .nav-tab{display:inline-flex;align-items:center;min-height:40px;margin-left:0;margin-right:6px;padding:8px 15px;background:#f0f0f1;border-bottom:1px solid #c3c4c7;color:#1d2327;cursor:pointer}.yneko-reimu-settings-tabs .nav-tab-active{background:#fff;border-bottom-color:#fff;color:#2271b1}.yneko-reimu-settings-panel{max-width:1280px;padding-top:4px}.yneko-reimu-settings-panel[hidden]{display:none!important}.yneko-reimu-settings-panel h2:first-child{margin-top:24px}.yneko-reimu-floating-submit{position:fixed;z-index:20;right:20px;bottom:0;left:180px;display:flex;align-items:center;justify-content:flex-end;gap:16px;min-height:64px;padding:12px 24px;background:rgba(240,240,241,.94);border-top:1px solid #dcdcde;box-shadow:0 -8px 24px rgba(0,0,0,.08);backdrop-filter:saturate(140%) blur(8px)}.folded .yneko-reimu-floating-submit{left:56px}.yneko-reimu-floating-submit__hint{color:#646970}.yneko-reimu-settings-page h2{margin-top:32px}.yneko-reimu-admin-text{line-height:1.35}.description.yneko-reimu-admin-text,.yneko-reimu-admin-text.description,.yneko-reimu-settings-page p.yneko-reimu-admin-text{display:block;margin:6px 0 0;color:#646970}.yneko-reimu-settings-page .button .yneko-reimu-admin-text{vertical-align:middle}.yneko-reimu-submit-button .yneko-reimu-admin-text{color:#fff}.yneko-reimu-admin-gif-upload{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0 18px;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-admin-gif-upload label{display:flex;flex-direction:column;gap:6px;font-weight:600}.yneko-reimu-special-badge-table{display:flex;flex-direction:column;gap:10px;max-width:760px}.yneko-reimu-special-badge-row{display:grid;grid-template-columns:130px minmax(120px,1fr) minmax(120px,1fr);gap:8px;align-items:center;padding:10px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-special-badge-row-extra{grid-template-columns:90px minmax(110px,.8fr) minmax(120px,1fr) minmax(120px,1fr)}.yneko-reimu-special-badge-row input[type=text]{width:100%}.yneko-reimu-media-field,.yneko-reimu-inline-media{display:flex;gap:8px;align-items:center}.yneko-reimu-inline-media input{flex:1;min-width:0}.yneko-reimu-repeatable-row{margin:14px 0;padding:16px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-row-heading{display:flex;align-items:center;margin:-2px 0 14px}.yneko-reimu-row-number{display:inline-flex;align-items:center;min-height:24px;padding:3px 10px;border-radius:999px;background:#f6f7f7;color:#1d2327;font-weight:600}.yneko-reimu-row-grid{display:grid;gap:12px}.yneko-reimu-row-grid-friend{grid-template-columns:repeat(4,minmax(0,1fr))}.yneko-reimu-row-grid-music{grid-template-columns:repeat(3,minmax(0,1fr))}.yneko-reimu-row-grid label{display:flex;flex-direction:column;gap:5px;font-weight:600}.yneko-reimu-row-grid input{width:100%}.yneko-reimu-row-actions{display:flex;gap:8px;margin-top:12px}.yneko-reimu-upload-admin-section{margin-top:22px}.yneko-reimu-upload-admin-section h3{margin:0 0 10px}.yneko-reimu-upload-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:14px}.yneko-reimu-upload-admin-card{padding:10px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-upload-admin-card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;background:#f6f7f7}.yneko-reimu-upload-admin-meta{display:flex;flex-direction:column;gap:3px;margin:9px 0;color:#646970;font-size:12px}.yneko-reimu-upload-admin-meta strong{color:#1d2327}.yneko-reimu-upload-admin-actions{display:flex;flex-wrap:wrap;gap:6px}@media(max-width:960px){.yneko-reimu-row-grid-friend,.yneko-reimu-row-grid-music{grid-template-columns:1fr}.yneko-reimu-floating-submit{left:0;right:0;justify-content:space-between;padding:10px 14px}}@media(max-width:782px){.yneko-reimu-settings-tabs .nav-tab{flex:1 1 150px;margin-right:4px}.yneko-reimu-floating-submit{min-height:74px}.yneko-reimu-floating-submit__hint{display:none}}'
 	);
 	wp_add_inline_style(
 		'yneko-reimu-admin-settings',
 		'.yneko-reimu-admin-gif-upload{align-items:center;padding:16px;background:linear-gradient(180deg,#fff,#fbfbfc)}.yneko-reimu-admin-gif-upload .button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;border-radius:6px;font-weight:600}.yneko-reimu-admin-gif-pick:before{content:"+";margin-right:6px;font-weight:700}.yneko-reimu-admin-gif-media:before{content:"";width:14px;height:14px;margin-right:6px;border:2px solid currentColor;border-radius:3px;box-sizing:border-box}.yneko-reimu-admin-gif-upload .button.is-loading{pointer-events:none;opacity:.72}.yneko-reimu-upload-admin-actions .button{border-radius:5px}.yneko-reimu-upload-admin-actions .button-link-delete{color:#b32d2e}'
+	);
+	wp_add_inline_style(
+		'yneko-reimu-admin-settings',
+		'.yneko-reimu-special-badge-table{max-width:1180px}.yneko-reimu-special-badge-row{display:grid;grid-template-columns:130px minmax(110px,.8fr) minmax(110px,.8fr) minmax(260px,1.3fr);gap:8px;align-items:center;padding:10px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-special-badge-row .description{grid-column:1/-1;margin:0;color:#646970}.yneko-reimu-special-badge-row .yneko-reimu-inline-media{min-width:0}.yneko-reimu-user-badge-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:14px}.yneko-reimu-user-badge-card{padding:14px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-user-badge-card__user{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}.yneko-reimu-user-badge-card__user span{color:#646970}.yneko-reimu-user-badge-card__tags{display:flex;flex-direction:column;gap:8px}.yneko-reimu-user-badge-item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px;border:1px solid #f0f0f1;border-radius:8px;background:#fbfbfc}.yneko-reimu-user-badge-pill{display:inline-flex;align-items:center;width:max-content;max-width:120px;padding:3px 8px;border-radius:999px;color:var(--badge-color,#2271b1);background:color-mix(in srgb,var(--badge-color,#2271b1) 10%,#fff);border:1px solid color-mix(in srgb,var(--badge-color,#2271b1) 24%,#fff);font-size:12px;font-weight:700}.yneko-reimu-user-badge-actions{display:flex;gap:5px}@media(max-width:960px){.yneko-reimu-special-badge-row,.yneko-reimu-user-badge-item{grid-template-columns:1fr}}'
 	);
 
 	wp_register_script( 'yneko-reimu-admin-settings', false, array( 'jquery' ), YNEKO_REIMU_VERSION, true );
@@ -1546,7 +1906,7 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 	wp_add_inline_script(
 		'yneko-reimu-admin-settings',
 		'window.YNEKO_REIMU_ADMIN_I18N=' . wp_json_encode( $admin_i18n ) . ';' .
-		"(function(){var labels=window.YNEKO_REIMU_ADMIN_I18N||{};var locale=labels.locale==='zh'?'zh':'en';var counters={friend:Date.now(),music:Date.now()+1000};function esc(value){return String(value||'').replace(/[&<>\"']/g,function(chr){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#039;'}[chr];});}function plain(key,zh,en){var item=labels[key]||{};return item[locale]||(locale==='zh'?zh:en);}function labelText(key,zh,en){return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,zh,en))+'</span>';}function fieldLabel(key,zh,en,control){return '<label>'+labelText(key,zh,en)+control+'</label>';}function rowHeading(type){return '<div class=\"yneko-reimu-row-heading\" data-row-label=\"'+type+'\"><span class=\"yneko-reimu-row-number\"></span></div>';}function rowTitle(type,index){var key=type==='music'?'musicItem':'friendItem';var fallbackZh=type==='music'?'曲目':'友链';var fallbackEn=type==='music'?'Track':'Friend';return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,fallbackZh,fallbackEn))+' #'+index+'</span>';}function isAccepted(input,url){var accept=(input&&input.dataset?input.dataset.accept:'')||'';if(!accept){return true;}var allowed=[];if(/image\\/png/.test(accept)){allowed.push('png');}if(/image\\/webp/.test(accept)){allowed.push('webp');}if(/image\\/jpe?g/.test(accept)){allowed.push('jpe?g');}if(!allowed.length){return true;}return new RegExp('\\\\.('+allowed.join('|')+')(?:[?#].*)?$','i').test(url||'');}function activateTab(name){var tabs=document.querySelectorAll('[data-yneko-settings-tab]');var panels=document.querySelectorAll('[data-yneko-settings-panel]');var exists=false;tabs.forEach(function(tab){if(tab.getAttribute('data-yneko-settings-tab')===name){exists=true;}});if(!exists){name='general';}tabs.forEach(function(tab){var active=tab.getAttribute('data-yneko-settings-tab')===name;tab.classList.toggle('nav-tab-active',active);tab.setAttribute('aria-selected',active?'true':'false');});panels.forEach(function(panel){var active=panel.getAttribute('data-yneko-settings-panel')===name;panel.hidden=!active;panel.classList.toggle('is-active',active);});try{window.localStorage.setItem('ynekoReimuSettingsTab',name);}catch(error){}if(window.location.hash!=='#'+name){try{history.replaceState(null,'','#'+name);}catch(error){}}}function initTabs(){var initial=(window.location.hash||'').replace(/^#/,'');if(!initial){try{initial=window.localStorage.getItem('ynekoReimuSettingsTab')||'';}catch(error){}}activateTab(initial||'general');document.querySelectorAll('[data-yneko-settings-tab]').forEach(function(tab){tab.addEventListener('click',function(event){event.preventDefault();activateTab(tab.getAttribute('data-yneko-settings-tab')||'general');});});window.addEventListener('hashchange',function(){activateTab((window.location.hash||'').replace(/^#/,''));});}function refreshNumbers(root){(root||document).querySelectorAll('.yneko-reimu-repeatable').forEach(function(section){var type=section.dataset.repeatable==='music'?'music':'friend';section.querySelectorAll('.yneko-reimu-repeatable-row').forEach(function(row,index){var heading=row.querySelector('.yneko-reimu-row-heading');if(!heading){heading=document.createElement('div');heading.className='yneko-reimu-row-heading';heading.setAttribute('data-row-label',type);heading.innerHTML='<span class=\"yneko-reimu-row-number\"></span>';row.insertBefore(heading,row.firstChild);}var number=heading.querySelector('.yneko-reimu-row-number');if(number){number.innerHTML=rowTitle(type,index+1);}});});}function media(button){var field=button.closest('.yneko-reimu-inline-media')||button.closest('.yneko-reimu-media-field');var input=field?field.querySelector('.yneko-reimu-media-url'):null;if(!input||!window.wp||!wp.media){return;}var accept=(input.dataset&&input.dataset.accept)||'';var frame=wp.media({title:plain('mediaTitle','选择媒体','Select media'),button:{text:plain('useMedia','使用此媒体','Use this media')},library:accept?{type:accept.split(',')}:undefined,multiple:false});frame.on('select',function(){var attachment=frame.state().get('selection').first().toJSON();var url=attachment.url||'';if(!isAccepted(input,url)){window.alert(plain('invalidImage','请选择此字段允许的图片格式。','Please choose an image format allowed by this field.'));return;}input.value=url;input.dispatchEvent(new Event('change',{bubbles:true}));});frame.open();}function pickButton(){return '<button type=\"button\" class=\"button yneko-reimu-media-button\">'+labelText('choose','选择','Choose')+'</button>';}function mediaInput(name){return '<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"'+name+'\">'+pickButton()+'</span>';}function friendTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('friend')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-friend\">'+fieldLabel('name','名称','Name','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][name]\">')+fieldLabel('url','链接','URL','<input type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][url]\">')+fieldLabel('description','描述','Description','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][desc]\">')+fieldLabel('avatar','头像','Avatar','<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][image]\">'+pickButton()+'</span>')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}function musicTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('music')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-music\">'+fieldLabel('trackTitle','歌名','Track title','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][name]\">')+fieldLabel('artist','作者','Artist','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][artist]\">')+fieldLabel('audio','音频','Audio',mediaInput('yneko_reimu_settings[music]['+i+'][url]'))+fieldLabel('cover','封面','Cover',mediaInput('yneko_reimu_settings[music]['+i+'][cover]'))+fieldLabel('lyrics','歌词 LRC','Lyrics LRC',mediaInput('yneko_reimu_settings[music]['+i+'][lrc]'))+fieldLabel('themeColor','主题色','Theme color','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][theme]\" value=\"#ff5252\">')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}document.addEventListener('change',function(event){var input=event.target&&event.target.matches&&event.target.matches('.yneko-reimu-media-url[data-accept]')?event.target:null;if(input&&input.value&&!isAccepted(input,input.value)){window.alert(plain('invalidImage','请选择此字段允许的图片格式。','Please choose an image format allowed by this field.'));input.value='';}});document.addEventListener('click',function(event){var target=event.target;if(target.closest('[data-yneko-upload-delete]')&&!window.confirm(plain('deleteUpload','确定删除这个评论上传文件吗？','Delete this comment upload file?'))){event.preventDefault();return;}if(target.closest('.yneko-reimu-media-button')){event.preventDefault();media(target.closest('.yneko-reimu-media-button'));}if(target.closest('.yneko-reimu-remove-row')){event.preventDefault();var repeatable=target.closest('.yneko-reimu-repeatable');target.closest('.yneko-reimu-repeatable-row').remove();refreshNumbers(repeatable||document);}var add=target.closest('.yneko-reimu-add-row');if(add){event.preventDefault();var type=add.dataset.template;var repeatable=add.closest('.yneko-reimu-repeatable');var list=repeatable.querySelector('.yneko-reimu-repeatable-list');var i=counters[type]++;list.insertAdjacentHTML('beforeend',type==='friend'?friendTemplate(i):musicTemplate(i));refreshNumbers(repeatable);}});initTabs();refreshNumbers();}());"
+		"(function(){var labels=window.YNEKO_REIMU_ADMIN_I18N||{};var locale=labels.locale==='zh'?'zh':'en';var counters={friend:Date.now(),music:Date.now()+1000};function esc(value){return String(value||'').replace(/[&<>\"']/g,function(chr){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#039;'}[chr];});}function plain(key,zh,en){var item=labels[key]||{};return item[locale]||(locale==='zh'?zh:en);}function labelText(key,zh,en){return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,zh,en))+'</span>';}function fieldLabel(key,zh,en,control){return '<label>'+labelText(key,zh,en)+control+'</label>';}function rowHeading(type){return '<div class=\"yneko-reimu-row-heading\" data-row-label=\"'+type+'\"><span class=\"yneko-reimu-row-number\"></span></div>';}function rowTitle(type,index){var key=type==='music'?'musicItem':'friendItem';var fallbackZh=type==='music'?'曲目':'友链';var fallbackEn=type==='music'?'Track':'Friend';return '<span class=\"yneko-reimu-admin-text\">'+esc(plain(key,fallbackZh,fallbackEn))+' #'+index+'</span>';}function isAccepted(input,url){var accept=(input&&input.dataset?input.dataset.accept:'')||'';if(!accept){return true;}var allowed=[];if(/image\\/png/.test(accept)){allowed.push('png');}if(/image\\/webp/.test(accept)){allowed.push('webp');}if(/image\\/avif/.test(accept)){allowed.push('avif');}if(/image\\/jpe?g/.test(accept)){allowed.push('jpe?g');}if(!allowed.length){return true;}return new RegExp('\\\\.('+allowed.join('|')+')(?:[?#].*)?$','i').test(url||'');}function activateTab(name){var tabs=document.querySelectorAll('[data-yneko-settings-tab]');var panels=document.querySelectorAll('[data-yneko-settings-panel]');var exists=false;tabs.forEach(function(tab){if(tab.getAttribute('data-yneko-settings-tab')===name){exists=true;}});if(!exists){name='general';}tabs.forEach(function(tab){var active=tab.getAttribute('data-yneko-settings-tab')===name;tab.classList.toggle('nav-tab-active',active);tab.setAttribute('aria-selected',active?'true':'false');});panels.forEach(function(panel){var active=panel.getAttribute('data-yneko-settings-panel')===name;panel.hidden=!active;panel.classList.toggle('is-active',active);});try{window.localStorage.setItem('ynekoReimuSettingsTab',name);}catch(error){}if(window.location.hash!=='#'+name){try{history.replaceState(null,'','#'+name);}catch(error){}}}function initTabs(){var initial=(window.location.hash||'').replace(/^#/,'');if(!initial){try{initial=window.localStorage.getItem('ynekoReimuSettingsTab')||'';}catch(error){}}activateTab(initial||'general');document.querySelectorAll('[data-yneko-settings-tab]').forEach(function(tab){tab.addEventListener('click',function(event){event.preventDefault();activateTab(tab.getAttribute('data-yneko-settings-tab')||'general');});});window.addEventListener('hashchange',function(){activateTab((window.location.hash||'').replace(/^#/,''));});}function refreshNumbers(root){(root||document).querySelectorAll('.yneko-reimu-repeatable').forEach(function(section){var type=section.dataset.repeatable==='music'?'music':'friend';section.querySelectorAll('.yneko-reimu-repeatable-row').forEach(function(row,index){var heading=row.querySelector('.yneko-reimu-row-heading');if(!heading){heading=document.createElement('div');heading.className='yneko-reimu-row-heading';heading.setAttribute('data-row-label',type);heading.innerHTML='<span class=\"yneko-reimu-row-number\"></span>';row.insertBefore(heading,row.firstChild);}var number=heading.querySelector('.yneko-reimu-row-number');if(number){number.innerHTML=rowTitle(type,index+1);}});});}function media(button){var field=button.closest('.yneko-reimu-inline-media')||button.closest('.yneko-reimu-media-field');var input=field?field.querySelector('.yneko-reimu-media-url'):null;if(!input||!window.wp||!wp.media){return;}var accept=(input.dataset&&input.dataset.accept)||'';var frame=wp.media({title:plain('mediaTitle','选择媒体','Select media'),button:{text:plain('useMedia','使用此媒体','Use this media')},library:accept?{type:accept.split(',')}:undefined,multiple:false});frame.on('select',function(){var attachment=frame.state().get('selection').first().toJSON();var url=attachment.url||'';if(!isAccepted(input,url)){window.alert(plain('invalidImage','请选择此字段允许的图片格式。','Please choose an image format allowed by this field.'));return;}input.value=url;input.dispatchEvent(new Event('change',{bubbles:true}));});frame.open();}function pickButton(){return '<button type=\"button\" class=\"button yneko-reimu-media-button\">'+labelText('choose','选择','Choose')+'</button>';}function mediaInput(name){return '<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"'+name+'\">'+pickButton()+'</span>';}function friendTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('friend')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-friend\">'+fieldLabel('name','名称','Name','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][name]\">')+fieldLabel('url','链接','URL','<input type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][url]\">')+fieldLabel('description','描述','Description','<input type=\"text\" name=\"yneko_reimu_settings[friends]['+i+'][desc]\">')+fieldLabel('avatar','头像','Avatar','<span class=\"yneko-reimu-inline-media\"><input class=\"yneko-reimu-media-url\" type=\"url\" name=\"yneko_reimu_settings[friends]['+i+'][image]\">'+pickButton()+'</span>')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}function musicTemplate(i){return '<div class=\"yneko-reimu-repeatable-row\">'+rowHeading('music')+'<div class=\"yneko-reimu-row-grid yneko-reimu-row-grid-music\">'+fieldLabel('trackTitle','歌名','Track title','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][name]\">')+fieldLabel('artist','作者','Artist','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][artist]\">')+fieldLabel('audio','音频','Audio',mediaInput('yneko_reimu_settings[music]['+i+'][url]'))+fieldLabel('cover','封面','Cover',mediaInput('yneko_reimu_settings[music]['+i+'][cover]'))+fieldLabel('lyrics','歌词 LRC','Lyrics LRC',mediaInput('yneko_reimu_settings[music]['+i+'][lrc]'))+fieldLabel('themeColor','主题色','Theme color','<input type=\"text\" name=\"yneko_reimu_settings[music]['+i+'][theme]\" value=\"#ff5252\">')+'</div><div class=\"yneko-reimu-row-actions\"><button type=\"button\" class=\"button yneko-reimu-remove-row\">'+labelText('remove','删除','Remove')+'</button></div></div>';}document.addEventListener('change',function(event){var input=event.target&&event.target.matches&&event.target.matches('.yneko-reimu-media-url[data-accept]')?event.target:null;if(input&&input.value&&!isAccepted(input,input.value)){window.alert(plain('invalidImage','请选择此字段允许的图片格式。','Please choose an image format allowed by this field.'));input.value='';}});document.addEventListener('click',function(event){var target=event.target;if(target.closest('[data-yneko-upload-delete]')&&!window.confirm(plain('deleteUpload','确定删除这个评论上传文件吗？','Delete this comment upload file?'))){event.preventDefault();return;}if(target.closest('.yneko-reimu-media-button')){event.preventDefault();media(target.closest('.yneko-reimu-media-button'));}if(target.closest('.yneko-reimu-remove-row')){event.preventDefault();var repeatable=target.closest('.yneko-reimu-repeatable');target.closest('.yneko-reimu-repeatable-row').remove();refreshNumbers(repeatable||document);}var add=target.closest('.yneko-reimu-add-row');if(add){event.preventDefault();var type=add.dataset.template;var repeatable=add.closest('.yneko-reimu-repeatable');var list=repeatable.querySelector('.yneko-reimu-repeatable-list');var i=counters[type]++;list.insertAdjacentHTML('beforeend',type==='friend'?friendTemplate(i):musicTemplate(i));refreshNumbers(repeatable);}});initTabs();refreshNumbers();}());"
 	);
 	wp_add_inline_script(
 		'yneko-reimu-admin-settings',

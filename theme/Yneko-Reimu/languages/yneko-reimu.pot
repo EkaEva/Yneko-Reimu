@@ -64,6 +64,10 @@ msgstr ""
 msgid "© %s. Powered by WordPress."
 msgstr ""
 
+#: inc/comments.php
+msgid "+ 新增自定义标签"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "404（´◔ ₃ ◔`)"
 msgstr ""
@@ -129,6 +133,10 @@ msgid "本站信息"
 msgstr ""
 
 #: inc/comments.php
+msgid "编辑"
+msgstr ""
+
+#: inc/comments.php
 msgid "编辑个人资料"
 msgstr ""
 
@@ -154,6 +162,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "播放器位置"
+msgstr ""
+
+#: inc/settings.php
+msgid "驳回"
 msgstr ""
 
 #: inc/settings.php
@@ -204,12 +216,20 @@ msgstr ""
 msgid "插入图片链接"
 msgstr ""
 
+#: inc/settings.php
+msgid "撤销"
+msgstr ""
+
 #: template-parts/virtual/about.php
 msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
 msgstr ""
 
 #: inc/customizer.php
 msgid "代码块折叠高度"
+msgstr ""
+
+#: inc/settings.php
+msgid "待审核"
 msgstr ""
 
 #: inc/comments.php
@@ -276,6 +296,10 @@ msgstr ""
 msgid "点赞"
 msgstr ""
 
+#: inc/comments.php
+msgid "订阅者"
+msgstr ""
+
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr ""
@@ -321,6 +345,10 @@ msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr ""
 
 #: inc/comments.php
+msgid "该评论标签为系统保留或屏蔽标签，请换一个。"
+msgstr ""
+
+#: inc/comments.php
 msgid "该验证码将在 %2$d 分钟后失效。"
 msgstr ""
 
@@ -345,6 +373,10 @@ msgid "个人资料"
 msgstr ""
 
 #: inc/comments.php
+msgid "个人资料已保存，评论标签审核中。"
+msgstr ""
+
+#: inc/comments.php
 msgid "个人资料已保存，头像审核中。"
 msgstr ""
 
@@ -366,6 +398,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "跟随系统"
+msgstr ""
+
+#: inc/comments.php
+msgid "贡献者"
 msgstr ""
 
 #: inc/customizer.php
@@ -416,8 +452,16 @@ msgstr ""
 msgid "关于这个站点与作者。"
 msgstr ""
 
+#: inc/comments.php
+msgid "管理员"
+msgstr ""
+
 #: inc/customizer.php
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
+msgstr ""
+
+#: inc/settings.php
+msgid "广告/官方/测试"
 msgstr ""
 
 #: inc/customizer.php inc/template-tags.php template-parts/widgets/default-widgets.php
@@ -625,6 +669,10 @@ msgid "朋友们的站点入口。"
 msgstr ""
 
 #: inc/settings.php
+msgid "批准"
+msgstr ""
+
+#: inc/settings.php
 msgid "批准入库"
 msgstr ""
 
@@ -646,6 +694,14 @@ msgstr ""
 
 #: inc/comments.php
 msgid "评论 GIF：%s"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论标签"
+msgstr ""
+
+#: inc/comments.php
+msgid "评论标签最多 8 个字符。"
 msgstr ""
 
 #: inc/comments.php
@@ -976,6 +1032,14 @@ msgstr ""
 msgid "搜索文章..."
 msgstr ""
 
+#: inc/comments.php
+msgid "特殊标签"
+msgstr ""
+
+#: inc/comments.php
+msgid "特殊标签和自定义标签合计最多 2 个；自定义标签最多 8 个字符，保留标签不可自行设置。"
+msgstr ""
+
 #: comments.php
 msgid "提交"
 msgstr ""
@@ -1176,6 +1240,10 @@ msgstr ""
 msgid "显示太极装饰"
 msgstr ""
 
+#: inc/comments.php
+msgid "显示我的评论头像框"
+msgstr ""
+
 #: inc/customizer.php
 msgid "显示阅读时间"
 msgstr ""
@@ -1304,6 +1372,10 @@ msgstr ""
 msgid "页面内容"
 msgstr ""
 
+#: inc/comments.php
+msgid "一条评论"
+msgstr ""
+
 #: template-parts/layout/mobile-nav.php
 msgid "移动端导航"
 msgstr ""
@@ -1318,6 +1390,10 @@ msgstr ""
 
 #: inc/settings.php
 msgid "已上传 %d 个 GIF，部分文件未成功。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已通过"
 msgstr ""
 
 #: inc/comments.php
@@ -1338,6 +1414,10 @@ msgstr ""
 
 #: inc/enqueue.php
 msgid "隐藏密码"
+msgstr ""
+
+#: inc/comments.php
+msgid "用户标签"
 msgstr ""
 
 #: inc/settings.php
@@ -1428,6 +1508,10 @@ msgstr ""
 msgid "暂无用户上传头像。"
 msgstr ""
 
+#: inc/settings.php
+msgid "暂无用户自定义标签。"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "赞助"
 msgstr ""
@@ -1450,6 +1534,10 @@ msgstr ""
 
 #: template-parts/layout/site-footer.php
 msgid "站点页脚"
+msgstr ""
+
+#: inc/comments.php
+msgid "站长"
 msgstr ""
 
 #: inc/enqueue.php
@@ -1546,6 +1634,10 @@ msgstr ""
 
 #: inc/customizer.php inc/post-meta.php
 msgid "左侧"
+msgstr ""
+
+#: inc/comments.php
+msgid "作者"
 msgstr ""
 
 #: inc/template-tags.php
