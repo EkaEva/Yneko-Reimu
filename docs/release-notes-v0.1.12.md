@@ -18,7 +18,7 @@
 - 主题扩展默认更轻，加载动画保持默认开启；APlayer 启用后首次进入页面即显示，但默认 `preload=metadata`，减少首屏完整音频下载。
 - 本地搜索索引默认不再公开全文，只输出标题、摘要、分类、标签和 URL；全文索引改为显式开关。
 - 侧栏新增可配置的主题内置小组件：标签云、项目、近期文章、近期评论、归档、分类，并支持排序；WordPress 原生小工具区默认关闭。
-- 源码目录瘦身：删除本地 WordPress 开发站残留、上游源码快照、旧大图和多张默认横幅变体，默认横幅保留 `assets/images/banner.webp` 一张。
+- 新增 Favicon / Apple Touch 兜底图设置：站点图标和 Logo 可继续使用 SVG，同时为不稳定支持 SVG 的浏览器、移动端和聊天软件输出 PNG/JPG fallback。
 
 ## 修复
 
@@ -38,7 +38,7 @@
 
 - 本版本不会删除既有主题设置、评论、用户、友链、曲目或媒体库数据。
 - 后台配置入口已重新分工：视觉和布局项继续使用 WordPress `theme_mod`，数据、服务和列表项继续使用 `yneko_reimu_settings`。
-- 上传 SVG 前请确认文件来源可信。聊天软件分享图建议使用 JPG 或 PNG `og:image`，不要依赖 SVG 或 WebP 站点图标。
+- 上传 SVG 前请确认文件来源可信。聊天软件分享图建议使用 JPG 或 PNG `og:image`；站点图标可继续使用 SVG，但建议额外设置 `512x512` PNG/JPG 作为 Favicon / Apple Touch 兜底图。
 - 本地验证包使用时间戳命名，例如 `Yneko-Reimu-v0.1.12-YYYYMMDD-HHMM.zip`。
 - GitHub Actions 会为本 tag 生成 `Yneko-Reimu-v0.1.12.zip`，请上传 Release 附件中的主题 ZIP，不要上传 GitHub 自动源码包。
 
@@ -60,7 +60,7 @@
 - Theme extension defaults are lighter while the loader remains on by default. APlayer is visible on first load when enabled, but uses `preload=metadata`.
 - Local search no longer exposes full post content by default; full-content indexing is now an explicit option.
 - Added configurable built-in sidebar widgets for tag cloud, projects, recent posts, recent comments, archives, and categories, with manual ordering. Native WordPress widget areas are off by default.
-- Slimmed the source tree by removing local WordPress development leftovers, the upstream source snapshot, older large images, and responsive default banner variants. The bundled default banner is now `assets/images/banner.webp`.
+- Added a Favicon / Apple Touch fallback setting. The Site Icon and Logo can keep using SVG, while the theme outputs a PNG/JPG fallback for browsers, mobile clients, and chat previews that do not reliably support SVG.
 
 ## Fixes
 
@@ -80,6 +80,6 @@
 
 - This release does not delete existing settings, comments, users, friend links, music tracks, or Media Library data.
 - Visual/layout options continue to use WordPress `theme_mod`; data, services, and lists continue to use `yneko_reimu_settings`.
-- Only upload trusted SVG files. For social sharing, use a JPG or PNG `og:image` instead of relying on an SVG or WebP site icon.
+- Only upload trusted SVG files. For social sharing, use a JPG or PNG `og:image`; the Site Icon can remain SVG, but a square `512x512` PNG/JPG Favicon / Apple Touch fallback is recommended.
 - Local validation packages use timestamped names such as `Yneko-Reimu-v0.1.12-YYYYMMDD-HHMM.zip`.
 - GitHub Actions will generate `Yneko-Reimu-v0.1.12.zip` for this tag. Upload the theme ZIP release asset, not GitHub's automatic source archive.

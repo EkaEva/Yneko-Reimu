@@ -136,7 +136,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - GitHub 主页链接：统一用于顶部 GitHub 三角标、侧栏 GitHub 链接和项目页拉取来源。
 - 赞助二维码：留空则不显示赞助二维码；配置后可在页面底部或短代码中显示。
 
-站点 Logo 和站点图标建议继续在 `外观 -> 自定义 -> 站点身份` 中设置，因为那里有 WordPress 原生预览。主题允许管理员上传 SVG 作为 Logo 或站点图标，但 SVG 可能携带脚本或外链，请只上传可信来源文件。为了聊天软件分享兼容性，站点图标建议同时使用 WordPress 裁剪出的 PNG 版本；`og:image` 推荐使用 JPG 或 PNG，不建议使用 WebP。
+站点 Logo 和站点图标建议继续在 `外观 -> 自定义 -> 站点身份` 中设置，因为那里有 WordPress 原生预览。主题允许管理员上传 SVG 作为 Logo 或站点图标，但 SVG 可能携带脚本或外链，请只上传可信来源文件。如果想保留 SVG 站点图标，可在 `外观 -> Yneko-Reimu 设置 -> 常规设置` 额外配置 `Favicon / Apple Touch 兜底图`，推荐使用 `512x512` PNG/JPG；主题会保留 SVG favicon，并为不稳定支持 SVG 的浏览器、移动端和聊天软件输出 PNG/JPG fallback。`og:image` 仍建议使用 JPG 或 PNG，不建议使用 WebP，并继续由 Rank Math 等 SEO 插件管理。
 
 #### 多语言设置
 
@@ -611,7 +611,7 @@ Site profile:
 - GitHub profile URL: shared by the GitHub corner ribbon, sidebar GitHub link, and project-page fetch source.
 - Sponsor QR code: hidden when empty; shown in sponsor entries when configured.
 
-Site Logo and Site Icon should usually be configured under `Appearance -> Customize -> Site Identity`, because WordPress provides native live preview there. The theme allows trusted administrators to upload SVG files for Logo and Site Icon, but SVG can contain scripts or external links, so upload only trusted files. For chat app previews, a PNG Site Icon is recommended. For `og:image`, use JPG or PNG rather than WebP.
+Site Logo and Site Icon should usually be configured under `Appearance -> Customize -> Site Identity`, because WordPress provides native live preview there. The theme allows trusted administrators to upload SVG files for Logo and Site Icon, but SVG can contain scripts or external links, so upload only trusted files. If you want to keep an SVG Site Icon, configure `Favicon / Apple Touch fallback` under `Appearance -> Yneko-Reimu Settings -> General`; a square `512x512` PNG/JPG is recommended. The theme keeps the SVG favicon and outputs the PNG/JPG fallback for browsers, mobile clients, and chat previews that do not reliably support SVG. `og:image` should still use JPG or PNG and remains managed by SEO plugins such as Rank Math.
 
 Multilingual settings:
 
