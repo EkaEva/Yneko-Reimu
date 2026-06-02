@@ -77,4 +77,4 @@ Goal: update README/admin configuration docs, add v0.1.12 release notes, validat
 1. README configuration and packaging documentation - complete
 2. v0.1.12 release notes - complete
 3. Local validation and package refresh - complete
-4. Commit, push, and tag release - pending
+4. Commit, push, and tag release - complete
