@@ -358,3 +358,21 @@ Goal: map the comments/profile public interface before any AJAX-sensitive runtim
 - Keep all auth, profile, comment submit/edit/delete/like, upload, and review-status AJAX action names unchanged.
 - Keep `window.REIMU_CONFIG.login`, `window.REIMU_CONFIG.commentUploads`, `window.REIMU_CONFIG.comments`, and `window.ReimuWP.init()` behavior unchanged.
 - The next implementation round should extract low-risk comment UI/source modules first, while keeping AJAX submit/upload/profile save handlers in the main bundle until there is a narrower runtime contract.
+
+## 2026-06-04 Comment Media Source Module Split
+
+Goal: start the comments/profile follow-up with a source-only extraction of low-risk comment media utilities while keeping the public `assets/dist/reimu.js` classic script, all AJAX actions, nonce names, payload fields, and profile/comment runtime behavior unchanged.
+
+### Phases
+
+1. Extract comment media text/token/preview helpers into an internal source module - complete
+2. Wire `assets/src/reimu.js` to consume the module without adding a lazy runtime - complete
+3. Verify classic script compatibility, size budgets, audit, PHP lint, package contents, and local-only exclusions - complete
+4. Record the next low-risk extraction target - complete
+
+### Decisions
+
+- `assets/src/reimu/comment-media.js` is an internal source module, not a public API and not a release ZIP file.
+- The module receives `getConfig()`, `t()`, `escapeHtml()`, and `dispatchInputEvent()` as injected dependencies so it can keep reading the current PJAX-synced config.
+- Comment submit/upload/like/edit/delete, login-state refresh, profile save, and profile polling remain in `assets/src/reimu.js`.
+- The next round can extract comment popover/tool binders or profile form UI helpers, but should still avoid moving AJAX request handlers.

@@ -211,3 +211,13 @@
 - Confirmed this round should not move runtime code because comments/profile includes auth, profile save, upload review, comment mutation, login-state DOM replacement, and polling refresh behavior.
 - Updated `task_plan.md` with a completed comments/profile safety interface review phase.
 - Next round should start a source-only extraction of low-risk comment UI utilities/binders from `assets/src/reimu.js`, keeping the built main classic script and all AJAX/profile handlers unchanged.
+
+## 2026-06-04 Comment Media Source Module Split
+
+- Started from a clean `main...origin/main` worktree.
+- Added `theme/Yneko-Reimu/assets/src/reimu/comment-media.js` for comment media token, preview, text counting, media limit, insert, replacement, and unsubmitted-upload cleanup helpers.
+- Updated `assets/src/reimu.js` to consume the new internal module while leaving comment submit/upload/like/edit/delete, auth, profile save, and status polling in the main source file.
+- Preserved PJAX config semantics by injecting `getConfig()` into the module instead of capturing the initial `window.REIMU_CONFIG` object.
+- Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, explicit classic-script parse checks for `reimu.js`, `reimu-search.js`, `reimu-photoswipe.js`, and `reimu-share.js`, `npm audit --audit-level=moderate`, `npm run lint:php`, full `php -l` over 72 theme PHP files, `npm run check`, `npm run package`, and `npm run check:package`.
+- Final package check used `Yneko-Reimu-v0.1.15-20260604-0011.zip`, reported 132 entries, included `assets/dist/reimu.js`, and excluded `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
+- Next round should extract comment popover/tool binding helpers or profile form UI helpers as source-only modules, still keeping AJAX request handlers in the main bundle.

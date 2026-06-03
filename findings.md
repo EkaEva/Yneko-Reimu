@@ -208,3 +208,13 @@
   - Comment submit, edit, delete, like, upload, upload discard, and login-state refresh.
   - DOM replacement after login/logout/profile refresh because it affects later `window.ReimuWP.init()` / PJAX rebinding behavior.
 - Recommended implementation sequence: first extract source-only utilities and binders from `assets/src/reimu.js` into internal modules, rebuild the same main `assets/dist/reimu.js`, and only then consider a lazy `reimu-comments.js` runtime for non-auth comment UI. Comments/profile AJAX should be split only after tests or manual QA cover login, logout, profile save, comment submit, upload review, and PJAX navigation.
+
+## 2026-06-04 Comment Media Source Module Split Findings
+
+- `assets/src/reimu/comment-media.js` now owns comment textarea/media helpers: token storage, token-to-Markdown resolution, media entry detection, one-media limit checks, replacement confirmation text, unsubmitted upload cleanup requests, plain text counting, Markdown preview rendering, and media insertion.
+- `assets/src/reimu.js` keeps the public orchestration and AJAX-sensitive flows, importing the module and exposing local variables with the same helper names used by the existing comment code.
+- The module intentionally uses `getConfig()` rather than capturing the initial config object. This preserves the previous behavior after PJAX updates `window.REIMU_CONFIG` and `config` inside `syncInlineConfig()`.
+- No public interface changed: AJAX action names, nonce names, comment upload payloads, profile payloads, `window.REIMU_CONFIG`, `window.ReimuWP`, and built script loading remain unchanged.
+- Build results after the split: `reimu.js` is 105.6 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
+- The release ZIP check confirmed `assets/src/reimu/comment-media.js`, `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are not packaged, while `assets/dist/reimu.js` is included.
+- The next low-risk candidate is comment popover/tool binding extraction: `closeCommentPopovers`, `setCommentToolState`, `toggleCommentPopover`, `initCommentPopoverOutsideClose`, `initCommentGifLibrary`, and upload row UI visibility can move behind injected helpers before any AJAX runtime split is attempted.
