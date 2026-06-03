@@ -192,11 +192,11 @@ msgstr ""
 msgid "播放器位置"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "驳回"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "驳回并删除"
 msgstr ""
 
@@ -208,7 +208,7 @@ msgstr ""
 msgid "补充"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "部分 GIF 上传失败。"
 msgstr ""
 
@@ -248,7 +248,7 @@ msgstr ""
 msgid "插入图片链接"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "撤销"
 msgstr ""
 
@@ -260,7 +260,7 @@ msgstr ""
 msgid "代码块折叠高度"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "待审核"
 msgstr ""
 
@@ -548,7 +548,7 @@ msgstr ""
 msgid "横幅与图片"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "后台上传的 GIF"
 msgstr ""
 
@@ -584,7 +584,7 @@ msgstr ""
 msgid "仅支持 JPG、PNG、WebP 和 GIF。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "仅支持未超出大小限制的 GIF 文件。"
 msgstr ""
 
@@ -720,11 +720,11 @@ msgstr ""
 msgid "朋友们的站点入口。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "批准"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "批准头像"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr ""
 msgid "请选择头像文件。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "请选择要上传的 GIF。"
 msgstr ""
 
@@ -976,7 +976,7 @@ msgstr ""
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "删除"
 msgstr ""
 
@@ -984,7 +984,7 @@ msgstr ""
 msgid "删除评论"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "删除头像"
 msgstr ""
 
@@ -1040,7 +1040,7 @@ msgstr ""
 msgid "申请方法"
 msgstr ""
 
-#: inc/comments/uploads.php inc/settings.php
+#: inc/comments/uploads.php inc/settings/renderers.php
 msgid "审核未通过"
 msgstr ""
 
@@ -1140,7 +1140,7 @@ msgstr ""
 msgid "跳到内容"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "通过"
 msgstr ""
 
@@ -1168,7 +1168,7 @@ msgstr ""
 msgid "头像审核不通过"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php inc/settings.php
+#: inc/comments.php inc/enqueue.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr ""
 
@@ -1184,11 +1184,11 @@ msgstr ""
 msgid "头像已选择，保存后生效。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "图片"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "图片待审核"
 msgstr ""
 
@@ -1196,7 +1196,7 @@ msgstr ""
 msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "图片已通过"
 msgstr ""
 
@@ -1240,11 +1240,11 @@ msgstr ""
 msgid "未来有你..."
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "未启用"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "未知用户"
 msgstr ""
 
@@ -1532,19 +1532,19 @@ msgstr ""
 msgid "已插入评论。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已撤销"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已上传 %d 个 GIF 并加入表情库。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已上传 %d 个 GIF，部分文件未成功。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已通过"
 msgstr ""
 
@@ -1552,7 +1552,7 @@ msgstr ""
 msgid "已退出登录。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已应用头像"
 msgstr ""
 
@@ -1572,11 +1572,11 @@ msgstr ""
 msgid "用户标签"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "用户评论 GIF"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "用户评论图片"
 msgstr ""
 
@@ -1636,7 +1636,7 @@ msgstr ""
 msgid "预设"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "原标签：%s"
 msgstr ""
 
@@ -1652,19 +1652,19 @@ msgstr ""
 msgid "暂时没有内容"
 msgstr ""
 
-#: inc/enqueue.php inc/settings.php
+#: inc/enqueue.php inc/settings/renderers.php
 msgid "暂无可选..."
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "暂无评论图片或 GIF 上传。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "暂无用户上传头像。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "暂无用户自定义标签。"
 msgstr ""
 
@@ -1848,15 +1848,15 @@ msgstr ""
 msgid "Friends"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 待审核"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 上传失败。"
 msgstr ""
 
@@ -1864,11 +1864,11 @@ msgstr ""
 msgid "GIF 已加入表情库。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 已上传并加入表情库。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 已通过"
 msgstr ""
 

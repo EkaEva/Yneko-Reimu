@@ -134,3 +134,11 @@
 - Verification passed: `npm run lint:php`, full `php -l` over 70 theme PHP files, `npm run check`, `npm audit --audit-level=moderate`, `npm run package`, and `npm run check:package`.
 - Confirmed built `assets/dist/reimu.js` still has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2259.zip`, includes `inc/settings/admin.php` and `inc/settings/schema.php`, and excludes development/local-only files.
+
+## 2026-06-03 Settings Renderer Split
+
+- Split independent settings render helpers from `inc/settings.php` into `inc/settings/renderers.php`.
+- Kept `yneko_reimu_render_settings_page()` and all settings form field names in `inc/settings.php`.
+- Verification passed: `npm run lint:php`, full `php -l` over 71 theme PHP files, `npm run check`, `npm audit --audit-level=moderate`, `npm run package`, and `npm run check:package`.
+- Confirmed built `assets/dist/reimu.js` still has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2307.zip`, includes `inc/settings/admin.php`, `inc/settings/schema.php`, and `inc/settings/renderers.php`, and excludes development/local-only files.

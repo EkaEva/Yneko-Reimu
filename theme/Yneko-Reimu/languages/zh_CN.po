@@ -197,11 +197,11 @@ msgstr "表情包"
 msgid "播放器位置"
 msgstr "播放器位置"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "驳回"
 msgstr "驳回"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "驳回并删除"
 msgstr "驳回并删除"
 
@@ -213,7 +213,7 @@ msgstr "博客卡片"
 msgid "补充"
 msgstr "补充"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "部分 GIF 上传失败。"
 msgstr "部分 GIF 上传失败。"
 
@@ -253,7 +253,7 @@ msgstr "插入 GIF 链接"
 msgid "插入图片链接"
 msgstr "插入图片链接"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "撤销"
 msgstr "撤销"
 
@@ -265,7 +265,7 @@ msgstr "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你
 msgid "代码块折叠高度"
 msgstr "代码块折叠高度"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "待审核"
 msgstr "待审核"
 
@@ -553,7 +553,7 @@ msgstr "横幅、封面、作者头像和搜索背景会立即体现在预览中
 msgid "横幅与图片"
 msgstr "横幅与图片"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "后台上传的 GIF"
 msgstr "后台上传的 GIF"
 
@@ -589,7 +589,7 @@ msgstr "加载更多..."
 msgid "仅支持 JPG、PNG、WebP 和 GIF。"
 msgstr "仅支持 JPG、PNG、WebP 和 GIF。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "仅支持未超出大小限制的 GIF 文件。"
 msgstr "仅支持未超出大小限制的 GIF 文件。"
 
@@ -725,11 +725,11 @@ msgstr "配置 GitHub 主页链接后会自动同步 starred 项目。"
 msgid "朋友们的站点入口。"
 msgstr "朋友们的站点入口。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "批准"
 msgstr "批准"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "批准头像"
 msgstr "批准头像"
 
@@ -933,7 +933,7 @@ msgstr "请选择 GIF 文件。"
 msgid "请选择头像文件。"
 msgstr "请选择头像文件。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "请选择要上传的 GIF。"
 msgstr "请选择要上传的 GIF。"
 
@@ -981,7 +981,7 @@ msgstr "认证器验证码不正确。"
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgstr "如果该邮箱已注册，验证码将发送到对应邮箱。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "删除"
 msgstr "删除"
 
@@ -989,7 +989,7 @@ msgstr "删除"
 msgid "删除评论"
 msgstr "删除评论"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "删除头像"
 msgstr "删除头像"
 
@@ -1045,7 +1045,7 @@ msgstr "少女祈祷中..."
 msgid "申请方法"
 msgstr "申请方法"
 
-#: inc/comments/uploads.php inc/settings.php
+#: inc/comments/uploads.php inc/settings/renderers.php
 msgid "审核未通过"
 msgstr "审核未通过"
 
@@ -1145,7 +1145,7 @@ msgstr "添加本站后，在本页留言，格式如下"
 msgid "跳到内容"
 msgstr "跳到内容"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "通过"
 msgstr "通过"
 
@@ -1173,7 +1173,7 @@ msgstr "头像上传失败。"
 msgid "头像审核不通过"
 msgstr "头像审核不通过"
 
-#: inc/comments.php inc/enqueue.php inc/settings.php
+#: inc/comments.php inc/enqueue.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr "头像审核中"
 
@@ -1189,11 +1189,11 @@ msgstr "头像已更新"
 msgid "头像已选择，保存后生效。"
 msgstr "头像已选择，保存后生效。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "图片"
 msgstr "图片"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "图片待审核"
 msgstr "图片待审核"
 
@@ -1201,7 +1201,7 @@ msgstr "图片待审核"
 msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
 msgstr "图片上传不支持 GIF，请使用 GIF 按钮。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "图片已通过"
 msgstr "图片已通过"
 
@@ -1245,11 +1245,11 @@ msgstr "未发现与「{query}」相关内容"
 msgid "未来有你..."
 msgstr "未来有你..."
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "未启用"
 msgstr "未启用"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "未知用户"
 msgstr "未知用户"
 
@@ -1537,19 +1537,19 @@ msgstr "移动端导航"
 msgid "已插入评论。"
 msgstr "已插入评论。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已撤销"
 msgstr "已撤销"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已上传 %d 个 GIF 并加入表情库。"
 msgstr "已上传 %d 个 GIF 并加入表情库。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已上传 %d 个 GIF，部分文件未成功。"
 msgstr "已上传 %d 个 GIF，部分文件未成功。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已通过"
 msgstr "已通过"
 
@@ -1557,7 +1557,7 @@ msgstr "已通过"
 msgid "已退出登录。"
 msgstr "已退出登录。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "已应用头像"
 msgstr "已应用头像"
 
@@ -1577,11 +1577,11 @@ msgstr "隐藏密码"
 msgid "用户标签"
 msgstr "用户标签"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "用户评论 GIF"
 msgstr "用户评论 GIF"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "用户评论图片"
 msgstr "用户评论图片"
 
@@ -1641,7 +1641,7 @@ msgstr "预览:"
 msgid "预设"
 msgstr "预设"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "原标签：%s"
 msgstr "原标签：%s"
 
@@ -1657,19 +1657,19 @@ msgstr "在这里写下文章的核心摘要，让读者先抓住这一页最重
 msgid "暂时没有内容"
 msgstr "暂时没有内容"
 
-#: inc/enqueue.php inc/settings.php
+#: inc/enqueue.php inc/settings/renderers.php
 msgid "暂无可选..."
 msgstr "暂无可选..."
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "暂无评论图片或 GIF 上传。"
 msgstr "暂无评论图片或 GIF 上传。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "暂无用户上传头像。"
 msgstr "暂无用户上传头像。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "暂无用户自定义标签。"
 msgstr "暂无用户自定义标签。"
 
@@ -1853,15 +1853,15 @@ msgstr "Footer Menu"
 msgid "Friends"
 msgstr "Friends"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF"
 msgstr "GIF"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 待审核"
 msgstr "GIF 待审核"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 上传失败。"
 msgstr "GIF 上传失败。"
 
@@ -1869,11 +1869,11 @@ msgstr "GIF 上传失败。"
 msgid "GIF 已加入表情库。"
 msgstr "GIF 已加入表情库。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 已上传并加入表情库。"
 msgstr "GIF 已上传并加入表情库。"
 
-#: inc/settings.php
+#: inc/settings/renderers.php
 msgid "GIF 已通过"
 msgstr "GIF 已通过"
 

@@ -234,3 +234,20 @@ Goal: continue the settings-page decomposition by moving admin helper functions 
 - `inc/settings/admin.php` is internal and loaded by `inc/settings.php`.
 - The admin page slug `yneko-reimu-settings`, settings page callback name, menu hooks, badge behavior, and enqueued asset handles stay unchanged.
 - Large form rendering remains in `inc/settings.php` for now; moving it needs a separate render-template pass.
+
+## 2026-06-03 Settings Renderer Split
+
+Goal: move independent settings-page renderer helpers out of `inc/settings.php` while keeping the main tabbed settings form in the entrypoint.
+
+### Phases
+
+1. Confirm helper render function boundaries after the admin helper split - complete
+2. Move GIF upload notice/control, friend row, music row, comment upload review list, avatar review list, and user badge review list renderers into `inc/settings/renderers.php` - complete
+3. Keep `yneko_reimu_render_settings_page()` and all form field names in `inc/settings.php` - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- `inc/settings/renderers.php` is internal and loaded by `inc/settings.php`.
+- Renderer function names and call sites stay unchanged.
+- The main tabbed form remains in `inc/settings.php`; extracting it should be the final settings-page render pass.

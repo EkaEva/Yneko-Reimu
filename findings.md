@@ -123,3 +123,10 @@
 - Moving page registration, admin menu badges, bilingual helper output, pending review counters, media field helper, and admin asset enqueue into `inc/settings/admin.php` cuts the entry file down to the settings registration/cleanup hooks plus render functions.
 - The admin helper split does not change the `appearance_page_yneko-reimu-settings` hook, `yneko-reimu-admin-settings` style/script handles, settings page slug, or visible form structure.
 - The next safe settings split is the render layer: friend/music row renderers and review list renderers can move before the large tabbed form is templated.
+
+## 2026-06-03 Settings Renderer Split Findings
+
+- The remaining render helpers after the main settings form are self-contained and only depend on existing admin/schema/comment helpers, so they can move without changing field names or form structure.
+- `inc/settings/renderers.php` now owns repeatable friend/music rows plus comment upload, avatar, user badge, and admin GIF upload renderer fragments.
+- `inc/settings.php` is reduced to settings registration, post-save cleanup, and the main tabbed form renderer. The last large responsibility in the file is the tabbed form itself.
+- The next settings step should either template the tabbed form into a dedicated module or pause settings work and start runtime lazy-loading enforcement.
