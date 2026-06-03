@@ -466,3 +466,21 @@ Goal: use the comments/profile contract to extract only request-free profile rev
 - The module owns only status message lookup, review-status row normalization, current-user inline status DOM rendering, and autohide scheduling.
 - `ackProfileStatuses()`, `startProfileStatusPolling()`, `refreshProfile()`, `postProfileAction()`, comment submit/upload/like/edit/delete, and login-state DOM replacement remain in `assets/src/reimu.js`.
 - The next round should either stop comments/profile extraction until manual WordPress QA is available, or move to another low-risk area outside the AJAX/rebind contract.
+
+## 2026-06-04 PHP Complexity Report Gate
+
+Goal: add a reproducible PHP complexity report so future refactors can track large files/functions before turning thresholds into failing quality gates.
+
+### Phases
+
+1. Add a dependency-free PHP complexity report script - complete
+2. Expose the report through npm scripts - complete
+3. Document the report as informational quality tooling - complete
+4. Record the current baseline and next refactor targets - complete
+
+### Decisions
+
+- `npm run report:php-complexity` is informational and does not fail the build yet.
+- The script reports largest files, largest named functions, and highest approximate branch-score functions under `theme/Yneko-Reimu`.
+- The current baseline should guide future PHP splits, especially `inc/comments.php`, `inc/settings/page.php`, `inc/customizer.php`, and `inc/template-tags.php`.
+- The next round should either add this report to CI/check documentation as a non-failing artifact step, or start a targeted split of the highest-risk PHP renderer only if public interfaces stay unchanged.

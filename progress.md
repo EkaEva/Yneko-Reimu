@@ -269,3 +269,13 @@
 - Verification passed so far: `npm run check:js`, `npm run build`, `npm run check:size`, and explicit classic-script pattern checks for public runtime scripts.
 - Size check reported `reimu.js` at 108.7 KB / 120 KB, with lazy runtimes and CSS still under budget.
 - Next round should stop comments/profile source extraction unless manual WordPress QA is available, and should move to another low-risk optimization area.
+
+## 2026-06-04 PHP Complexity Report Gate
+
+- Added `tools/report-php-complexity.mjs`, a dependency-free Node report for PHP file size, named-function length, and approximate branch complexity under `theme/Yneko-Reimu`.
+- Added `npm run report:php-complexity`.
+- Updated `docs/development.md` to document the report as informational quality tooling rather than a failing check.
+- Ran `npm run report:php-complexity`; baseline reported 72 PHP files, 566 named functions, 13,988 nonblank lines, and branch score 5,043.
+- Initial hotspots: `inc/comments.php`, `inc/template-tags.php`, `inc/comments/uploads.php`, `inc/settings/page.php`, `inc/customizer.php`, and `inc/settings/schema.php`.
+- Ran `npm run check:js`; 26 JavaScript files passed syntax checks.
+- Next round should use the report to choose a low-risk PHP decomposition target or add CI/docs guidance for collecting this report without failing legacy code.

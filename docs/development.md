@@ -9,6 +9,7 @@ npm install
 npm run check:js
 npm run build
 npm run check:size
+npm run report:php-complexity
 npm run package
 ```
 
@@ -30,6 +31,8 @@ npm run lint:php
 - `assets/dist/reimu.css` must stay at or below 220 KB.
 - Public runtime script builds must remain compatible with classic script loading and must not contain `import.meta`, unresolved dynamic `import(` calls, or top-level ESM import/export syntax.
 - The feature loading report comes from `tools/feature-loading-plan.mjs`; update it before moving code out of the main bundle.
+
+`npm run report:php-complexity` scans the runtime theme PHP files and reports the largest files, largest named functions, and highest approximate branch scores. It is informational for now so the project can track legacy complexity before turning any threshold into a failing quality gate.
 
 ## Source Layout
 

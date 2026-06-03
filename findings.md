@@ -267,3 +267,12 @@
 - Build results after the split: `reimu.js` is 108.7 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
 - Public runtime scripts still contain no `import.meta`, unresolved dynamic `import(`, or top-level ESM import/export syntax.
 - This likely exhausts the safe comments/profile source-only extraction set. Further comments/profile runtime movement should wait for a local WordPress manual QA pass using the contract checklist.
+
+## 2026-06-04 PHP Complexity Report Findings
+
+- `tools/report-php-complexity.mjs` now scans all runtime PHP files and reports largest files, largest named functions, and highest approximate branch-score functions without adding a new dependency.
+- Baseline scan: 72 PHP files, 566 named functions, 15,832 total lines, 13,988 nonblank lines, and an approximate branch score of 5,043.
+- Largest files by nonblank lines: `inc/comments.php` (3,012), `inc/template-tags.php` (1,328), `inc/comments/uploads.php` (1,032), `inc/settings/schema.php` (861), and `inc/github-login.php` (839).
+- Largest named functions by lines: `yneko_reimu_customize_register()` in `inc/customizer.php` (739), `yneko_reimu_render_settings_page()` in `inc/settings/page.php` (543), `yneko_reimu_enqueue_assets()` in `inc/enqueue.php` (287), and `yneko_reimu_ajax_profile_save()` in `inc/comments.php` (242).
+- Highest approximate branch scores: `yneko_reimu_render_settings_page()` (636), `yneko_reimu_sanitize_settings()` (159), `yneko_reimu_profile_modal_html()` (138), `yneko_reimu_render_comment_upload_admin()` (98), and `yneko_reimu_comment_callback()` (96).
+- The report should remain informational until a stable baseline and refactor budget exist. The next PHP refactor target should be renderer/schema decomposition rather than comments/profile request handlers unless manual QA is available.
