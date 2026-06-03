@@ -137,3 +137,10 @@
 - The settings page callback name remains unchanged, so the existing `add_theme_page()` callback in `inc/settings/admin.php` continues to work.
 - The settings first-stage split now has four internal modules: `schema.php`, `admin.php`, `renderers.php`, and `page.php`.
 - With settings decomposition complete for this phase, the next higher-value work is runtime lazy-loading/budget enforcement rather than further PHP file shuffling.
+
+## 2026-06-03 Runtime Loading Strategy Findings
+
+- The current size gate enforces the 120 KB/220 KB JS/CSS budgets and classic script compatibility, but it previously did not expose planned page or interaction triggers for future runtime splitting.
+- `tools/feature-loading-plan.mjs` now records the first loading backlog as machine-readable entries. Search, share, comments/profile, APlayer, PhotoSwipe, Mermaid, and KaTeX each have an owner, current loading mode, target loading mode, trigger, gate, and compatibility note.
+- This round intentionally does not change WordPress enqueue behavior or introduce dynamic imports in the main package. The quality gate now reports lazy-loading readiness while preserving the single classic `assets/dist/reimu.js` public interface.
+- Current statuses: `share` is partial-lazy because Weixin QR already loads `qrcode.js` on interaction; APlayer, Mermaid, and KaTeX are condition-loaded at the vendor layer; search, comments/profile, and PhotoSwipe remain main-bundle candidates for later extraction.

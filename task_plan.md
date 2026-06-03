@@ -269,3 +269,20 @@ Goal: finish the settings first-stage decomposition by moving the main tabbed se
 - The settings page callback remains `yneko_reimu_render_settings_page`.
 - All form field names, tab keys, option names, nonces, and admin page slug remain unchanged.
 - Settings PHP first-stage decomposition is now complete enough to move the next round back to runtime lazy-loading and budget enforcement.
+
+## 2026-06-03 Runtime Loading Strategy
+
+Goal: make the planned lazy-loading boundaries visible to quality gates before changing runtime loading behavior.
+
+### Phases
+
+1. Inspect current front-end initialization and asset enqueue behavior - complete
+2. Add a machine-readable feature loading plan for search/share/comments-profile/APlayer/PhotoSwipe/Mermaid/KaTeX - complete
+3. Extend `npm run check:size` to print and validate loading-plan trigger/gate metadata - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- Keep `assets/dist/reimu.js` as a single classic script in this round.
+- Do not add dynamic imports or change WordPress script enqueue handles yet.
+- Use the loading plan as the source of truth for the next actual runtime split.

@@ -26,6 +26,7 @@ npm run lint:php
 - `assets/dist/reimu.js` must stay at or below 120 KB.
 - `assets/dist/reimu.css` must stay at or below 220 KB.
 - The main `reimu.js` build must remain compatible with classic script loading and must not contain `import.meta` or unresolved dynamic `import(` calls.
+- The feature loading report comes from `tools/feature-loading-plan.mjs`; update it before moving code out of the main bundle.
 
 ## Source Layout
 

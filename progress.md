@@ -151,3 +151,14 @@
 - Confirmed built `assets/dist/reimu.js` still has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2314.zip`, includes `inc/settings/admin.php`, `inc/settings/schema.php`, `inc/settings/renderers.php`, and `inc/settings/page.php`, and excludes development/local-only files.
 - Next round should start runtime lazy-loading/budget enforcement rather than continuing settings-file decomposition.
+
+## 2026-06-03 Runtime Loading Strategy
+
+- Started the runtime lazy-loading and budget-enforcement round from a clean `main...origin/main` worktree.
+- Added `tools/feature-loading-plan.mjs` with loading metadata for search, share, comments/profile, APlayer, PhotoSwipe, Mermaid, and KaTeX.
+- Extended `tools/check-size.mjs` so `npm run check:size` reports the loading plan and fails if a feature entry is missing trigger, target loading mode, or gate metadata.
+- Updated `docs/development.md` to document that the size check now also owns the feature loading plan report.
+- Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 72 theme PHP files, `npm run package`, and `npm run check:package`.
+- Confirmed built `assets/dist/reimu.js` parses as a classic script and contains no `import.meta`, dynamic `import(`, or top-level ESM import/export.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2326.zip`, reported 129 entries, and excluded development/local-only files.
+- Next round should start the first actual runtime source extraction target from this loading plan, preferably search or PhotoSwipe, while preserving the single classic public entry.

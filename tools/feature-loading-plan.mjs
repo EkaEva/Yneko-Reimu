@@ -1,0 +1,79 @@
+export const featureLoadingPlan = [
+  {
+    feature: 'search',
+    owner: 'assets/src/reimu/search.js',
+    status: 'candidate',
+    currentLoading: 'main-bundle',
+    targetLoading: 'interaction',
+    trigger: '#nav-search-btn click or keyboard shortcut',
+    gate: 'window.REIMU_CONFIG.search',
+    notes: 'Keep window.ReimuSearchClose available when the search popup is present.'
+  },
+  {
+    feature: 'share',
+    owner: 'assets/src/reimu/share.js',
+    status: 'partial-lazy',
+    currentLoading: 'main-bundle plus lazy qrcode.js',
+    targetLoading: 'interaction',
+    trigger: '.reimu-post-share__button[data-share="weixin"] click',
+    gate: '.reimu-post-share',
+    notes: 'The Weixin QR dependency already loads as a classic script only when needed.'
+  },
+  {
+    feature: 'comments-profile',
+    owner: 'assets/src/reimu.js',
+    status: 'candidate',
+    currentLoading: 'main-bundle',
+    targetLoading: 'page-context',
+    trigger: '#comments, #respond, #reimu-profile-modal, or [data-reimu-profile-open]',
+    gate: 'window.REIMU_CONFIG.login and window.REIMU_CONFIG.comments',
+    notes: 'Preserve existing AJAX actions, nonces, payloads, and window.ReimuWP rebind behavior.'
+  },
+  {
+    feature: 'aplayer',
+    owner: 'assets/src/reimu.js and inc/enqueue.php',
+    status: 'condition-loaded',
+    currentLoading: 'conditional vendor dependency plus main-bundle initializer',
+    targetLoading: 'page-context-or-visibility',
+    trigger: '#aplayer or meting-js entering viewport or user interaction',
+    gate: 'window.REIMU_CONFIG.aplayer.audio',
+    notes: 'APlayer vendor files are only enqueued when configured audio exists.'
+  },
+  {
+    feature: 'photoswipe',
+    owner: 'assets/src/reimu.js and inc/enqueue.php',
+    status: 'candidate',
+    currentLoading: 'optional vendor CSS plus main-bundle overlay implementation',
+    targetLoading: 'page-context',
+    trigger: '.article-entry img or .reimu-photoswipe-item on singular content',
+    gate: 'window.REIMU_CONFIG.photoswipe',
+    notes: 'Do not wrap linked images twice; preserve the current lightweight overlay behavior.'
+  },
+  {
+    feature: 'mermaid',
+    owner: 'assets/src/reimu.js and inc/enqueue.php',
+    status: 'condition-loaded',
+    currentLoading: 'conditional vendor dependency plus main-bundle initializer',
+    targetLoading: 'content-context',
+    trigger: 'pre code.language-mermaid, code.language-mermaid, or .mermaid',
+    gate: 'window.REIMU_CONFIG.mermaid',
+    notes: 'Vendor script is currently enqueued only when the feature switch is enabled.'
+  },
+  {
+    feature: 'katex',
+    owner: 'assets/src/reimu.js and inc/enqueue.php',
+    status: 'condition-loaded',
+    currentLoading: 'conditional vendor dependency plus main-bundle initializer',
+    targetLoading: 'content-context',
+    trigger: 'math delimiters in .article-entry',
+    gate: 'window.REIMU_CONFIG.katex',
+    notes: 'Vendor CSS and scripts are currently enqueued only when the feature switch is enabled.'
+  }
+];
+
+export function featureLoadingSummary() {
+  return featureLoadingPlan.map((entry) => {
+    const printableStatus = entry.status.replace(/-/g, ' ');
+    return `[loading] ${entry.feature}: ${printableStatus}; trigger=${entry.trigger}; target=${entry.targetLoading}.`;
+  });
+}

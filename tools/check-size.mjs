@@ -1,6 +1,7 @@
 import { readFile, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { featureLoadingPlan, featureLoadingSummary } from './feature-loading-plan.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
@@ -48,6 +49,19 @@ for (const check of classicScriptPatterns) {
 
 if (!failed) {
   console.log('[classic-script] assets/dist/reimu.js is compatible with classic script loading.');
+}
+
+for (const line of featureLoadingSummary()) {
+  console.log(line);
+}
+
+const incompleteLoadingEntries = featureLoadingPlan.filter((entry) => !entry.trigger || !entry.targetLoading || !entry.gate);
+if (incompleteLoadingEntries.length) {
+  console.error('[loading] Feature loading plan entries must include trigger, targetLoading, and gate:');
+  for (const entry of incompleteLoadingEntries) {
+    console.error(`- ${entry.feature}`);
+  }
+  failed = true;
 }
 
 if (failed) {
