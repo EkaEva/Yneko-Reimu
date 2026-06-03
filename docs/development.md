@@ -46,6 +46,7 @@ Admin settings JavaScript is maintained in `theme/Yneko-Reimu/assets/src/admin-s
 - Do not rename saved settings, post meta keys, AJAX action names, nonce names, documented filters/actions, template paths, virtual page slugs, or public URLs without a compatibility plan.
 - New settings need a default value, sanitizer, UI location, migration decision, and a note about whether they affect front-end loading.
 - Heavy or third-party features should stay disabled by default and gated by a setting, page context, or user interaction.
+- Before moving comments/profile AJAX handlers, login-state DOM replacement, or runtime boundaries, follow `docs/comments-profile-contract.md`.
 
 ## Package Checks
 

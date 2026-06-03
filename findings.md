@@ -249,3 +249,11 @@
 - Build results after the split: `reimu.js` is 108.3 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
 - The release ZIP check confirmed `assets/src/reimu/profile-form.js`, `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are not packaged, while `assets/dist/reimu.js` is included.
 - Remaining comments/profile code is now mostly AJAX-sensitive, polling-driven, or rebind-heavy. The next round should pause extraction and create a focused manual QA checklist/contract for comments and profile before moving any request handlers or runtime boundaries.
+
+## 2026-06-04 Comments/Profile Runtime Contract Findings
+
+- `docs/comments-profile-contract.md` now captures the preserved comments/profile public surface: front-end config keys, AJAX action names, DOM selector contracts, and runtime invariants.
+- The manual QA checklist covers the regression paths that automated checks do not exercise locally: guest auth, profile save/avatar/TOTP/email/tag flows, comment submit/reply/upload/like/edit/delete, admin review status, PJAX navigation, and rebind duplication.
+- The contract makes request-handler movement a gated change. Moving login/register/lost-password, profile request handlers, comment mutation handlers, or introducing `reimu-comments.js` / `reimu-profile.js` requires a before-and-after manual QA pass.
+- `docs/development.md` now links to the contract from development constraints so it is visible to contributors, while `PROJECT.md` / `AGENTS.md` remain local-only and uncommitted.
+- The next implementation round should audit the remaining `assets/src/reimu.js` comments/profile code against this contract and decide whether to extract a small request-free module or stop front-end splitting until manual WordPress QA is available.

@@ -252,3 +252,11 @@
 - Generated and checked `releases/Yneko-Reimu-v0.1.15-20260604-0038.zip`.
 - Manual ZIP check confirmed `assets/dist/reimu.js` is included, while `assets/src/reimu/profile-form.js`, `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are excluded.
 - Next round should stop broad source extraction briefly and build a focused manual QA checklist/runtime contract for comments and profile before any AJAX-sensitive handler is moved.
+
+## 2026-06-04 Comments/Profile Runtime Contract
+
+- Added `docs/comments-profile-contract.md` to document the comments/profile preserved surface: config keys, AJAX actions, DOM selectors, runtime invariants, allowed split boundaries, manual QA checklist, and verification commands.
+- Linked the new contract from `docs/development.md` so future contributors see it before changing comments/profile AJAX handlers, login-state DOM replacement, or runtime boundaries.
+- Updated `task_plan.md` and `findings.md` with the new contract as a safety gate for later modularity work.
+- This round intentionally changed documentation/process files only; no runtime code or build artifacts were changed.
+- Next round should audit remaining comments/profile code in `assets/src/reimu.js` against the contract and decide whether one more request-free source module is safe, or whether to pause front-end splitting until manual WordPress QA can be run.

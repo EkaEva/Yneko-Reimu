@@ -430,3 +430,21 @@ Goal: extract profile modal form-only helpers while keeping profile fetch/save, 
 - The module owns URL normalization, password validation/toggles, avatar dirty/hint state, tag error rendering, custom tag row rendering, and selected tag limit UI.
 - Profile payload application, `profile_get`, `profile_save`, `profile_email_code`, `profile_totp_generate`, login-state refresh, and review-status polling remain in the main source file.
 - Remaining comments/profile code is now mostly AJAX-sensitive or rebind-heavy; the next round should reassess boundaries before any further split.
+
+## 2026-06-04 Comments/Profile Runtime Contract
+
+Goal: create a written contract and manual QA checklist for the comments/profile runtime before any future AJAX-sensitive extraction or lazy runtime split.
+
+### Phases
+
+1. Document preserved config keys, AJAX actions, DOM selectors, and runtime invariants - complete
+2. Document manual QA coverage for guest auth, logged-in profile, comments, review status, and PJAX rebinds - complete
+3. Link the contract from public development docs - complete
+4. Record next implementation direction - complete
+
+### Decisions
+
+- `docs/comments-profile-contract.md` is a public development contract, not a new theme API.
+- The contract explicitly blocks moving login/profile/comment request handlers or introducing `reimu-comments.js` / `reimu-profile.js` without a dedicated manual QA pass.
+- `docs/development.md` now points developers to the contract before changing comments/profile AJAX handlers, DOM replacement, or runtime boundaries.
+- The next round should use this contract to audit the remaining `assets/src/reimu.js` comments/profile code and identify whether any request-free module remains worth extracting.
