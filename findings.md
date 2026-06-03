@@ -239,3 +239,13 @@
 - Build results after the split: `reimu.js` is 107.1 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
 - The release ZIP check confirmed `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are not packaged, while `assets/dist/reimu.js` is included.
 - The remaining comment/profile extraction candidates are narrower. A safe next pass can move profile form UI-only helpers, but login/register/lost-password submission, profile save, profile polling, comment submit, comment like, edit, delete, and upload AJAX should remain in the main bundle unless a stronger runtime contract and manual QA checklist are created.
+
+## 2026-06-04 Profile Form UI Source Module Split Findings
+
+- `assets/src/reimu/profile-form.js` now owns profile modal form-only helpers: URL normalization, password validation and visibility toggles, avatar hint/dirty-state updates, profile tag error rendering, custom tag row rendering, custom tag capacity, and selected-tag limit UI.
+- `assets/src/reimu.js` keeps the AJAX-sensitive profile flows: `yneko_reimu_profile_get`, `yneko_reimu_profile_save`, `yneko_reimu_profile_email_code`, `yneko_reimu_profile_totp_generate`, profile avatar upload, status acknowledgement/polling, login-state refresh, and modal DOM replacement reinitialization.
+- Avatar dirty tracking now uses an injected mutable state object so the old submit decision remains explicit without keeping the helper implementation inline.
+- Tag error timeout state is also injected, preserving the previous delayed clear behavior while moving the DOM-only rendering logic out of the main source file.
+- Build results after the split: `reimu.js` is 108.3 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
+- The release ZIP check confirmed `assets/src/reimu/profile-form.js`, `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are not packaged, while `assets/dist/reimu.js` is included.
+- Remaining comments/profile code is now mostly AJAX-sensitive, polling-driven, or rebind-heavy. The next round should pause extraction and create a focused manual QA checklist/contract for comments and profile before moving any request handlers or runtime boundaries.

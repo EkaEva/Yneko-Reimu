@@ -242,3 +242,13 @@
 - Ran `npm run package` followed by `npm run check:package`; generated and checked `releases/Yneko-Reimu-v0.1.15-20260604-0030.zip`.
 - Final package check reported 132 entries, included `assets/dist/reimu.js`, and excluded `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
 - Next round should extract profile form UI-only helpers, or pause source splitting to reassess the remaining comments/profile code before any AJAX-sensitive extraction.
+
+## 2026-06-04 Profile Form UI Source Module Split
+
+- Added `theme/Yneko-Reimu/assets/src/reimu/profile-form.js` for profile modal URL normalization, password validation/toggles, avatar hint/dirty-state helpers, custom tag rendering, tag error display, and selected tag limit UI.
+- Updated `theme/Yneko-Reimu/assets/src/reimu.js` to consume the new internal module while keeping profile fetch/save, email code, TOTP generation, avatar upload, login-state refresh, and profile review-status polling in the main entrypoint.
+- Verification passed before final record updates: `npm run check:js`, `npm run build`, `npm run check:size`, explicit classic-script parse checks for `reimu.js`, `reimu-search.js`, `reimu-photoswipe.js`, and `reimu-share.js`, `npm audit --audit-level=moderate`, `npm run lint:php`, full `php -l` over 72 theme PHP files, `npm run check`, `npm run package`, and `npm run check:package`.
+- Final size check in `npm run check` reported `reimu.js` at 108.3 KB / 120 KB, with lazy runtimes and CSS still under budget.
+- Generated and checked `releases/Yneko-Reimu-v0.1.15-20260604-0038.zip`.
+- Manual ZIP check confirmed `assets/dist/reimu.js` is included, while `assets/src/reimu/profile-form.js`, `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are excluded.
+- Next round should stop broad source extraction briefly and build a focused manual QA checklist/runtime contract for comments and profile before any AJAX-sensitive handler is moved.

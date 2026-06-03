@@ -412,3 +412,21 @@ Goal: continue source-only comments modularity by extracting comment sorting, ho
 - The module owns only DOM/list behavior: hot score, latest activity, load-more item collection, load-more sync, sort mode, and sort button binding.
 - `appendSubmittedComment()`, `initCommentLikes()`, `initCommentOwnerActions()`, and `initAjaxCommentSubmit()` remain in the main source file because they rebind or perform AJAX-sensitive flows.
 - The next round should target profile form UI-only helpers or pause source splitting to reassess whether the remaining comments/profile code is now too AJAX-sensitive for safe extraction.
+
+## 2026-06-04 Profile Form UI Source Module Split
+
+Goal: extract profile modal form-only helpers while keeping profile fetch/save, email-code, TOTP, avatar upload, login-state refresh, and profile status polling in the main entrypoint.
+
+### Phases
+
+1. Extract profile form UI helpers into an internal source module - complete
+2. Keep profile AJAX actions and status polling in `assets/src/reimu.js` - complete
+3. Verify classic script compatibility, size budgets, audit, PHP lint, package contents, and local-only exclusions - complete
+4. Record remaining extraction risk - complete
+
+### Decisions
+
+- `assets/src/reimu/profile-form.js` is an internal source module, not a public API and not a release ZIP file.
+- The module owns URL normalization, password validation/toggles, avatar dirty/hint state, tag error rendering, custom tag row rendering, and selected tag limit UI.
+- Profile payload application, `profile_get`, `profile_save`, `profile_email_code`, `profile_totp_generate`, login-state refresh, and review-status polling remain in the main source file.
+- Remaining comments/profile code is now mostly AJAX-sensitive or rebind-heavy; the next round should reassess boundaries before any further split.
