@@ -251,3 +251,21 @@ Goal: move independent settings-page renderer helpers out of `inc/settings.php` 
 - `inc/settings/renderers.php` is internal and loaded by `inc/settings.php`.
 - Renderer function names and call sites stay unchanged.
 - The main tabbed form remains in `inc/settings.php`; extracting it should be the final settings-page render pass.
+
+## 2026-06-03 Settings Page Split
+
+Goal: finish the settings first-stage decomposition by moving the main tabbed settings page renderer out of `inc/settings.php`.
+
+### Phases
+
+1. Confirm `yneko_reimu_render_settings_page()` is the final large render block in `inc/settings.php` - complete
+2. Move `yneko_reimu_render_settings_page()` into `inc/settings/page.php` - complete
+3. Keep `inc/settings.php` as the settings entrypoint with module requires, registration, and save cleanup hooks - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- `inc/settings/page.php` is internal and loaded by `inc/settings.php`.
+- The settings page callback remains `yneko_reimu_render_settings_page`.
+- All form field names, tab keys, option names, nonces, and admin page slug remain unchanged.
+- Settings PHP first-stage decomposition is now complete enough to move the next round back to runtime lazy-loading and budget enforcement.

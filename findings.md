@@ -130,3 +130,10 @@
 - `inc/settings/renderers.php` now owns repeatable friend/music rows plus comment upload, avatar, user badge, and admin GIF upload renderer fragments.
 - `inc/settings.php` is reduced to settings registration, post-save cleanup, and the main tabbed form renderer. The last large responsibility in the file is the tabbed form itself.
 - The next settings step should either template the tabbed form into a dedicated module or pause settings work and start runtime lazy-loading enforcement.
+
+## 2026-06-03 Settings Page Split Findings
+
+- `yneko_reimu_render_settings_page()` was the final large settings renderer left in `inc/settings.php`; moving it to `inc/settings/page.php` leaves the entrypoint focused on module loading, settings registration, and post-save cleanup.
+- The settings page callback name remains unchanged, so the existing `add_theme_page()` callback in `inc/settings/admin.php` continues to work.
+- The settings first-stage split now has four internal modules: `schema.php`, `admin.php`, `renderers.php`, and `page.php`.
+- With settings decomposition complete for this phase, the next higher-value work is runtime lazy-loading/budget enforcement rather than further PHP file shuffling.

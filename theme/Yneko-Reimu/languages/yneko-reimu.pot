@@ -276,7 +276,7 @@ msgstr ""
 msgid "当前用户无权上传 SVG。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/page.php
 msgid "当前账户已绑定 GitHub：%s"
 msgstr ""
 
@@ -508,7 +508,7 @@ msgstr ""
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/page.php
 msgid "广告/官方/测试"
 msgstr ""
 
@@ -2000,11 +2000,11 @@ msgstr ""
 msgid "Yneko-Reimu"
 msgstr ""
 
-#: inc/settings/admin.php inc/settings.php
+#: inc/settings/admin.php inc/settings/page.php
 msgid "Yneko-Reimu 设置"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/page.php
 msgid "Yneko-Reimu 设置分类"
 msgstr ""
 

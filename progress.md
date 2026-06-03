@@ -142,3 +142,12 @@
 - Verification passed: `npm run lint:php`, full `php -l` over 71 theme PHP files, `npm run check`, `npm audit --audit-level=moderate`, `npm run package`, and `npm run check:package`.
 - Confirmed built `assets/dist/reimu.js` still has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2307.zip`, includes `inc/settings/admin.php`, `inc/settings/schema.php`, and `inc/settings/renderers.php`, and excludes development/local-only files.
+
+## 2026-06-03 Settings Page Split
+
+- Split the main settings page renderer `yneko_reimu_render_settings_page()` from `inc/settings.php` into `inc/settings/page.php`.
+- Kept `inc/settings.php` as the settings entrypoint with module requires, `register_setting()`, and blocked user badge cleanup after settings save.
+- Verification passed: `npm run lint:php`, full `php -l` over 72 theme PHP files, `npm run check`, `npm audit --audit-level=moderate`, `npm run package`, and `npm run check:package`.
+- Confirmed built `assets/dist/reimu.js` still has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2314.zip`, includes `inc/settings/admin.php`, `inc/settings/schema.php`, `inc/settings/renderers.php`, and `inc/settings/page.php`, and excludes development/local-only files.
+- Next round should start runtime lazy-loading/budget enforcement rather than continuing settings-file decomposition.
