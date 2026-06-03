@@ -202,3 +202,12 @@
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 72 theme PHP files, `npm run package`, and `npm run check:package`.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2353.zip`, reported 132 entries, included `assets/dist/reimu-share.js` and `assets/dist/qrcode.js`, and excluded manifest/source/local-only files.
 - Next round should pause runtime splitting for a focused comments/profile safety and interface review before touching AJAX-sensitive code, unless choosing another non-AJAX visual runtime.
+
+## 2026-06-03 Comments/Profile Safety Interface Review
+
+- Started from a clean `main...origin/main` worktree.
+- Reviewed `inc/comments.php`, `inc/comments/uploads.php`, `inc/enqueue.php`, and the comments/profile sections of `assets/src/reimu.js`.
+- Recorded the comments/profile AJAX action map, nonce map, front-end payload map, DOM trigger map, and rebind surfaces in `findings.md`.
+- Confirmed this round should not move runtime code because comments/profile includes auth, profile save, upload review, comment mutation, login-state DOM replacement, and polling refresh behavior.
+- Updated `task_plan.md` with a completed comments/profile safety interface review phase.
+- Next round should start a source-only extraction of low-risk comment UI utilities/binders from `assets/src/reimu.js`, keeping the built main classic script and all AJAX/profile handlers unchanged.

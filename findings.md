@@ -165,3 +165,46 @@
 - `assets/src/reimu-share.js` now registers the internal `window.ReimuShareRuntime`, and the main script only loads it on pages with `.share-wrapper`.
 - Weixin QR generation remains second-stage lazy: `assets/dist/reimu-share.js` loads `assets/dist/qrcode.js` only when the Weixin share link is clicked.
 - Public behavior is unchanged: share Customizer settings, share URLs, template placement, and non-Weixin outbound links are still owned by PHP markup.
+
+## 2026-06-03 Comments/Profile Safety Interface Review Findings
+
+- The comments/profile area is the highest-risk remaining front-end split candidate because it combines authentication, profile saves, upload review state, comment mutation, login-state DOM replacement, and polling-driven refresh behavior.
+- Public config/nonce surface from `window.REIMU_CONFIG` must stay stable:
+  - `login.ajaxUrl`, `login.nonce`, `login.registerNonce`, `login.registerCodeNonce`, `login.lostNonce`, `login.lostCodeNonce`, `login.profileNonce`, and `login.logoutNonce`.
+  - `commentUploads.enabled`, `commentUploads.imageEnabled`, `commentUploads.gifEnabled`, `commentUploads.isLoggedIn`, `commentUploads.nonce`, and `commentUploads.gifs`.
+  - `comments.nonce`.
+- Front-end auth/profile AJAX actions currently sent by `assets/src/reimu.js`:
+  - `yneko_reimu_login` with `nonce=login.nonce`, `log`, `pwd`, `rememberme`, optional `two_factor_code`.
+  - `yneko_reimu_register_code` with `nonce=login.registerCodeNonce`, `display_name`, `user_email`, and `redirect_to`.
+  - `yneko_reimu_register` with `nonce=login.registerNonce`, `display_name`, `user_email`, `user_password`, `verify_code`, and `redirect_to`.
+  - `yneko_reimu_lostpassword_code` with `nonce=login.lostCodeNonce`, `user_login`, and `redirect_to`.
+  - `yneko_reimu_lostpassword` with `nonce=login.lostNonce`, `user_login`, `user_password`, `verify_code`, and `redirect_to`.
+  - `yneko_reimu_profile_get`, `yneko_reimu_profile_status_ack`, `yneko_reimu_profile_email_code`, `yneko_reimu_profile_totp_generate`, `yneko_reimu_profile_avatar_upload`, and `yneko_reimu_profile_save`, all gated by `nonce=login.profileNonce`.
+  - `yneko_reimu_logout` gated by `nonce=login.logoutNonce`.
+- Front-end comment AJAX actions currently sent by `assets/src/reimu.js`:
+  - `yneko_reimu_comment_upload` with `nonce=commentUploads.nonce`, `type`, and uploaded `file`.
+  - `yneko_reimu_comment_upload_discard` with `nonce=commentUploads.nonce`, `url`, and `cleanup_key`.
+  - `yneko_reimu_submit_comment` with `nonce=comments.nonce` plus the normal WordPress comment form fields.
+  - `yneko_reimu_comment_like` with per-comment `data-like-nonce` and `comment_id`.
+  - `yneko_reimu_edit_comment` / `yneko_reimu_delete_comment` with per-comment `data-comment-manage-nonce` and `comment_id`.
+- PHP hook/action surface to preserve:
+  - Public/guest auth: `wp_ajax_nopriv_yneko_reimu_login`, `wp_ajax_nopriv_yneko_reimu_register_code`, `wp_ajax_nopriv_yneko_reimu_register`, `wp_ajax_nopriv_yneko_reimu_lostpassword_code`, and `wp_ajax_nopriv_yneko_reimu_lostpassword`.
+  - Login-state refresh: `wp_ajax_yneko_reimu_login_state` and `wp_ajax_nopriv_yneko_reimu_login_state`.
+  - Logged-in profile/logout: `wp_ajax_yneko_reimu_logout`, `wp_ajax_yneko_reimu_profile_get`, `wp_ajax_yneko_reimu_profile_status_ack`, `wp_ajax_yneko_reimu_profile_email_code`, `wp_ajax_yneko_reimu_profile_totp_generate`, `wp_ajax_yneko_reimu_profile_avatar_upload`, and `wp_ajax_yneko_reimu_profile_save`.
+  - Comments: `wp_ajax_yneko_reimu_comment_like`, `wp_ajax_nopriv_yneko_reimu_comment_like`, `wp_ajax_yneko_reimu_edit_comment`, `wp_ajax_yneko_reimu_delete_comment`, `wp_ajax_yneko_reimu_submit_comment`, and `wp_ajax_nopriv_yneko_reimu_submit_comment`.
+  - Comment media uploads/admin: `wp_ajax_yneko_reimu_comment_upload`, `wp_ajax_yneko_reimu_comment_upload_discard`, `wp_ajax_yneko_reimu_admin_add_gif_media`, `admin_init` handlers for comment media review, avatar review, user badge review, and admin GIF uploads.
+- DOM triggers/rebind surface to preserve:
+  - Comment tools use `[data-comment-tool]`, `[data-comment-popover]`, `[data-comment-upload-button]`, `[data-comment-upload-input]`, `[data-comment-gif-library]`, and textareas under `.reimu-comment-form`.
+  - Mutating comment actions use `#comments [data-comment-like]`, `[data-comment-edit]`, `[data-comment-delete]`, `[data-comment-sort]`, `#respond`, and WordPress reply/cancel behavior.
+  - Auth/profile uses `#reimu-login-modal`, `#reimu-profile-modal`, `[data-reimu-profile-open]`, `.reimu-comment-login-link`, `[data-reimu-ajax-logout]`, `[data-reimu-github-popup]`, and `[data-reimu-auth-popup]`.
+  - `refreshCommentLoginState()` may inject/replace login/profile modal HTML and current-user identity HTML, so any split must still re-run `initLoginModal()`, `initProfileModal()`, `initCommentAjaxLogout()`, `initCommentLoginTriggers()`, and comment upload row state.
+- Safe source-module extraction candidates for the next round:
+  - Pure comment media text utilities: token store, token resolution, media counting, media cleanup request wrapper, textarea insertion, preview rendering.
+  - Pure comment UI binders with no PHP contract changes: selector tabs, popover open/close, GIF library rendering, upload row visibility, sort/load-more helpers.
+  - Profile form UI utilities that do not send requests: password visibility/validation, URL normalization, avatar preview dirty-state tracking, custom-tag row rendering and selection cap logic.
+- High-risk code that should remain in the main bundle until a stricter runtime contract exists:
+  - Login/register/lost-password submission and nonce refresh.
+  - Profile save, profile avatar upload, email code, TOTP generation, profile status polling, and status acknowledgement.
+  - Comment submit, edit, delete, like, upload, upload discard, and login-state refresh.
+  - DOM replacement after login/logout/profile refresh because it affects later `window.ReimuWP.init()` / PJAX rebinding behavior.
+- Recommended implementation sequence: first extract source-only utilities and binders from `assets/src/reimu.js` into internal modules, rebuild the same main `assets/dist/reimu.js`, and only then consider a lazy `reimu-comments.js` runtime for non-auth comment UI. Comments/profile AJAX should be split only after tests or manual QA cover login, logout, profile save, comment submit, upload review, and PJAX navigation.

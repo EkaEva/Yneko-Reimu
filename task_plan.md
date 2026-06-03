@@ -340,3 +340,21 @@ Goal: move share popup and Weixin QR behavior out of the main public script whil
 - Keep `assets/dist/qrcode.js` as the Weixin-only QR dependency loaded from inside the share runtime.
 - Keep all share Customizer settings, share link URLs, template markup, and public post/virtual page placement unchanged.
 - The next round should either review comments/profile before runtime work there, or split a non-AJAX visual/content runtime with a similarly clear trigger.
+
+## 2026-06-03 Comments/Profile Safety Interface Review
+
+Goal: map the comments/profile public interface before any AJAX-sensitive runtime split, so future extraction preserves nonces, actions, payload fields, DOM triggers, login-state refresh behavior, and review-status polling.
+
+### Phases
+
+1. Inventory comment/profile AJAX actions and nonce names - complete
+2. Map front-end DOM triggers and payload fields - complete
+3. Identify safe split boundaries and high-risk prerequisites - complete
+4. Record next implementation direction without changing runtime code - complete
+
+### Decisions
+
+- Do not split comments/profile into a lazy runtime as one large move.
+- Keep all auth, profile, comment submit/edit/delete/like, upload, and review-status AJAX action names unchanged.
+- Keep `window.REIMU_CONFIG.login`, `window.REIMU_CONFIG.commentUploads`, `window.REIMU_CONFIG.comments`, and `window.ReimuWP.init()` behavior unchanged.
+- The next implementation round should extract low-risk comment UI/source modules first, while keeping AJAX submit/upload/profile save handlers in the main bundle until there is a narrower runtime contract.
