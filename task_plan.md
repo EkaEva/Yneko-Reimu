@@ -394,3 +394,21 @@ Goal: continue comments/profile modularity with a source-only extraction of comm
 - The module receives `initCommentUploadRows()` as an injected dependency so upload UI can still initialize without moving upload request code.
 - Existing comment toolbar DOM attributes, preview behavior, GIF insertion, URL insertion, upload row behavior, and `window.ReimuWP.init()` rebinding remain unchanged.
 - The next round should target either comment sorting/load-more helpers or profile form-only helpers, still avoiding AJAX handler migration.
+
+## 2026-06-04 Comment List Source Module Split
+
+Goal: continue source-only comments modularity by extracting comment sorting, hot-score calculation, latest-activity calculation, and load-more helpers while keeping comment submit, like, edit, delete, and login/profile flows in the main entrypoint.
+
+### Phases
+
+1. Extract comment sorting and load-more helpers into an internal source module - complete
+2. Keep submitted-comment insertion and AJAX mutation handlers in `assets/src/reimu.js` - complete
+3. Verify classic script compatibility, size budgets, audit, PHP lint, package contents, and local-only exclusions - complete
+4. Record the next low-risk extraction target - complete
+
+### Decisions
+
+- `assets/src/reimu/comment-list.js` is an internal source module, not a public API and not a release ZIP file.
+- The module owns only DOM/list behavior: hot score, latest activity, load-more item collection, load-more sync, sort mode, and sort button binding.
+- `appendSubmittedComment()`, `initCommentLikes()`, `initCommentOwnerActions()`, and `initAjaxCommentSubmit()` remain in the main source file because they rebind or perform AJAX-sensitive flows.
+- The next round should target profile form UI-only helpers or pause source splitting to reassess whether the remaining comments/profile code is now too AJAX-sensitive for safe extraction.

@@ -232,3 +232,13 @@
 - `npm run check:package` was first started in parallel with packaging and inspected the previous `0011` ZIP; rerunning after package completion correctly inspected `Yneko-Reimu-v0.1.15-20260604-0020.zip`.
 - Final package check reported 132 entries, included `assets/dist/reimu.js`, and excluded `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
 - Next round should extract comment sorting/load-more helpers or profile form UI-only helpers, still keeping AJAX request handlers in the main bundle.
+
+## 2026-06-04 Comment List Source Module Split
+
+- Started from a clean `main...origin/main` worktree.
+- Added `theme/Yneko-Reimu/assets/src/reimu/comment-list.js` for comment hot sorting, latest activity time, load-more item collection, load-more visibility syncing, sort mode lookup, and sort/load-more button binding.
+- Kept submitted-comment insertion, comment submit, comment like, edit/delete, WordPress reply movement, login-state refresh, profile save, and profile polling in `assets/src/reimu.js`.
+- Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, explicit classic-script parse checks for `reimu.js`, `reimu-search.js`, `reimu-photoswipe.js`, and `reimu-share.js`, `npm audit --audit-level=moderate`, `npm run lint:php`, full `php -l` over 72 theme PHP files, and `npm run check`.
+- Ran `npm run package` followed by `npm run check:package`; generated and checked `releases/Yneko-Reimu-v0.1.15-20260604-0030.zip`.
+- Final package check reported 132 entries, included `assets/dist/reimu.js`, and excluded `assets/src/reimu/comment-list.js`, `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
+- Next round should extract profile form UI-only helpers, or pause source splitting to reassess the remaining comments/profile code before any AJAX-sensitive extraction.
