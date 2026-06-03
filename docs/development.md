@@ -25,6 +25,7 @@ npm run lint:php
 
 - `assets/dist/reimu.js` must stay at or below 120 KB.
 - `assets/dist/reimu-search.js` must stay at or below 24 KB.
+- `assets/dist/reimu-photoswipe.js` must stay at or below 24 KB.
 - `assets/dist/reimu.css` must stay at or below 220 KB.
 - Public runtime script builds must remain compatible with classic script loading and must not contain `import.meta`, unresolved dynamic `import(` calls, or top-level ESM import/export syntax.
 - The feature loading report comes from `tools/feature-loading-plan.mjs`; update it before moving code out of the main bundle.

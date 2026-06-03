@@ -41,13 +41,13 @@ export const featureLoadingPlan = [
   },
   {
     feature: 'photoswipe',
-    owner: 'assets/src/reimu.js and inc/enqueue.php',
-    status: 'candidate',
-    currentLoading: 'optional vendor CSS plus main-bundle overlay implementation',
+    owner: 'assets/src/reimu-photoswipe.js and assets/src/reimu/photoswipe.js',
+    status: 'lazy-runtime',
+    currentLoading: 'optional vendor CSS plus lazy classic runtime',
     targetLoading: 'page-context',
     trigger: '.article-entry img or .reimu-photoswipe-item on singular content',
     gate: 'window.REIMU_CONFIG.photoswipe',
-    notes: 'Do not wrap linked images twice; preserve the current lightweight overlay behavior.'
+    notes: 'Main reimu.js only loads the runtime when PhotoSwipe is enabled and article images exist.'
   },
   {
     feature: 'mermaid',

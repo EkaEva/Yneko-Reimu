@@ -151,3 +151,10 @@
 - The main bundle now keeps only a small search loader and loads `assets/dist/reimu-search.js` as a classic script on first search interaction.
 - `reimu-search.js` exposes internal `window.ReimuSearchRuntime.init/open` methods; existing public behavior through `window.ReimuSearchClose` is preserved.
 - `npm run check:size` now budgets the lazy search runtime at 24 KB and checks both `reimu.js` and `reimu-search.js` for classic script compatibility.
+
+## 2026-06-03 PhotoSwipe Runtime Split Findings
+
+- PhotoSwipe was a low-risk second runtime split because the existing implementation was self-contained: image wrapping, click binding, overlay rendering, keyboard controls, and destroy all lived in one contiguous front-end block.
+- `assets/src/reimu/photoswipe.js` now owns the implementation, and `assets/src/reimu-photoswipe.js` registers the internal `window.ReimuPhotoSwipeRuntime` classic runtime.
+- The main script now loads `assets/dist/reimu-photoswipe.js` only when `window.REIMU_CONFIG.photoswipe` is enabled and article images or existing PhotoSwipe items are present.
+- The compatibility surface is preserved: `window.REIMU_PHOTOSWIPE.destroy()` still exists while the overlay is open, and the setting/config gates are unchanged.

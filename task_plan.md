@@ -304,3 +304,21 @@ Goal: move the search implementation out of the main public script while preserv
 - Keep `assets/dist/reimu.js` as the single WordPress-enqueued main script.
 - Do not expose the internal search runtime as a documented public API.
 - The next runtime split candidate should be PhotoSwipe because it has a visible page-context trigger and no AJAX/security payloads.
+
+## 2026-06-03 PhotoSwipe Runtime Split
+
+Goal: move the lightweight image-preview implementation out of the main public script while preserving the PhotoSwipe feature switch, image wrapping behavior, overlay UI, and `window.REIMU_PHOTOSWIPE.destroy()` compatibility.
+
+### Phases
+
+1. Inspect PhotoSwipe function boundaries and integration points - complete
+2. Add a lazy classic PhotoSwipe runtime entry and internal source module - complete
+3. Extend build and size/classic checks to cover the PhotoSwipe runtime - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- Use `assets/dist/reimu-photoswipe.js` as an internal lazy classic runtime file.
+- Keep the existing `yneko_reimu_photoswipe_enable` setting and `window.REIMU_CONFIG.photoswipe` gate unchanged.
+- Keep the main WordPress-enqueued script as `assets/dist/reimu.js`; do not enqueue the PhotoSwipe runtime through PHP.
+- The next runtime candidate should avoid comment/profile security flows until a focused review plan is ready.

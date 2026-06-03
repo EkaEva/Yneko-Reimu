@@ -57,6 +57,7 @@ async function buildClassicScript(input, outputName) {
 
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu.js'), 'reimu.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-search.js'), 'reimu-search.js');
+await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'reimu-photoswipe.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/admin-settings.js'), 'admin-settings.js');
 
 async function listDistOutputs(dir, prefix = 'assets/dist') {

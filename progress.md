@@ -176,3 +176,16 @@
 - Confirmed `assets/dist/reimu.js` and `assets/dist/reimu-search.js` parse as classic scripts and contain no `import.meta`, dynamic `import(`, or top-level ESM import/export.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2336.zip`, reported 130 entries, included `assets/dist/reimu-search.js`, and excluded manifest/source/local-only files.
 - Next round should split or lazy-gate PhotoSwipe runtime behavior, because search now has the first interaction-loaded classic runtime.
+
+## 2026-06-03 PhotoSwipe Runtime Split
+
+- Started from a clean `main...origin/main` worktree.
+- Added `theme/Yneko-Reimu/assets/src/reimu/photoswipe.js` for the PhotoSwipe image wrapping and overlay implementation.
+- Added `theme/Yneko-Reimu/assets/src/reimu-photoswipe.js` as a lazy classic runtime entry that registers `window.ReimuPhotoSwipeRuntime`.
+- Replaced the main-bundle PhotoSwipe implementation with a small loader in `assets/src/reimu.js` that loads the runtime only when the feature is enabled and article images/items exist.
+- Updated `tools/build-reimu.mjs`, `tools/check-size.mjs`, `tools/feature-loading-plan.mjs`, and `docs/development.md` so `assets/dist/reimu-photoswipe.js` is built, budgeted at 24 KB, reported as lazy runtime, and checked for classic script compatibility.
+- Initial verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, plus explicit classic parse/import checks for `reimu.js`, `reimu-search.js`, and `reimu-photoswipe.js`.
+- Initial size results: `reimu.js` 106.3 KB / 120 KB, `reimu-search.js` 9.8 KB / 24 KB, `reimu-photoswipe.js` 5.6 KB / 24 KB, and `reimu.css` 205.3 KB / 220 KB.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 72 theme PHP files, `npm run package`, and `npm run check:package`.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2345.zip`, reported 131 entries, included `assets/dist/reimu-photoswipe.js`, and excluded manifest/source/local-only files.
+- Next round should either split another low-risk visual/content runtime or pause runtime splitting to review comments/profile before touching AJAX-sensitive code.
