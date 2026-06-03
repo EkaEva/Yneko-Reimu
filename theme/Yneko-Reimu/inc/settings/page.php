@@ -338,81 +338,8 @@ function yneko_reimu_render_settings_page() {
 				</table>
 			</section>
 
-			<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="extensions" hidden>
-				<h2><?php yneko_reimu_admin_bilingual_heading( '扩展与第三方', 'Extensions and third-party resources' ); ?></h2>
-				<?php yneko_reimu_admin_bilingual_description( '这些功能通常会加载额外脚本或连接第三方域名，因此从自定义器移到主设置页集中管理。视觉与布局仍在自定义器中实时预览。', 'These features usually load extra scripts or contact third-party domains, so they are managed here. Visual and layout options remain in the Customizer for live preview.' ); ?>
-				<table class="form-table" role="presentation">
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( '主题扩展', 'Theme extensions' ); ?></th>
-					<td>
-						<?php
-						$feature_labels = array(
-							'preloader_enable' => array( '加载动画', 'Loading animation' ),
-							'top_enable' => array( '回到顶部太极按钮', 'Back-to-top Taichi button' ),
-							'triangle_badge' => array( '右上角 GitHub 三角标', 'GitHub corner ribbon' ),
-							'firework_enable' => array( '鼠标烟花', 'Mouse firework' ),
-							'pjax_enable' => array( 'PJAX 软导航', 'PJAX navigation' ),
-							'busuanzi_enable' => array( '不蒜子统计', 'Busuanzi statistics' ),
-							'katex_enable' => array( 'KaTeX 数学公式', 'KaTeX math' ),
-							'photoswipe_enable' => array( 'PhotoSwipe 图片灯箱', 'PhotoSwipe lightbox' ),
-							'mermaid_enable' => array( 'Mermaid 图表', 'Mermaid diagrams' ),
-							'custom_cursor' => array( '自定义鼠标指针', 'Custom cursor' ),
-						);
-						?>
-						<?php foreach ( $feature_labels as $key => $label ) : ?>
-							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[features][<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( '1', $features[ $key ] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( $label[0], $label[1] ); ?></label><br>
-						<?php endforeach; ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( 'Live2D Widgets', 'Live2D Widgets' ); ?></th>
-					<td><label><input type="checkbox" name="yneko_reimu_settings[third_party][live2d_enable]" value="1" <?php checked( '1', $third_party['live2d_enable'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '启用 Live2D Widgets', 'Enable Live2D Widgets' ); ?></label></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="yneko-reimu-live2d-base"><?php yneko_reimu_admin_bilingual_label( 'Live2D Widgets 资源地址', 'Live2D Widgets resource URL' ); ?></label></th>
-					<td><input id="yneko-reimu-live2d-base" class="regular-text" type="url" name="yneko_reimu_settings[third_party][live2d_base_url]" value="<?php echo esc_attr( $third_party['live2d_base_url'] ); ?>"></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="yneko-reimu-live2d-api"><?php yneko_reimu_admin_bilingual_label( 'Live2D 模型 CDN 地址', 'Live2D model CDN URL' ); ?></label></th>
-					<td><input id="yneko-reimu-live2d-api" class="regular-text" type="url" name="yneko_reimu_settings[third_party][live2d_api_base_url]" value="<?php echo esc_attr( $third_party['live2d_api_base_url'] ); ?>"></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="yneko-reimu-vendor-cdn"><?php yneko_reimu_admin_bilingual_label( 'Vendor CDN 前缀', 'Vendor CDN base' ); ?></label></th>
-					<td>
-						<input id="yneko-reimu-vendor-cdn" class="regular-text" type="url" name="yneko_reimu_settings[third_party][vendor_cdn_base]" value="<?php echo esc_attr( $third_party['vendor_cdn_base'] ); ?>">
-						<?php yneko_reimu_admin_bilingual_description( '用于 Reimu 扩展包的 CDN 前缀。默认使用 jsDelivr，需要隐私优先时可替换为自托管资源。', 'CDN prefix for Reimu extension packages. The default uses jsDelivr; replace it with self-hosted resources for a privacy-first setup.' ); ?>
-					</td>
-				</tr>
-				</table>
-			</section>
-
-			<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="external-comments" hidden>
-				<h2><?php yneko_reimu_admin_bilingual_heading( '外部评论', 'External comments' ); ?></h2>
-				<?php yneko_reimu_admin_bilingual_description( 'WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。', 'WordPress comments are always available. Third-party comments load only when enabled and configured.' ); ?>
-				<table class="form-table" role="presentation">
-				<?php
-				$external_comment_fields = array(
-					'giscus' => array( 'Giscus', array( 'repo', 'repo_id', 'category', 'category_id' ) ),
-					'utterances' => array( 'Utterances', array( 'repo' ) ),
-					'disqus' => array( 'Disqus', array( 'shortname' ) ),
-					'waline' => array( 'Waline', array( 'server_url' ) ),
-					'twikoo' => array( 'Twikoo', array( 'env_id' ) ),
-					'valine' => array( 'Valine', array( 'app_id', 'app_key', 'server_url' ) ),
-				);
-				?>
-				<?php foreach ( $external_comment_fields as $prefix => $meta ) : ?>
-					<tr>
-						<th scope="row"><?php echo esc_html( $meta[0] ); ?></th>
-						<td>
-							<label><input type="checkbox" name="yneko_reimu_settings[external_comments][<?php echo esc_attr( $prefix ); ?>_enable]" value="1" <?php checked( '1', $external_comments[ $prefix . '_enable' ] ?? '0' ); ?>> <?php echo esc_html( $meta[0] ); ?></label>
-							<?php foreach ( $meta[1] as $field ) : ?>
-								<p><label><?php echo esc_html( $meta[0] . ' ' . $field ); ?><br><input class="regular-text" type="text" name="yneko_reimu_settings[external_comments][<?php echo esc_attr( $prefix . '_' . $field ); ?>]" value="<?php echo esc_attr( $external_comments[ $prefix . '_' . $field ] ?? '' ); ?>"></label></p>
-							<?php endforeach; ?>
-						</td>
-					</tr>
-				<?php endforeach; ?>
-				</table>
-			</section>
+			<?php yneko_reimu_render_settings_extensions_panel( $features, $third_party ); ?>
+			<?php yneko_reimu_render_settings_external_comments_panel( $external_comments ); ?>
 
 			<?php yneko_reimu_render_settings_friends_panel( $settings ); ?>
 			<?php yneko_reimu_render_settings_music_panel( $settings, $player ); ?>

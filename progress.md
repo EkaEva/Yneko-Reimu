@@ -290,3 +290,13 @@
 - Ran `npm run lint:php`; PHPCS passed.
 - Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 426 lines and score 503.
 - Next round should continue with another self-contained settings panel, likely `external-comments` or `extensions`, while avoiding comments/profile PHP request handlers.
+
+## 2026-06-04 Settings Extension Panels Split
+
+- Moved the extensions panel and external-comments panel from `inc/settings/page.php` into `inc/settings/panels.php`.
+- Replaced the moved markup with `yneko_reimu_render_settings_extensions_panel( $features, $third_party )` and `yneko_reimu_render_settings_external_comments_panel( $external_comments )`.
+- Kept all `features`, `third_party`, and `external_comments` option names and tab keys unchanged.
+- Verified targeted syntax with `php -l` on `inc/settings/page.php` and `inc/settings/panels.php`.
+- Ran `npm run lint:php`; PHPCS passed.
+- Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 353 lines and score 426.
+- Next round should continue with the search or i18n panel, or pause for manual admin UI checks.

@@ -285,3 +285,12 @@
 - Complexity report after the split: `yneko_reimu_render_settings_page()` dropped from 543 lines / score 636 to 426 lines / score 503.
 - The new `yneko_reimu_render_settings_music_panel()` appears as a contained hotspot at 86 lines / score 101, which is acceptable as an intermediate renderer split.
 - Next low-risk targets inside the settings page are `external-comments` and `extensions`; both are admin-only renderers with stable field names and no request handlers.
+
+## 2026-06-04 Settings Extension Panels Split Findings
+
+- `inc/settings/panels.php` now also owns the extensions and external-comments settings panels.
+- Public admin contracts are unchanged: `extensions` and `external-comments` tab keys, `data-yneko-settings-panel` values, feature/third-party/external-comment option keys, input names, labels, and save/sanitize flow all remain the same.
+- `inc/settings/page.php` now calls `yneko_reimu_render_settings_extensions_panel( $features, $third_party )` and `yneko_reimu_render_settings_external_comments_panel( $external_comments )`.
+- Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 426 lines / score 503 to 353 lines / score 426.
+- This keeps decomposition in the low-risk admin-renderer layer and still avoids comments/profile PHP request handlers.
+- Next low-risk settings page candidates are the search and i18n panels; both are smaller, mostly field rendering, and have stable option names.

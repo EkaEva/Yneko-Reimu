@@ -502,3 +502,21 @@ Goal: reduce `inc/settings/page.php` complexity by moving low-risk settings page
 - The friend panel keeps `data-yneko-settings-panel="friends"` and all `yneko_reimu_settings[friend_site]` / `yneko_reimu_settings[friends]` field names unchanged.
 - The music panel keeps `data-yneko-settings-panel="music"` and all `yneko_reimu_settings[player]` / `yneko_reimu_settings[music]` field names unchanged.
 - The next round should continue settings page decomposition with another self-contained panel, likely external comments or extensions, before considering higher-risk comments/profile PHP handlers.
+
+## 2026-06-04 Settings Extension Panels Split
+
+Goal: continue settings page decomposition by moving the extensions and external-comments panels into `inc/settings/panels.php` without changing settings keys, tab keys, input names, or third-party feature defaults.
+
+### Phases
+
+1. Identify extensions and external-comments panel dependencies - complete
+2. Move both panel renderers into `inc/settings/panels.php` - complete
+3. Replace page markup with panel function calls - complete
+4. Verify PHP syntax, PHPCS, and complexity report impact - complete
+
+### Decisions
+
+- The extensions panel keeps `data-yneko-settings-panel="extensions"` and all `yneko_reimu_settings[features]` / `yneko_reimu_settings[third_party]` names unchanged.
+- The external-comments panel keeps `data-yneko-settings-panel="external-comments"` and all `yneko_reimu_settings[external_comments]` names unchanged.
+- `inc/settings/page.php` now stays focused on the top-level form, tabs, and remaining unextracted panels.
+- The next round should continue with the search or i18n panel, which are smaller and self-contained, or pause PHP splitting to run manual admin UI checks.
