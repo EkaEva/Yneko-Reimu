@@ -78,3 +78,87 @@ Goal: update README/admin configuration docs, add v0.1.12 release notes, validat
 2. v0.1.12 release notes - complete
 3. Local validation and package refresh - complete
 4. Commit, push, and tag release - complete
+
+## 2026-06-03 Social and Share Configuration
+
+Goal: add Customizer-managed article sharing and sidebar social links, matching the upstream Reimu icon families while separating stored URLs from front-end enablement.
+
+### Phases
+
+1. Confirm upstream and local behavior - complete
+2. Add Customizer settings for share/social enablement and URLs - complete
+3. Render article share buttons and full sidebar social set - complete
+4. Add icon mappings and WeChat share interaction - complete
+5. Build and verification - complete
+
+### Decisions
+
+- Manage article sharing and sidebar social links together in the WordPress Customizer.
+- Article share supports the 8 upstream platforms and defaults to QQ and Weixin enabled.
+- Sidebar social supports the 29 upstream platforms and defaults to GitHub enabled only.
+- URL fields can be filled while their corresponding enable checkbox is off; disabled means hidden on the front end.
+- QQ sharing opens the upstream `connect.qq.com` share URL; Weixin uses a lightweight QR/card popup rather than full screenshot capture.
+- Weixin QR codes are generated locally through a Vite split chunk, so the front end does not depend on an external QR image API.
+
+## 2026-06-03 Share and Social Follow-up
+
+Goal: fix article share alignment/cursor behavior, expose the GitHub triangle badge toggle in the social Customizer section, and add Xiaohongshu as a sidebar social option.
+
+### Phases
+
+1. Confirm current share/social implementation and target files - complete
+2. Add Customizer triangle badge toggle and Xiaohongshu definition/icon asset - complete
+3. Fix article share layout and hover cursor behavior - complete
+4. Build and verification - complete
+
+## 2026-06-03 Loading Screen Fix
+
+Goal: fix the local validation package getting stuck on the loader after the share/social build.
+
+### Phases
+
+1. Diagnose built front-end script parse failure - complete
+2. Restore classic script compatibility for Weixin QR loading - complete
+3. Rebuild, validate, and regenerate local package - complete
+
+### Decisions
+
+- Keep `reimu.js` compatible with WordPress classic script enqueuing instead of converting the enqueue to `type="module"`.
+- Load the QR library as a lazy classic script from `assets/dist/qrcode.js`.
+
+## 2026-06-03 Profile Modal and Virtual Share Fixes
+
+Goal: fix missing share icons on virtual pages, clarify hot comment sorting, improve profile avatar upload feedback, and preserve custom tags when special tags are toggled.
+
+### Phases
+
+1. Inspect current share, comment sort, profile avatar, and tag flows - complete
+2. Add virtual page share rendering for about/friend/projects - complete
+3. Split avatar upload into immediate validation/upload/save flow - complete
+4. Preserve custom tags as inactive/frozen when special tags consume display slots - complete
+5. Build, lint, and regenerate validation package - complete
+
+## 2026-06-03 Share Placement, Profile Save Flow, and Admin Badges
+
+Goal: refine share placement on posts/virtual pages, align GitHub avatar/profile input behavior, stage avatar uploads until profile save, support selectable custom tags, move avatar status under the user name, and add pending-review badges in admin settings.
+
+### Phases
+
+1. Inspect current templates, profile modal JS/PHP, and admin settings counts - complete
+2. Adjust share template placement for posts/about/friend/projects - complete
+3. Update GitHub avatar URL and avatar upload save flow - complete
+4. Add selectable custom tags with five stored rows and two active slots - complete
+5. Add admin pending-review badge counts and section markers - complete
+6. Build, lint, package, and verify release ZIP - complete
+
+## 2026-06-03 Review Status Sync and Badge Cleanup
+
+Goal: move all review/update/reject prompts under the current user name, remove duplicate admin badge rendering while adding WordPress menu badges, fix approved custom tags returning to the profile/front end, and refresh approved comments/media/profile state without requiring a page refresh.
+
+### Phases
+
+1. Inspect current status, profile payload, upload approval, and admin badge code - complete
+2. Add shared user-facing review status state for avatar, tags, and comments - complete
+3. Clean admin badge placement and WordPress sidebar menu badges - complete
+4. Add front-end profile/comment polling and DOM refresh - complete
+5. Build, lint, package, and verify release ZIP - complete

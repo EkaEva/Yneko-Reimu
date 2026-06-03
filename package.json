@@ -1,20 +1,20 @@
 {
   "name": "yneko-reimu",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "private": true,
   "description": "WordPress classic hybrid port of hexo-theme-reimu.",
   "scripts": {
     "i18n": "node tools/build-i18n.mjs",
     "check:i18n": "node --check tools/build-i18n.mjs && npm run i18n",
     "build": "npm run i18n && node tools/build-lily-cursor.mjs && vite build && node tools/build-reimu.mjs",
-    "check:js": "node --check theme/Yneko-Reimu/assets/src/reimu.js && node --check tools/build-reimu.mjs && node --check tools/build-lily-cursor.mjs && node --check tools/build-i18n.mjs",
-    "lint:php": "composer run lint:php",
+    "check:js": "node --check theme/Yneko-Reimu/assets/src/reimu.js && node --check tools/build-reimu.mjs && node --check tools/build-lily-cursor.mjs && node --check tools/build-i18n.mjs && node --check tools/run-phpcs.mjs",
+    "lint:php": "node tools/run-phpcs.mjs",
     "check": "npm run check:js && npm run build && npm run lint:php",
     "package": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -Command \"& './tools/package-theme.ps1' -Version ('v' + $env:npm_package_version)\""
   },
   "license": "MIT",
   "devDependencies": {
     "qrcode": "^1.5.1",
-    "vite": "^5.4.11"
+    "vite": "^6.4.3"
   }
 }

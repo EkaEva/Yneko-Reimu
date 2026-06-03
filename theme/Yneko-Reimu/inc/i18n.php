@@ -107,7 +107,7 @@ function yneko_reimu_i18n_is_english_request() {
 }
 
 function yneko_reimu_i18n_frontend_text( $text ) {
-	if ( ! yneko_reimu_i18n_enabled() || is_admin() && ! wp_doing_ajax() || 'en_US' !== yneko_reimu_i18n_current_language() ) {
+	if ( ! yneko_reimu_i18n_enabled() || ( is_admin() && ! wp_doing_ajax() ) || 'en_US' !== yneko_reimu_i18n_current_language() ) {
 		return $text;
 	}
 

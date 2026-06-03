@@ -324,7 +324,7 @@ function yneko_reimu_save_post_options( $post_id ) {
 		'_yneko_reimu_comments'  => array( 'inherit', 'show', 'hide' ),
 		'_yneko_reimu_sticky'    => array( 'inherit', 'show', 'hide' ),
 	);
-	$values  = isset( $_POST['yneko_reimu_meta'] ) && is_array( $_POST['yneko_reimu_meta'] ) ? wp_unslash( $_POST['yneko_reimu_meta'] ) : array();
+	$values  = isset( $_POST['yneko_reimu_meta'] ) && is_array( $_POST['yneko_reimu_meta'] ) ? wp_unslash( $_POST['yneko_reimu_meta'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized per registered meta field below.
 
 	foreach ( $allowed as $meta_key => $choices ) {
 		$value = isset( $values[ $meta_key ] ) ? sanitize_key( $values[ $meta_key ] ) : 'inherit';

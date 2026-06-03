@@ -1101,7 +1101,13 @@ function yneko_reimu_admin_badge( $count ) {
 		return '';
 	}
 
-	return '<span class="yneko-reimu-admin-badge" aria-label="' . esc_attr( sprintf( __( '%d 个待处理项目', 'yneko-reimu' ), $count ) ) . '">' . esc_html( (string) $count ) . '</span>';
+	return '<span class="yneko-reimu-admin-badge" aria-label="' . esc_attr(
+		sprintf(
+			/* translators: %d: pending review item count. */
+			__( '%d 个待处理项目', 'yneko-reimu' ),
+			$count
+		)
+	) . '">' . esc_html( (string) $count ) . '</span>';
 }
 
 function yneko_reimu_admin_count_pending_comment_uploads( $type = 'all' ) {
@@ -2022,7 +2028,14 @@ function yneko_reimu_render_user_badge_admin() {
 								<span class="yneko-reimu-user-badge-pill" style="<?php echo esc_attr( $color ? '--badge-color:' . $color . ';' : '' ); ?>"><?php echo esc_html( $label ); ?></span>
 								<span class="description"><?php echo '0' === (string) ( $tag['enabled'] ?? '1' ) ? esc_html__( '未启用', 'yneko-reimu' ) : ( 'pending' === $status ? esc_html__( '待审核', 'yneko-reimu' ) : esc_html__( '已通过', 'yneko-reimu' ) ); ?></span>
 								<?php if ( 'pending' === $status && ! empty( $tag['old_label'] ) ) : ?>
-									<span class="description"><?php echo esc_html( sprintf( __( '原标签：%s', 'yneko-reimu' ), $tag['old_label'] ) ); ?></span>
+									<?php
+									$old_label_text = sprintf(
+										/* translators: %s: previous user badge label. */
+										__( '原标签：%s', 'yneko-reimu' ),
+										$tag['old_label']
+									);
+									?>
+									<span class="description"><?php echo esc_html( $old_label_text ); ?></span>
 								<?php endif; ?>
 								<div class="yneko-reimu-user-badge-actions">
 									<?php if ( 'pending' === $status ) : ?>

@@ -485,7 +485,7 @@ function yneko_reimu_github_login_begin_oauth( $bind_current_user = false ) {
 		wp_die( esc_html__( 'GitHub login is not configured.', 'yneko-reimu' ), 403 );
 	}
 
-	$redirect_to = isset( $_GET['redirect_to'] ) ? wp_unslash( $_GET['redirect_to'] ) : home_url( '/' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$redirect_to = isset( $_GET['redirect_to'] ) ? sanitize_url( wp_unslash( $_GET['redirect_to'] ) ) : home_url( '/' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$redirect_to = wp_validate_redirect( $redirect_to, home_url( '/' ) );
 	$state       = wp_generate_password( 32, false, false );
 	$state_key   = 'yneko_reimu_github_login_state_' . hash( 'sha256', $state );

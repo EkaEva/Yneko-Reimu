@@ -26,13 +26,20 @@ $reimu_share_data = array(
 ?>
 <div class="share-wrapper" data-reimu-share="<?php echo esc_attr( wp_json_encode( $reimu_share_data ) ); ?>" aria-label="<?php esc_attr_e( '分享', 'yneko-reimu' ); ?>">
 	<?php foreach ( $reimu_shares as $reimu_share_key => $reimu_share ) : ?>
+		<?php
+		$reimu_share_label = sprintf(
+			/* translators: %s: share service label. */
+			__( '分享到 %s', 'yneko-reimu' ),
+			$reimu_share['label']
+		);
+		?>
 		<a
 			href="<?php echo esc_url( $reimu_share['url'] ); ?>"
 			class="share-link share-link-<?php echo esc_attr( $reimu_share_key ); ?>"
 			<?php if ( 'weixin' !== $reimu_share_key ) : ?>
 				target="_blank" rel="noopener noreferrer"
 			<?php endif; ?>
-			aria-label="<?php echo esc_attr( sprintf( __( '分享到 %s', 'yneko-reimu' ), $reimu_share['label'] ) ); ?>"
+			aria-label="<?php echo esc_attr( $reimu_share_label ); ?>"
 			title="<?php echo esc_attr( $reimu_share['label'] ); ?>"
 			data-share-service="<?php echo esc_attr( $reimu_share_key ); ?>"
 			data-no-pjax

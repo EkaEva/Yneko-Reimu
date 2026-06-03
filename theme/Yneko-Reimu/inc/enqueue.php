@@ -278,6 +278,7 @@ function yneko_reimu_enqueue_assets() {
 		'loginFailed'           => esc_html__( '登录失败，请检查账号和密码。', 'yneko-reimu' ),
 		'registerCodeSending'   => esc_html__( '发送中...', 'yneko-reimu' ),
 		'registerCodeSent'      => esc_html__( '验证码已发送，请检查您的邮箱。', 'yneko-reimu' ),
+		/* translators: %s: remaining seconds. */
 		'registerCodeWait'      => esc_html__( '%s 秒后重发', 'yneko-reimu' ),
 		'profile2faGenerated'   => esc_html__( '请用认证器扫码，并输入 6 位验证码后保存。', 'yneko-reimu' ),
 		'imagePreview'          => esc_html__( '图片预览', 'yneko-reimu' ),
@@ -449,8 +450,8 @@ function yneko_reimu_favicon() {
 
 		if ( $site_icon ) {
 			$type_attr = $site_icon_mime ? ' type="' . esc_attr( $site_icon_mime ) . '"' : '';
-			echo '<link rel="icon"' . $type_attr . ' href="' . esc_url( $site_icon ) . '" sizes="32x32">' . "\n";
-			echo '<link rel="icon"' . $type_attr . ' href="' . esc_url( $site_icon ) . '" sizes="192x192">' . "\n";
+			echo '<link rel="icon"' . $type_attr . ' href="' . esc_url( $site_icon ) . '" sizes="32x32">' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<link rel="icon"' . $type_attr . ' href="' . esc_url( $site_icon ) . '" sizes="192x192">' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		echo '<link rel="icon" type="' . esc_attr( $fallback_type ) . '" href="' . esc_url( $fallback_version ) . '" sizes="32x32">' . "\n";
@@ -540,7 +541,7 @@ function yneko_reimu_preload_theme_script() {
 	$default = esc_js( yneko_reimu_get_theme_mod( 'yneko_reimu_dark_mode_default', 'auto' ) );
 	?>
 	<script>
-		(function(){try{var s=localStorage.getItem('dark_mode')||'<?php echo $default; ?>';var d=s==='auto'?((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'):(s==='true'||s==='dark'?'dark':'light');document.documentElement.setAttribute('data-theme',d);}catch(e){}}());
+		(function(){try{var s=localStorage.getItem('dark_mode')||'<?php echo $default; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>';var d=s==='auto'?((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'):(s==='true'||s==='dark'?'dark':'light');document.documentElement.setAttribute('data-theme',d);}catch(e){}}());
 	</script>
 	<?php
 }

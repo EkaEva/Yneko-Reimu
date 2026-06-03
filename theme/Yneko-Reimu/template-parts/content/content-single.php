@@ -65,17 +65,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 			?>
 			<nav id="article-nav" aria-label="<?php esc_attr_e( '文章导航', 'yneko-reimu' ); ?>" data-aos="fade-up">
 				<?php if ( $prev_post ) : ?>
+					<?php
+					$reimu_prev_label = sprintf(
+						/* translators: %s: previous post title. */
+						__( '上一篇：%s', 'yneko-reimu' ),
+						get_the_title( $prev_post )
+					);
+					?>
 					<div class="article-nav-link-wrap left">
 						<img data-src="<?php echo esc_url( yneko_reimu_get_post_cover_url( $prev_post->ID ) ); ?>" data-sizes="auto" alt="<?php echo esc_attr( get_the_title( $prev_post ) ); ?>" class="lazyload">
-						<a href="<?php echo esc_url( function_exists( 'yneko_reimu_i18n_post_url' ) ? yneko_reimu_i18n_post_url( $prev_post->ID, $current_language ) : get_permalink( $prev_post ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( '上一篇：%s', 'yneko-reimu' ), get_the_title( $prev_post ) ) ); ?>" title="<?php echo esc_attr( get_the_title( $prev_post ) ); ?>"></a>
+						<a href="<?php echo esc_url( function_exists( 'yneko_reimu_i18n_post_url' ) ? yneko_reimu_i18n_post_url( $prev_post->ID, $current_language ) : get_permalink( $prev_post ) ); ?>" aria-label="<?php echo esc_attr( $reimu_prev_label ); ?>" title="<?php echo esc_attr( get_the_title( $prev_post ) ); ?>"></a>
 						<div class="article-nav-caption"><?php esc_html_e( '上一篇', 'yneko-reimu' ); ?></div>
 						<h3 class="article-nav-title"><?php echo esc_html( get_the_title( $prev_post ) ); ?></h3>
 					</div>
 				<?php endif; ?>
 				<?php if ( $next_post ) : ?>
+					<?php
+					$reimu_next_label = sprintf(
+						/* translators: %s: next post title. */
+						__( '下一篇：%s', 'yneko-reimu' ),
+						get_the_title( $next_post )
+					);
+					?>
 					<div class="article-nav-link-wrap right">
 						<img data-src="<?php echo esc_url( yneko_reimu_get_post_cover_url( $next_post->ID ) ); ?>" data-sizes="auto" alt="<?php echo esc_attr( get_the_title( $next_post ) ); ?>" class="lazyload">
-						<a href="<?php echo esc_url( function_exists( 'yneko_reimu_i18n_post_url' ) ? yneko_reimu_i18n_post_url( $next_post->ID, $current_language ) : get_permalink( $next_post ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( '下一篇：%s', 'yneko-reimu' ), get_the_title( $next_post ) ) ); ?>" title="<?php echo esc_attr( get_the_title( $next_post ) ); ?>"></a>
+						<a href="<?php echo esc_url( function_exists( 'yneko_reimu_i18n_post_url' ) ? yneko_reimu_i18n_post_url( $next_post->ID, $current_language ) : get_permalink( $next_post ) ); ?>" aria-label="<?php echo esc_attr( $reimu_next_label ); ?>" title="<?php echo esc_attr( get_the_title( $next_post ) ); ?>"></a>
 						<div class="article-nav-caption"><?php esc_html_e( '下一篇', 'yneko-reimu' ); ?></div>
 						<h3 class="article-nav-title"><?php echo esc_html( get_the_title( $next_post ) ); ?></h3>
 					</div>

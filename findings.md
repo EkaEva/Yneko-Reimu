@@ -61,3 +61,30 @@
 - `vendor-src/reimu-upstream` was removed from the repository; builds continue from `theme/Yneko-Reimu/assets/src/yneko-reimu-base.css`.
 - Large PNG fallbacks `assets/images/banner.png` and `assets/images/search-bg.png` were removed; WebP assets remain.
 - No local `wp-local`, Docker Compose, or WordPress development-site files remain in the repository.
+
+## 2026-06-03 Loading Screen Fix Findings
+
+- The previous local validation package could stay on the loading screen because `assets/dist/reimu.js` contained `import.meta.url` from the Weixin QR dynamic import.
+- WordPress enqueues `assets/dist/reimu.js` as a classic script, so the browser treats `import.meta` as a syntax error and never reaches the theme initialization that hides the loader.
+- The QR library now ships as `assets/dist/qrcode.js` and is loaded lazily as a classic script only when Weixin share needs to render a QR code.
+
+## 2026-06-03 Profile and Share Follow-up Findings
+
+- About/friend/projects can render through virtual templates instead of `content-page.php`; those virtual templates previously only rendered the virtual footer, so article share icons were absent.
+- Comment hot sorting is front-end only: `commentHotScore()` returns the number of nested child comments under a top-level comment. Hot mode sorts by that reply count descending, then by older comment time first as a tie-breaker.
+- The profile avatar picker previously changed the upload button text to the selected filename and only uploaded as part of the whole profile save submit.
+- Custom profile tags were removed from the DOM when special tags reduced the custom capacity; this also made them disappear from the saved profile. The UI now keeps them as inactive/frozen rows and the back end stores up to two custom tags regardless of how many are currently visible.
+
+## 2026-06-03 Share/Profile/Admin Follow-up Findings
+
+- The latest requested refinement changes the avatar upload flow back to profile-form submit: file selection should validate/stage, and the modal should close only after the user clicks profile Save and the save response succeeds.
+- Settings are loaded before comments helpers in `functions.php`, so admin pending-review badge counters must guard comment-upload helper calls with `function_exists`.
+- Custom comment tags now need separate limits: five stored custom rows and two active/displayed badges across special plus selected custom tags.
+- To avoid turning a first-login GitHub avatar into a custom avatar accidentally, the profile form now posts `avatar_changed=1` only after the user edits the avatar URL or chooses an avatar file.
+
+## 2026-06-03 Review Status Sync Findings
+
+- The prior avatar-only inline status could not report tag or comment review outcomes, and avatar approval deleted the status before front-end polling could display "头像已更新".
+- User custom tag review approval moved pending tags into active meta, but the profile modal preferred pending tags over active tags whenever any pending row remained. The modal now merges active and pending custom rows so approved tags stay visible while remaining pending rows still show.
+- Duplicate admin badges came from both top tabs and broad headings/table rows. The cleaned layout keeps top tab totals and only shows section badges beside concrete review lists: user tag review, user avatar manager, user comment GIF, and user comment image.
+- Comment/media review changes happen in the admin while the user is on a different page, so front-end updates need polling. The polling path now fetches profile status via AJAX and refreshes the current `#comments` block from the current page HTML after review completion.

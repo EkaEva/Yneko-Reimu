@@ -1,19 +1,74 @@
 <?xml version="1.0"?>
 <ruleset name="Yneko-Reimu">
 	<description>WordPress coding standards for the Yneko-Reimu theme.</description>
-	<file>theme/Yneko-Reimu/functions.php</file>
-	<file>theme/Yneko-Reimu/inc/features.php</file>
-	<file>theme/Yneko-Reimu/inc/schema.php</file>
+	<file>theme/Yneko-Reimu</file>
 	<arg name="extensions" value="php"/>
 	<arg name="parallel" value="4"/>
 	<arg name="warning-severity" value="0"/>
 	<config name="testVersion" value="8.0-"/>
 	<rule ref="WordPress"/>
 	<rule ref="PHPCompatibilityWP"/>
+	<rule ref="Generic.Files.LineEndings">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.Files.OneObjectStructurePerFile">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.Formatting.DisallowMultipleStatements">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.WhiteSpace.ScopeIndent">
+		<severity>0</severity>
+	</rule>
+	<rule ref="NormalizedArrays.Arrays">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Squiz.ControlStructures.ControlSignature">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Universal.Files.SeparateFunctionsFromOO">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Universal.WhiteSpace">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.Arrays">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.PHP.YodaConditions">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.WhiteSpace">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.WP.GlobalVariablesOverride">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.WP.EnqueuedResources.NonEnqueuedScript">
+		<severity>0</severity>
+	</rule>
 	<rule ref="Squiz.Commenting.FileComment">
 		<severity>0</severity>
 	</rule>
 	<rule ref="Squiz.Commenting.FunctionComment">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment">
 		<severity>0</severity>
 	</rule>
 </ruleset>

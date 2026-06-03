@@ -79,7 +79,6 @@ const outputStats = Object.fromEntries(
   )
 );
 const manifest = {
-  builtAt: new Date().toISOString(),
   builder: 'vite',
   upstream: {
     name: upstreamPkg.name,

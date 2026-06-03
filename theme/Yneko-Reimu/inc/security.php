@@ -44,7 +44,7 @@ function yneko_reimu_block_author_id_enumeration() {
 		return;
 	}
 
-	$author = (string) wp_unslash( $_GET['author'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$author = isset( $_GET['author'] ) ? sanitize_text_field( wp_unslash( $_GET['author'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( ! preg_match( '/^\d+$/', $author ) ) {
 		return;
 	}

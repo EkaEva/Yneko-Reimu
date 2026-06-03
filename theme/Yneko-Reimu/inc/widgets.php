@@ -27,7 +27,11 @@ function yneko_reimu_widgets_init() {
 			array_merge(
 				$shared,
 				array(
-					'name' => sprintf( __( 'Footer Column %d', 'yneko-reimu' ), $i ),
+					'name' => sprintf(
+						/* translators: %d: footer widget column number. */
+						__( 'Footer Column %d', 'yneko-reimu' ),
+						$i
+					),
 					'id'   => 'footer-' . $i,
 				)
 			)

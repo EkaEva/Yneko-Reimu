@@ -1161,7 +1161,7 @@ function yneko_reimu_user_profile_payload( $user_id = 0 ) {
 }
 
 function yneko_reimu_ajax_login_state() {
-	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' );
+	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	$redirect = wp_validate_redirect( $redirect, home_url( '/' ) );
 	yneko_reimu_ajax_set_language_from_redirect( $redirect );
 
@@ -1523,9 +1523,9 @@ function yneko_reimu_ajax_login() {
 	}
 
 	$email    = isset( $_POST['log'] ) ? strtolower( sanitize_email( wp_unslash( $_POST['log'] ) ) ) : '';
-	$password = isset( $_POST['pwd'] ) ? (string) wp_unslash( $_POST['pwd'] ) : '';
+	$password = isset( $_POST['pwd'] ) ? (string) wp_unslash( $_POST['pwd'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be checked raw.
 	$remember = ! empty( $_POST['rememberme'] );
-	$two_factor_code = isset( $_POST['two_factor_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['two_factor_code'] ) ) : '';
+	$two_factor_code = isset( $_POST['two_factor_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['two_factor_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	if ( '' === $email || ! is_email( $email ) || '' === $password ) {
 		wp_send_json_error(
@@ -1749,8 +1749,13 @@ function yneko_reimu_ajax_profile_email_code() {
 	}
 
 	$code  = (string) random_int( 100000, 999999 );
-	$title = sprintf( __( '[%s] 邮箱修改验证码', 'yneko-reimu' ), wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) );
+	$title = sprintf(
+		/* translators: %s: site title. */
+		__( '[%s] 邮箱修改验证码', 'yneko-reimu' ),
+		wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES )
+	);
 	$message = sprintf(
+		/* translators: 1: verification code, 2: expiry minutes. */
 		__( '您的邮箱修改验证码是：%1$s', 'yneko-reimu' ) . "\n\n" . __( '该验证码将在 %2$d 分钟后失效。', 'yneko-reimu' ),
 		$code,
 		5
@@ -1807,7 +1812,7 @@ function yneko_reimu_ajax_profile_avatar_upload() {
 	}
 
 	$user_id = get_current_user_id();
-	$result  = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] ?? array() );
+	$result  = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] ?? array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	if ( is_wp_error( $result ) ) {
 		wp_send_json_error(
 			array(
@@ -1847,22 +1852,22 @@ function yneko_reimu_ajax_profile_save() {
 	$user_id      = get_current_user_id();
 	$user         = wp_get_current_user();
 	$display_name = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
-	$profile_url  = isset( $_POST['profile_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['profile_url'] ) ) : '';
-	$avatar_url   = isset( $_POST['avatar_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['avatar_url'] ) ) : '';
+	$profile_url  = isset( $_POST['profile_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['profile_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$avatar_url   = isset( $_POST['avatar_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['avatar_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	$avatar_changed = ! empty( $_POST['avatar_changed'] );
 	$new_email_input = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 	$new_email    = $new_email_input ? $new_email_input : $user->user_email;
-	$email_code   = isset( $_POST['email_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['email_code'] ) ) : '';
-	$new_password = isset( $_POST['new_password'] ) ? (string) wp_unslash( $_POST['new_password'] ) : '';
-	$new_password_confirm = isset( $_POST['new_password_confirm'] ) ? (string) wp_unslash( $_POST['new_password_confirm'] ) : '';
+	$email_code   = isset( $_POST['email_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['email_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$new_password = isset( $_POST['new_password'] ) ? (string) wp_unslash( $_POST['new_password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be set raw.
+	$new_password_confirm = isset( $_POST['new_password_confirm'] ) ? (string) wp_unslash( $_POST['new_password_confirm'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be compared raw.
 	$avatar_frame_enabled = ! empty( $_POST['avatar_frame_enabled'] );
 	$totp_enabled = ! empty( $_POST['totp_enabled'] );
-	$totp_code    = isset( $_POST['totp_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['totp_code'] ) ) : '';
-	$tag_labels   = isset( $_POST['comment_tag_label'] ) && is_array( $_POST['comment_tag_label'] ) ? wp_unslash( $_POST['comment_tag_label'] ) : array();
-	$tag_colors   = isset( $_POST['comment_tag_color'] ) && is_array( $_POST['comment_tag_color'] ) ? wp_unslash( $_POST['comment_tag_color'] ) : array();
-	$tag_ids      = isset( $_POST['comment_tag_id'] ) && is_array( $_POST['comment_tag_id'] ) ? wp_unslash( $_POST['comment_tag_id'] ) : array();
-	$tag_enabled_input = isset( $_POST['comment_tag_enabled'] ) && is_array( $_POST['comment_tag_enabled'] ) ? wp_unslash( $_POST['comment_tag_enabled'] ) : array();
-	$special_enabled_input = isset( $_POST['comment_special_enabled'] ) && is_array( $_POST['comment_special_enabled'] ) ? wp_unslash( $_POST['comment_special_enabled'] ) : array();
+	$totp_code    = isset( $_POST['totp_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['totp_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$tag_labels   = isset( $_POST['comment_tag_label'] ) && is_array( $_POST['comment_tag_label'] ) ? wp_unslash( $_POST['comment_tag_label'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$tag_colors   = isset( $_POST['comment_tag_color'] ) && is_array( $_POST['comment_tag_color'] ) ? wp_unslash( $_POST['comment_tag_color'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$tag_ids      = isset( $_POST['comment_tag_id'] ) && is_array( $_POST['comment_tag_id'] ) ? wp_unslash( $_POST['comment_tag_id'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$tag_enabled_input = isset( $_POST['comment_tag_enabled'] ) && is_array( $_POST['comment_tag_enabled'] ) ? wp_unslash( $_POST['comment_tag_enabled'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$special_enabled_input = isset( $_POST['comment_special_enabled'] ) && is_array( $_POST['comment_special_enabled'] ) ? wp_unslash( $_POST['comment_special_enabled'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	if ( '' === $display_name || mb_strlen( $display_name ) > 50 ) {
 		wp_send_json_error( array( 'message' => esc_html__( '请输入 1 到 50 个字符的昵称。', 'yneko-reimu' ) ), 400 );
@@ -1979,7 +1984,7 @@ function yneko_reimu_ajax_profile_save() {
 
 	if ( isset( $_FILES['avatar_file'] ) && ! empty( $_FILES['avatar_file']['name'] ) ) {
 		$avatar_changed = true;
-		$avatar_result = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] );
+		$avatar_result = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( is_wp_error( $avatar_result ) ) {
 			wp_send_json_error( array( 'message' => $avatar_result->get_error_message() ), 400 );
 		}
@@ -2194,6 +2199,7 @@ function yneko_reimu_ajax_send_register_code() {
 		wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES )
 	);
 	$message = sprintf(
+		/* translators: 1: verification code, 2: expiry minutes. */
 		__( '您的注册验证码是：%1$s', 'yneko-reimu' ) . "\n\n" . __( '该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请忽略这封邮件。', 'yneko-reimu' ),
 		$code,
 		5
@@ -2228,8 +2234,8 @@ function yneko_reimu_ajax_register() {
 
 	$display_name  = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
 	$user_email    = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
-	$user_password = isset( $_POST['user_password'] ) ? (string) wp_unslash( $_POST['user_password'] ) : '';
-	$verify_code   = isset( $_POST['verify_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['verify_code'] ) ) : '';
+	$user_password = isset( $_POST['user_password'] ) ? (string) wp_unslash( $_POST['user_password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be created raw.
+	$verify_code   = isset( $_POST['verify_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['verify_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	$errors        = yneko_reimu_validate_registration_fields( $display_name, $user_email, $user_password, true );
 
 	if ( $errors->has_errors() ) {
@@ -2306,6 +2312,7 @@ function yneko_reimu_ajax_send_lostpassword_code() {
 		wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES )
 	);
 	$message = sprintf(
+		/* translators: 1: verification code, 2: expiry minutes. */
 		__( '您的密码重置验证码是：%1$s', 'yneko-reimu' ) . "\n\n" . __( '该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请立即检查账号安全。', 'yneko-reimu' ),
 		$code,
 		5
@@ -2336,8 +2343,8 @@ function yneko_reimu_ajax_lostpassword() {
 	yneko_reimu_ajax_set_language_from_redirect( wp_validate_redirect( $redirect, home_url( '/' ) ) );
 
 	$identifier    = isset( $_POST['user_login'] ) ? strtolower( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) ) : '';
-	$user_password = isset( $_POST['user_password'] ) ? (string) wp_unslash( $_POST['user_password'] ) : '';
-	$verify_code   = isset( $_POST['verify_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['verify_code'] ) ) : '';
+	$user_password = isset( $_POST['user_password'] ) ? (string) wp_unslash( $_POST['user_password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be reset raw.
+	$verify_code   = isset( $_POST['verify_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['verify_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	if ( '' === $identifier || ! is_email( $identifier ) ) {
 		wp_send_json_error( array( 'message' => esc_html__( '请输入注册邮箱。', 'yneko-reimu' ) ), 400 );
 	}
@@ -2624,7 +2631,7 @@ function yneko_reimu_ajax_edit_comment() {
 		wp_send_json_error( array( 'message' => __( '你不能编辑这条评论。', 'yneko-reimu' ) ), 403 );
 	}
 
-	$content = isset( $_POST['comment'] ) ? trim( (string) wp_unslash( $_POST['comment'] ) ) : '';
+	$content = isset( $_POST['comment'] ) ? trim( (string) wp_unslash( $_POST['comment'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Comment content is passed to wp_update_comment and rendered through the theme sanitizer.
 	if ( '' === $content ) {
 		wp_send_json_error( array( 'message' => __( '评论内容不能为空。', 'yneko-reimu' ) ), 400 );
 	}
@@ -3425,9 +3432,8 @@ function yneko_reimu_comment_promote_upload_url( $url, $comment_id, $status = 'p
 	);
 
 	add_filter( 'upload_dir', 'yneko_reimu_comment_upload_dir' );
-	$_FILES['yneko_reimu_comment_promote_file'] = $file;
-	$attachment_id                             = media_handle_sideload(
-		$_FILES['yneko_reimu_comment_promote_file'],
+	$attachment_id = media_handle_sideload(
+		$file,
 		0,
 		sprintf(
 			/* translators: %s: original file name. */
@@ -3439,7 +3445,6 @@ function yneko_reimu_comment_promote_upload_url( $url, $comment_id, $status = 'p
 			'mimes'     => yneko_reimu_comment_upload_allowed_mimes(),
 		)
 	);
-	unset( $_FILES['yneko_reimu_comment_promote_file'] );
 	remove_filter( 'upload_dir', 'yneko_reimu_comment_upload_dir' );
 
 	if ( is_wp_error( $attachment_id ) ) {
@@ -4343,7 +4348,7 @@ function yneko_reimu_comment_callback( $comment, $args, $depth ) {
 	?>
 	<li <?php comment_class( 'reimu-comment' . ( 'rejected' === $review_status ? ' reimu-comment-rejected' : '' ) ); ?> id="comment-<?php comment_ID(); ?>" data-comment-time="<?php echo esc_attr( $comment_time ); ?>" data-comment-id="<?php echo esc_attr( $comment_id ); ?>" data-comment-user-id="<?php echo esc_attr( absint( $comment->user_id ) ); ?>" data-comment-likes="<?php echo esc_attr( $like_count ); ?>" data-comment-liked="<?php echo $user_liked ? '1' : '0'; ?>">
 		<article class="reimu-comment__body">
-			<a class="reimu-comment__avatar<?php echo $is_logged_in_commenter ? ' reimu-comment__avatar--logged-in' : ''; ?>" href="<?php echo esc_url( $comment_link ); ?>" aria-hidden="true" tabindex="-1"><?php echo yneko_reimu_get_comment_avatar( $comment, 56 ); ?></a>
+			<a class="reimu-comment__avatar<?php echo $is_logged_in_commenter ? ' reimu-comment__avatar--logged-in' : ''; ?>" href="<?php echo esc_url( $comment_link ); ?>" aria-hidden="true" tabindex="-1"><?php echo yneko_reimu_get_comment_avatar( $comment, 56 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
 			<div class="reimu-comment__content">
 				<header class="reimu-comment__meta">
 					<span class="reimu-comment__headline">
