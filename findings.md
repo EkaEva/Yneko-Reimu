@@ -88,3 +88,12 @@
 - User custom tag review approval moved pending tags into active meta, but the profile modal preferred pending tags over active tags whenever any pending row remained. The modal now merges active and pending custom rows so approved tags stay visible while remaining pending rows still show.
 - Duplicate admin badges came from both top tabs and broad headings/table rows. The cleaned layout keeps top tab totals and only shows section badges beside concrete review lists: user tag review, user avatar manager, user comment GIF, and user comment image.
 - Comment/media review changes happen in the admin while the user is on a different page, so front-end updates need polling. The polling path now fetches profile status via AJAX and refreshes the current `#comments` block from the current page HTML after review completion.
+
+## 2026-06-03 Development Standards Findings
+
+- Root-level `PROJECT.md` and `AGENTS.md` did not exist before this pass. They are suitable for local-only development constraints because `.git/info/exclude` can hide them without changing the shared `.gitignore`.
+- Current built asset baseline from `assets/dist/manifest.json`: `reimu.js` 116,191 bytes, `reimu.css` 215,531 bytes, `qrcode.js` 23,468 bytes, `loader.css` 1,753 bytes, `xiaohongshu.svg` 8,155 bytes.
+- The short-term budgets of 120 KB for `reimu.js` and 220 KB for `reimu.css` pass against the current baseline, leaving only a small buffer. Future feature work should reduce or split assets before adding more global code.
+- `settings.php` previously embedded a very large admin settings JavaScript string. Moving that logic into `assets/src/admin-settings.js` makes it eligible for `node --check`, Vite minification, and future modular cleanup.
+- Release package checks should inspect ZIP contents directly because a whitelist can still drift when new generated assets or local-only files are introduced.
+- The Lily cursor build rewrote PNG files during validation. Adding metadata stripping and excluding PNG time/date chunks made the output smaller and more deterministic; cursor files now shrink by roughly 250 bytes each.

@@ -93,3 +93,15 @@
 - Completed the review status sync follow-up: username-under prompts now cover avatar, tag, and comment pending/updated/rejected states; admin badges only show on settings tabs and concrete review sections; WordPress Appearance and Yneko-Reimu settings menu items get native pending badges; approved custom tags merge back into the active profile payload; front-end polling refreshes profile/avatar/tag/comment DOM and re-fetches the current comments block after review changes.
 - Ran `npm run check:js`, targeted `php -l` checks for `inc/comments.php`, `inc/settings.php`, and `inc/enqueue.php`, `npm run build`, classic-script parse verification, and `npm run package`; generated `releases/Yneko-Reimu-v0.1.13-20260603-1406.zip`.
 - Verified the `1406` ZIP contains `inc/comments.php`, `inc/settings.php`, `inc/enqueue.php`, built `assets/dist/reimu.js`, built `assets/dist/reimu.css`, `assets/dist/qrcode.js`, and refreshed `en_US`/`zh_CN` language files; restored cursor build side effects afterward.
+## 2026-06-03 Development Standards and Guardrails
+
+- Created local-only `PROJECT.md` and `AGENTS.md` with architecture, compatibility, performance, security, and agent execution rules.
+- Added `PROJECT.md` and `AGENTS.md` to `.git/info/exclude` so they do not appear in Git status, do not sync to GitHub, and do not enter release ZIPs.
+- Added `tools/check-size.mjs` to enforce short-term `reimu.js` and `reimu.css` budgets and classic script compatibility.
+- Added `tools/check-package.mjs` to inspect the newest release ZIP for forbidden development/local files.
+- Added `theme/Yneko-Reimu/assets/src/admin-settings.js` and updated Vite so it builds to `assets/dist/admin-settings.js`.
+- Updated `settings.php` to enqueue the built admin settings script and inject only the `YNEKO_REIMU_ADMIN_I18N` config object before it.
+- Updated `docs/development.md` with development constraints, size budgets, admin JS source ownership, and package checks.
+- Updated the Lily cursor build to strip PNG metadata and exclude time/date chunks so repeated builds produce smaller, more stable cursor assets.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 67 theme PHP files, `npm run package`, and `npm run check:package`.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2208.zip` and reported 124 entries with no forbidden development files.

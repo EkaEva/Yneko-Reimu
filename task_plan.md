@@ -162,3 +162,22 @@ Goal: move all review/update/reject prompts under the current user name, remove 
 3. Clean admin badge placement and WordPress sidebar menu badges - complete
 4. Add front-end profile/comment polling and DOM refresh - complete
 5. Build, lint, package, and verify release ZIP - complete
+
+## 2026-06-03 Development Standards and Optimization Guardrails
+
+Goal: implement the follow-up optimization plan by adding local-only production/agent rules, public development constraints, asset/package quality gates, and a first low-risk modularity improvement without changing public theme interfaces.
+
+### Phases
+
+1. Local-only standards and Git exclude - complete
+2. Baseline size measurement and size/package quality gates - complete
+3. Admin settings JavaScript extraction - complete
+4. Public development documentation and planning records - complete
+5. Build, lint, audit, package, and diff verification - complete
+
+### Decisions
+
+- `PROJECT.md` and `AGENTS.md` are local-only files and are excluded through `.git/info/exclude`, not `.gitignore`.
+- Keep the main public front-end script compatible with WordPress classic script loading.
+- Use short-term budgets of 120 KB for `assets/dist/reimu.js` and 220 KB for `assets/dist/reimu.css`.
+- Treat package contents as a quality gate so development-only and local-only files cannot silently enter release ZIPs.

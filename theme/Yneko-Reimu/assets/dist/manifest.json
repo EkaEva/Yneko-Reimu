@@ -11,6 +11,7 @@
     "assets/src/yneko-reimu-adapter.css"
   ],
   "outputs": [
+    "assets/dist/admin-settings.js",
     "assets/dist/loader.css",
     "assets/dist/qrcode.js",
     "assets/dist/reimu.css",
@@ -18,9 +19,10 @@
     "assets/dist/xiaohongshu.svg"
   ],
   "outputStats": {
+    "assets/dist/admin-settings.js": 8249,
     "assets/dist/loader.css": 1753,
     "assets/dist/qrcode.js": 23468,
-    "assets/dist/reimu.css": 215531,
+    "assets/dist/reimu.css": 210179,
     "assets/dist/reimu.js": 116191,
     "assets/dist/xiaohongshu.svg": 8155
   }

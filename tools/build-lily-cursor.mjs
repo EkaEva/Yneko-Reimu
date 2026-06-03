@@ -76,7 +76,17 @@ const magick = resolveMagick();
 
 for (const [sourceName, targetName] of cursors) {
   const source = resolve(sourceDir, sourceName);
-  await exec(magick, [source, '-background', 'none', '-resize', `${cursorSize}x${cursorSize}`, resolve(cursorDir, targetName)], {
+  await exec(magick, [
+    source,
+    '-background',
+    'none',
+    '-resize',
+    `${cursorSize}x${cursorSize}`,
+    '-strip',
+    '-define',
+    'png:exclude-chunk=time,date',
+    resolve(cursorDir, targetName)
+  ], {
     windowsHide: true,
     maxBuffer: 1024 * 1024 * 8
   });
