@@ -327,6 +327,7 @@ const enTranslations = new Map(Object.entries({
   '请输入 1 到 50 个字符的昵称。': 'Please enter a nickname between 1 and 50 characters.',
   '请输入有效的昵称。': 'Please enter a valid nickname.',
   '昵称不能超过 50 个字符。': 'Nickname cannot exceed 50 characters.',
+  '退出': 'Logout',
   '退出登录': 'Log out',
   '已退出登录。': 'Logged out.',
   '登录后可上传 GIF。': 'Log in to upload GIFs.',

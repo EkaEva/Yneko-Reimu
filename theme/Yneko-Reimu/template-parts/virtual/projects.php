@@ -106,6 +106,6 @@ if ( ! function_exists( 'yneko_reimu_project_load_more_button' ) ) {
 				</div>
 			<?php endif; ?>
 		</div>
-		<?php get_template_part( 'template-parts/meta/virtual-page-footer' ); ?>
+		<?php get_template_part( 'template-parts/meta/virtual-page-footer', null, array( 'show_share' => true ) ); ?>
 	</div>
 </article>

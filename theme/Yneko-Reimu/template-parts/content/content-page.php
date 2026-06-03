@@ -30,5 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 		</div>
 		<?php echo yneko_reimu_sponsor_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php get_template_part( 'template-parts/meta/post-share' ); ?>
 	</div>
 </article>

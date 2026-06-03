@@ -10,16 +10,20 @@ if ( post_password_required() ) {
 $reimu_external_comments = yneko_reimu_external_comment_systems();
 $reimu_display_post_id   = function_exists( 'yneko_reimu_comments_current_display_post_id' ) ? yneko_reimu_comments_current_display_post_id() : get_the_ID();
 $reimu_canonical_post_id = function_exists( 'yneko_reimu_comments_canonical_post_id' ) ? yneko_reimu_comments_canonical_post_id( $reimu_display_post_id ) : $reimu_display_post_id;
-$reimu_comments          = $reimu_canonical_post_id ? get_comments(
-	array(
-		'post_id' => $reimu_canonical_post_id,
-		'status'  => 'approve',
-		'order'   => 'ASC',
-	)
-) : array();
-$reimu_show_wp_comments  = comments_open( $reimu_canonical_post_id ) || ! empty( $reimu_comments ) || get_comments_number( $reimu_canonical_post_id );
+$reimu_comments          = array();
+if ( $reimu_canonical_post_id ) {
+	$reimu_comments = function_exists( 'yneko_reimu_get_visible_comments' ) ? yneko_reimu_get_visible_comments( $reimu_canonical_post_id ) : get_comments(
+		array(
+			'post_id' => $reimu_canonical_post_id,
+			'status'  => 'approve',
+			'order'   => 'ASC',
+		)
+	);
+}
+$reimu_total_comment_count = $reimu_canonical_post_id ? get_comments_number( $reimu_canonical_post_id ) : 0;
+$reimu_show_wp_comments  = comments_open( $reimu_canonical_post_id ) || ! empty( $reimu_comments ) || $reimu_total_comment_count;
 $reimu_has_selector      = ! empty( $reimu_external_comments );
-$reimu_comment_count     = get_comments_number( $reimu_canonical_post_id );
+$reimu_comment_count     = count( $reimu_comments );
 $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 ?>
 <section id="comments" data-aos="fade-up">
@@ -98,7 +102,7 @@ $reimu_comment_open      = comments_open( $reimu_canonical_post_id );
 				<div class="reimu-comment-order" aria-label="<?php esc_attr_e( '评论排序', 'yneko-reimu' ); ?>">
 					<button type="button" class="active" data-comment-sort="asc"><?php esc_html_e( '按正序', 'yneko-reimu' ); ?></button>
 					<button type="button" data-comment-sort="desc"><?php esc_html_e( '按倒序', 'yneko-reimu' ); ?></button>
-					<button type="button" data-comment-sort="hot"><?php esc_html_e( '按热度', 'yneko-reimu' ); ?></button>
+					<button type="button" data-comment-sort="hot" title="<?php esc_attr_e( '按点赞、回复和近期活跃综合排序', 'yneko-reimu' ); ?>" aria-label="<?php esc_attr_e( '按热度：按点赞、回复和近期活跃综合排序', 'yneko-reimu' ); ?>"><?php esc_html_e( '按热度', 'yneko-reimu' ); ?></button>
 				</div>
 			</div>
 

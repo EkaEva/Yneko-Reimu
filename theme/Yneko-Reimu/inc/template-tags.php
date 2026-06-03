@@ -59,8 +59,36 @@ function yneko_reimu_special_page_slug( $post_id = 0 ) {
 	}
 
 	$slug = get_post_field( 'post_name', $post_id );
-	return in_array( $slug, array( 'about', 'projects', 'archives', 'friend' ), true ) ? $slug : '';
+	if ( ! in_array( $slug, array( 'about', 'projects', 'archives', 'friend' ), true ) ) {
+		return '';
+	}
+
+	return function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( $slug ) ? '' : $slug;
 }
+
+function yneko_reimu_force_disabled_builtin_page_404() {
+	if ( is_admin() || ! is_singular( 'page' ) ) {
+		return;
+	}
+
+	$post_id = absint( get_queried_object_id() );
+	if ( ! $post_id ) {
+		return;
+	}
+
+	$slug = get_post_field( 'post_name', $post_id );
+	if ( ! in_array( $slug, array( 'about', 'projects', 'archives', 'friend' ), true ) || ! function_exists( 'yneko_reimu_builtin_page_enabled' ) || yneko_reimu_builtin_page_enabled( $slug ) ) {
+		return;
+	}
+
+	global $wp_query;
+	if ( $wp_query instanceof WP_Query && method_exists( $wp_query, 'set_404' ) ) {
+		$wp_query->set_404();
+	}
+	status_header( 404 );
+	nocache_headers();
+}
+add_action( 'template_redirect', 'yneko_reimu_force_disabled_builtin_page_404', 0 );
 
 function yneko_reimu_term_count_by_slug( $taxonomy, $slug ) {
 	$term = get_term_by( 'slug', $slug, $taxonomy );
@@ -348,32 +376,198 @@ function yneko_reimu_excerpt( $post_id = 0 ) {
 	return wp_trim_words( $text, $length, '...' );
 }
 
-function yneko_reimu_social_links() {
-	$github = yneko_reimu_settings_github_url();
+function yneko_reimu_share_context( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : absint( get_the_ID() );
+	$slug    = '';
+	$pages   = function_exists( 'yneko_reimu_virtual_pages' ) ? yneko_reimu_virtual_pages() : array();
 
-	return array_filter(
-		array(
-			'github' => array(
-				'label' => 'GitHub',
-				'url'   => $github,
-			),
-			'x'      => array(
-				'label' => 'X',
-				'url'   => yneko_reimu_get_theme_mod( 'yneko_reimu_social_x', '' ),
-			),
-			'email'  => array(
-				'label' => __( 'Email', 'yneko-reimu' ),
-				'url'   => yneko_reimu_get_theme_mod( 'yneko_reimu_social_email', '' ),
-			),
-			'rss'    => array(
-				'label' => 'RSS',
-				'url'   => yneko_reimu_get_theme_mod( 'yneko_reimu_social_rss', '' ),
-			),
-		),
-		static function ( $item ) {
-			return ! empty( $item['url'] );
-		}
+	if ( function_exists( 'yneko_reimu_is_virtual_page' ) && yneko_reimu_is_virtual_page() && function_exists( 'yneko_reimu_virtual_page_slug' ) ) {
+		$slug = yneko_reimu_virtual_page_slug();
+	} elseif ( $post_id && function_exists( 'yneko_reimu_special_page_slug' ) ) {
+		$slug = yneko_reimu_special_page_slug( $post_id );
+	}
+
+	$is_virtual = $slug && isset( $pages[ $slug ] ) && function_exists( 'yneko_reimu_is_virtual_page' ) && yneko_reimu_is_virtual_page();
+	$url        = $post_id ? get_permalink( $post_id ) : home_url( '/' );
+	$title      = $post_id ? wp_strip_all_tags( get_the_title( $post_id ) ) : get_bloginfo( 'name' );
+	$desc       = $post_id ? yneko_reimu_excerpt( $post_id ) : get_bloginfo( 'description' );
+	$author     = $post_id ? get_the_author_meta( 'display_name', (int) get_post_field( 'post_author', $post_id ) ) : get_bloginfo( 'name' );
+
+	if ( $is_virtual ) {
+		$url    = function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( $slug ) : home_url( '/' . $slug . '/' );
+		$title  = $pages[ $slug ]['title'];
+		$desc   = $pages[ $slug ]['description'];
+		$author = get_bloginfo( 'name' );
+	}
+
+	return array(
+		'post_id'     => $post_id,
+		'url'         => $url,
+		'title'       => $title,
+		'description' => $desc,
+		'author'      => $author,
+		'image'       => yneko_reimu_get_post_share_image( $post_id ),
 	);
+}
+
+function yneko_reimu_customizer_bool( $name, $default = false ) {
+	$value = yneko_reimu_get_theme_mod( $name, null );
+	return null === $value ? (bool) $default : (bool) $value;
+}
+
+function yneko_reimu_social_definitions() {
+	return array(
+		'email'         => array(
+			'label'       => __( 'Email', 'yneko-reimu' ),
+			'placeholder' => __( 'Email URL 或 mailto:', 'yneko-reimu' ),
+		),
+		'github'        => array(
+			'label'       => 'GitHub',
+			'placeholder' => __( '请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。', 'yneko-reimu' ),
+		),
+		'google'        => array( 'label' => 'Google', 'placeholder' => 'https://plus.google.com/yourname' ),
+		'twitter'       => array( 'label' => 'Twitter / X', 'placeholder' => 'https://twitter.com/yourname' ),
+		'bluesky'       => array( 'label' => 'Bluesky', 'placeholder' => 'https://bsky.app/profile/yourname' ),
+		'facebook'      => array( 'label' => 'Facebook', 'placeholder' => 'https://www.facebook.com/yourname' ),
+		'instagram'     => array( 'label' => 'Instagram', 'placeholder' => 'https://www.instagram.com/yourname' ),
+		'linkedin'      => array( 'label' => 'LinkedIn', 'placeholder' => 'https://www.linkedin.com/in/yourname' ),
+		'pinterest'     => array( 'label' => 'Pinterest', 'placeholder' => 'https://www.pinterest.com/yourname' ),
+		'youtube'       => array( 'label' => 'YouTube', 'placeholder' => 'https://www.youtube.com/channel/yourname' ),
+		'vimeo'         => array( 'label' => 'Vimeo', 'placeholder' => 'https://vimeo.com/yourname' ),
+		'flickr'        => array( 'label' => 'Flickr', 'placeholder' => 'https://www.flickr.com/photos/yourname' ),
+		'dribbble'      => array( 'label' => 'Dribbble', 'placeholder' => 'https://dribbble.com/yourname' ),
+		'behance'       => array( 'label' => 'Behance', 'placeholder' => 'https://www.behance.net/yourname' ),
+		'bilibili'      => array( 'label' => 'Bilibili', 'placeholder' => 'https://space.bilibili.com/yourname' ),
+		'xiaohongshu'   => array( 'label' => __( '小红书', 'yneko-reimu' ), 'placeholder' => 'https://www.xiaohongshu.com/user/profile/yourname' ),
+		'weibo'         => array( 'label' => 'Weibo', 'placeholder' => 'https://weibo.com/yourname' ),
+		'zhihu'         => array( 'label' => 'Zhihu', 'placeholder' => 'https://www.zhihu.com/people/yourname' ),
+		'reddit'        => array( 'label' => 'Reddit', 'placeholder' => 'https://www.reddit.com/user/yourname' ),
+		'tumblr'        => array( 'label' => 'Tumblr', 'placeholder' => 'https://yourname.tumblr.com' ),
+		'medium'        => array( 'label' => 'Medium', 'placeholder' => 'https://medium.com/@yourname' ),
+		'deviantart'    => array( 'label' => 'DeviantArt', 'placeholder' => 'https://yourname.deviantart.com' ),
+		'stackoverflow' => array( 'label' => 'Stack Overflow', 'placeholder' => 'https://stackoverflow.com/users/yourname' ),
+		'keybase'       => array( 'label' => 'Keybase', 'placeholder' => 'https://keybase.io/yourname' ),
+		'telegram'      => array( 'label' => 'Telegram', 'placeholder' => 'https://t.me/yourname' ),
+		'discord'       => array( 'label' => 'Discord', 'placeholder' => 'https://discordapp.com/users/yourname' ),
+		'steam'         => array( 'label' => 'Steam', 'placeholder' => 'https://steamcommunity.com/id/yourname' ),
+		'weixin'        => array( 'label' => __( '微信', 'yneko-reimu' ), 'placeholder' => 'https://example.com/your-weixin-link' ),
+		'qq'            => array( 'label' => 'QQ', 'placeholder' => 'https://example.com/your-qq-link' ),
+		'tiktok'        => array( 'label' => 'TikTok', 'placeholder' => 'https://www.tiktok.com/@yourname' ),
+		'rss'           => array( 'label' => 'RSS', 'placeholder' => get_feed_link() ),
+	);
+}
+
+function yneko_reimu_share_definitions() {
+	return array(
+		'facebook' => array( 'label' => 'Facebook' ),
+		'twitter'  => array( 'label' => 'Twitter / X' ),
+		'bluesky'  => array( 'label' => 'Bluesky' ),
+		'linkedin' => array( 'label' => 'LinkedIn' ),
+		'reddit'   => array( 'label' => 'Reddit' ),
+		'weibo'    => array( 'label' => 'Weibo' ),
+		'qq'       => array( 'label' => 'QQ' ),
+		'weixin'   => array( 'label' => __( '微信', 'yneko-reimu' ) ),
+	);
+}
+
+function yneko_reimu_social_url( $key ) {
+	if ( 'github' === $key ) {
+		return yneko_reimu_settings_github_url();
+	}
+
+	$legacy_key = 'twitter' === $key ? 'yneko_reimu_social_x' : '';
+	$url        = trim( (string) yneko_reimu_get_theme_mod( 'yneko_reimu_social_' . $key, '' ) );
+	if ( '' === $url && $legacy_key ) {
+		$url = trim( (string) yneko_reimu_get_theme_mod( $legacy_key, '' ) );
+	}
+
+	if ( '' === $url && 'rss' === $key ) {
+		$url = get_feed_link();
+	}
+
+	if ( 'email' === $key && is_email( $url ) ) {
+		$url = 'mailto:' . sanitize_email( $url );
+	}
+
+	return '' === $url ? '' : esc_url_raw( $url );
+}
+
+function yneko_reimu_social_links() {
+	$links = array();
+
+	foreach ( yneko_reimu_social_definitions() as $key => $item ) {
+		$enabled = yneko_reimu_customizer_bool( 'yneko_reimu_social_' . $key . '_enabled', 'github' === $key );
+		$url     = yneko_reimu_social_url( $key );
+		if ( ! $enabled || '' === $url ) {
+			continue;
+		}
+
+		$links[ $key ] = array(
+			'label' => $item['label'],
+			'url'   => $url,
+		);
+	}
+
+	return $links;
+}
+
+function yneko_reimu_share_url( $key, $post_id = 0 ) {
+	$context = yneko_reimu_share_context( $post_id );
+	$url     = rawurlencode( $context['url'] );
+	$title   = rawurlencode( $context['title'] );
+	$desc    = rawurlencode( $context['description'] );
+	$source  = rawurlencode( home_url( '/' ) );
+
+	switch ( $key ) {
+		case 'facebook':
+			return 'https://www.facebook.com/sharer/sharer.php?u=' . $url;
+		case 'twitter':
+			return 'https://twitter.com/intent/tweet?url=' . $url . '&text=' . $title . '&via=' . rawurlencode( get_bloginfo( 'name' ) );
+		case 'bluesky':
+			return 'https://bsky.app/intent/compose?text=' . rawurlencode( $context['title'] . ' ' . $context['url'] );
+		case 'linkedin':
+			return 'https://www.linkedin.com/shareArticle?url=' . $url . '&title=' . $title . '&summary=' . $desc . '&mini=true&ro=true';
+		case 'reddit':
+			return 'https://www.reddit.com/submit?url=' . $url . '&title=' . $title;
+		case 'weibo':
+			return 'https://service.weibo.com/share/share.php?url=' . $url . '&appkey=&title=' . $title . '&pic=&ralateUid=';
+		case 'qq':
+			return 'https://connect.qq.com/widget/shareqq/index.html?url=' . $url . '&title=' . $title . '&desc=' . $desc . '&source=' . $source;
+		case 'weixin':
+			return $context['url'];
+	}
+
+	return '#';
+}
+
+function yneko_reimu_share_links( $post_id = 0 ) {
+	$links = array();
+
+	foreach ( yneko_reimu_share_definitions() as $key => $item ) {
+		$enabled = yneko_reimu_customizer_bool( 'yneko_reimu_share_' . $key . '_enabled', in_array( $key, array( 'qq', 'weixin' ), true ) );
+		if ( ! $enabled ) {
+			continue;
+		}
+
+		$links[ $key ] = array(
+			'label' => $item['label'],
+			'url'   => yneko_reimu_share_url( $key, $post_id ),
+		);
+	}
+
+	return $links;
+}
+
+function yneko_reimu_get_post_share_image( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	if ( $post_id && has_post_thumbnail( $post_id ) ) {
+		$image = get_the_post_thumbnail_url( $post_id, 'large' );
+		if ( $image ) {
+			return $image;
+		}
+	}
+
+	return yneko_reimu_get_default_cover_url();
 }
 
 function yneko_reimu_normalize_theme_url( $url, $fallback = '' ) {
@@ -396,7 +590,7 @@ function yneko_reimu_normalize_theme_url( $url, $fallback = '' ) {
 }
 
 function yneko_reimu_default_nav_items() {
-	return array(
+	$items = array(
 		'home'     => array(
 			'source_label' => '首页',
 			'label' => __( '首页', 'yneko-reimu' ),
@@ -428,6 +622,14 @@ function yneko_reimu_default_nav_items() {
 			'url'   => function_exists( 'yneko_reimu_i18n_virtual_path' ) ? yneko_reimu_i18n_virtual_path( 'friend' ) : home_url( '/friend/' ),
 		),
 	);
+
+	foreach ( array( 'projects', 'archives', 'about', 'friend' ) as $slug ) {
+		if ( function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( $slug ) ) {
+			unset( $items[ $slug ] );
+		}
+	}
+
+	return $items;
 }
 
 function yneko_reimu_nav_item_is_builtin_label( $label, $default ) {
@@ -456,7 +658,7 @@ function yneko_reimu_nav_items() {
 	return $items;
 }
 
-function yneko_reimu_nav_builtin_slug_from_url( $url ) {
+function yneko_reimu_nav_builtin_slug_from_url( $url, $include_disabled = false ) {
 	$path      = trim( (string) wp_parse_url( (string) $url, PHP_URL_PATH ), '/' );
 	$home_path = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
 	if ( '' !== $home_path && 0 === strpos( $path, $home_path . '/' ) ) {
@@ -474,7 +676,15 @@ function yneko_reimu_nav_builtin_slug_from_url( $url ) {
 		return 'home';
 	}
 
-	return in_array( $path, array( 'projects', 'archives', 'about', 'friend' ), true ) ? $path : '';
+	if ( ! in_array( $path, array( 'projects', 'archives', 'about', 'friend' ), true ) ) {
+		return '';
+	}
+
+	if ( ! $include_disabled && function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( $path ) ) {
+		return '';
+	}
+
+	return $path;
 }
 
 function yneko_reimu_nav_localized_url( $url ) {
@@ -525,6 +735,9 @@ function yneko_reimu_menu_item_matches_url( $item, $path ) {
 
 function yneko_reimu_ensure_projects_menu_item( $items, $args ) {
 	if ( is_admin() || empty( $args->theme_location ) || 'primary' !== $args->theme_location ) {
+		return $items;
+	}
+	if ( function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( 'projects' ) ) {
 		return $items;
 	}
 
@@ -587,8 +800,13 @@ function yneko_reimu_dedupe_builtin_menu_items( $items, $args ) {
 
 	$seen = array();
 	foreach ( $items as $index => $item ) {
-		$slug = yneko_reimu_nav_builtin_slug_from_url( $item->url );
+		$slug = yneko_reimu_nav_builtin_slug_from_url( $item->url, true );
 		if ( ! $slug ) {
+			continue;
+		}
+
+		if ( function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( $slug ) ) {
+			unset( $items[ $index ] );
 			continue;
 		}
 
@@ -605,7 +823,7 @@ function yneko_reimu_dedupe_builtin_menu_items( $items, $args ) {
 add_filter( 'wp_nav_menu_objects', 'yneko_reimu_dedupe_builtin_menu_items', 20, 2 );
 
 function yneko_reimu_virtual_pages() {
-	return array(
+	$pages = array(
 		'about'    => array(
 			'title'       => __( '关于', 'yneko-reimu' ),
 			'description' => __( '关于这个站点与作者。', 'yneko-reimu' ),
@@ -623,6 +841,14 @@ function yneko_reimu_virtual_pages() {
 			'description' => __( '朋友们的站点入口。', 'yneko-reimu' ),
 		),
 	);
+
+	foreach ( array_keys( $pages ) as $slug ) {
+		if ( function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( $slug ) ) {
+			unset( $pages[ $slug ] );
+		}
+	}
+
+	return $pages;
 }
 
 function yneko_reimu_detect_virtual_page_slug() {

@@ -1,6 +1,6 @@
 {
   "name": "yneko-reimu",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "private": true,
   "description": "WordPress classic hybrid port of hexo-theme-reimu.",
   "scripts": {
@@ -14,6 +14,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "qrcode": "^1.5.1",
     "vite": "^5.4.11"
   }
 }

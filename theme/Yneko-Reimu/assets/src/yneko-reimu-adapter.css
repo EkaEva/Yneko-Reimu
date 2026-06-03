@@ -1135,7 +1135,7 @@ textarea,
 .comment-content:not(#comments .comment-content),
 .comment-body,
 .reimu-comment__content .comment-text,
-.reimu-comment-form input:not([type="submit"]):not([type="checkbox"]),
+.reimu-comment-form input:not([type="submit"]):not([type="checkbox"]):not([data-profile-current-email]),
 .reimu-comment-form textarea,
 #reimu-search-input input {
   cursor: var(--cursor-text) !important;
@@ -2880,12 +2880,39 @@ html[lang="en-US"] .article-copyright p {
   margin: 0 0 14px;
 }
 
-.reimu-profile-form label:not(.reimu-login-remember) {
+.reimu-profile-form label:not(.reimu-login-remember):not(.reimu-profile-avatar-label):not(.reimu-profile-special-tag-toggle):not(.reimu-profile-tag-enabled) {
   display: block;
   margin-bottom: 8px;
   color: var(--color-link);
   font-size: 14px;
   font-weight: 700;
+}
+
+.reimu-profile-form .reimu-profile-avatar-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--color-link);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.reimu-profile-avatar-label small {
+  min-height: 1em;
+  color: var(--grey-9);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.reimu-profile-avatar-label small.success {
+  color: #16a34a;
+}
+
+.reimu-profile-avatar-label small.error {
+  color: #dc2626;
 }
 
 .reimu-profile-form input[type="text"],
@@ -2907,6 +2934,34 @@ html[lang="en-US"] .article-copyright p {
   border-color: rgba(255, 82, 82, .78) !important;
   background: rgba(255, 82, 82, .06);
   box-shadow: 0 0 0 3px rgba(255, 82, 82, .10);
+}
+
+.reimu-profile-frozen-field {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 14px;
+  color: color-mix(in srgb, var(--color-default) 46%, var(--grey-9));
+  background: color-mix(in srgb, var(--color-background) 72%, var(--color-wrap));
+  border: 1px solid rgba(255, 82, 82, .14);
+  border-radius: 8px;
+  box-shadow: none;
+  opacity: .62;
+  line-height: 1.4;
+  cursor: var(--cursor-not-allowed) !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.reimu-profile-frozen-field:hover,
+.reimu-profile-frozen-field:focus {
+  color: color-mix(in srgb, var(--color-default) 46%, var(--grey-9));
+  background: color-mix(in srgb, var(--color-background) 72%, var(--color-wrap));
+  border-color: rgba(255, 82, 82, .14);
+  box-shadow: none;
+  cursor: var(--cursor-not-allowed) !important;
 }
 
 .reimu-profile-avatar-row {
@@ -3024,14 +3079,81 @@ html[lang="en-US"] .article-copyright p {
 
 .reimu-profile-tag-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 44px 34px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
   gap: 10px;
   align-items: center;
   margin-top: 8px;
 }
 
+.reimu-profile-form .reimu-profile-tag-enabled {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  place-items: center;
+  justify-self: center;
+  align-self: center;
+  margin: 0 !important;
+  padding: 0;
+  line-height: 0;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.reimu-profile-form .reimu-profile-tag-enabled input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reimu-profile-form .reimu-profile-tag-enabled span {
+  position: relative;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 82, 82, .28);
+  border-radius: 6px;
+  background: var(--color-wrap);
+  box-shadow: 0 4px 12px rgba(255, 82, 82, .08);
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+.reimu-profile-tag-enabled span::before {
+  content: "";
+  width: 10px;
+  height: 6px;
+  border: 2px solid #fff;
+  border-top: 0;
+  border-right: 0;
+  opacity: 0;
+  transform: translateY(-1px) rotate(-45deg);
+  transition: opacity .2s ease;
+}
+
+.reimu-profile-tag-enabled input:checked + span {
+  background: var(--red-1);
+  border-color: var(--red-1);
+  box-shadow: 0 6px 16px rgba(255, 82, 82, .2);
+}
+
+.reimu-profile-tag-enabled input:checked + span::before {
+  opacity: 1;
+}
+
+.reimu-profile-tag-enabled input:disabled + span {
+  opacity: .38;
+  cursor: not-allowed !important;
+}
+
 .reimu-profile-form .reimu-profile-tag-row input[type="text"] {
-  min-height: 40px;
+  height: 44px !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  align-self: center;
 }
 
 .reimu-profile-form .reimu-profile-tag-row input[type="text"].is-invalid {
@@ -3041,7 +3163,11 @@ html[lang="en-US"] .article-copyright p {
 
 .reimu-profile-tag-row input[type="color"] {
   width: 44px;
-  height: 40px;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  align-self: center;
+  margin: 0 !important;
   padding: 3px;
   background: var(--color-background);
   border: 1px solid rgba(255, 82, 82, .22);
@@ -3049,12 +3175,17 @@ html[lang="en-US"] .article-copyright p {
   cursor: var(--cursor-pointer) !important;
 }
 
+.reimu-profile-tag-row.is-disabled {
+  opacity: .46;
+  filter: grayscale(.24);
+}
+
 .reimu-profile-add-tag,
 .reimu-profile-remove-tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
+  min-height: 44px;
   color: var(--red-1);
   background: var(--color-wrap);
   border: 1px solid rgba(255, 82, 82, .22);
@@ -3071,8 +3202,12 @@ html[lang="en-US"] .article-copyright p {
 }
 
 .reimu-profile-remove-tag {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  align-self: center;
+  margin: 0 !important;
   padding: 0;
   font-size: 18px;
   line-height: 1;
@@ -3678,6 +3813,7 @@ html[lang="en-US"] .article-copyright p {
   position: absolute;
   top: -5px;
   right: -5px;
+  z-index: 4;
   display: inline-flex;
   width: 18px;
   height: 18px;
@@ -3719,6 +3855,103 @@ html[lang="en-US"] .article-copyright p {
 .reimu-comment-current-user__logout.is-loading {
   opacity: .7;
   pointer-events: none;
+}
+
+.reimu-comment-current-user__logout-text {
+  display: inline-flex;
+  width: 58px;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  padding: 0 8px;
+  color: var(--color-default) !important;
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .22);
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 28px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: var(--cursor-pointer) !important;
+  transition: color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.reimu-comment-current-user__logout-text:hover {
+  color: var(--red-1) !important;
+  border-color: rgba(255, 82, 82, .42);
+  box-shadow: 0 6px 16px rgba(255, 82, 82, .12);
+  transform: translateY(-1px);
+}
+
+.reimu-comment-current-user__logout-text.is-loading {
+  opacity: .7;
+  pointer-events: none;
+}
+
+.reimu-comment-current-user__statuses {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px 0;
+  overflow: visible;
+}
+
+.reimu-comment-current-user__status {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  overflow: visible;
+  color: var(--red-1);
+  background: rgba(255, 82, 82, .07);
+  border: 1px solid rgba(255, 82, 82, .16);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reimu-comment-current-user__status-count {
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  display: inline-flex;
+  min-width: 15px;
+  height: 15px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  color: #fff;
+  background: var(--red-1);
+  border: 1px solid var(--color-wrap);
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.reimu-comment-current-user__status.is-success {
+  color: #16a34a;
+  background: rgba(22, 163, 74, .08);
+  border-color: rgba(22, 163, 74, .2);
+}
+
+.reimu-comment-current-user__status.is-error {
+  color: #dc2626;
+  background: rgba(220, 38, 38, .08);
+  border-color: rgba(220, 38, 38, .2);
 }
 
 .reimu-comment-current-user__name {
@@ -3775,6 +4008,16 @@ a.reimu-comment-current-user__name:hover,
 #main .reimu-comment-form input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
 #main .reimu-comment-form textarea {
   cursor: var(--cursor-text) !important;
+}
+
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email],
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email]:hover,
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email]:focus,
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email][readonly],
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-frozen-field,
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-frozen-field:hover,
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-frozen-field:focus {
+  cursor: var(--cursor-not-allowed) !important;
 }
 
 #main .reimu-comment-form .comment-form-comment:focus-within textarea,
@@ -3846,6 +4089,14 @@ a.reimu-comment-current-user__name:hover,
 
 .reimu-comment-pending {
   opacity: .86;
+}
+
+.comment-awaiting-moderation.is-rejected {
+  color: #dc2626;
+}
+
+.reimu-comment-rejected .comment-text {
+  opacity: .72;
 }
 
 #main .reimu-comment-login a,
@@ -3929,7 +4180,7 @@ a.reimu-comment-current-user__name:hover,
   background: var(--color-wrap);
 }
 
-.icon-bilibili {
+.article-entry .icon-bilibili:not(.share-icon):not(.sidebar-social-icon) {
   display: none !important;
 }
 
@@ -5158,4 +5409,325 @@ body #sidebar > #aplayer.aplayer .aplayer-list.reimu-scroll-zone-dragging ol::-w
   .reimu-yml-editor .code-expand {
     margin: 3px;
   }
+}
+
+.sidebar-social-icon:before,
+.share-icon:before {
+  font-family: iconfont;
+}
+
+.icon-google:before { content: "\e611"; }
+.icon-facebook:before { content: "\e60e"; }
+.icon-twitter:before,
+.icon-x:before { content: "\e62a"; }
+.icon-bluesky:before { content: "\e64b"; }
+.icon-instagram:before { content: "\e615"; }
+.icon-linkedin:before { content: "\e614"; }
+.icon-pinterest:before { content: "\e61a"; }
+.icon-youtube:before { content: "\e62d"; }
+.icon-vimeo:before { content: "\e629"; }
+.icon-flickr:before { content: "\e612"; }
+.icon-dribbble:before { content: "\e610"; }
+.icon-behance:before { content: "\e602"; }
+.icon-xiaohongshu:before { content: ""; }
+.icon-weibo:before { content: "\e62c"; }
+.icon-zhihu:before { content: "\e62e"; }
+.icon-reddit:before { content: "\e61c"; }
+.icon-tumblr:before { content: "\e625"; }
+.icon-medium:before { content: "\e616"; }
+.icon-deviantart:before { content: "\e60b"; }
+.icon-stackoverflow:before { content: "\e620"; }
+.icon-keybase:before { content: "\e61e"; }
+.icon-telegram:before { content: "\e623"; }
+.icon-discord:before { content: "\e60d"; }
+.icon-steam:before { content: "\e624"; }
+.icon-email:before { content: "\e63c"; }
+.icon-tiktok:before { content: "\e64a"; }
+.icon-rss:before { content: "\e61f"; }
+
+.icon-email,
+.icon-rss {
+  color: var(--red-2);
+}
+
+.icon-google { color: #4285f4; }
+.icon-facebook { color: #3b5998; }
+.icon-twitter,
+.icon-x { color: #191717; }
+.icon-bluesky { color: #1185fe; }
+.icon-instagram { color: #e1306c; }
+.icon-linkedin { color: #0e76a8; }
+.icon-pinterest { color: #bd081c; }
+.icon-youtube { color: #ff0000; }
+.icon-vimeo { color: #1ab7ea; }
+.icon-flickr { color: #ff0084; }
+.icon-dribbble { color: #ea4c89; }
+.icon-behance { color: #1769ff; }
+.icon-xiaohongshu { color: #ff2e4d; }
+.icon-weibo { color: #e6162d; }
+.icon-zhihu { color: #0084ff; }
+.icon-reddit { color: #ff4500; }
+.icon-tumblr { color: #35465c; }
+.icon-medium { color: #00ab6c; }
+.icon-deviantart { color: #05cc47; }
+.icon-stackoverflow { color: #f48024; }
+.icon-keybase { color: #33a0ff; }
+.icon-telegram { color: #0088cc; }
+.icon-discord { color: #7289da; }
+.icon-steam { color: #171a21; }
+.icon-weixin { color: #09b83e; }
+.icon-qq { color: #12b7f5; }
+.icon-tiktok {
+  color: #000;
+  filter: drop-shadow(-1px -1px 0 #69c9d0) drop-shadow(1px 1px 0 #fe2c55);
+}
+
+.sidebar-social-icon.icon-xiaohongshu:before {
+  display: block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  -webkit-mask: url("../images/icons/xiaohongshu.svg") center / contain no-repeat;
+  mask: url("../images/icons/xiaohongshu.svg") center / contain no-repeat;
+}
+
+.share-wrapper {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.article-footer > .share-wrapper {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  width: 100%;
+  margin: 8px 0 4px;
+}
+
+.article-inner .article-footer > .share-wrapper {
+  max-width: 100%;
+}
+
+.article-inner > .share-wrapper {
+  max-width: calc(100% - 72px);
+  margin: 8px 36px 4px;
+}
+
+.share-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: var(--cursor-pointer) !important;
+}
+
+.share-link:after {
+  display: none !important;
+}
+
+.share-icon {
+  display: inline-flex;
+  min-width: 28px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: var(--cursor-pointer) !important;
+}
+
+#main .share-wrapper,
+#main .share-wrapper .share-link,
+#main .share-wrapper .share-link *,
+#main .share-wrapper .share-icon,
+#main .share-wrapper .share-icon:before {
+  cursor: var(--cursor-pointer) !important;
+}
+
+.share-link:hover .share-icon:before,
+.share-link:focus-visible .share-icon:before {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.share-icon .share-weixin {
+  color: var(--color-default);
+  cursor: var(--cursor-default) !important;
+}
+
+#main .share-wrapper .share-weixin,
+#main .share-wrapper .share-weixin * {
+  cursor: var(--cursor-default) !important;
+}
+
+.share-weixin {
+  display: none;
+  position: absolute;
+  top: -440px;
+  left: -138px;
+  width: 300px;
+  height: 420px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(.8);
+  transition: opacity .3s ease, transform .3s ease;
+  user-select: none;
+  z-index: 50;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.share-weixin span {
+  display: block;
+}
+
+.share-weixin img {
+  filter: none !important;
+  opacity: 1;
+}
+
+.share-weixin-banner {
+  width: 100%;
+  height: 120px;
+  background: var(--red-5-5);
+  object-fit: cover;
+}
+
+.share-weixin-title {
+  overflow: hidden;
+  padding: 10px 16px;
+  color: var(--color-link);
+  font-size: 16px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.share-weixin-desc {
+  position: relative;
+  display: -webkit-box !important;
+  overflow: hidden;
+  margin: 0 16px 10px;
+  color: var(--color-default);
+  font-size: 14px;
+  line-height: 2;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  word-break: break-word;
+}
+
+.share-weixin-desc:after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(rgba(255, 255, 255, 0), #fff);
+}
+
+.share-weixin-qr {
+  width: 80px;
+  height: 80px;
+}
+
+.share-weixin-author {
+  margin: 12px 0;
+  color: var(--color-default);
+  font-size: 14px;
+}
+
+.share-weixin-theme {
+  color: var(--color-default);
+  font-size: 12px;
+}
+
+.share-weixin.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+@media screen and (max-width: 767px) {
+  .article-inner > .share-wrapper {
+    max-width: calc(100% - 32px);
+    margin-right: 16px;
+    margin-left: 16px;
+  }
+
+  .article-footer > .share-wrapper {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .share-weixin {
+    left: 50% !important;
+    width: min(300px, calc(100vw - 28px));
+    transform: translateX(-50%) scale(.8);
+  }
+
+  .share-weixin.active {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* Keep profile-only controls from inheriting broad comment form defaults. */
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-tag-row {
+  grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
+  align-items: center;
+}
+
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-tag-enabled {
+  display: grid !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  place-items: center;
+  justify-self: center;
+  align-self: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0;
+}
+
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-tag-row input[type="text"],
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-tag-row input[type="color"],
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-remove-tag {
+  height: 44px !important;
+  min-height: 44px !important;
+  align-self: center;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  box-sizing: border-box;
+}
+
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-frozen-field,
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-frozen-field:hover,
+#main .reimu-comment-form .reimu-profile-form .reimu-profile-frozen-field:focus,
+.reimu-profile-frozen-field,
+.reimu-profile-frozen-field:hover,
+.reimu-profile-frozen-field:focus,
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email],
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email]:hover,
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email]:focus,
+#main .reimu-comment-form .reimu-profile-form input[data-profile-current-email][readonly],
+input[data-profile-current-email],
+input[data-profile-current-email]:hover,
+input[data-profile-current-email]:focus,
+input[data-profile-current-email][readonly] {
+  color: color-mix(in srgb, var(--color-default) 44%, var(--grey-9)) !important;
+  background: color-mix(in srgb, var(--color-background) 76%, var(--color-wrap)) !important;
+  border-color: rgba(255, 82, 82, .12) !important;
+  box-shadow: none !important;
+  cursor: var(--cursor-not-allowed) !important;
+  caret-color: transparent !important;
+  user-select: none;
+  -webkit-user-select: none;
 }

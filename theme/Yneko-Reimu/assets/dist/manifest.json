@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-06-02T16:09:21.068Z",
+  "builtAt": "2026-06-03T12:18:07.371Z",
   "builder": "vite",
   "upstream": {
     "name": "Yneko-Reimu CSS reference snapshot",
@@ -13,12 +13,16 @@
   ],
   "outputs": [
     "assets/dist/loader.css",
+    "assets/dist/qrcode.js",
+    "assets/dist/reimu.css",
     "assets/dist/reimu.js",
-    "assets/dist/reimu.css"
+    "assets/dist/xiaohongshu.svg"
   ],
   "outputStats": {
     "assets/dist/loader.css": 1753,
-    "assets/dist/reimu.js": 102364,
-    "assets/dist/reimu.css": 203120
+    "assets/dist/qrcode.js": 23468,
+    "assets/dist/reimu.css": 215602,
+    "assets/dist/reimu.js": 116191,
+    "assets/dist/xiaohongshu.svg": 8155
   }
 }

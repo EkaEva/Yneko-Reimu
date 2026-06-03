@@ -37,6 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<footer class="article-footer">
 			<?php get_template_part( 'template-parts/meta/post-copyright' ); ?>
+			<?php get_template_part( 'template-parts/meta/post-share' ); ?>
 			<div class="article-footer-terms">
 			<?php
 			get_template_part( 'template-parts/meta/post-terms' );

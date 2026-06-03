@@ -22,6 +22,19 @@ function yneko_reimu_sanitize_url_or_empty( $value ) {
 	return '' === $value ? '' : esc_url_raw( $value );
 }
 
+function yneko_reimu_sanitize_social_url_or_empty( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+
+	if ( is_email( $value ) ) {
+		return 'mailto:' . sanitize_email( $value );
+	}
+
+	return esc_url_raw( $value );
+}
+
 function yneko_reimu_sanitize_url_base_or_empty( $value ) {
 	$value = trim( (string) $value );
 	if ( '' === $value ) {

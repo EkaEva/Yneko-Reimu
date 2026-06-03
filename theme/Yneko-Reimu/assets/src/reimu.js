@@ -10,6 +10,8 @@
   var pjaxRequestId = 0;
   var aplayerInstance = null;
   var scrollDirection = 0;
+  var qrCodeScriptPromise = null;
+  var assetBaseUrl = getAssetBaseUrl();
   var aplayerState = {
     index: 0,
     currentTime: 0,
@@ -52,6 +54,19 @@
 
   function qsa(selector, parent) {
     return Array.prototype.slice.call((parent || document).querySelectorAll(selector));
+  }
+
+  function getAssetBaseUrl() {
+    var script = document.currentScript || qs('script[src*="/assets/dist/reimu.js"]');
+    var src = script ? script.getAttribute('src') || '' : '';
+    if (!src) {
+      return '';
+    }
+    try {
+      return new URL('.', new URL(src, window.location.href)).href;
+    } catch (error) {
+      return src.replace(/[^/]*$/, '');
+    }
   }
 
   function escapeHtml(value) {
@@ -2420,14 +2435,16 @@
     return textarea._reimuCommentMedia;
   }
 
-  function commentMediaToken(textarea, url, type) {
+  function commentMediaToken(textarea, url, type, options) {
     var store = commentMediaStore(textarea);
     store.index += 1;
     var kind = type === 'gif' ? 'GIF' : 'IMAGE';
     var token = '[' + kind + ':' + store.index + ']';
     store.items[token] = {
       url: url,
-      type: type === 'gif' ? 'gif' : 'image'
+      type: type === 'gif' ? 'gif' : 'image',
+      cleanupKey: options && options.cleanupKey ? String(options.cleanupKey) : '',
+      uploaded: !!(options && options.uploaded)
     };
     return token;
   }
@@ -2441,6 +2458,114 @@
       }
       return '![' + (kind === 'GIF' ? 'GIF' : 'image') + '](' + item.url + ')';
     });
+  }
+
+  function commentMediaRegex() {
+    return /\[(GIF|IMAGE):(\d+)\]|!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/gi;
+  }
+
+  function commentMediaEntries(value) {
+    var entries = [];
+    String(value || '').replace(commentMediaRegex(), function (match, tokenKind, tokenIndex, alt, url, offset) {
+      var type = tokenKind ? String(tokenKind).toLowerCase() : (/gif/i.test(alt || '') || /\.gif(?:[?#]|$)/i.test(url || '') ? 'gif' : 'image');
+      entries.push({
+        text: match,
+        type: type === 'gif' ? 'gif' : 'image',
+        offset: offset,
+        length: match.length
+      });
+      return match;
+    });
+    return entries;
+  }
+
+  function cleanupUnsubmittedCommentMedia(item) {
+    if (!item || !item.uploaded || !item.cleanupKey || !item.url || !config.login || !config.login.ajaxUrl) {
+      return;
+    }
+    var uploads = config.commentUploads || {};
+    if (!uploads.nonce) {
+      return;
+    }
+    var formData = new FormData();
+    formData.append('action', 'yneko_reimu_comment_upload_discard');
+    formData.append('nonce', uploads.nonce || '');
+    formData.append('url', item.url || '');
+    formData.append('cleanup_key', item.cleanupKey || '');
+    fetch(config.login.ajaxUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: formData
+    }).catch(function () {});
+  }
+
+  function commentMediaReplaceMessage(entries) {
+    var hasGif = entries.some(function (entry) {
+      return entry.type === 'gif';
+    });
+    var hasImage = entries.some(function (entry) {
+      return entry.type === 'image';
+    });
+    if (hasGif && !hasImage) {
+      return t('commentMediaReplaceGifConfirm', '是否清空当前表情并重新添加？');
+    }
+    if (hasImage && !hasGif) {
+      return t('commentMediaReplaceImageConfirm', '是否清空当前图片并重新添加？');
+    }
+    return t('commentMediaReplaceAllConfirm', '是否清空当前图片和表情并重新添加？');
+  }
+
+  function removeCommentMediaFromTextarea(textarea) {
+    if (!textarea) {
+      return;
+    }
+    var value = textarea.value || '';
+    var entries = commentMediaEntries(value);
+    if (!entries.length) {
+      return;
+    }
+    var start = typeof textarea.selectionStart === 'number' ? textarea.selectionStart : value.length;
+    var store = textarea._reimuCommentMedia ? textarea._reimuCommentMedia.items : null;
+    if (store) {
+      entries.forEach(function (entry) {
+        if (/^\[(?:GIF|IMAGE):\d+\]$/i.test(entry.text)) {
+          cleanupUnsubmittedCommentMedia(store[entry.text]);
+          delete store[entry.text];
+        }
+      });
+    }
+    var cleaned = value
+      .replace(commentMediaRegex(), '\n')
+      .replace(/[ \t]*\n[ \t]*/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+    textarea.value = cleaned;
+    if (textarea.setSelectionRange) {
+      var position = Math.min(start, cleaned.length);
+      textarea.setSelectionRange(position, position);
+    }
+    dispatchInputEvent(textarea);
+  }
+
+  function confirmCommentMediaReplace(textarea) {
+    var entries = commentMediaEntries(textarea ? textarea.value : '');
+    return !entries.length || window.confirm(commentMediaReplaceMessage(entries));
+  }
+
+  function prepareCommentMediaInsert(textarea, confirmedReplace) {
+    var entries = commentMediaEntries(textarea ? textarea.value : '');
+    if (!entries.length) {
+      return true;
+    }
+    if (!confirmedReplace && !window.confirm(commentMediaReplaceMessage(entries))) {
+      return false;
+    }
+    removeCommentMediaFromTextarea(textarea);
+    return true;
+  }
+
+  function commentMediaLimitOk(value) {
+    return commentMediaEntries(value).length <= 1;
   }
 
   function commentTextForCount(value) {
@@ -2559,8 +2684,12 @@
     }
   }
 
-  function insertCommentMedia(textarea, url, type) {
-    insertIntoTextarea(textarea, commentMediaToken(textarea, url, type));
+  function insertCommentMedia(textarea, url, type, options) {
+    if (!prepareCommentMediaInsert(textarea, options && options.confirmedReplace)) {
+      return false;
+    }
+    insertIntoTextarea(textarea, commentMediaToken(textarea, url, type, options || {}));
+    return true;
   }
 
   function initCommentGifLibrary(form, textarea) {
@@ -2585,8 +2714,9 @@
       button.addEventListener('click', function () {
         var url = button.getAttribute('data-comment-gif-url') || '';
         if (url) {
-          insertCommentMedia(textarea, url, 'gif');
-          closeCommentPopovers(form);
+          if (insertCommentMedia(textarea, url, 'gif')) {
+            closeCommentPopovers(form);
+          }
         }
       });
     });
@@ -2650,7 +2780,15 @@
               initCommentUploadRows(form, textarea);
               return;
             }
-            uploadCommentFile(type, input, button, textarea, form);
+            var replaceConfirmed = false;
+            if (commentMediaEntries(textarea ? textarea.value : '').length) {
+              if (!confirmCommentMediaReplace(textarea)) {
+                input.value = '';
+                return;
+              }
+              replaceConfirmed = true;
+            }
+            uploadCommentFile(type, input, button, textarea, form, replaceConfirmed);
           }
         });
       }
@@ -2672,7 +2810,7 @@
       });
     });
 
-    function uploadCommentFile(type, input, button, textarea, form) {
+    function uploadCommentFile(type, input, button, textarea, form, replaceConfirmed) {
       var state = uploadState(type);
       if (!state.canUpload) {
         showTooltip(t(type === 'gif' ? 'commentUploadGifLogin' : 'commentUploadLogin', type === 'gif' ? '登录后可上传 GIF。' : '登录后可上传图片。'));
@@ -2712,7 +2850,11 @@
           showTooltip(message);
           return;
         }
-        insertCommentMedia(textarea, payload.data.url, payload.data.type || type);
+        insertCommentMedia(textarea, payload.data.url, payload.data.type || type, {
+          confirmedReplace: !!replaceConfirmed,
+          cleanupKey: payload.data.cleanupKey || '',
+          uploaded: !!payload.data.cleanupKey
+        });
         input.value = '';
         if (status) {
           status.textContent = Object.prototype.hasOwnProperty.call(payload.data, 'message') ? payload.data.message : t('commentUploadDone', '已插入评论。');
@@ -2806,11 +2948,12 @@
           }
           return;
         }
-        insertCommentMedia(textarea, url, type);
-        if (input) {
-          input.value = '';
+        if (insertCommentMedia(textarea, url, type)) {
+          if (input) {
+            input.value = '';
+          }
+          closeCommentPopovers(form);
         }
-        closeCommentPopovers(form);
       });
     });
 
@@ -2826,7 +2969,29 @@
     if (!item) {
       return 0;
     }
-    return qsa('.children .reimu-comment', item).length;
+    var parentLikes = Number(item.dataset.commentLikes || 0);
+    var replyItems = qsa('.children .reimu-comment', item);
+    var replyLikes = 0;
+    var latestTime = Number(item.dataset.commentTime || 0);
+    replyItems.forEach(function (reply) {
+      replyLikes += Number(reply.dataset.commentLikes || 0);
+      latestTime = Math.max(latestTime, Number(reply.dataset.commentTime || 0));
+    });
+    var activeTime = latestTime > 0 ? latestTime : Number(item.dataset.commentTime || 0);
+    var ageHours = activeTime > 0 ? Math.max(0, (Date.now() / 1000 - activeTime) / 3600) : 0;
+    var baseScore = parentLikes * 4 + replyLikes * 2 + replyItems.length * 3 + 1;
+    return baseScore / Math.pow(1 + ageHours / 72, 0.35);
+  }
+
+  function commentLatestActivityTime(item) {
+    if (!item) {
+      return 0;
+    }
+    var latestTime = Number(item.dataset.commentTime || 0);
+    qsa('.children .reimu-comment', item).forEach(function (reply) {
+      latestTime = Math.max(latestTime, Number(reply.dataset.commentTime || 0));
+    });
+    return latestTime;
   }
 
   function getLoadMoreItems(rootElement) {
@@ -2903,7 +3068,7 @@
     var items = qsa(':scope > .reimu-comment', list);
     items.sort(function (a, b) {
       if (mode === 'hot') {
-        return commentHotScore(b) - commentHotScore(a) || Number(a.dataset.commentTime || 0) - Number(b.dataset.commentTime || 0);
+        return commentHotScore(b) - commentHotScore(a) || commentLatestActivityTime(b) - commentLatestActivityTime(a) || Number(a.dataset.commentTime || 0) - Number(b.dataset.commentTime || 0);
       }
       if (mode === 'desc') {
         return Number(b.dataset.commentTime || 0) - Number(a.dataset.commentTime || 0);
@@ -3010,6 +3175,11 @@
         textarea.focus();
         return;
       }
+      if (textarea && !commentMediaLimitOk(textarea.value)) {
+        showTooltip(t('commentMediaLimitOne', '一条评论最多只能添加一张图片或一个 GIF。'));
+        textarea.focus();
+        return;
+      }
       var submit = qs('.reimu-comment-submit', form) || qs('[type="submit"]', form);
       if (submit && submit.disabled) {
         return;
@@ -3059,6 +3229,17 @@
           }
         }
         showTooltip(payload.data.message || (!!payload.data.approved ? t('commentSubmitSuccess', '评论已发布。') : t('commentSubmitPending', '评论已提交，正在等待审核。')));
+        if (!payload.data.approved) {
+          var profileModal = qs('#reimu-profile-modal');
+          if (profileModal && profileModal._reimuSetInlineProfileStatuses) {
+            profileModal._reimuSetInlineProfileStatuses([{ text: t('commentsPending', '评论审核中'), state: 'pending', status: 'pending', type: 'comments', count: 1 }]);
+          } else if (profileModal && profileModal._reimuSetInlineProfileStatus) {
+            profileModal._reimuSetInlineProfileStatus(t('commentsPending', '评论审核中'), 'pending', 'comments', 1);
+          }
+          if (profileModal && profileModal._reimuStartProfileStatusPolling) {
+            profileModal._reimuStartProfileStatusPolling();
+          }
+        }
         if (item && item.scrollIntoView) {
           window.setTimeout(function () {
             item.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3099,9 +3280,17 @@
       if (!id) {
         return;
       }
-      var liked = !!likes[id];
+      var commentItem = button.closest('.reimu-comment');
+      var hasServerLikedState = commentItem && typeof commentItem.dataset.commentLiked !== 'undefined';
+      var serverLiked = hasServerLikedState && commentItem.dataset.commentLiked === '1';
+      var liked = hasServerLikedState ? serverLiked : !!likes[id];
       button.classList.toggle('liked', liked);
       button.setAttribute('aria-pressed', liked ? 'true' : 'false');
+      if (serverLiked) {
+        likes[id] = 1;
+      } else if (hasServerLikedState) {
+        delete likes[id];
+      }
       if (button.dataset.commentLikeReady) {
         return;
       }
@@ -3133,6 +3322,11 @@
           if (count) {
             count.textContent = String(payload.data.count || 0);
           }
+          var commentItem = button.closest('.reimu-comment');
+          if (commentItem) {
+            commentItem.dataset.commentLikes = String(payload.data.count || 0);
+            commentItem.dataset.commentLiked = nextLiked ? '1' : '0';
+          }
           currentLikes[id] = nextLiked ? 1 : undefined;
           if (!nextLiked) {
             delete currentLikes[id];
@@ -3140,6 +3334,9 @@
           setLikedComments(currentLikes);
           button.classList.toggle('liked', nextLiked);
           button.setAttribute('aria-pressed', nextLiked ? 'true' : 'false');
+          if (getActiveCommentSortMode() === 'hot') {
+            sortCommentList('hot');
+          }
         }).catch(function () {}).finally(function () {
           button.disabled = false;
         });
@@ -3198,6 +3395,11 @@
           var next = textarea.value.trim();
           if (!next) {
             showTooltip(t('commentEmpty', '还没有评论，来抢一张小板凳吧。'));
+            textarea.focus();
+            return;
+          }
+          if (!commentMediaLimitOk(next)) {
+            showTooltip(t('commentMediaLimitOne', '一条评论最多只能添加一张图片或一个 GIF。'));
             textarea.focus();
             return;
           }
@@ -3765,6 +3967,9 @@
     var form = qs('[data-reimu-profile-form]', modal);
     var message = qs('[data-profile-message]', modal);
     var emailTimer = null;
+    var profileStatusTimer = null;
+    var profileAvatarChanged = false;
+    var profileAvatarOriginalUrl = '';
 
     function setOpen(open) {
       modal.classList.toggle('show', !!open);
@@ -3784,9 +3989,11 @@
         form.reset();
         validateProfilePasswords();
         clearProfileTagError();
+        setProfileAvatarHint('');
         var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
         if (avatarUploadButton) {
           avatarUploadButton.textContent = t('upload', '上传');
+          avatarUploadButton.disabled = false;
         }
       }
     }
@@ -3829,6 +4036,218 @@
       return !invalid;
     }
 
+    function setProfileAvatarHint(text, ok) {
+      var hint = form ? qs('[data-profile-avatar-hint]', form) : null;
+      if (!hint) {
+        return;
+      }
+      hint.textContent = text || '';
+      hint.classList.toggle('success', !!ok);
+      hint.classList.toggle('error', !ok && !!text);
+    }
+
+    function markProfileAvatarChanged(changed) {
+      profileAvatarChanged = !!changed;
+      var input = form ? qs('[data-profile-avatar-changed]', form) : null;
+      if (input) {
+        input.value = profileAvatarChanged ? '1' : '0';
+      }
+    }
+
+    function profileAvatarUrlChanged() {
+      var input = form ? qs('[name="avatar_url"]', form) : null;
+      return !!(input && String(input.value || '').trim() !== String(profileAvatarOriginalUrl || '').trim());
+    }
+
+    function profileStatusMessage(type, status) {
+      var map = {
+        avatar: {
+          pending: ['avatarPending', '头像审核中'],
+          updated: ['avatarUpdated', '头像已更新'],
+          rejected: ['avatarRejected', '头像审核不通过']
+        },
+        tags: {
+          pending: ['tagsPending', '标签审核中'],
+          updated: ['tagsUpdated', '标签已更新'],
+          rejected: ['tagsRejected', '标签审核不通过']
+        },
+        comments: {
+          pending: ['commentsPending', '评论审核中'],
+          updated: ['commentsUpdated', '评论已更新'],
+          rejected: ['commentsRejected', '评论审核不通过']
+        }
+      };
+      var item = map[type] && map[type][status] ? map[type][status] : null;
+      return item ? t(item[0], item[1]) : '';
+    }
+
+    function hasPendingProfileStatus(statuses) {
+      statuses = statuses || {};
+      return ['avatar', 'tags', 'comments'].some(function (type) {
+        return statuses[type] && statuses[type].status === 'pending';
+      });
+    }
+
+    function profileStatusRows(statuses) {
+      statuses = statuses || {};
+      var order = ['avatar', 'tags', 'comments'];
+      return order.map(function (type) {
+        var item = statuses[type] || {};
+        var status = item.status || '';
+        var text = status ? profileStatusMessage(type, status) : '';
+        if (!text) {
+          return null;
+        }
+        return {
+          type: type,
+          status: status,
+          text: text,
+          state: status === 'rejected' ? 'error' : (status === 'updated' ? 'success' : 'pending'),
+          count: Number(item.count || 0)
+        };
+      }).filter(Boolean);
+    }
+
+    function ackProfileStatuses(types) {
+      types = Array.isArray(types) ? types.filter(Boolean) : [];
+      if (!types.length || !config.login || !config.login.ajaxUrl || !config.login.profileNonce) {
+        return;
+      }
+      var data = new FormData();
+      data.append('action', 'yneko_reimu_profile_status_ack');
+      data.append('nonce', config.login.profileNonce || '');
+      types.forEach(function (type) {
+        data.append('types[]', type);
+      });
+      fetch(config.login.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+        .then(function (response) { return response.json(); })
+        .then(function (payload) {
+          if (payload && payload.success && payload.data && config.login) {
+            config.login.profileNonce = payload.data.profileNonce || config.login.profileNonce;
+            config.login.logoutNonce = payload.data.logoutNonce || config.login.logoutNonce;
+          }
+        }).catch(function () {});
+    }
+
+    function setInlineProfileStatus(text, state, type, count) {
+      var rows = text ? [{ text: text, state: state, type: type, count: count || 0, status: state === 'pending' ? 'pending' : '' }] : [];
+      setInlineProfileStatuses(rows);
+    }
+
+    function setInlineProfileStatuses(rows) {
+      rows = Array.isArray(rows) ? rows : [];
+      qsa('.reimu-comment-current-user').forEach(function (identity) {
+        var name = qs('.reimu-comment-current-user__name', identity);
+        var list = qs('[data-profile-inline-status-list]', identity);
+        if (!rows.length) {
+          if (list) {
+            list.remove();
+          }
+          return;
+        }
+        if (!list) {
+          list = document.createElement('span');
+          list.className = 'reimu-comment-current-user__statuses';
+          list.setAttribute('data-profile-inline-status-list', '');
+          if (name) {
+            name.insertAdjacentElement('afterend', list);
+          } else {
+            identity.appendChild(list);
+          }
+        }
+        list.innerHTML = '';
+        rows.forEach(function (row) {
+          var status = document.createElement('span');
+          status.className = 'reimu-comment-current-user__status';
+          status.setAttribute('data-profile-inline-status', '');
+          status.setAttribute('data-profile-status-kind', row.type || '');
+          status.setAttribute('data-profile-status-state', row.status || row.state || '');
+          status.textContent = row.text || '';
+          status.classList.toggle('is-error', row.state === 'error');
+          status.classList.toggle('is-success', row.state === 'success');
+          status.classList.toggle('is-pending', row.state === 'pending');
+          if (row.state === 'pending' && Number(row.count || 0) > 1 && (row.type === 'tags' || row.type === 'comments')) {
+            var badge = document.createElement('b');
+            badge.className = 'reimu-comment-current-user__status-count';
+            badge.textContent = String(row.count);
+            status.appendChild(badge);
+          }
+          list.appendChild(status);
+        });
+      });
+    }
+
+    function applyInlineProfileStatus(data, options) {
+      options = options || {};
+      var rows = profileStatusRows(data && data.reviewStatuses ? data.reviewStatuses : {});
+      if (!rows.length) {
+        if (options.clearEmpty) {
+          setInlineProfileStatuses([]);
+        }
+        return false;
+      }
+      setInlineProfileStatuses(rows);
+      var pending = rows.some(function (row) { return row.state === 'pending'; });
+      var ackTypes = rows.filter(function (row) { return row.state !== 'pending'; }).map(function (row) { return row.type; });
+      if (ackTypes.length) {
+        if (options.autohide !== false) {
+          window.setTimeout(function () {
+            var pendingRows = rows.filter(function (row) { return row.state === 'pending'; });
+            setInlineProfileStatuses(pendingRows);
+            ackProfileStatuses(ackTypes);
+          }, 4200);
+        }
+      }
+      return pending;
+    }
+
+    function applyProfilePayload(data, options) {
+      if (!data) {
+        return false;
+      }
+      options = options || {};
+      var modalOpen = modal.classList.contains('show') || modal.getAttribute('aria-hidden') === 'false';
+      if (options.forceFill || (options.fillProfile !== false && !modalOpen)) {
+        fillProfile(data);
+      }
+      updateCommentBadgesForProfile(data);
+      updateVisibleProfileLinks(data);
+      updateVisibleProfileAvatars(data);
+      return applyInlineProfileStatus(data, options);
+    }
+
+    function startProfileStatusPolling() {
+      window.clearInterval(profileStatusTimer);
+      profileStatusTimer = window.setInterval(function () {
+        if (!config.login || !config.login.ajaxUrl || !config.login.profileNonce) {
+          return;
+        }
+        var data = new FormData();
+        data.append('action', 'yneko_reimu_profile_get');
+        data.append('nonce', config.login.profileNonce || '');
+        data.append('redirect_to', window.location.href || '');
+        fetch(config.login.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+          .then(function (response) { return response.json(); })
+          .then(function (payload) {
+            if (!payload || !payload.success || !payload.data) {
+              return;
+            }
+            config.login.profileNonce = payload.data.profileNonce || config.login.profileNonce;
+            config.login.logoutNonce = payload.data.logoutNonce || config.login.logoutNonce;
+            var stillPending = applyProfilePayload(payload.data, { autohide: true, fillProfile: false });
+            if (stillPending) {
+              return;
+            }
+            window.clearInterval(profileStatusTimer);
+          }).catch(function () {});
+      }, 5000);
+    }
+    modal._reimuStartProfileStatusPolling = startProfileStatusPolling;
+    modal._reimuApplyProfilePayload = applyProfilePayload;
+    modal._reimuSetInlineProfileStatus = setInlineProfileStatus;
+    modal._reimuSetInlineProfileStatuses = setInlineProfileStatuses;
+    modal._reimuHasPendingProfileStatus = hasPendingProfileStatus;
+
     function fillProfile(data) {
       if (!data || !form) {
         return;
@@ -3840,12 +4259,17 @@
         avatar_url: data.avatarUrl,
         profile_url: data.profileUrl
       };
+      profileAvatarOriginalUrl = data.avatarUrl || '';
       Object.keys(fields).forEach(function (name) {
         var input = qs('[name="' + name + '"]', form);
         if (input) {
           input.value = fields[name] || '';
         }
       });
+      var currentEmailDisplay = qs('[data-profile-current-email-display]', form);
+      if (currentEmailDisplay) {
+        currentEmailDisplay.textContent = fields.current_email || '';
+      }
       var twoFactor = qs('[name="totp_enabled"]', form);
       if (twoFactor) {
         twoFactor.checked = !!data.twoFactor;
@@ -3865,7 +4289,20 @@
       }
       var commentTags = Array.isArray(data.commentTags) ? data.commentTags : [];
       var pendingTags = Array.isArray(data.pendingCommentTags) ? data.pendingCommentTags : [];
-      var customTags = pendingTags.length ? pendingTags : commentTags.filter(function (tag) { return tag && tag.type === 'custom'; });
+      var activeCustomTags = commentTags.filter(function (tag) { return tag && tag.type === 'custom'; });
+      var seenCustomTags = {};
+      var customTags = [];
+      pendingTags.concat(activeCustomTags).forEach(function (tag) {
+        if (!tag || !tag.label) {
+          return;
+        }
+        var key = String(tag.id || tag.old_id || '').trim() || (String(tag.label || '').trim().toLowerCase() + '|' + String(tag.color || '').trim().toLowerCase());
+        if (seenCustomTags[key]) {
+          return;
+        }
+        seenCustomTags[key] = true;
+        customTags.push(tag);
+      });
       var specialTags = commentTags.filter(function (tag) { return tag && tag.type === 'special' && tag.key; });
       specialTags.forEach(function (tag) {
         var specialInput = qs('[name="comment_special_enabled[' + tag.key + ']"]', form);
@@ -3885,11 +4322,14 @@
       var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
       if (avatarUploadButton) {
         avatarUploadButton.textContent = t('upload', '上传');
+        avatarUploadButton.disabled = false;
       }
       var avatarFileInput = qs('[data-profile-avatar-file]', form);
       if (avatarFileInput) {
         avatarFileInput.value = '';
       }
+      markProfileAvatarChanged(false);
+      setProfileAvatarHint('');
       validateProfilePasswords();
     }
 
@@ -4014,8 +4454,22 @@
       return count;
     }
 
+    function profileEnabledCustomTagCount() {
+      var count = 0;
+      qsa('[data-profile-tag-enabled]', form).forEach(function (input) {
+        if (input.checked) {
+          count += 1;
+        }
+      });
+      return count;
+    }
+
+    function profileSelectedTagCount() {
+      return profileSpecialCount() + profileEnabledCustomTagCount();
+    }
+
     function enforceProfileSpecialLimit(changedInput) {
-      var checked = qsa('[name^="comment_special_enabled["]', form).filter(function (input) {
+      var checked = qsa('[name^="comment_special_enabled["], [data-profile-tag-enabled]', form).filter(function (input) {
         return input.checked;
       });
       if (checked.length <= 2) {
@@ -4033,24 +4487,57 @@
       return Math.max(0, 2 - profileSpecialCount());
     }
 
+    function profileCustomTagStorageLimit() {
+      var list = qs('[data-profile-tag-list]', form);
+      return Math.max(1, Number(list && list.dataset ? list.dataset.storageLimit || 5 : 5));
+    }
+
     function syncProfileAddTagState() {
       var list = qs('[data-profile-tag-list]', form);
       var add = qs('[data-profile-add-tag]', form);
       if (!list || !add) {
         return;
       }
-      var count = qsa('.reimu-profile-tag-row', list).length;
+      var rows = qsa('.reimu-profile-tag-row', list);
       var capacity = profileCustomTagCapacity();
+      var selected = 0;
       list.dataset.maxTags = String(capacity);
-      add.hidden = capacity <= 0;
-      add.disabled = count >= capacity;
+      add.hidden = false;
+      add.disabled = rows.length >= profileCustomTagStorageLimit();
+      rows.forEach(function (row) {
+        var checkbox = qs('[data-profile-tag-enabled]', row);
+        if (checkbox && checkbox.checked) {
+          selected += 1;
+          if (selected > capacity) {
+            checkbox.checked = false;
+            selected -= 1;
+          }
+        }
+      });
+      rows.forEach(function (row) {
+        var checkbox = qs('[data-profile-tag-enabled]', row);
+        var hidden = qs('[name="comment_tag_enabled[]"]', row);
+        var active = !!(checkbox && checkbox.checked);
+        row.classList.toggle('is-disabled', !active);
+        if (hidden) {
+          hidden.value = active ? '1' : '0';
+        }
+        if (checkbox) {
+          checkbox.disabled = !active && selected >= capacity;
+          checkbox.setAttribute('aria-disabled', checkbox.disabled ? 'true' : 'false');
+        }
+      });
     }
 
     function profileTagRow(tag) {
       tag = tag || {};
       var row = document.createElement('div');
       row.className = 'reimu-profile-tag-row';
-      row.innerHTML = '<input name="comment_tag_label[]" type="text" maxlength="8" placeholder="' + escapeHtml(t('commentTag', '标签')) + '" value="' + escapeHtml(tag.label || '') + '">' +
+      var enabled = tag.enabled !== '0';
+      row.innerHTML = '<input name="comment_tag_id[]" type="hidden" value="' + escapeHtml(tag.id || '') + '">' +
+        '<input name="comment_tag_enabled[]" type="hidden" value="' + (enabled ? '1' : '0') + '">' +
+        '<label class="reimu-profile-tag-enabled" title="' + escapeHtml(t('enable', '启用')) + '"><input type="checkbox" data-profile-tag-enabled' + (enabled ? ' checked' : '') + '><span></span></label>' +
+        '<input name="comment_tag_label[]" type="text" maxlength="8" placeholder="' + escapeHtml(t('commentTag', '标签')) + '" value="' + escapeHtml(tag.label || '') + '">' +
         '<input name="comment_tag_color[]" type="color" value="' + escapeHtml(tag.color || '#ff5252') + '">' +
         '<button type="button" class="reimu-profile-remove-tag" data-profile-remove-tag aria-label="' + escapeHtml(t('remove', '删除')) + '">×</button>';
       return row;
@@ -4063,7 +4550,7 @@
       }
       list.innerHTML = '';
       tags = Array.isArray(tags) ? tags : [];
-      tags.slice(0, profileCustomTagCapacity()).forEach(function (tag) {
+      tags.slice(0, profileCustomTagStorageLimit()).forEach(function (tag) {
         if (tag && tag.label) {
           list.appendChild(profileTagRow(tag));
         }
@@ -4087,7 +4574,10 @@
               config.login.profileNonce = payload.data.profileNonce || config.login.profileNonce;
               config.login.logoutNonce = payload.data.logoutNonce || config.login.logoutNonce;
             }
-            fillProfile(payload.data);
+            var stillPending = applyProfilePayload(payload.data, { autohide: false, forceFill: true });
+            if (stillPending || hasPendingProfileStatus(payload.data && payload.data.reviewStatuses)) {
+              startProfileStatusPolling();
+            }
           }
         }).catch(function () {});
     }
@@ -4143,10 +4633,20 @@
     var avatarUrlInput = qs('[name="avatar_url"]', form);
     if (avatarUrlInput) {
       avatarUrlInput.addEventListener('input', function () {
+        markProfileAvatarChanged(profileAvatarUrlChanged());
         var preview = qs('[data-profile-avatar-preview]', form);
         if (preview && avatarUrlInput.value) {
           preview.src = avatarUrlInput.value;
         }
+      });
+    }
+
+    var currentEmailInput = qs('[data-profile-current-email]', form);
+    if (currentEmailInput) {
+      currentEmailInput.setAttribute('tabindex', '-1');
+      currentEmailInput.setAttribute('aria-readonly', 'true');
+      currentEmailInput.addEventListener('focus', function () {
+        currentEmailInput.blur();
       });
     }
 
@@ -4157,11 +4657,11 @@
         if (!list || addTagButton.disabled) {
           return;
         }
-        if (qsa('.reimu-profile-tag-row', list).length >= profileCustomTagCapacity()) {
+        if (qsa('.reimu-profile-tag-row', list).length >= profileCustomTagStorageLimit()) {
           syncProfileAddTagState();
           return;
         }
-        list.appendChild(profileTagRow({ color: '#ff5252' }));
+        list.appendChild(profileTagRow({ color: '#ff5252', enabled: profileEnabledCustomTagCount() < profileCustomTagCapacity() ? '1' : '0' }));
         syncProfileAddTagState();
       });
     }
@@ -4170,13 +4670,6 @@
       input.addEventListener('change', function () {
         if (input.checked) {
           enforceProfileSpecialLimit(input);
-        }
-        var list = qs('[data-profile-tag-list]', form);
-        var capacity = profileCustomTagCapacity();
-        if (list) {
-          qsa('.reimu-profile-tag-row', list).slice(capacity).forEach(function (row) {
-            row.remove();
-          });
         }
         syncProfileAddTagState();
       });
@@ -4195,23 +4688,60 @@
       syncProfileAddTagState();
     });
 
+    form.addEventListener('change', function (event) {
+      var checkbox = event.target && event.target.matches && event.target.matches('[data-profile-tag-enabled]') ? event.target : null;
+      if (!checkbox) {
+        return;
+      }
+      if (checkbox.checked && profileSelectedTagCount() > 2) {
+        checkbox.checked = false;
+        showProfileTagError({ data: { message: t('commentTagLimit', '特殊标签和已勾选的自定义标签合计最多 2 个。') } });
+      } else {
+        clearProfileTagError();
+      }
+      syncProfileAddTagState();
+    });
+
     var avatarUploadButton = qs('[data-profile-avatar-upload]', form);
     var avatarFileInput = qs('[data-profile-avatar-file]', form);
     if (avatarUploadButton && avatarFileInput) {
       avatarUploadButton.addEventListener('click', function () {
+        if (avatarUploadButton.disabled) {
+          return;
+        }
+        setProfileAvatarHint('');
+        avatarFileInput.value = '';
+        markProfileAvatarChanged(profileAvatarUrlChanged());
         avatarFileInput.click();
       });
       avatarFileInput.addEventListener('change', function () {
         var file = avatarFileInput.files && avatarFileInput.files[0] ? avatarFileInput.files[0] : null;
         if (!file) {
           avatarUploadButton.textContent = t('upload', '上传');
+          avatarUploadButton.disabled = false;
+          setProfileAvatarHint('');
           return;
         }
-        avatarUploadButton.textContent = file.name.length > 10 ? file.name.slice(0, 9) + '...' : file.name;
+        avatarUploadButton.textContent = t('upload', '上传');
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        var extOk = /\.(?:jpe?g|png|webp)$/i.test(file.name || '');
+        if (allowedTypes.indexOf(file.type) === -1 && !extOk) {
+          setProfileAvatarHint(t('avatarInvalidType', '头像仅支持 JPG、PNG 或 WebP。'), false);
+          avatarFileInput.value = '';
+          return;
+        }
+        var maxMb = Number(modal.getAttribute('data-avatar-max-mb') || 1);
+        if (file.size > maxMb * 1024 * 1024) {
+          setProfileAvatarHint(t('avatarTooLarge', '头像文件超过大小限制。'), false);
+          avatarFileInput.value = '';
+          return;
+        }
         var preview = qs('[data-profile-avatar-preview]', form);
         if (preview && window.URL && window.URL.createObjectURL) {
           preview.src = window.URL.createObjectURL(file);
         }
+        markProfileAvatarChanged(true);
+        setProfileAvatarHint(t('avatarReady', '头像已选择，保存后生效。'), true);
       });
     }
 
@@ -4312,14 +4842,17 @@
           return;
         }
         var data = new FormData(form);
+        var avatarChanged = profileAvatarChanged;
         postProfileAction('yneko_reimu_profile_save', data).then(function (payload) {
           setMessage(payload && payload.data && payload.data.message ? payload.data.message : '', payload && payload.success);
           if (payload && payload.success) {
             clearProfileTagError();
-            fillProfile(payload.data);
-            updateCommentBadgesForProfile(payload.data);
-            updateVisibleProfileLinks(payload.data);
-            updateVisibleProfileAvatars(payload.data);
+            var stillPending = applyProfilePayload(payload.data, { autohide: true, forceFill: true });
+            if (stillPending || hasPendingProfileStatus(payload.data && payload.data.reviewStatuses)) {
+              startProfileStatusPolling();
+            } else if (avatarChanged && payload.data && payload.data.avatarUrl) {
+              applyInlineProfileStatus(payload.data, { autohide: true });
+            }
             setOpen(false);
             refreshCommentLoginState();
           } else if (payload && payload.data && payload.data.field === 'comment_tag_label') {
@@ -4332,6 +4865,7 @@
         });
       });
     }
+    refreshProfile();
   }
 
   function applyCommentLoggedInState(data) {
@@ -4387,6 +4921,14 @@
     initProfileModal();
     initLoginModal();
     initCommentAjaxLogout();
+    var profileModal = qs('#reimu-profile-modal');
+    if (profileModal && data.profile && profileModal._reimuApplyProfilePayload) {
+      var stillPending = profileModal._reimuApplyProfilePayload(data.profile, { autohide: false });
+      var hasPending = profileModal._reimuHasPendingProfileStatus && profileModal._reimuHasPendingProfileStatus(data.profile.reviewStatuses);
+      if ((stillPending || hasPending) && profileModal._reimuStartProfileStatusPolling) {
+        profileModal._reimuStartProfileStatusPolling();
+      }
+    }
     return true;
   }
 
@@ -4877,13 +5419,170 @@
     }
   }
 
+  function parseShareData(wrapper) {
+    if (!wrapper) {
+      return {};
+    }
+    try {
+      return JSON.parse(wrapper.getAttribute('data-reimu-share') || '{}') || {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function setShareText(node, value) {
+    if (node) {
+      node.textContent = String(value || '');
+    }
+  }
+
+  function loadQrCodeModule() {
+    if (window.QRCode && typeof window.QRCode.toDataURL === 'function') {
+      return Promise.resolve(window.QRCode);
+    }
+
+    if (!qrCodeScriptPromise) {
+      qrCodeScriptPromise = new Promise(function (resolve, reject) {
+        var existing = qs('script[data-reimu-qrcode]');
+        if (existing) {
+          existing.addEventListener('load', function () {
+            resolve(window.QRCode);
+          }, { once: true });
+          existing.addEventListener('error', reject, { once: true });
+          return;
+        }
+
+        var script = document.createElement('script');
+        script.src = (assetBaseUrl || '') + 'qrcode.js';
+        script.async = true;
+        script.defer = true;
+        script.dataset.reimuQrcode = 'true';
+        script.addEventListener('load', function () {
+          resolve(window.QRCode);
+        }, { once: true });
+        script.addEventListener('error', function () {
+          reject(new Error('Failed to load qrcode.js'));
+        }, { once: true });
+        document.head.appendChild(script);
+      })
+        .catch(function (error) {
+          qrCodeScriptPromise = null;
+          throw error;
+        });
+    }
+
+    return qrCodeScriptPromise;
+  }
+
+  function renderShareQr(qr, url) {
+    if (!qr || !url) {
+      return;
+    }
+    if (qr.dataset.qrUrl === url && qr.getAttribute('src')) {
+      return;
+    }
+
+    qr.dataset.qrUrl = url;
+    qr.removeAttribute('src');
+    qr.setAttribute('aria-busy', 'true');
+
+    loadQrCodeModule()
+      .then(function (QRCode) {
+        if (!QRCode || typeof QRCode.toDataURL !== 'function') {
+          throw new Error('QRCode.toDataURL is unavailable');
+        }
+        return QRCode.toDataURL(url, {
+          errorCorrectionLevel: 'M',
+          margin: 1,
+          width: 180
+        });
+      })
+      .then(function (dataUrl) {
+        if (qr.dataset.qrUrl === url) {
+          qr.src = dataUrl;
+        }
+      })
+      .catch(function (error) {
+        if (window.console && window.console.warn) {
+          window.console.warn('[Yneko-Reimu] failed to generate share QR:', error);
+        }
+      })
+      .then(function () {
+        qr.removeAttribute('aria-busy');
+      });
+  }
+
+  function fillWeixinShareCard(wrapper, popup) {
+    var data = parseShareData(wrapper);
+    var url = data.url || window.location.href;
+    var banner = qs('[data-share-weixin-banner]', popup);
+    var qr = qs('[data-share-weixin-qr]', popup);
+
+    if (banner && data.image) {
+      banner.src = data.image;
+    }
+    renderShareQr(qr, url);
+
+    setShareText(qs('[data-share-weixin-title]', popup), data.title || document.title);
+    setShareText(qs('[data-share-weixin-desc]', popup), data.description || '');
+    setShareText(qs('[data-share-weixin-author]', popup), data.author ? 'By: ' + data.author : '');
+    setShareText(qs('[data-share-weixin-theme]', popup), data.theme || 'Powered By Yneko-Reimu');
+  }
+
+  function closeWeixinShare(except) {
+    qsa('[data-share-weixin-popup].active').forEach(function (popup) {
+      if (popup === except) {
+        return;
+      }
+      popup.classList.remove('active');
+      popup.setAttribute('aria-hidden', 'true');
+    });
+  }
+
+  function initShare() {
+    qsa('.share-wrapper').forEach(function (wrapper) {
+      if (wrapper.dataset.shareReady) {
+        return;
+      }
+      wrapper.dataset.shareReady = 'true';
+
+      qsa('[data-share-service="weixin"]', wrapper).forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          var popup = qs('[data-share-weixin-popup]', link);
+          if (!popup) {
+            return;
+          }
+          var willOpen = !popup.classList.contains('active');
+          closeWeixinShare(popup);
+          if (willOpen) {
+            fillWeixinShareCard(wrapper, popup);
+          }
+          popup.classList.toggle('active', willOpen);
+          popup.setAttribute('aria-hidden', willOpen ? 'false' : 'true');
+        });
+      });
+    });
+
+    if (!document.documentElement.dataset.shareDelegated) {
+      document.documentElement.dataset.shareDelegated = 'true';
+      document.addEventListener('click', function (event) {
+        if (event.target.closest && event.target.closest('.share-link-weixin')) {
+          return;
+        }
+        closeWeixinShare();
+      });
+    }
+  }
+
   function initFirework() {
     if (!config.firework || !window.firework || window.matchMedia('(max-width: 768px)').matches || root.dataset.fireworkReady) {
       return;
     }
     root.dataset.fireworkReady = 'true';
     window.firework({
-      excludeElements: ['input', 'textarea', 'select', 'option', 'label', '.aplayer', '.search-popup', '#search-form'],
+      excludeElements: ['input', 'textarea', 'select', 'option', 'label', '.aplayer', '.search-popup', '#search-form', '[data-reimu-profile-open]', '.reimu-profile-modal', '.reimu-profile-modal *'],
       particles: [
         {
           shape: 'circle',
@@ -5332,6 +6031,7 @@
       initCommentSelector,
       initWordPressCommentForm,
       initSponsor,
+      initShare,
       initLoadMore,
       initExternalLinks,
       initPjax

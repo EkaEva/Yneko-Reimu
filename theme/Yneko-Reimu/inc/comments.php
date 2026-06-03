@@ -311,7 +311,27 @@ function yneko_reimu_comment_user_can_bypass_tag_review( $user_id = 0 ) {
 	return $user_id && ( user_can( $user_id, 'manage_options' ) || user_can( $user_id, 'moderate_comments' ) );
 }
 
-function yneko_reimu_comment_normalize_tag_list( $stored, $limit = 2 ) {
+function yneko_reimu_comment_custom_tag_storage_limit() {
+	return 5;
+}
+
+function yneko_reimu_comment_badge_display_limit() {
+	return 2;
+}
+
+function yneko_reimu_comment_tag_id( $id = '' ) {
+	$id = sanitize_key( (string) $id );
+	if ( '' !== $id ) {
+		return $id;
+	}
+
+	return 'tag_' . substr( md5( wp_generate_uuid4() . '|' . microtime( true ) ), 0, 16 );
+}
+
+function yneko_reimu_comment_normalize_tag_list( $stored, $limit = null ) {
+	if ( null === $limit ) {
+		$limit = yneko_reimu_comment_custom_tag_storage_limit();
+	}
 	$stored = is_array( $stored ) ? $stored : array();
 	$tags   = array();
 	foreach ( $stored as $tag ) {
@@ -325,12 +345,97 @@ function yneko_reimu_comment_normalize_tag_list( $stored, $limit = 2 ) {
 		}
 
 		$color = sanitize_hex_color( $tag['color'] ?? '' );
-		$tags[] = array(
-			'label' => $label,
-			'color' => $color ? $color : '#3b82f6',
+		$clean_tag = array(
+			'id'      => yneko_reimu_comment_tag_id( $tag['id'] ?? '' ),
+			'label'   => $label,
+			'color'   => $color ? $color : '#3b82f6',
+			'enabled' => '0' === (string) ( $tag['enabled'] ?? '1' ) ? '0' : '1',
 		);
+		if ( ! empty( $tag['old_id'] ) ) {
+			$clean_tag['old_id'] = sanitize_key( $tag['old_id'] );
+		}
+		if ( ! empty( $tag['old_label'] ) ) {
+			$clean_tag['old_label'] = yneko_reimu_sanitize_comment_tag_label( $tag['old_label'] );
+		}
+		$tags[] = $clean_tag;
 	}
 	return $tags;
+}
+
+function yneko_reimu_comment_user_pending_tags( $user_id ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return array();
+	}
+
+	$stored = get_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', true );
+	if ( ! is_array( $stored ) ) {
+		return array();
+	}
+
+	$normalized = yneko_reimu_comment_normalize_tag_list( $stored, yneko_reimu_comment_custom_tag_storage_limit() );
+	if ( $normalized !== $stored ) {
+		if ( $normalized ) {
+			update_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', $normalized );
+		} else {
+			delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
+		}
+	}
+
+	return $normalized;
+}
+
+function yneko_reimu_comment_tag_map_by_id( $tags ) {
+	$map = array();
+	foreach ( is_array( $tags ) ? $tags : array() as $tag ) {
+		if ( ! is_array( $tag ) || empty( $tag['id'] ) ) {
+			continue;
+		}
+		$map[ sanitize_key( $tag['id'] ) ] = $tag;
+	}
+	return $map;
+}
+
+function yneko_reimu_comment_tags_same_label( $left, $right ) {
+	return mb_strtolower( (string) $left ) === mb_strtolower( (string) $right );
+}
+
+function yneko_reimu_comment_prepare_reviewed_tags( $current_tags, $submitted_tags ) {
+	$current_tags  = yneko_reimu_comment_normalize_tag_list( $current_tags, yneko_reimu_comment_custom_tag_storage_limit() );
+	$submitted_tags = yneko_reimu_comment_normalize_tag_list( $submitted_tags, yneko_reimu_comment_custom_tag_storage_limit() );
+	$current_map   = yneko_reimu_comment_tag_map_by_id( $current_tags );
+	$active        = array();
+	$pending       = array();
+
+	foreach ( $submitted_tags as $submitted ) {
+		$id      = sanitize_key( $submitted['id'] ?? '' );
+		$current = $id && isset( $current_map[ $id ] ) ? $current_map[ $id ] : null;
+		if ( $current ) {
+			if ( yneko_reimu_comment_tags_same_label( $current['label'] ?? '', $submitted['label'] ?? '' ) ) {
+				$current['color']   = $submitted['color'];
+				$current['enabled'] = $submitted['enabled'];
+				$active[] = $current;
+			} else {
+				$active[] = $current;
+				$pending[] = array_merge(
+					$submitted,
+					array(
+						'id'      => $id,
+						'old_id'  => $id,
+						'old_label' => $current['label'],
+					)
+				);
+			}
+			continue;
+		}
+
+		$pending[] = $submitted;
+	}
+
+	return array(
+		'active'  => yneko_reimu_comment_normalize_tag_list( $active, yneko_reimu_comment_custom_tag_storage_limit() ),
+		'pending' => yneko_reimu_comment_normalize_tag_list( $pending, yneko_reimu_comment_custom_tag_storage_limit() ),
+	);
 }
 
 function yneko_reimu_sanitize_comment_tag_label( $label ) {
@@ -356,7 +461,16 @@ function yneko_reimu_comment_user_custom_tags( $user_id ) {
 		return array();
 	}
 
-	return yneko_reimu_comment_normalize_tag_list( $stored, 2 );
+	$normalized = yneko_reimu_comment_normalize_tag_list( $stored, yneko_reimu_comment_custom_tag_storage_limit() );
+	if ( $normalized !== $stored ) {
+		if ( $normalized ) {
+			update_user_meta( $user_id, '_yneko_reimu_comment_tags', $normalized );
+		} else {
+			delete_user_meta( $user_id, '_yneko_reimu_comment_tags' );
+		}
+	}
+
+	return $normalized;
 }
 
 function yneko_reimu_comment_badges_enabled() {
@@ -489,8 +603,9 @@ function yneko_reimu_comment_user_tags_payload( $user_id ) {
 	$payload = array();
 	$special_badges = yneko_reimu_comment_user_special_badges( $user_id );
 	$hidden  = yneko_reimu_comment_user_hidden_special_badges( $user_id );
+	$touched = '' !== (string) get_user_meta( $user_id, '_yneko_reimu_comment_special_badges_touched', true );
 	foreach ( $special_badges as $index => $special ) {
-		$enabled = $hidden ? ! in_array( $special['type'], $hidden, true ) : 0 === $index;
+		$enabled = $touched ? ! in_array( $special['type'], $hidden, true ) : 0 === $index;
 		$payload[] = array(
 			'type'    => 'special',
 			'key'     => $special['type'],
@@ -508,17 +623,24 @@ function yneko_reimu_comment_user_tags_payload( $user_id ) {
 			}
 		)
 	);
-	$custom_slots = max( 0, 2 - $enabled_special_count );
+	$display_limit = yneko_reimu_comment_badge_display_limit();
+	$custom_slots  = max( 0, $display_limit - $enabled_special_count );
 	if ( ! yneko_reimu_comment_badges_enabled() ) {
 		$custom_slots = 0;
 	}
-	foreach ( array_slice( yneko_reimu_comment_user_custom_tags( $user_id ), 0, $custom_slots ) as $tag ) {
+	$enabled_custom_count = 0;
+	foreach ( yneko_reimu_comment_user_custom_tags( $user_id ) as $tag ) {
+		$enabled = '0' !== (string) ( $tag['enabled'] ?? '1' ) && $enabled_custom_count < $custom_slots;
+		if ( $enabled ) {
+			$enabled_custom_count++;
+		}
 		$payload[] = array(
 			'type' => 'custom',
+			'id'   => $tag['id'],
 			'key'  => '',
 			'label' => $tag['label'],
 			'color' => $tag['color'],
-			'enabled' => '1',
+			'enabled' => $enabled ? '1' : '0',
 		);
 	}
 
@@ -539,8 +661,9 @@ function yneko_reimu_comment_user_badges_html( $user_id ) {
 	$badges = array();
 	$special_badges = yneko_reimu_comment_user_special_badges( $user_id );
 	$hidden  = yneko_reimu_comment_user_hidden_special_badges( $user_id );
+	$touched = '' !== (string) get_user_meta( $user_id, '_yneko_reimu_comment_special_badges_touched', true );
 	foreach ( $special_badges as $index => $special ) {
-		$enabled = $hidden ? ! in_array( $special['type'], $hidden, true ) : 0 === $index;
+		$enabled = $touched ? ! in_array( $special['type'], $hidden, true ) : 0 === $index;
 		if ( ! $enabled ) {
 			continue;
 		}
@@ -551,8 +674,15 @@ function yneko_reimu_comment_user_badges_html( $user_id ) {
 		);
 	}
 
+	$display_limit = yneko_reimu_comment_badge_display_limit();
 	if ( yneko_reimu_comment_badges_enabled() ) {
-		foreach ( array_slice( yneko_reimu_comment_user_custom_tags( $user_id ), 0, max( 0, 2 - count( $badges ) ) ) as $tag ) {
+		foreach ( yneko_reimu_comment_user_custom_tags( $user_id ) as $tag ) {
+			if ( count( $badges ) >= $display_limit ) {
+				break;
+			}
+			if ( '0' === (string) ( $tag['enabled'] ?? '1' ) ) {
+				continue;
+			}
 			$badges[] = array(
 				'label' => $tag['label'],
 				'class' => 'reimu-comment-user-tag--custom',
@@ -561,7 +691,7 @@ function yneko_reimu_comment_user_badges_html( $user_id ) {
 		}
 	}
 
-	$badges = array_slice( $badges, 0, 2 );
+	$badges = array_slice( $badges, 0, $display_limit );
 
 	if ( empty( $badges ) ) {
 		return '';
@@ -637,6 +767,248 @@ function yneko_reimu_user_avatar_url( $user_id ) {
 
 	$custom = get_user_meta( $user_id, '_yneko_reimu_avatar_url', true );
 	return $custom ? esc_url_raw( $custom ) : '';
+}
+
+function yneko_reimu_user_profile_avatar_url( $user_id ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return '';
+	}
+
+	$custom = yneko_reimu_user_avatar_url( $user_id );
+	if ( $custom ) {
+		return $custom;
+	}
+
+	foreach ( array( '_yneko_reimu_github_avatar_url', '_yneko_github_avatar_url' ) as $meta_key ) {
+		$avatar = get_user_meta( $user_id, $meta_key, true );
+		if ( $avatar ) {
+			return esc_url_raw( $avatar );
+		}
+	}
+
+	return '';
+}
+
+function yneko_reimu_user_review_status_meta_key( $type ) {
+	$type = sanitize_key( $type );
+	if ( ! in_array( $type, array( 'avatar', 'tags', 'comments' ), true ) ) {
+		return '';
+	}
+
+	return 'avatar' === $type ? '_yneko_reimu_avatar_status' : '_yneko_reimu_' . $type . '_status';
+}
+
+function yneko_reimu_set_user_review_status( $user_id, $type, $status, $comment_id = 0 ) {
+	$user_id = absint( $user_id );
+	$key     = yneko_reimu_user_review_status_meta_key( $type );
+	$status  = sanitize_key( $status );
+	if ( ! $user_id || ! $key || ! in_array( $status, array( 'pending', 'updated', 'rejected' ), true ) ) {
+		return;
+	}
+
+	update_user_meta( $user_id, $key, $status );
+	update_user_meta( $user_id, $key . '_time', time() );
+	if ( $comment_id ) {
+		update_user_meta( $user_id, $key . '_comment_id', absint( $comment_id ) );
+	}
+}
+
+function yneko_reimu_increment_user_review_status_count( $user_id, $type, $status, $comment_id = 0 ) {
+	$user_id = absint( $user_id );
+	$key     = yneko_reimu_user_review_status_meta_key( $type );
+	$status  = sanitize_key( $status );
+	if ( ! $user_id || ! $key || ! in_array( $status, array( 'pending', 'updated', 'rejected' ), true ) ) {
+		return;
+	}
+
+	$current_status = (string) get_user_meta( $user_id, $key, true );
+	$count_key      = $key . '_count';
+	$count          = absint( get_user_meta( $user_id, $count_key, true ) );
+	update_user_meta( $user_id, $key, $status );
+	update_user_meta( $user_id, $key . '_time', time() );
+	update_user_meta( $user_id, $count_key, $status === $current_status ? max( 1, $count + 1 ) : 1 );
+	if ( $comment_id ) {
+		update_user_meta( $user_id, $key . '_comment_id', absint( $comment_id ) );
+	}
+}
+
+function yneko_reimu_clear_user_review_status( $user_id, $type ) {
+	$user_id = absint( $user_id );
+	$key     = yneko_reimu_user_review_status_meta_key( $type );
+	if ( ! $user_id || ! $key ) {
+		return;
+	}
+
+	delete_user_meta( $user_id, $key );
+	delete_user_meta( $user_id, $key . '_time' );
+	delete_user_meta( $user_id, $key . '_comment_id' );
+	delete_user_meta( $user_id, $key . '_count' );
+}
+
+function yneko_reimu_user_pending_comment_review_count( $user_id ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return 0;
+	}
+
+	$comment_ids = array();
+	foreach ( get_comments( array( 'user_id' => $user_id, 'status' => 'hold', 'fields' => 'ids', 'number' => 300 ) ) as $comment_id ) {
+		$comment_ids[ absint( $comment_id ) ] = true;
+	}
+	foreach ( yneko_reimu_comment_upload_library( 300, 'all', true ) as $item ) {
+		if ( absint( $item['user'] ?? 0 ) !== $user_id ) {
+			continue;
+		}
+		if ( in_array( (string) ( $item['status'] ?? '' ), array( 'pending', 'revoked' ), true ) ) {
+			$comment_id = absint( $item['comment_id'] ?? 0 );
+			if ( $comment_id ) {
+				$comment_ids[ $comment_id ] = true;
+			}
+		}
+	}
+	foreach ( yneko_reimu_comment_pending_temp_uploads( 300 ) as $item ) {
+		if ( absint( $item['user'] ?? 0 ) === $user_id ) {
+			$comment_id = absint( $item['comment_id'] ?? 0 );
+			if ( $comment_id ) {
+				$comment_ids[ $comment_id ] = true;
+			}
+		}
+	}
+	return count( $comment_ids );
+}
+
+function yneko_reimu_user_review_status_payload( $user_id ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return array();
+	}
+
+	$payload = array();
+	foreach ( array( 'avatar', 'tags', 'comments' ) as $type ) {
+		$key    = yneko_reimu_user_review_status_meta_key( $type );
+		$status = $key ? (string) get_user_meta( $user_id, $key, true ) : '';
+		if ( ! in_array( $status, array( 'pending', 'updated', 'rejected' ), true ) ) {
+			continue;
+		}
+		$payload[ $type ] = array(
+			'status'    => $status,
+			'timestamp' => absint( get_user_meta( $user_id, $key . '_time', true ) ),
+			'commentId' => absint( get_user_meta( $user_id, $key . '_comment_id', true ) ),
+			'count'     => absint( get_user_meta( $user_id, $key . '_count', true ) ),
+		);
+		if ( 'pending' === $status && 'tags' === $type ) {
+			$payload[ $type ]['count'] = count( yneko_reimu_comment_user_pending_tags( $user_id ) );
+		} elseif ( 'pending' === $status && 'comments' === $type ) {
+			$payload[ $type ]['count'] = max( 1, yneko_reimu_user_pending_comment_review_count( $user_id ) );
+		} elseif ( empty( $payload[ $type ]['count'] ) ) {
+			$payload[ $type ]['count'] = 1;
+		}
+	}
+
+	return $payload;
+}
+
+function yneko_reimu_user_review_primary_status_html( $user_id ) {
+	$statuses = yneko_reimu_user_review_status_payload( $user_id );
+	$priority = array( 'avatar', 'tags', 'comments' );
+	$html     = '';
+	foreach ( $priority as $type ) {
+		if ( empty( $statuses[ $type ]['status'] ) ) {
+			continue;
+		}
+		$status = (string) $statuses[ $type ]['status'];
+		$label  = '';
+		$class  = 'reimu-comment-current-user__status';
+		if ( 'avatar' === $type ) {
+			$label = 'pending' === $status ? __( '头像审核中', 'yneko-reimu' ) : ( 'rejected' === $status ? __( '头像审核不通过', 'yneko-reimu' ) : __( '头像已更新', 'yneko-reimu' ) );
+		} elseif ( 'tags' === $type ) {
+			$label = 'pending' === $status ? __( '标签审核中', 'yneko-reimu' ) : ( 'rejected' === $status ? __( '标签审核不通过', 'yneko-reimu' ) : __( '标签已更新', 'yneko-reimu' ) );
+		} else {
+			$label = 'pending' === $status ? __( '评论审核中', 'yneko-reimu' ) : ( 'rejected' === $status ? __( '评论审核不通过', 'yneko-reimu' ) : __( '评论已更新', 'yneko-reimu' ) );
+		}
+		if ( 'rejected' === $status ) {
+			$class .= ' is-error';
+		} elseif ( 'updated' === $status ) {
+			$class .= ' is-success';
+		} else {
+			$class .= ' is-pending';
+		}
+		$count = absint( $statuses[ $type ]['count'] ?? 0 );
+		$html .= '<span class="' . esc_attr( $class ) . '" data-profile-inline-status data-profile-status-kind="' . esc_attr( $type ) . '" data-profile-status-state="' . esc_attr( $status ) . '">' . esc_html( $label );
+		if ( 'pending' === $status && $count > 1 && in_array( $type, array( 'tags', 'comments' ), true ) ) {
+			$html .= '<b class="reimu-comment-current-user__status-count">' . esc_html( (string) $count ) . '</b>';
+		}
+		$html .= '</span>';
+	}
+
+	return $html ? '<span class="reimu-comment-current-user__statuses" data-profile-inline-status-list>' . $html . '</span>' : '';
+}
+
+function yneko_reimu_handle_profile_avatar_upload( $user_id, $file ) {
+	$user_id = absint( $user_id );
+	if ( ! $user_id ) {
+		return new WP_Error( 'invalid_user', __( '请先登录。', 'yneko-reimu' ) );
+	}
+	if ( ! yneko_reimu_avatar_upload_enabled() ) {
+		return new WP_Error( 'avatar_upload_disabled', __( '当前未开启头像上传。', 'yneko-reimu' ) );
+	}
+	if ( empty( $file['name'] ) ) {
+		return new WP_Error( 'avatar_file_missing', __( '请选择头像文件。', 'yneko-reimu' ) );
+	}
+	if ( ! empty( $file['size'] ) && absint( $file['size'] ) > yneko_reimu_avatar_upload_limit() ) {
+		return new WP_Error( 'avatar_too_large', __( '头像文件超过大小限制。', 'yneko-reimu' ) );
+	}
+
+	$allowed_mimes = array( 'image/jpeg', 'image/png', 'image/webp' );
+	$file_type     = wp_check_filetype_and_ext( $file['tmp_name'] ?? '', $file['name'] ?? '' );
+	$mime_type     = isset( $file_type['type'] ) ? (string) $file_type['type'] : '';
+	if ( ! in_array( $mime_type, $allowed_mimes, true ) ) {
+		return new WP_Error( 'avatar_invalid_type', __( '头像仅支持 JPG、PNG 或 WebP。', 'yneko-reimu' ) );
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	if ( yneko_reimu_avatar_review_enabled() ) {
+		$GLOBALS['yneko_reimu_avatar_upload_pending'] = true;
+	}
+	add_filter( 'upload_dir', 'yneko_reimu_avatar_upload_dir' );
+	$upload = wp_handle_upload(
+		$file,
+		array(
+			'test_form' => false,
+			'mimes'     => array(
+				'jpg|jpeg' => 'image/jpeg',
+				'png'      => 'image/png',
+				'webp'     => 'image/webp',
+			),
+		)
+	);
+	remove_filter( 'upload_dir', 'yneko_reimu_avatar_upload_dir' );
+	unset( $GLOBALS['yneko_reimu_avatar_upload_pending'] );
+
+	if ( empty( $upload['url'] ) || ! empty( $upload['error'] ) ) {
+		return new WP_Error( 'avatar_upload_failed', ! empty( $upload['error'] ) ? $upload['error'] : __( '头像上传失败。', 'yneko-reimu' ) );
+	}
+
+	$avatar_url = esc_url_raw( $upload['url'] );
+	$pending    = yneko_reimu_avatar_review_enabled();
+	if ( $pending ) {
+		update_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', $avatar_url );
+		yneko_reimu_set_user_review_status( $user_id, 'avatar', 'pending' );
+	} else {
+		$current = (string) get_user_meta( $user_id, '_yneko_reimu_avatar_url', true );
+		if ( $current && $current !== $avatar_url ) {
+			yneko_reimu_delete_upload_by_url( $current );
+		}
+		update_user_meta( $user_id, '_yneko_reimu_avatar_url', $avatar_url );
+		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+		yneko_reimu_set_user_review_status( $user_id, 'avatar', 'updated' );
+	}
+
+	return array(
+		'url'     => $avatar_url,
+		'pending' => $pending,
+	);
 }
 
 function yneko_reimu_comment_avatar_frame_url( $user_id ) {
@@ -733,6 +1105,7 @@ function yneko_reimu_comment_current_user_identity_html( $redirect = '' ) {
 	$logout_url   = wp_logout_url( $redirect );
 	$avatar       = yneko_reimu_comment_avatar_for_user_html( $user_id, 56 );
 	$name_html    = esc_html( $display_name );
+	$status_html  = yneko_reimu_user_review_primary_status_html( $user_id );
 
 	if ( $profile_url ) {
 		$name_html = '<a class="reimu-comment-current-user__name" href="' . esc_url( $profile_url ) . '" target="_blank" rel="noopener noreferrer nofollow">' . esc_html( $display_name ) . '</a>';
@@ -746,6 +1119,8 @@ function yneko_reimu_comment_current_user_identity_html( $redirect = '' ) {
 			'<a class="reimu-comment-current-user__logout" href="' . esc_url( $logout_url ) . '" data-reimu-ajax-logout data-no-pjax aria-label="' . esc_attr__( '退出登录', 'yneko-reimu' ) . '"></a>' .
 		'</div>' .
 		$name_html .
+		$status_html .
+		'<a class="reimu-comment-current-user__logout-text" href="' . esc_url( $logout_url ) . '" data-reimu-ajax-logout data-no-pjax aria-label="' . esc_attr__( '退出登录', 'yneko-reimu' ) . '">' . esc_html__( '退出', 'yneko-reimu' ) . '</a>' .
 	'</div>';
 }
 
@@ -764,9 +1139,11 @@ function yneko_reimu_user_profile_payload( $user_id = 0 ) {
 		'userId'      => $user_id,
 		'displayName' => $user->display_name ? $user->display_name : $user->user_login,
 		'email'       => $user->user_email,
-		'avatarUrl'   => yneko_reimu_user_avatar_url( $user_id ),
+		'avatarUrl'   => yneko_reimu_user_profile_avatar_url( $user_id ),
 		'pendingAvatarUrl' => (string) get_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', true ),
+		'avatarStatus' => (string) get_user_meta( $user_id, '_yneko_reimu_avatar_status', true ),
 		'avatarPending' => 'pending' === (string) get_user_meta( $user_id, '_yneko_reimu_avatar_status', true ),
+		'reviewStatuses' => yneko_reimu_user_review_status_payload( $user_id ),
 		'profileUrl'  => $profile_url,
 		'publicProfileUrl' => $public_profile_url,
 		'twoFactor'   => yneko_reimu_user_2fa_enabled( $user_id ),
@@ -777,7 +1154,7 @@ function yneko_reimu_user_profile_payload( $user_id = 0 ) {
 		'avatarHtml' => yneko_reimu_comment_avatar_for_user_html( $user_id, 56 ),
 		'commentBadgesEnabled' => yneko_reimu_comment_badges_enabled(),
 		'commentTags' => yneko_reimu_comment_user_tags_payload( $user_id ),
-		'pendingCommentTags' => yneko_reimu_comment_normalize_tag_list( get_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', true ), 2 ),
+		'pendingCommentTags' => yneko_reimu_comment_user_pending_tags( $user_id ),
 		'commentBadgesHtml' => yneko_reimu_comment_user_badges_html( $user_id ),
 		'commentTagReviewEnabled' => yneko_reimu_comment_tag_review_enabled(),
 	);
@@ -824,6 +1201,7 @@ function yneko_reimu_ajax_login_state() {
 			),
 			'profileNonce'      => wp_create_nonce( 'yneko_reimu_profile' ),
 			'logoutNonce'       => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+			'profile'           => yneko_reimu_user_profile_payload(),
 		)
 	);
 }
@@ -1015,7 +1393,7 @@ function yneko_reimu_profile_modal_html() {
 			}
 		)
 	);
-	$custom_tag_slots = max( 0, 2 - $enabled_special_count );
+	$custom_tag_slots = max( 0, yneko_reimu_comment_badge_display_limit() - $enabled_special_count );
 	$custom_tags = array_values(
 		array_filter(
 			$comment_tags,
@@ -1026,7 +1404,7 @@ function yneko_reimu_profile_modal_html() {
 	);
 	ob_start();
 	?>
-	<div class="reimu-profile-modal" id="reimu-profile-modal" aria-hidden="true">
+	<div class="reimu-profile-modal" id="reimu-profile-modal" aria-hidden="true" data-avatar-max-mb="<?php echo esc_attr( $profile['avatarMaxMb'] ); ?>">
 		<div class="reimu-profile-modal__mask" data-profile-close></div>
 		<div class="reimu-profile-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="reimu-profile-title">
 			<button type="button" class="reimu-login-modal__close popup-btn-close" data-profile-close aria-label="<?php esc_attr_e( '关闭个人资料窗口', 'yneko-reimu' ); ?>"></button>
@@ -1034,9 +1412,13 @@ function yneko_reimu_profile_modal_html() {
 			<form class="reimu-profile-form" data-reimu-profile-form>
 				<div class="reimu-profile-avatar-preview"><img data-profile-avatar-preview src="<?php echo esc_url( $profile['avatarUrl'] ? $profile['avatarUrl'] : get_avatar_url( get_current_user_id(), array( 'size' => 96 ) ) ); ?>" alt=""></div>
 				<p class="reimu-profile-avatar-field">
-					<label for="reimu-profile-avatar-url"><?php esc_html_e( '头像链接', 'yneko-reimu' ); ?></label>
+					<label for="reimu-profile-avatar-url" class="reimu-profile-avatar-label">
+						<span><?php esc_html_e( '头像链接', 'yneko-reimu' ); ?></span>
+						<small data-profile-avatar-hint role="status" aria-live="polite"></small>
+					</label>
 					<span class="reimu-profile-avatar-row">
 						<input id="reimu-profile-avatar-url" name="avatar_url" type="url" value="<?php echo esc_attr( $profile['avatarUrl'] ); ?>">
+						<input name="avatar_changed" type="hidden" value="0" data-profile-avatar-changed>
 						<?php if ( ! empty( $profile['avatarUploadEnabled'] ) ) : ?>
 							<button class="reimu-profile-avatar-upload" type="button" data-profile-avatar-upload><?php esc_html_e( '上传', 'yneko-reimu' ); ?></button>
 							<input id="reimu-profile-avatar-file" name="avatar_file" type="file" accept="image/jpeg,image/png,image/webp" data-profile-avatar-file hidden>
@@ -1055,10 +1437,10 @@ function yneko_reimu_profile_modal_html() {
 					<label class="reimu-login-remember"><input name="avatar_frame_enabled" type="checkbox" value="1" <?php checked( ! empty( $profile['avatarFrameEnabled'] ) ); ?>><span><?php esc_html_e( '显示我的评论头像框', 'yneko-reimu' ); ?></span></label>
 				</p>
 				<?php if ( ! empty( $profile['commentBadgesEnabled'] ) ) : ?>
-				<div class="reimu-profile-tags">
-					<div class="reimu-profile-tags__header">
-						<span><?php esc_html_e( '评论标签', 'yneko-reimu' ); ?></span>
-						<small><?php esc_html_e( '特殊标签和自定义标签合计最多 2 个；自定义标签最多 8 个字符，保留标签不可自行设置。', 'yneko-reimu' ); ?></small>
+					<div class="reimu-profile-tags">
+						<div class="reimu-profile-tags__header">
+							<span><?php esc_html_e( '评论标签', 'yneko-reimu' ); ?></span>
+						<small><?php esc_html_e( '最多添加 5 个自定义标签；特殊标签和已勾选的自定义标签合计最多 2 个。自定义标签最多 8 个字符，保留标签不可自行设置。', 'yneko-reimu' ); ?></small>
 					</div>
 					<div class="reimu-profile-tags__message" data-profile-tags-message role="status" aria-live="polite" hidden></div>
 					<?php if ( $special_tags ) : ?>
@@ -1072,13 +1454,14 @@ function yneko_reimu_profile_modal_html() {
 							<?php endforeach; ?>
 						</div>
 					<?php endif; ?>
-					<div class="reimu-profile-tag-list" data-profile-tag-list data-max-tags="<?php echo esc_attr( $custom_tag_slots ); ?>" data-existing-tags="<?php echo esc_attr( wp_json_encode( $custom_tags ) ); ?>"></div>
+					<div class="reimu-profile-tag-list" data-profile-tag-list data-max-tags="<?php echo esc_attr( $custom_tag_slots ); ?>" data-storage-limit="<?php echo esc_attr( yneko_reimu_comment_custom_tag_storage_limit() ); ?>" data-existing-tags="<?php echo esc_attr( wp_json_encode( $custom_tags ) ); ?>"></div>
 					<button type="button" class="reimu-profile-add-tag" data-profile-add-tag><?php esc_html_e( '+ 新增自定义标签', 'yneko-reimu' ); ?></button>
 				</div>
 				<?php endif; ?>
 				<p>
 					<label for="reimu-profile-email"><?php esc_html_e( '邮箱', 'yneko-reimu' ); ?></label>
-					<input id="reimu-profile-email" name="current_email" type="email" value="<?php echo esc_attr( $profile['email'] ); ?>" readonly data-profile-current-email>
+					<output id="reimu-profile-email" class="reimu-profile-frozen-field" aria-readonly="true" aria-disabled="true" data-profile-current-email-display><?php echo esc_html( $profile['email'] ); ?></output>
+					<input name="current_email" type="hidden" value="<?php echo esc_attr( $profile['email'] ); ?>" data-profile-current-email>
 				</p>
 				<p>
 					<label for="reimu-profile-new-email"><?php esc_html_e( '新邮箱', 'yneko-reimu' ); ?></label>
@@ -1312,6 +1695,33 @@ function yneko_reimu_ajax_profile_get() {
 }
 add_action( 'wp_ajax_yneko_reimu_profile_get', 'yneko_reimu_ajax_profile_get' );
 
+function yneko_reimu_ajax_profile_status_ack() {
+	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请先登录。', 'yneko-reimu' ) ), 401 );
+	}
+
+	$types = isset( $_POST['types'] ) && is_array( $_POST['types'] ) ? array_map( 'sanitize_key', wp_unslash( $_POST['types'] ) ) : array();
+	foreach ( $types as $type ) {
+		$key = yneko_reimu_user_review_status_meta_key( $type );
+		if ( ! $key ) {
+			continue;
+		}
+		$status = (string) get_user_meta( get_current_user_id(), $key, true );
+		if ( in_array( $status, array( 'updated', 'rejected' ), true ) ) {
+			yneko_reimu_clear_user_review_status( get_current_user_id(), $type );
+		}
+	}
+
+	wp_send_json_success(
+		array(
+			'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+			'logoutNonce'  => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_profile_status_ack', 'yneko_reimu_ajax_profile_status_ack' );
+
 function yneko_reimu_ajax_profile_email_code() {
 	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
 	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' );
@@ -1387,6 +1797,45 @@ function yneko_reimu_ajax_profile_totp_generate() {
 }
 add_action( 'wp_ajax_yneko_reimu_profile_totp_generate', 'yneko_reimu_ajax_profile_totp_generate' );
 
+function yneko_reimu_ajax_profile_avatar_upload() {
+	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
+	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' );
+	$redirect = wp_validate_redirect( $redirect, home_url( '/' ) );
+	yneko_reimu_ajax_set_language_from_redirect( $redirect );
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请先登录。', 'yneko-reimu' ) ), 401 );
+	}
+
+	$user_id = get_current_user_id();
+	$result  = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] ?? array() );
+	if ( is_wp_error( $result ) ) {
+		wp_send_json_error(
+			array(
+				'message'      => $result->get_error_message(),
+				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+				'logoutNonce'  => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+			),
+			400
+		);
+	}
+
+	$pending = ! empty( $result['pending'] );
+	wp_send_json_success(
+		array_merge(
+			array(
+				'message'      => $pending ? esc_html__( '头像审核中', 'yneko-reimu' ) : esc_html__( '头像已更新', 'yneko-reimu' ),
+				'avatarUploadUrl' => $result['url'],
+				'avatarUploadPending' => $pending,
+				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+				'logoutNonce'  => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+				'identity'     => yneko_reimu_comment_current_user_identity_html( $redirect ),
+			),
+			yneko_reimu_user_profile_payload( $user_id )
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_profile_avatar_upload', 'yneko_reimu_ajax_profile_avatar_upload' );
+
 function yneko_reimu_ajax_profile_save() {
 	check_ajax_referer( 'yneko_reimu_profile', 'nonce' );
 	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' );
@@ -1400,6 +1849,7 @@ function yneko_reimu_ajax_profile_save() {
 	$display_name = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
 	$profile_url  = isset( $_POST['profile_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['profile_url'] ) ) : '';
 	$avatar_url   = isset( $_POST['avatar_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['avatar_url'] ) ) : '';
+	$avatar_changed = ! empty( $_POST['avatar_changed'] );
 	$new_email_input = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 	$new_email    = $new_email_input ? $new_email_input : $user->user_email;
 	$email_code   = isset( $_POST['email_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['email_code'] ) ) : '';
@@ -1410,6 +1860,8 @@ function yneko_reimu_ajax_profile_save() {
 	$totp_code    = isset( $_POST['totp_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['totp_code'] ) ) : '';
 	$tag_labels   = isset( $_POST['comment_tag_label'] ) && is_array( $_POST['comment_tag_label'] ) ? wp_unslash( $_POST['comment_tag_label'] ) : array();
 	$tag_colors   = isset( $_POST['comment_tag_color'] ) && is_array( $_POST['comment_tag_color'] ) ? wp_unslash( $_POST['comment_tag_color'] ) : array();
+	$tag_ids      = isset( $_POST['comment_tag_id'] ) && is_array( $_POST['comment_tag_id'] ) ? wp_unslash( $_POST['comment_tag_id'] ) : array();
+	$tag_enabled_input = isset( $_POST['comment_tag_enabled'] ) && is_array( $_POST['comment_tag_enabled'] ) ? wp_unslash( $_POST['comment_tag_enabled'] ) : array();
 	$special_enabled_input = isset( $_POST['comment_special_enabled'] ) && is_array( $_POST['comment_special_enabled'] ) ? wp_unslash( $_POST['comment_special_enabled'] ) : array();
 
 	if ( '' === $display_name || mb_strlen( $display_name ) > 50 ) {
@@ -1421,22 +1873,35 @@ function yneko_reimu_ajax_profile_save() {
 
 	$comment_tags = array();
 	$hidden_special_badges = array();
+	$avatar_pending = false;
+	$tags_pending = false;
 	$special_badges = yneko_reimu_comment_user_special_badges( $user_id );
 	foreach ( $special_badges as $index => $special_badge ) {
 		$type = sanitize_key( $special_badge['type'] ?? '' );
 		if ( ! $type ) {
 			continue;
 		}
-		$enabled = isset( $special_enabled_input[ $type ] ) ? ! empty( $special_enabled_input[ $type ] ) : 0 === $index;
+		$enabled = ! empty( $special_enabled_input[ $type ] );
 		if ( ! $enabled ) {
 			$hidden_special_badges[] = $type;
 		}
 	}
 	$special_counts = max( 0, count( $special_badges ) - count( $hidden_special_badges ) );
-	$custom_capacity = yneko_reimu_comment_badges_enabled() ? max( 0, 2 - $special_counts ) : 0;
+	$display_limit   = yneko_reimu_comment_badge_display_limit();
+	if ( $special_counts > $display_limit ) {
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( '特殊标签和已勾选的自定义标签合计最多 2 个。', 'yneko-reimu' ),
+				'field'   => 'comment_tag_label',
+			),
+			400
+		);
+	}
+	$custom_capacity = yneko_reimu_comment_badges_enabled() ? max( 0, $display_limit - $special_counts ) : 0;
+	$enabled_custom_count = 0;
 	if ( yneko_reimu_comment_badges_enabled() ) {
 		foreach ( $tag_labels as $index => $raw_label ) {
-			if ( count( $comment_tags ) >= $custom_capacity ) {
+			if ( count( $comment_tags ) >= yneko_reimu_comment_custom_tag_storage_limit() ) {
 				break;
 			}
 			$raw_label = isset( $tag_labels[ $index ] ) ? (string) $tag_labels[ $index ] : '';
@@ -1459,9 +1924,25 @@ function yneko_reimu_ajax_profile_save() {
 				);
 			}
 			$color = sanitize_hex_color( $tag_colors[ $index ] ?? '' );
+			$enabled = ! empty( $tag_enabled_input[ $index ] ) && $enabled_custom_count < $custom_capacity;
+			if ( ! empty( $tag_enabled_input[ $index ] ) && ! $enabled ) {
+				wp_send_json_error(
+					array(
+						'message' => esc_html__( '特殊标签和已勾选的自定义标签合计最多 2 个。', 'yneko-reimu' ),
+						'field'   => 'comment_tag_label',
+						'index'   => absint( $index ),
+					),
+					400
+				);
+			}
+			if ( $enabled ) {
+				$enabled_custom_count++;
+			}
 			$comment_tags[] = array(
-				'label' => $label,
-				'color' => $color ? $color : '#ff5252',
+				'id'      => yneko_reimu_comment_tag_id( $tag_ids[ $index ] ?? '' ),
+				'label'   => $label,
+				'color'   => $color ? $color : '#ff5252',
+				'enabled' => $enabled ? '1' : '0',
 			);
 		}
 	}
@@ -1497,49 +1978,25 @@ function yneko_reimu_ajax_profile_save() {
 	}
 
 	if ( isset( $_FILES['avatar_file'] ) && ! empty( $_FILES['avatar_file']['name'] ) ) {
-		if ( ! yneko_reimu_avatar_upload_enabled() ) {
-			wp_send_json_error( array( 'message' => esc_html__( '当前未开启头像上传。', 'yneko-reimu' ) ), 403 );
+		$avatar_changed = true;
+		$avatar_result = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] );
+		if ( is_wp_error( $avatar_result ) ) {
+			wp_send_json_error( array( 'message' => $avatar_result->get_error_message() ), 400 );
 		}
-		if ( ! empty( $_FILES['avatar_file']['size'] ) && absint( $_FILES['avatar_file']['size'] ) > yneko_reimu_avatar_upload_limit() ) {
-			wp_send_json_error( array( 'message' => esc_html__( '头像文件超过大小限制。', 'yneko-reimu' ) ), 400 );
-		}
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		if ( yneko_reimu_avatar_review_enabled() ) {
-			$GLOBALS['yneko_reimu_avatar_upload_pending'] = true;
-		}
-		add_filter( 'upload_dir', 'yneko_reimu_avatar_upload_dir' );
-		$upload = wp_handle_upload(
-			$_FILES['avatar_file'],
-			array(
-				'test_form' => false,
-				'mimes'     => array(
-					'jpg|jpeg' => 'image/jpeg',
-					'png'      => 'image/png',
-					'webp'     => 'image/webp',
-				),
-			)
-		);
-		remove_filter( 'upload_dir', 'yneko_reimu_avatar_upload_dir' );
-		unset( $GLOBALS['yneko_reimu_avatar_upload_pending'] );
-		if ( empty( $upload['url'] ) || ! empty( $upload['error'] ) ) {
-			wp_send_json_error( array( 'message' => ! empty( $upload['error'] ) ? $upload['error'] : esc_html__( '头像上传失败。', 'yneko-reimu' ) ), 400 );
-		}
-		$avatar_url = esc_url_raw( $upload['url'] );
+		$avatar_url     = $avatar_result['url'];
+		$avatar_pending = ! empty( $avatar_result['pending'] );
 	}
 
-	$avatar_pending = false;
-	if ( $avatar_url && yneko_reimu_avatar_review_enabled() && isset( $_FILES['avatar_file'] ) && ! empty( $_FILES['avatar_file']['name'] ) ) {
-		update_user_meta( $user_id, '_yneko_reimu_avatar_pending_url', $avatar_url );
-		update_user_meta( $user_id, '_yneko_reimu_avatar_status', 'pending' );
-		$avatar_pending = true;
-	} elseif ( $avatar_url ) {
-		update_user_meta( $user_id, '_yneko_reimu_avatar_url', $avatar_url );
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
-	} else {
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_url' );
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+	if ( $avatar_changed ) {
+		if ( $avatar_url && ! $avatar_pending ) {
+			update_user_meta( $user_id, '_yneko_reimu_avatar_url', $avatar_url );
+			delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+			yneko_reimu_set_user_review_status( $user_id, 'avatar', 'updated' );
+		} elseif ( ! $avatar_url && ! $avatar_pending ) {
+			delete_user_meta( $user_id, '_yneko_reimu_avatar_url' );
+			delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
+			yneko_reimu_clear_user_review_status( $user_id, 'avatar' );
+		}
 	}
 
 	if ( $totp_enabled ) {
@@ -1572,20 +2029,36 @@ function yneko_reimu_ajax_profile_save() {
 	}
 	if ( $comment_tags ) {
 		if ( yneko_reimu_comment_tag_review_enabled() && ! yneko_reimu_comment_user_can_bypass_tag_review( $user_id ) ) {
-			update_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', $comment_tags );
+			$reviewed = yneko_reimu_comment_prepare_reviewed_tags( yneko_reimu_comment_user_custom_tags( $user_id ), $comment_tags );
+			if ( $reviewed['active'] ) {
+				update_user_meta( $user_id, '_yneko_reimu_comment_tags', $reviewed['active'] );
+			} else {
+				delete_user_meta( $user_id, '_yneko_reimu_comment_tags' );
+			}
+			if ( $reviewed['pending'] ) {
+				update_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', $reviewed['pending'] );
+				yneko_reimu_set_user_review_status( $user_id, 'tags', 'pending' );
+				$tags_pending = true;
+			} else {
+				delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
+				yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
+			}
 		} else {
 			update_user_meta( $user_id, '_yneko_reimu_comment_tags', $comment_tags );
 			delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
+			yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
 		}
 	} else {
 		delete_user_meta( $user_id, '_yneko_reimu_comment_tags' );
 		delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
+		yneko_reimu_clear_user_review_status( $user_id, 'tags' );
 	}
 	if ( $hidden_special_badges ) {
 		update_user_meta( $user_id, '_yneko_reimu_comment_hidden_special_badges', $hidden_special_badges );
 	} else {
 		delete_user_meta( $user_id, '_yneko_reimu_comment_hidden_special_badges' );
 	}
+	update_user_meta( $user_id, '_yneko_reimu_comment_special_badges_touched', '1' );
 	if ( '' !== $new_password ) {
 		wp_set_password( $new_password, $user_id );
 		wp_set_current_user( $user_id );
@@ -1599,6 +2072,7 @@ function yneko_reimu_ajax_profile_save() {
 				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
 				'logoutNonce' => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
 				'identity' => yneko_reimu_comment_current_user_identity_html( $redirect ),
+				'tagsPending' => $tags_pending,
 			),
 			yneko_reimu_user_profile_payload( $user_id )
 		)
@@ -1905,11 +2379,99 @@ function yneko_reimu_ajax_lostpassword() {
 }
 add_action( 'wp_ajax_nopriv_yneko_reimu_lostpassword', 'yneko_reimu_ajax_lostpassword' );
 
+function yneko_reimu_comment_like_cookie_name() {
+	return 'yneko_reimu_comment_like_id';
+}
+
+function yneko_reimu_comment_like_guest_token() {
+	$cookie_name = yneko_reimu_comment_like_cookie_name();
+	$token       = isset( $_COOKIE[ $cookie_name ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ $cookie_name ] ) ) : '';
+	if ( preg_match( '/^[a-f0-9]{32,64}$/i', $token ) ) {
+		return strtolower( $token );
+	}
+
+	$token   = str_replace( '-', '', wp_generate_uuid4() ) . str_replace( '-', '', wp_generate_uuid4() );
+	$expires = time() + YEAR_IN_SECONDS;
+	$cookie  = array(
+		'expires'  => $expires,
+		'path'     => defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/',
+		'secure'   => is_ssl(),
+		'httponly' => true,
+		'samesite' => 'Lax',
+	);
+	if ( defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
+		$cookie['domain'] = COOKIE_DOMAIN;
+	}
+
+	setcookie( $cookie_name, $token, $cookie );
+	$_COOKIE[ $cookie_name ] = $token;
+
+	return $token;
+}
+
+function yneko_reimu_comment_like_actor_key( $create_guest = true ) {
+	$user_id = get_current_user_id();
+	if ( $user_id ) {
+		return 'user:' . absint( $user_id );
+	}
+
+	$token = $create_guest ? yneko_reimu_comment_like_guest_token() : '';
+	if ( ! $token ) {
+		$cookie_name = yneko_reimu_comment_like_cookie_name();
+		$token       = isset( $_COOKIE[ $cookie_name ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ $cookie_name ] ) ) : '';
+	}
+	if ( ! preg_match( '/^[a-f0-9]{32,64}$/i', $token ) ) {
+		return '';
+	}
+
+	return 'guest:' . hash_hmac( 'sha256', $token, wp_salt( 'nonce' ) );
+}
+
+function yneko_reimu_comment_like_registry( $comment_id ) {
+	$registry = yneko_reimu_get_comment_meta( absint( $comment_id ), '_yneko_reimu_like_registry', true );
+	return is_array( $registry ) ? $registry : array();
+}
+
+function yneko_reimu_comment_like_baseline( $comment_id ) {
+	$comment_id = absint( $comment_id );
+	$baseline   = yneko_reimu_get_comment_meta( $comment_id, '_yneko_reimu_like_baseline', true );
+	if ( '' !== $baseline && null !== $baseline ) {
+		return absint( $baseline );
+	}
+
+	$current        = absint( yneko_reimu_get_comment_meta( $comment_id, '_yneko_reimu_like_count', true ) );
+	$stored_registry = yneko_reimu_comment_like_registry( $comment_id );
+	$baseline       = max( 0, $current - count( array_filter( $stored_registry ) ) );
+	update_comment_meta( $comment_id, '_yneko_reimu_like_baseline', $baseline );
+
+	return absint( $baseline );
+}
+
+function yneko_reimu_comment_like_count_from_registry( $comment_id, $registry = null ) {
+	$registry = is_array( $registry ) ? $registry : yneko_reimu_comment_like_registry( $comment_id );
+	return yneko_reimu_comment_like_baseline( $comment_id ) + count( array_filter( $registry ) );
+}
+
+function yneko_reimu_comment_user_liked( $comment_id ) {
+	$comment_id = absint( $comment_id );
+	if ( ! $comment_id ) {
+		return false;
+	}
+
+	$actor_key = yneko_reimu_comment_like_actor_key( false );
+	if ( ! $actor_key ) {
+		return false;
+	}
+
+	$registry  = yneko_reimu_comment_like_registry( $comment_id );
+	return ! empty( $registry[ $actor_key ] );
+}
+
 function yneko_reimu_ajax_comment_like() {
 	$comment_id = isset( $_POST['comment_id'] ) ? absint( wp_unslash( $_POST['comment_id'] ) ) : 0;
-	$liked      = ! empty( $_POST['liked'] );
+	$comment    = $comment_id ? get_comment( $comment_id ) : null;
 
-	if ( ! $comment_id || ! get_comment( $comment_id ) ) {
+	if ( ! $comment ) {
 		wp_send_json_error(
 			array(
 				'message' => esc_html__( '评论不存在。', 'yneko-reimu' ),
@@ -1920,14 +2482,36 @@ function yneko_reimu_ajax_comment_like() {
 
 	check_ajax_referer( 'yneko_reimu_comment_like_' . $comment_id, 'nonce' );
 
-	$count = absint( yneko_reimu_get_comment_meta( $comment_id, '_yneko_reimu_like_count', true ) );
-	$count = $liked ? max( 0, $count - 1 ) : $count + 1;
+	if ( ! yneko_reimu_comment_is_publicly_visible( $comment ) ) {
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( '评论不存在。', 'yneko-reimu' ),
+			),
+			404
+		);
+	}
+
+	$actor_key = yneko_reimu_comment_like_actor_key();
+	$registry  = yneko_reimu_comment_like_registry( $comment_id );
+	$next_liked = empty( $registry[ $actor_key ] );
+	if ( $next_liked ) {
+		$registry[ $actor_key ] = time();
+	} else {
+		unset( $registry[ $actor_key ] );
+	}
+
+	$count = yneko_reimu_comment_like_count_from_registry( $comment_id, $registry );
+	if ( empty( $registry ) ) {
+		delete_comment_meta( $comment_id, '_yneko_reimu_like_registry' );
+	} else {
+		update_comment_meta( $comment_id, '_yneko_reimu_like_registry', $registry );
+	}
 	update_comment_meta( $comment_id, '_yneko_reimu_like_count', $count );
 
 	wp_send_json_success(
 		array(
 			'count' => $count,
-			'liked' => ! $liked,
+			'liked' => $next_liked,
 		)
 	);
 }
@@ -1948,6 +2532,86 @@ function yneko_reimu_current_user_can_manage_comment( $comment ) {
 	return $user_id && absint( $comment->user_id ) === absint( $user_id );
 }
 
+function yneko_reimu_current_user_can_view_private_comment( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment || ! is_user_logged_in() ) {
+		return false;
+	}
+
+	if ( current_user_can( 'moderate_comments' ) || current_user_can( 'edit_comment', $comment->comment_ID ) ) {
+		return true;
+	}
+
+	return absint( $comment->user_id ) && absint( $comment->user_id ) === get_current_user_id();
+}
+
+function yneko_reimu_comment_visible_upload_review_status( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return '';
+	}
+
+	foreach ( yneko_reimu_comment_extract_image_urls( $comment->comment_content ) as $url ) {
+		if ( false !== strpos( $url, 'yneko-reimu-comments/tmp/' ) ) {
+			$review = yneko_reimu_comment_temp_review_status( $comment->comment_ID, $url );
+			return in_array( (string) ( $review['status'] ?? '' ), array( 'pending', 'rejected' ), true ) ? (string) $review['status'] : 'pending';
+		}
+		$attachment_id = attachment_url_to_postid( $url );
+		if ( ! $attachment_id || '1' !== get_post_meta( $attachment_id, '_yneko_reimu_comment_upload', true ) ) {
+			continue;
+		}
+		$status = (string) get_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status', true );
+		if ( in_array( $status, array( 'pending', 'revoked', 'rejected' ), true ) ) {
+			return $status;
+		}
+	}
+
+	return '';
+}
+
+function yneko_reimu_comment_is_publicly_visible( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return false;
+	}
+
+	if ( '1' !== (string) $comment->comment_approved ) {
+		return yneko_reimu_current_user_can_view_private_comment( $comment );
+	}
+
+	$review_status = yneko_reimu_comment_visible_upload_review_status( $comment );
+	if ( in_array( $review_status, array( 'pending', 'revoked', 'rejected' ), true ) ) {
+		return yneko_reimu_current_user_can_view_private_comment( $comment );
+	}
+
+	return true;
+}
+
+function yneko_reimu_get_visible_comments( $post_id ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id ) {
+		return array();
+	}
+
+	$comments = get_comments(
+		array(
+			'post_id' => $post_id,
+			'status'  => is_user_logged_in() ? 'all' : 'approve',
+			'order'   => 'ASC',
+			'type'    => 'comment',
+		)
+	);
+
+	return array_values(
+		array_filter(
+			$comments,
+			static function ( $comment ) {
+				return yneko_reimu_comment_is_publicly_visible( $comment );
+			}
+		)
+	);
+}
+
 function yneko_reimu_ajax_edit_comment() {
 	$comment_id = isset( $_POST['comment_id'] ) ? absint( wp_unslash( $_POST['comment_id'] ) ) : 0;
 	$comment    = $comment_id ? get_comment( $comment_id ) : null;
@@ -1963,6 +2627,9 @@ function yneko_reimu_ajax_edit_comment() {
 	$content = isset( $_POST['comment'] ) ? trim( (string) wp_unslash( $_POST['comment'] ) ) : '';
 	if ( '' === $content ) {
 		wp_send_json_error( array( 'message' => __( '评论内容不能为空。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( yneko_reimu_comment_media_count( $content ) > 1 ) {
+		wp_send_json_error( array( 'message' => __( '一条评论最多只能添加一张图片或一个 GIF。', 'yneko-reimu' ) ), 400 );
 	}
 
 	$result = wp_update_comment(
@@ -2095,7 +2762,15 @@ function yneko_reimu_ajax_submit_comment() {
 	}
 
 	$is_approved = '1' === (string) $comment->comment_approved;
-	$count       = get_comments_number( (int) $comment->comment_post_ID );
+	if ( ! $is_approved && is_user_logged_in() && absint( $comment->user_id ) === get_current_user_id() ) {
+		yneko_reimu_increment_user_review_status_count( get_current_user_id(), 'comments', 'pending', $comment->comment_ID );
+	}
+	foreach ( yneko_reimu_comment_extract_image_urls( $comment->comment_content ) as $url ) {
+		if ( false !== strpos( $url, 'yneko-reimu-comments/tmp/' ) ) {
+			yneko_reimu_comment_set_temp_review_status( $comment->comment_ID, $url, 'pending' );
+		}
+	}
+	$count       = count( yneko_reimu_get_visible_comments( (int) $comment->comment_post_ID ) );
 	wp_send_json_success(
 		array(
 			'comment_id' => absint( $comment->comment_ID ),
@@ -2114,6 +2789,29 @@ function yneko_reimu_ajax_submit_comment() {
 }
 add_action( 'wp_ajax_yneko_reimu_submit_comment', 'yneko_reimu_ajax_submit_comment' );
 add_action( 'wp_ajax_nopriv_yneko_reimu_submit_comment', 'yneko_reimu_ajax_submit_comment' );
+
+function yneko_reimu_update_comment_review_status_for_user( $comment_id, $status ) {
+	if ( ! empty( $GLOBALS['yneko_reimu_suppress_comment_review_status'] ) ) {
+		return;
+	}
+
+	$comment = get_comment( $comment_id );
+	if ( ! $comment || empty( $comment->user_id ) ) {
+		return;
+	}
+
+	$status = sanitize_key( $status );
+	if ( in_array( $status, array( 'approve', 'approved', '1' ), true ) ) {
+		yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'updated', $comment->comment_ID );
+	} elseif ( in_array( $status, array( 'hold', 'unapprove', 'unapproved', '0', 'spam', 'trash', 'delete' ), true ) ) {
+		yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'rejected', $comment->comment_ID );
+	}
+}
+
+function yneko_reimu_comment_status_changed( $comment_id, $comment_status = '' ) {
+	yneko_reimu_update_comment_review_status_for_user( $comment_id, $comment_status );
+}
+add_action( 'wp_set_comment_status', 'yneko_reimu_comment_status_changed', 10, 2 );
 
 function yneko_reimu_hold_comment_with_pending_uploads( $approved, $commentdata ) {
 	$content = isset( $commentdata['comment_content'] ) ? (string) $commentdata['comment_content'] : '';
@@ -2184,6 +2882,11 @@ function yneko_reimu_comment_temp_cleanup_days() {
 	return max( 1, min( 30, absint( $settings['temp_cleanup_days'] ?? 7 ) ) );
 }
 
+function yneko_reimu_comment_rejected_cleanup_hours() {
+	$settings = function_exists( 'yneko_reimu_settings_comment_upload' ) ? yneko_reimu_settings_comment_upload() : array();
+	return max( 1, min( 168, absint( $settings['rejected_cleanup_hours'] ?? 24 ) ) );
+}
+
 function yneko_reimu_comment_regular_upload_base() {
 	$uploads = wp_get_upload_dir();
 	return array(
@@ -2207,6 +2910,90 @@ function yneko_reimu_comment_url_to_path( $url ) {
 function yneko_reimu_comment_extract_image_urls( $content ) {
 	preg_match_all( '/!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/i', (string) $content, $matches );
 	return empty( $matches[1] ) ? array() : array_values( array_unique( array_map( 'esc_url_raw', $matches[1] ) ) );
+}
+
+function yneko_reimu_comment_media_count( $content ) {
+	preg_match_all( '/!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/i', (string) $content, $matches );
+	return empty( $matches[0] ) ? 0 : count( $matches[0] );
+}
+
+function yneko_reimu_comment_normalize_media_url( $url ) {
+	return esc_url_raw( html_entity_decode( (string) $url, ENT_QUOTES ) );
+}
+
+function yneko_reimu_comment_remove_temp_review_status( $comment_id, $url ) {
+	$comment_id = absint( $comment_id );
+	$url        = esc_url_raw( $url );
+	if ( ! $comment_id || ! $url ) {
+		return;
+	}
+
+	$meta = yneko_reimu_comment_temp_review_meta( $comment_id );
+	if ( ! isset( $meta[ $url ] ) ) {
+		return;
+	}
+
+	unset( $meta[ $url ] );
+	if ( empty( $meta ) ) {
+		delete_comment_meta( $comment_id, '_yneko_reimu_comment_temp_upload_reviews' );
+	} else {
+		update_comment_meta( $comment_id, '_yneko_reimu_comment_temp_upload_reviews', $meta );
+	}
+}
+
+function yneko_reimu_comment_remove_media_url_from_content( $content, $url ) {
+	$target  = yneko_reimu_comment_normalize_media_url( $url );
+	$changed = false;
+	if ( '' === $target ) {
+		return (string) $content;
+	}
+
+	$updated = preg_replace_callback(
+		'/!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/i',
+		function ( $matches ) use ( $target, &$changed ) {
+			if ( $target === yneko_reimu_comment_normalize_media_url( $matches[1] ?? '' ) ) {
+				$changed = true;
+				return "\n";
+			}
+			return $matches[0];
+		},
+		(string) $content
+	);
+
+	if ( ! $changed ) {
+		return (string) $content;
+	}
+
+	$updated = preg_replace( "/[ \t]*\n[ \t]*/", "\n", (string) $updated );
+	$updated = preg_replace( "/\n{3,}/", "\n\n", (string) $updated );
+	return trim( (string) $updated );
+}
+
+function yneko_reimu_comment_remove_upload_from_comment( $comment_id, $url ) {
+	$comment = get_comment( absint( $comment_id ) );
+	if ( ! $comment ) {
+		return false;
+	}
+
+	$updated = yneko_reimu_comment_remove_media_url_from_content( $comment->comment_content, $url );
+	if ( $updated === (string) $comment->comment_content ) {
+		return false;
+	}
+
+	yneko_reimu_comment_remove_temp_review_status( $comment->comment_ID, $url );
+	if ( '' === trim( wp_strip_all_tags( $updated ) ) ) {
+		return wp_delete_comment( $comment->comment_ID, true ) ? 'deleted' : false;
+	}
+
+	$result = wp_update_comment(
+		array(
+			'comment_ID'      => absint( $comment->comment_ID ),
+			'comment_content' => $updated,
+		),
+		true
+	);
+
+	return ( is_wp_error( $result ) || ! $result ) ? false : 'updated';
 }
 
 function yneko_reimu_comment_missing_image_url() {
@@ -2233,6 +3020,21 @@ function yneko_reimu_comment_resolve_image_url( $url ) {
 	return yneko_reimu_comment_missing_image_url();
 }
 
+function yneko_reimu_comment_media_review_label( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return '';
+	}
+	$status = yneko_reimu_comment_visible_upload_review_status( $comment );
+	if ( 'rejected' === $status ) {
+		return __( '审核未通过', 'yneko-reimu' );
+	}
+	if ( in_array( $status, array( 'pending', 'revoked' ), true ) || ( '0' === (string) $comment->comment_approved && ! $status ) ) {
+		return __( '评论正在等待审核。', 'yneko-reimu' );
+	}
+	return '';
+}
+
 function yneko_reimu_comment_upload_allowed_mimes() {
 	return array(
 		'jpg|jpeg' => 'image/jpeg',
@@ -2244,6 +3046,44 @@ function yneko_reimu_comment_upload_allowed_mimes() {
 
 function yneko_reimu_comment_temp_upload_nonce_action( $action, $relative ) {
 	return 'yneko_reimu_comment_upload_' . sanitize_key( $action ) . '_temp_' . md5( wp_normalize_path( rawurldecode( (string) $relative ) ) );
+}
+
+function yneko_reimu_comment_temp_review_meta( $comment_id ) {
+	$meta = get_comment_meta( absint( $comment_id ), '_yneko_reimu_comment_temp_upload_reviews', true );
+	return is_array( $meta ) ? $meta : array();
+}
+
+function yneko_reimu_comment_set_temp_review_status( $comment_id, $url, $status ) {
+	$comment_id = absint( $comment_id );
+	$url        = esc_url_raw( $url );
+	$status     = sanitize_key( $status );
+	if ( ! $comment_id || ! $url || ! in_array( $status, array( 'pending', 'rejected' ), true ) ) {
+		return;
+	}
+
+	$meta         = yneko_reimu_comment_temp_review_meta( $comment_id );
+	$meta[ $url ] = array(
+		'status' => $status,
+		'time'   => time(),
+	);
+	update_comment_meta( $comment_id, '_yneko_reimu_comment_temp_upload_reviews', $meta );
+}
+
+function yneko_reimu_comment_temp_review_status( $comment_id, $url ) {
+	$meta = yneko_reimu_comment_temp_review_meta( $comment_id );
+	$url  = esc_url_raw( $url );
+	return isset( $meta[ $url ] ) && is_array( $meta[ $url ] ) ? $meta[ $url ] : array();
+}
+
+function yneko_reimu_comment_set_upload_status( $attachment_id, $status ) {
+	$attachment_id = absint( $attachment_id );
+	$status        = sanitize_key( $status );
+	if ( ! $attachment_id || ! in_array( $status, array( 'pending', 'approved', 'revoked', 'rejected', 'private' ), true ) ) {
+		return;
+	}
+
+	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status', $status );
+	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status_time', time() );
 }
 
 function yneko_reimu_comment_upload_is_gif_attachment( $attachment_id ) {
@@ -2286,7 +3126,7 @@ function yneko_reimu_comment_upload_library( $limit = 80, $type = 'all', $includ
 	if ( $include_pending ) {
 		$meta_query[] = array(
 			'key'     => '_yneko_reimu_comment_upload_status',
-			'value'   => array( 'approved', 'pending', 'private' ),
+			'value'   => array( 'approved', 'pending', 'private', 'revoked', 'rejected' ),
 			'compare' => 'IN',
 		);
 	} else {
@@ -2356,15 +3196,18 @@ function yneko_reimu_comment_pending_temp_uploads( $limit = 80 ) {
 		}
 		$relative = ltrim( str_replace( $root, '', $path ), '/' );
 		$url = trailingslashit( $base['url'] ) . str_replace( DIRECTORY_SEPARATOR, '/', $relative );
+		$comment = yneko_reimu_comment_find_comment_by_temp_url( $url );
+		$review  = $comment ? yneko_reimu_comment_temp_review_status( $comment->comment_ID, $url ) : array();
+		$status  = in_array( (string) ( $review['status'] ?? '' ), array( 'pending', 'rejected' ), true ) ? (string) $review['status'] : 'pending';
 		$uploads[] = array(
 			'id'     => 'temp:' . rawurlencode( $relative ),
 			'url'    => esc_url_raw( $url ),
 			'path'   => $path,
 			'title'  => wp_basename( $path ),
 			'type'   => 'image/gif' === $mime ? 'gif' : 'image',
-			'status' => 'pending',
-			'user'   => 0,
-			'comment_id' => 0,
+			'status' => $status,
+			'user'   => $comment ? absint( $comment->user_id ) : 0,
+			'comment_id' => $comment ? absint( $comment->comment_ID ) : 0,
 			'date'   => date_i18n( 'Y-m-d H:i', filemtime( $path ) ),
 		);
 		if ( count( $uploads ) >= absint( $limit ) ) {
@@ -2455,6 +3298,8 @@ function yneko_reimu_ajax_comment_upload() {
 	}
 
 	$is_gif = 'image/gif' === $mime;
+	$cleanup_key   = wp_generate_password( 24, false, false );
+	$attachment_id = 0;
 	if ( ! $needs_review ) {
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -2468,9 +3313,21 @@ function yneko_reimu_ajax_comment_upload() {
 			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
 			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
 			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', $is_gif ? 'gif' : 'image' );
-			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status', $is_gif ? 'approved' : 'private' );
+			yneko_reimu_comment_set_upload_status( $attachment_id, 'approved' );
 			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', get_current_user_id() );
+			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_cleanup_key', $cleanup_key );
 		}
+	}
+
+	if ( $needs_review ) {
+		set_transient(
+			'yneko_reimu_comment_upload_cleanup_' . md5( esc_url_raw( $upload['url'] ) ),
+			array(
+				'key'  => $cleanup_key,
+				'user' => get_current_user_id(),
+			),
+			DAY_IN_SECONDS
+		);
 	}
 
 	wp_send_json_success(
@@ -2479,13 +3336,65 @@ function yneko_reimu_ajax_comment_upload() {
 			'type'    => $is_gif ? 'gif' : 'image',
 			'status'  => $needs_review ? 'pending' : 'approved',
 			'requiresReview' => $needs_review,
+			'cleanupKey' => $cleanup_key,
 			'message' => $needs_review ? __( '文件已上传，等待管理员审核。', 'yneko-reimu' ) : __( '已插入评论。', 'yneko-reimu' ),
 		)
 	);
 }
 add_action( 'wp_ajax_yneko_reimu_comment_upload', 'yneko_reimu_ajax_comment_upload' );
 
-function yneko_reimu_comment_promote_upload_url( $url, $comment_id ) {
+function yneko_reimu_ajax_comment_upload_discard() {
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => __( '登录后可上传图片。', 'yneko-reimu' ) ), 403 );
+	}
+
+	check_ajax_referer( 'yneko_reimu_comment_upload', 'nonce' );
+
+	$url         = isset( $_POST['url'] ) ? esc_url_raw( wp_unslash( $_POST['url'] ) ) : '';
+	$cleanup_key = isset( $_POST['cleanup_key'] ) ? sanitize_text_field( wp_unslash( $_POST['cleanup_key'] ) ) : '';
+	if ( ! $url || ! $cleanup_key ) {
+		wp_send_json_error( array( 'message' => __( '无效的评论上传附件。', 'yneko-reimu' ) ), 400 );
+	}
+
+	if ( yneko_reimu_comment_find_comment_by_temp_url( $url ) ) {
+		wp_send_json_error( array( 'message' => __( '文件已被评论使用。', 'yneko-reimu' ) ), 409 );
+	}
+
+	$attachment_id = attachment_url_to_postid( $url );
+	if ( $attachment_id && '1' === get_post_meta( $attachment_id, '_yneko_reimu_comment_upload', true ) ) {
+		if ( absint( get_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', true ) ) !== get_current_user_id() ) {
+			wp_send_json_error( array( 'message' => __( '权限不足。', 'yneko-reimu' ) ), 403 );
+		}
+		if ( $cleanup_key !== (string) get_post_meta( $attachment_id, '_yneko_reimu_comment_upload_cleanup_key', true ) ) {
+			wp_send_json_error( array( 'message' => __( '无效的评论上传附件。', 'yneko-reimu' ) ), 400 );
+		}
+		if ( absint( get_post_meta( $attachment_id, '_yneko_reimu_comment_upload_comment_id', true ) ) ) {
+			wp_send_json_error( array( 'message' => __( '文件已被评论使用。', 'yneko-reimu' ) ), 409 );
+		}
+		wp_delete_attachment( $attachment_id, true );
+		wp_send_json_success();
+	}
+
+	$temp_base = yneko_reimu_comment_temp_upload_base();
+	if ( 0 !== strpos( $url, trailingslashit( $temp_base['url'] ) ) ) {
+		wp_send_json_error( array( 'message' => __( '无效的评论上传附件。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$cleanup = get_transient( 'yneko_reimu_comment_upload_cleanup_' . md5( $url ) );
+	if ( ! is_array( $cleanup ) || $cleanup_key !== (string) ( $cleanup['key'] ?? '' ) || absint( $cleanup['user'] ?? 0 ) !== get_current_user_id() ) {
+		wp_send_json_error( array( 'message' => __( '无效的评论上传附件。', 'yneko-reimu' ) ), 400 );
+	}
+
+	$path = yneko_reimu_comment_url_to_path( $url );
+	if ( $path && file_exists( $path ) ) {
+		wp_delete_file( $path );
+	}
+	delete_transient( 'yneko_reimu_comment_upload_cleanup_' . md5( $url ) );
+	wp_send_json_success();
+}
+add_action( 'wp_ajax_yneko_reimu_comment_upload_discard', 'yneko_reimu_ajax_comment_upload_discard' );
+
+function yneko_reimu_comment_promote_upload_url( $url, $comment_id, $status = 'pending' ) {
 	$temp_base = yneko_reimu_comment_temp_upload_base();
 	if ( 0 !== strpos( $url, trailingslashit( $temp_base['url'] ) ) ) {
 		return $url;
@@ -2543,7 +3452,7 @@ function yneko_reimu_comment_promote_upload_url( $url, $comment_id ) {
 	$user_id = $comment ? absint( $comment->user_id ) : 0;
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', $is_gif ? 'gif' : 'image' );
-	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status', $is_gif ? 'pending' : 'private' );
+	yneko_reimu_comment_set_upload_status( $attachment_id, in_array( $status, array( 'pending', 'approved' ), true ) ? $status : 'pending' );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', $user_id );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_comment_id', absint( $comment_id ) );
 
@@ -2568,7 +3477,7 @@ function yneko_reimu_promote_comment_uploads( $comment_id, $comment_approved, $c
 		if ( yneko_reimu_comment_upload_review_enabled( $type ) ) {
 			continue;
 		}
-		$promoted = yneko_reimu_comment_promote_upload_url( $url, $comment_id );
+		$promoted = yneko_reimu_comment_promote_upload_url( $url, $comment_id, 'approved' );
 		if ( $promoted ) {
 			$updated = str_replace( $url, $promoted, $updated );
 		}
@@ -2610,14 +3519,7 @@ function yneko_reimu_comment_delete_temp_uploads_from_content( $content ) {
 }
 
 function yneko_reimu_cleanup_comment_temp_uploads_on_status( $comment_id, $comment_status ) {
-	if ( in_array( (string) $comment_status, array( 'approve', '1' ), true ) ) {
-		return;
-	}
-
-	$comment = get_comment( $comment_id );
-	if ( $comment ) {
-		yneko_reimu_comment_delete_temp_uploads_from_content( $comment->comment_content );
-	}
+	unset( $comment_id, $comment_status );
 }
 add_action( 'wp_set_comment_status', 'yneko_reimu_cleanup_comment_temp_uploads_on_status', 10, 2 );
 
@@ -2638,6 +3540,7 @@ function yneko_reimu_cleanup_expired_comment_temp_uploads() {
 
 	$now      = time();
 	$max_age  = yneko_reimu_comment_temp_cleanup_days() * DAY_IN_SECONDS;
+	$rejected_max_age = yneko_reimu_comment_rejected_cleanup_hours() * HOUR_IN_SECONDS;
 	$iterator = new RecursiveIteratorIterator(
 		new RecursiveDirectoryIterator( $root, FilesystemIterator::SKIP_DOTS ),
 		RecursiveIteratorIterator::CHILD_FIRST
@@ -2647,10 +3550,47 @@ function yneko_reimu_cleanup_expired_comment_temp_uploads() {
 		if ( 0 !== strpos( $path, $root ) ) {
 			continue;
 		}
-		if ( $item->isFile() && ( $now - $item->getMTime() ) > $max_age ) {
-			wp_delete_file( $path );
+		if ( $item->isFile() ) {
+			$relative = ltrim( str_replace( $root, '', $path ), '/' );
+			$url = trailingslashit( $base['url'] ) . str_replace( DIRECTORY_SEPARATOR, '/', $relative );
+			$comment = yneko_reimu_comment_find_comment_by_temp_url( $url );
+			$review  = $comment ? yneko_reimu_comment_temp_review_status( $comment->comment_ID, $url ) : array();
+			$status  = (string) ( $review['status'] ?? 'pending' );
+			$review_time = absint( $review['time'] ?? $item->getMTime() );
+			if ( 'rejected' === $status ) {
+				if ( ( $now - $review_time ) > $rejected_max_age ) {
+					if ( $comment ) {
+						yneko_reimu_comment_remove_upload_from_comment( $comment->comment_ID, $url );
+					}
+					wp_delete_file( $path );
+				}
+			} elseif ( ( $now - $item->getMTime() ) > $max_age ) {
+				if ( $comment ) {
+					yneko_reimu_comment_remove_upload_from_comment( $comment->comment_ID, $url );
+				}
+				wp_delete_file( $path );
+			}
 		} elseif ( $item->isDir() ) {
 			@rmdir( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+	}
+
+	foreach ( yneko_reimu_comment_upload_library( 300, 'all', true ) as $item ) {
+		if ( 'rejected' !== (string) ( $item['status'] ?? '' ) || empty( $item['id'] ) || ! is_numeric( $item['id'] ) ) {
+			continue;
+		}
+		$status_time = absint( get_post_meta( absint( $item['id'] ), '_yneko_reimu_comment_upload_status_time', true ) );
+		if ( ! $status_time ) {
+			$status_time = get_post_time( 'U', true, absint( $item['id'] ) );
+		}
+		if ( $status_time && ( $now - $status_time ) > $rejected_max_age ) {
+			$attachment_id  = absint( $item['id'] );
+			$attachment_url = wp_get_attachment_url( $attachment_id );
+			$comment_id     = absint( $item['comment_id'] ?? 0 );
+			if ( $comment_id && $attachment_url ) {
+				yneko_reimu_comment_remove_upload_from_comment( $comment_id, $attachment_url );
+			}
+			wp_delete_attachment( $attachment_id, true );
 		}
 	}
 }
@@ -2752,6 +3692,19 @@ function yneko_reimu_prevent_duplicate_simple_comment( $commentdata ) {
 }
 add_filter( 'preprocess_comment', 'yneko_reimu_prevent_duplicate_simple_comment', 5 );
 
+function yneko_reimu_limit_comment_media_count( $approved, $commentdata ) {
+	if ( yneko_reimu_comment_media_count( $commentdata['comment_content'] ?? '' ) <= 1 ) {
+		return $approved;
+	}
+
+	return new WP_Error(
+		'yneko_reimu_comment_media_limit',
+		__( '一条评论最多只能添加一张图片或一个 GIF。', 'yneko-reimu' ),
+		array( 'status' => 400 )
+	);
+}
+add_filter( 'pre_comment_approved', 'yneko_reimu_limit_comment_media_count', 5, 2 );
+
 function yneko_reimu_approve_public_gif_only_comment( $approved, $commentdata ) {
 	if ( yneko_reimu_comment_is_public_gif_only( $commentdata['comment_content'] ?? '' ) ) {
 		return 1;
@@ -2834,7 +3787,7 @@ function yneko_reimu_admin_comment_gif_upload_action() {
 
 		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
 		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', 'gif' );
-		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status', 'approved' );
+		yneko_reimu_comment_set_upload_status( $attachment_id, 'approved' );
 		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', get_current_user_id() );
 		++$done;
 	}
@@ -2878,7 +3831,7 @@ function yneko_reimu_admin_add_gif_from_media() {
 
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', 'gif' );
-	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_status', 'approved' );
+	yneko_reimu_comment_set_upload_status( $attachment_id, 'approved' );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', get_current_user_id() );
 
 	wp_send_json_success( array( 'message' => __( 'GIF 已加入表情库。', 'yneko-reimu' ) ) );
@@ -2923,13 +3876,22 @@ add_action( 'pre_get_posts', 'yneko_reimu_hide_comment_uploads_from_media_librar
 
 function yneko_reimu_comment_upload_admin_action() {
 	$action = isset( $_GET['yneko_comment_upload_action'] ) ? sanitize_key( wp_unslash( $_GET['yneko_comment_upload_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$raw_action = $action;
 	$id     = isset( $_GET['attachment_id'] ) ? absint( $_GET['attachment_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$temp   = isset( $_GET['temp_upload'] ) ? rawurldecode( sanitize_text_field( wp_unslash( $_GET['temp_upload'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( ! $action || ( ! $id && ! $temp ) ) {
 		return;
 	}
 
-	if ( ! in_array( $action, array( 'approve', 'remove', 'delete', 'approve_temp', 'delete_temp' ), true ) ) {
+	if ( 'approve_temp' === $action ) {
+		$action = 'approve';
+	} elseif ( 'delete_temp' === $action ) {
+		$action = 'delete';
+	} elseif ( 'remove' === $action ) {
+		$action = 'revoke';
+	}
+
+	if ( ! in_array( $action, array( 'approve', 'reject', 'revoke', 'delete' ), true ) ) {
 		return;
 	}
 
@@ -2937,8 +3899,12 @@ function yneko_reimu_comment_upload_admin_action() {
 		wp_die( esc_html__( '权限不足。', 'yneko-reimu' ), 403 );
 	}
 
-	if ( in_array( $action, array( 'approve_temp', 'delete_temp' ), true ) ) {
-		check_admin_referer( yneko_reimu_comment_temp_upload_nonce_action( $action, $temp ) );
+	if ( $temp ) {
+		$nonce_action = yneko_reimu_comment_temp_upload_nonce_action( $action, $temp );
+		if ( in_array( $raw_action, array( 'approve_temp', 'delete_temp' ), true ) ) {
+			$nonce_action = yneko_reimu_comment_temp_upload_nonce_action( $raw_action, $temp );
+		}
+		check_admin_referer( $nonce_action );
 		$relative = $temp;
 		$relative = str_replace( array( '../', '..\\' ), '', $relative );
 		$base     = yneko_reimu_comment_temp_upload_base();
@@ -2949,8 +3915,8 @@ function yneko_reimu_comment_upload_admin_action() {
 		}
 		$url     = trailingslashit( $base['url'] ) . str_replace( DIRECTORY_SEPARATOR, '/', $relative );
 		$comment = yneko_reimu_comment_find_comment_by_temp_url( $url );
-		if ( 'approve_temp' === $action ) {
-			$promoted = yneko_reimu_comment_promote_upload_url( $url, $comment ? $comment->comment_ID : 0 );
+		if ( 'approve' === $action ) {
+			$promoted = yneko_reimu_comment_promote_upload_url( $url, $comment ? $comment->comment_ID : 0, 'approved' );
 			if ( $promoted && $comment ) {
 				wp_update_comment(
 					array(
@@ -2958,20 +3924,37 @@ function yneko_reimu_comment_upload_admin_action() {
 						'comment_content' => str_replace( $url, $promoted, $comment->comment_content ),
 					)
 				);
+				delete_comment_meta( $comment->comment_ID, '_yneko_reimu_comment_temp_upload_reviews' );
 				if ( '0' === (string) $comment->comment_approved ) {
+					$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
 					wp_set_comment_status( $comment->comment_ID, 'approve' );
+					unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
+					if ( ! empty( $comment->user_id ) ) {
+						yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'updated', $comment->comment_ID );
+					}
+				} elseif ( ! empty( $comment->user_id ) ) {
+					yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'updated', $comment->comment_ID );
 				}
 			}
-		} else {
+		} elseif ( 'reject' === $action ) {
+			if ( $comment ) {
+				yneko_reimu_comment_set_temp_review_status( $comment->comment_ID, $url, 'rejected' );
+				if ( '1' === (string) $comment->comment_approved ) {
+					$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
+					wp_set_comment_status( $comment->comment_ID, 'hold' );
+					unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
+				}
+				if ( ! empty( $comment->user_id ) ) {
+					yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'rejected', $comment->comment_ID );
+				}
+			}
+		} elseif ( 'delete' === $action ) {
 			wp_delete_file( $path );
 			if ( $comment ) {
-				$updated = preg_replace( '#!\[[^\]]*\]\(' . preg_quote( $url, '#' ) . '\)#', '', $comment->comment_content );
-				wp_update_comment(
-					array(
-						'comment_ID'      => absint( $comment->comment_ID ),
-						'comment_content' => trim( (string) $updated ),
-					)
-				);
+				yneko_reimu_comment_remove_upload_from_comment( $comment->comment_ID, $url );
+				if ( ! empty( $comment->user_id ) ) {
+					yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'rejected', $comment->comment_ID );
+				}
 			}
 		}
 		wp_safe_redirect( remove_query_arg( array( 'yneko_comment_upload_action', 'attachment_id', 'temp_upload', '_wpnonce' ) ) );
@@ -2984,12 +3967,46 @@ function yneko_reimu_comment_upload_admin_action() {
 		wp_die( esc_html__( '无效的评论上传附件。', 'yneko-reimu' ), 400 );
 	}
 
+	$upload_user_id = absint( get_post_meta( $id, '_yneko_reimu_comment_upload_user_id', true ) );
+	$comment_id     = absint( get_post_meta( $id, '_yneko_reimu_comment_upload_comment_id', true ) );
 	if ( 'approve' === $action ) {
-		update_post_meta( $id, '_yneko_reimu_comment_upload_status', 'approved' );
-	} elseif ( 'remove' === $action ) {
-		update_post_meta( $id, '_yneko_reimu_comment_upload_status', 'private' );
+		yneko_reimu_comment_set_upload_status( $id, 'approved' );
+		if ( $comment_id ) {
+			$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
+			wp_set_comment_status( $comment_id, 'approve' );
+			unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
+		}
+	} elseif ( 'revoke' === $action ) {
+		yneko_reimu_comment_set_upload_status( $id, 'revoked' );
+		if ( $comment_id ) {
+			$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
+			wp_set_comment_status( $comment_id, 'hold' );
+			unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
+		}
+		if ( $upload_user_id ) {
+			yneko_reimu_set_user_review_status( $upload_user_id, 'comments', 'pending', $comment_id );
+		}
+	} elseif ( 'reject' === $action ) {
+		yneko_reimu_comment_set_upload_status( $id, 'rejected' );
+		if ( $comment_id ) {
+			$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
+			wp_set_comment_status( $comment_id, 'hold' );
+			unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
+		}
 	} elseif ( 'delete' === $action ) {
+		$attachment_url = wp_get_attachment_url( $id );
+		if ( $comment_id && $attachment_url ) {
+			yneko_reimu_comment_remove_upload_from_comment( $comment_id, $attachment_url );
+		} elseif ( $attachment_url ) {
+			$comment = yneko_reimu_comment_find_comment_by_temp_url( $attachment_url );
+			if ( $comment ) {
+				yneko_reimu_comment_remove_upload_from_comment( $comment->comment_ID, $attachment_url );
+			}
+		}
 		wp_delete_attachment( $id, true );
+	}
+	if ( $upload_user_id && in_array( $action, array( 'approve', 'reject', 'delete' ), true ) ) {
+		yneko_reimu_set_user_review_status( $upload_user_id, 'comments', 'approve' === $action ? 'updated' : 'rejected', $comment_id );
 	}
 
 	wp_safe_redirect( remove_query_arg( array( 'yneko_comment_upload_action', 'attachment_id', 'temp_upload', '_wpnonce' ) ) );
@@ -3035,14 +4052,15 @@ function yneko_reimu_avatar_admin_action() {
 		}
 		update_user_meta( $user_id, '_yneko_reimu_avatar_url', $pending );
 		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+		yneko_reimu_set_user_review_status( $user_id, 'avatar', 'updated' );
 	} elseif ( 'reject' === $action && $pending ) {
 		yneko_reimu_delete_upload_by_url( $pending );
 		delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
-		delete_user_meta( $user_id, '_yneko_reimu_avatar_status' );
+		yneko_reimu_set_user_review_status( $user_id, 'avatar', 'rejected' );
 	} elseif ( 'delete' === $action ) {
 		yneko_reimu_delete_upload_by_url( $current );
 		delete_user_meta( $user_id, '_yneko_reimu_avatar_url' );
+		yneko_reimu_clear_user_review_status( $user_id, 'avatar' );
 	}
 
 	wp_safe_redirect( remove_query_arg( array( 'yneko_avatar_action', 'user_id', '_wpnonce' ) ) );
@@ -3062,20 +4080,41 @@ function yneko_reimu_user_badge_admin_action() {
 	}
 	check_admin_referer( 'yneko_reimu_user_badge_' . $action . '_' . $user_id . '_' . $index );
 
-	$active  = yneko_reimu_comment_normalize_tag_list( get_user_meta( $user_id, '_yneko_reimu_comment_tags', true ), 2 );
-	$pending = yneko_reimu_comment_normalize_tag_list( get_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', true ), 2 );
+	$active  = yneko_reimu_comment_user_custom_tags( $user_id );
+	$pending = yneko_reimu_comment_user_pending_tags( $user_id );
 
 	if ( 'approve' === $action && isset( $pending[ $index ] ) ) {
-		$active[] = $pending[ $index ];
-		$active   = array_slice( yneko_reimu_comment_normalize_tag_list( $active, 2 ), 0, 2 );
+		$approved_tag = $pending[ $index ];
+		$replace_id   = sanitize_key( $approved_tag['old_id'] ?? ( $approved_tag['id'] ?? '' ) );
+		$active = array_values(
+			array_filter(
+				$active,
+				static function ( $tag ) use ( $approved_tag, $replace_id ) {
+					if ( ! is_array( $tag ) ) {
+						return false;
+					}
+					$tag_id = sanitize_key( $tag['id'] ?? '' );
+					if ( $replace_id && $tag_id === $replace_id ) {
+						return false;
+					}
+					return ! yneko_reimu_comment_tags_same_label( $tag['label'] ?? '', $approved_tag['label'] ?? '' );
+				}
+			)
+		);
+		unset( $approved_tag['old_id'], $approved_tag['old_label'] );
+		$active[] = $approved_tag;
+		$active   = yneko_reimu_comment_normalize_tag_list( $active, yneko_reimu_comment_custom_tag_storage_limit() );
 		unset( $pending[ $index ] );
 		$pending = array_values( $pending );
+		yneko_reimu_set_user_review_status( $user_id, 'tags', $pending ? 'pending' : 'updated' );
 	} elseif ( 'reject' === $action && isset( $pending[ $index ] ) ) {
 		unset( $pending[ $index ] );
 		$pending = array_values( $pending );
+		yneko_reimu_set_user_review_status( $user_id, 'tags', $pending ? 'pending' : 'rejected' );
 	} elseif ( 'revoke' === $action && isset( $active[ $index ] ) ) {
 		unset( $active[ $index ] );
 		$active = array_values( $active );
+		yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
 	}
 
 	if ( $active ) {
@@ -3289,17 +4328,20 @@ function yneko_reimu_render_comment_markdown( $text ) {
 function yneko_reimu_comment_callback( $comment, $args, $depth ) {
 	$comment_time = $comment->comment_date_gmt ? mysql2date( 'U', $comment->comment_date_gmt, false ) : mysql2date( 'U', $comment->comment_date, false );
 	$comment_id   = get_comment_ID();
-	$like_count   = absint( yneko_reimu_get_comment_meta( $comment_id, '_yneko_reimu_like_count', true ) );
+	$like_count   = yneko_reimu_comment_like_count_from_registry( $comment_id );
+	$user_liked   = yneko_reimu_comment_user_liked( $comment_id );
 	$badges       = yneko_reimu_comment_agent_badges( $comment->comment_agent, $comment->comment_author_IP );
 	$user_badges  = ! empty( $comment->user_id ) ? yneko_reimu_comment_user_badges_html( $comment->user_id ) : '';
 	$is_logged_in_commenter = ! empty( $comment->user_id );
 	$comment_link = get_comment_link( $comment );
 	$can_manage   = yneko_reimu_current_user_can_manage_comment( $comment );
+	$review_label = yneko_reimu_comment_media_review_label( $comment );
+	$review_status = yneko_reimu_comment_visible_upload_review_status( $comment );
 	if ( ! empty( $GLOBALS['yneko_reimu_comment_display_url'] ) ) {
 		$comment_link = untrailingslashit( (string) $GLOBALS['yneko_reimu_comment_display_url'] ) . '#comment-' . absint( $comment_id );
 	}
 	?>
-	<li <?php comment_class( 'reimu-comment' ); ?> id="comment-<?php comment_ID(); ?>" data-comment-time="<?php echo esc_attr( $comment_time ); ?>" data-comment-id="<?php echo esc_attr( $comment_id ); ?>" data-comment-user-id="<?php echo esc_attr( absint( $comment->user_id ) ); ?>">
+	<li <?php comment_class( 'reimu-comment' . ( 'rejected' === $review_status ? ' reimu-comment-rejected' : '' ) ); ?> id="comment-<?php comment_ID(); ?>" data-comment-time="<?php echo esc_attr( $comment_time ); ?>" data-comment-id="<?php echo esc_attr( $comment_id ); ?>" data-comment-user-id="<?php echo esc_attr( absint( $comment->user_id ) ); ?>" data-comment-likes="<?php echo esc_attr( $like_count ); ?>" data-comment-liked="<?php echo $user_liked ? '1' : '0'; ?>">
 		<article class="reimu-comment__body">
 			<a class="reimu-comment__avatar<?php echo $is_logged_in_commenter ? ' reimu-comment__avatar--logged-in' : ''; ?>" href="<?php echo esc_url( $comment_link ); ?>" aria-hidden="true" tabindex="-1"><?php echo yneko_reimu_get_comment_avatar( $comment, 56 ); ?></a>
 			<div class="reimu-comment__content">
@@ -3313,8 +4355,8 @@ function yneko_reimu_comment_callback( $comment, $args, $depth ) {
 					</span>
 					<?php echo $badges; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</header>
-				<?php if ( '0' === $comment->comment_approved ) : ?>
-					<p class="comment-awaiting-moderation"><?php esc_html_e( '评论正在等待审核。', 'yneko-reimu' ); ?></p>
+				<?php if ( $review_label ) : ?>
+					<p class="comment-awaiting-moderation<?php echo 'rejected' === $review_status ? ' is-rejected' : ''; ?>"><?php echo esc_html( $review_label ); ?></p>
 				<?php endif; ?>
 				<div class="comment-text wl-content" data-comment-raw="<?php echo esc_attr( $comment->comment_content ); ?>"><?php echo yneko_reimu_render_comment_markdown( $comment->comment_content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 				<div class="reimu-comment__footer" aria-label="<?php esc_attr_e( '评论操作', 'yneko-reimu' ); ?>">
@@ -3326,7 +4368,7 @@ function yneko_reimu_comment_callback( $comment, $args, $depth ) {
 							<?php echo yneko_reimu_waline_icon( 'trash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</button>
 					<?php endif; ?>
-					<button type="button" class="reimu-comment-like" data-comment-like="<?php echo esc_attr( $comment_id ); ?>" data-like-nonce="<?php echo esc_attr( wp_create_nonce( 'yneko_reimu_comment_like_' . $comment_id ) ); ?>" aria-pressed="false" aria-label="<?php esc_attr_e( '点赞', 'yneko-reimu' ); ?>">
+					<button type="button" class="reimu-comment-like<?php echo $user_liked ? ' liked' : ''; ?>" data-comment-like="<?php echo esc_attr( $comment_id ); ?>" data-like-nonce="<?php echo esc_attr( wp_create_nonce( 'yneko_reimu_comment_like_' . $comment_id ) ); ?>" aria-pressed="<?php echo $user_liked ? 'true' : 'false'; ?>" aria-label="<?php esc_attr_e( '点赞', 'yneko-reimu' ); ?>">
 						<?php echo yneko_reimu_waline_icon( 'heart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<span data-like-count><?php echo esc_html( $like_count ); ?></span>
 					</button>

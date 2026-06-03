@@ -32,12 +32,20 @@ msgstr ""
 msgid "%d 分钟阅读"
 msgstr ""
 
+#: inc/settings.php
+msgid "%d 个待处理项目"
+msgstr ""
+
 #: inc/template-tags.php
 msgid "%d 篇文章"
 msgstr ""
 
 #: inc/template-tags.php
 msgid "%d 字"
+msgstr ""
+
+#: inc/customizer.php
+msgid "%s 链接"
 msgstr ""
 
 #: inc/view-count.php
@@ -77,7 +85,15 @@ msgid "按倒序"
 msgstr ""
 
 #: comments.php
+msgid "按点赞、回复和近期活跃综合排序"
+msgstr ""
+
+#: comments.php
 msgid "按热度"
+msgstr ""
+
+#: comments.php
+msgid "按热度：按点赞、回复和近期活跃综合排序"
 msgstr ""
 
 #: inc/template-tags.php
@@ -148,6 +164,18 @@ msgstr ""
 msgid "标签"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "标签审核不通过"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "标签审核中"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "标签已更新"
+msgstr ""
+
 #: inc/customizer.php template-parts/widgets/default-widgets.php
 msgid "标签云"
 msgstr ""
@@ -198,6 +226,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "侧栏卡片之前"
+msgstr ""
+
+#: inc/customizer.php
+msgid "侧栏社交图标"
 msgstr ""
 
 #: inc/customizer.php
@@ -324,6 +356,18 @@ msgstr ""
 msgid "分类数量"
 msgstr ""
 
+#: template-parts/meta/post-share.php
+msgid "分享"
+msgstr ""
+
+#: template-parts/meta/post-share.php
+msgid "分享到 %s"
+msgstr ""
+
+#: inc/customizer.php
+msgid "分享与社交链接"
+msgstr ""
+
 #: template-parts/components/pagination.php
 msgid "分页导航"
 msgstr ""
@@ -418,6 +462,10 @@ msgstr ""
 
 #: inc/comments.php
 msgid "关闭个人资料窗口"
+msgstr ""
+
+#: inc/customizer.php
+msgid "关闭后，页面右上角不再显示 GitHub 三角标。"
 msgstr ""
 
 #: template-parts/layout/search-popup.php
@@ -532,10 +580,6 @@ msgstr ""
 msgid "加载更多..."
 msgstr ""
 
-#: inc/settings.php
-msgid "仅移出表情库"
-msgstr ""
-
 #: inc/comments.php
 msgid "仅支持 JPG、PNG、WebP 和 GIF。"
 msgstr ""
@@ -629,7 +673,15 @@ msgid "默认卡片封面"
 msgstr ""
 
 #: inc/customizer.php
+msgid "默认启用 QQ 和微信，其它分享按钮默认关闭。"
+msgstr ""
+
+#: inc/customizer.php
 msgid "默认头像/角色图"
+msgstr ""
+
+#: inc/customizer.php
+msgid "默认只启用 GitHub。其它社交链接可先填写保存，启用后才会显示。"
 msgstr ""
 
 #: inc/comments.php
@@ -670,10 +722,6 @@ msgstr ""
 
 #: inc/settings.php
 msgid "批准"
-msgstr ""
-
-#: inc/settings.php
-msgid "批准入库"
 msgstr ""
 
 #: inc/settings.php
@@ -741,11 +789,15 @@ msgid "评论上传：%s"
 msgstr ""
 
 #: inc/comments.php inc/enqueue.php
-msgid "评论提交失败。"
+msgid "评论审核不通过"
 msgstr ""
 
-#: inc/settings.php
-msgid "评论图片"
+#: inc/comments.php inc/enqueue.php
+msgid "评论审核中"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "评论提交失败。"
 msgstr ""
 
 #: inc/comments.php inc/enqueue.php
@@ -754,6 +806,10 @@ msgstr ""
 
 #: inc/comments.php inc/enqueue.php
 msgid "评论已发布。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "评论已更新"
 msgstr ""
 
 #: inc/comments.php
@@ -774,6 +830,18 @@ msgstr ""
 
 #: inc/comments.php
 msgid "评论正在等待审核。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "启用"
+msgstr ""
+
+#: inc/customizer.php
+msgid "启用侧栏社交：%s"
+msgstr ""
+
+#: inc/customizer.php
+msgid "启用文章分享：%s"
 msgstr ""
 
 #: inc/customizer.php
@@ -798,6 +866,10 @@ msgstr ""
 
 #: inc/comments.php
 msgid "请不要重复发送相同的评论。"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr ""
 
 #: template-parts/content/content-none.php
@@ -852,6 +924,10 @@ msgstr ""
 msgid "请选择 GIF 文件。"
 msgstr ""
 
+#: inc/comments.php
+msgid "请选择头像文件。"
+msgstr ""
+
 #: inc/settings.php
 msgid "请选择要上传的 GIF。"
 msgstr ""
@@ -900,16 +976,16 @@ msgstr ""
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgstr ""
 
+#: inc/settings.php
+msgid "删除"
+msgstr ""
+
 #: inc/comments.php
 msgid "删除评论"
 msgstr ""
 
 #: inc/settings.php
 msgid "删除头像"
-msgstr ""
-
-#: inc/settings.php
-msgid "删除文件"
 msgstr ""
 
 #: inc/comments.php inc/enqueue.php
@@ -926,6 +1002,10 @@ msgstr ""
 
 #: inc/enqueue.php
 msgid "上传中..."
+msgstr ""
+
+#: inc/customizer.php
+msgid "上方管理文章分享按钮；下方管理侧栏社交图标。链接可以先填写，只有启用后才会在前台显示。"
 msgstr ""
 
 #: template-parts/content/content-single.php
@@ -956,12 +1036,12 @@ msgstr ""
 msgid "少女祈祷中..."
 msgstr ""
 
-#: inc/customizer.php
-msgid "社交链接"
-msgstr ""
-
 #: template-parts/virtual/friend.php
 msgid "申请方法"
+msgstr ""
+
+#: inc/comments.php inc/settings.php
+msgid "审核未通过"
 msgstr ""
 
 #: inc/comments.php
@@ -1036,8 +1116,8 @@ msgstr ""
 msgid "特殊标签"
 msgstr ""
 
-#: inc/comments.php
-msgid "特殊标签和自定义标签合计最多 2 个；自定义标签最多 8 个字符，保留标签不可自行设置。"
+#: inc/comments.php inc/enqueue.php
+msgid "特殊标签和已勾选的自定义标签合计最多 2 个。"
 msgstr ""
 
 #: comments.php
@@ -1060,6 +1140,22 @@ msgstr ""
 msgid "跳到内容"
 msgstr ""
 
+#: inc/settings.php
+msgid "通过"
+msgstr ""
+
+#: inc/customizer.php
+msgid "同时用于顶部 GitHub 三角标、侧栏 GitHub 图标和项目页拉取来源。"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "头像更新中"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "头像仅支持 JPG、PNG 或 WebP。"
+msgstr ""
+
 #: inc/comments.php
 msgid "头像链接"
 msgstr ""
@@ -1068,12 +1164,24 @@ msgstr ""
 msgid "头像上传失败。"
 msgstr ""
 
+#: inc/comments.php inc/enqueue.php
+msgid "头像审核不通过"
+msgstr ""
+
 #: inc/comments.php inc/enqueue.php inc/settings.php
 msgid "头像审核中"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments.php inc/enqueue.php
 msgid "头像文件超过大小限制。"
+msgstr ""
+
+#: inc/comments.php inc/enqueue.php
+msgid "头像已更新"
+msgstr ""
+
+#: inc/enqueue.php
+msgid "头像已选择，保存后生效。"
 msgstr ""
 
 #: inc/settings.php
@@ -1088,12 +1196,20 @@ msgstr ""
 msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
 msgstr ""
 
+#: inc/settings.php
+msgid "图片已通过"
+msgstr ""
+
 #: inc/enqueue.php
 msgid "图片预览"
 msgstr ""
 
 #: template-parts/virtual/projects.php
 msgid "推荐项目待同步"
+msgstr ""
+
+#: inc/comments.php
+msgid "退出"
 msgstr ""
 
 #: inc/comments.php
@@ -1108,6 +1224,14 @@ msgstr ""
 msgid "忘记密码？"
 msgstr ""
 
+#: inc/template-tags.php
+msgid "微信"
+msgstr ""
+
+#: template-parts/meta/post-share.php
+msgid "微信分享二维码"
+msgstr ""
+
 #: inc/enqueue.php
 msgid "未发现与「{query}」相关内容"
 msgstr ""
@@ -1117,11 +1241,19 @@ msgid "未来有你..."
 msgstr ""
 
 #: inc/settings.php
+msgid "未启用"
+msgstr ""
+
+#: inc/settings.php
 msgid "未知用户"
 msgstr ""
 
 #: inc/comments.php
 msgid "文件大小超出限制。"
+msgstr ""
+
+#: inc/comments.php
+msgid "文件已被评论使用。"
 msgstr ""
 
 #: inc/comments.php
@@ -1134,6 +1266,10 @@ msgstr ""
 
 #: template-parts/content/content-single.php
 msgid "文章导航"
+msgstr ""
+
+#: inc/customizer.php
+msgid "文章分享链接"
 msgstr ""
 
 #: inc/toc.php
@@ -1245,6 +1381,10 @@ msgid "显示我的评论头像框"
 msgstr ""
 
 #: inc/customizer.php
+msgid "显示右上角 GitHub 三角标"
+msgstr ""
+
+#: inc/customizer.php
 msgid "显示阅读时间"
 msgstr ""
 
@@ -1270,6 +1410,10 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "小工具之后"
+msgstr ""
+
+#: inc/template-tags.php
+msgid "小红书"
 msgstr ""
 
 #: template-parts/virtual/friend.php
@@ -1376,12 +1520,20 @@ msgstr ""
 msgid "一条评论"
 msgstr ""
 
+#: inc/comments.php
+msgid "一条评论最多只能添加一张图片或一个 GIF。"
+msgstr ""
+
 #: template-parts/layout/mobile-nav.php
 msgid "移动端导航"
 msgstr ""
 
 #: inc/comments.php inc/enqueue.php
 msgid "已插入评论。"
+msgstr ""
+
+#: inc/settings.php
+msgid "已撤销"
 msgstr ""
 
 #: inc/settings.php
@@ -1484,6 +1636,10 @@ msgstr ""
 msgid "预设"
 msgstr ""
 
+#: inc/settings.php
+msgid "原标签：%s"
+msgstr ""
+
 #: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
 msgid "阅读量"
 msgstr ""
@@ -1554,10 +1710,6 @@ msgstr ""
 
 #: inc/customizer.php
 msgid "这里只保留可预览的虚拟页面文案；友链列表请到“外观 -> Yneko-Reimu 设置”。"
-msgstr ""
-
-#: inc/customizer.php
-msgid "这里只保留可直接预览的社交展示链接；GitHub 主页和 OAuth 请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
 #: inc/customizer.php
@@ -1632,6 +1784,10 @@ msgstr ""
 msgid "总访问量"
 msgstr ""
 
+#: inc/comments.php
+msgid "最多添加 5 个自定义标签；特殊标签和已勾选的自定义标签合计最多 2 个。自定义标签最多 8 个字符，保留标签不可自行设置。"
+msgstr ""
+
 #: inc/customizer.php inc/post-meta.php
 msgid "左侧"
 msgstr ""
@@ -1676,7 +1832,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/template-tags.php
 msgid "Email URL 或 mailto:"
 msgstr ""
 
@@ -1709,11 +1865,11 @@ msgid "GIF 已加入表情库。"
 msgstr ""
 
 #: inc/settings.php
-msgid "GIF 已入库"
+msgid "GIF 已上传并加入表情库。"
 msgstr ""
 
 #: inc/settings.php
-msgid "GIF 已上传并加入表情库。"
+msgid "GIF 已通过"
 msgstr ""
 
 #: inc/github-login.php
@@ -1722,6 +1878,10 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "GitHub 登录成功，正在返回评论区..."
+msgstr ""
+
+#: inc/customizer.php
+msgid "GitHub 链接"
 msgstr ""
 
 #: inc/template-tags.php
@@ -1778,6 +1938,10 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "No WordPress account is linked to this GitHub account."
+msgstr ""
+
+#: template-parts/meta/post-share.php
+msgid "Powered By %s"
 msgstr ""
 
 #: inc/setup.php

@@ -4,8 +4,9 @@ import { resolve } from 'node:path';
 const themeRoot = resolve('theme/Yneko-Reimu');
 
 export default defineConfig({
+  base: './',
   build: {
-    emptyOutDir: false,
+    emptyOutDir: true,
     manifest: false,
     minify: 'esbuild',
     outDir: resolve(themeRoot, 'assets/dist'),

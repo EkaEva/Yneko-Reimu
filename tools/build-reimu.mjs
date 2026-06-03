@@ -1,4 +1,4 @@
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,11 +8,7 @@ const cssSources = [
   'assets/src/yneko-reimu-base.css',
   'assets/src/yneko-reimu-adapter.css'
 ];
-const outputs = [
-  'assets/dist/loader.css',
-  'assets/dist/reimu.js',
-  'assets/dist/reimu.css'
-];
+const distRoot = resolve(themeRoot, 'assets/dist');
 
 function minifyCss(css) {
   return css
@@ -28,6 +24,36 @@ const loaderOutput = resolve(themeRoot, 'assets/dist/loader.css');
 await mkdir(dirname(loaderOutput), { recursive: true });
 await writeFile(loaderOutput, `${minifyCss(loaderSource)}\n`);
 
+const qrcodeSource = resolve(root, 'node_modules/qrcode/build/qrcode.js');
+const qrcodeOutput = resolve(themeRoot, 'assets/dist/qrcode.js');
+
+try {
+  await copyFile(qrcodeSource, qrcodeOutput);
+} catch (error) {
+  throw new Error('Unable to copy qrcode.js. Run npm install before building.');
+}
+
+async function listDistOutputs(dir, prefix = 'assets/dist') {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const relativePath = `${prefix}/${entry.name}`;
+    const absolutePath = resolve(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      files.push(...await listDistOutputs(absolutePath, relativePath));
+      continue;
+    }
+
+    if ('assets/dist/manifest.json' !== relativePath) {
+      files.push(relativePath);
+    }
+  }
+
+  return files.sort();
+}
+
 let upstreamPkg = {
   name: 'Yneko-Reimu CSS reference snapshot',
   version: 'local',
@@ -42,6 +68,7 @@ try {
 } catch (error) {
   // Local builds use the bundled CSS reference snapshot when the upstream mirror is absent.
 }
+const outputs = await listDistOutputs(distRoot);
 const outputStats = Object.fromEntries(
   await Promise.all(
     outputs.map(async (output) => {

@@ -598,6 +598,11 @@ function yneko_reimu_i18n_resolve_en_request( $query ) {
 	}
 
 	if ( in_array( $path, array( 'about', 'projects', 'archives', 'friend' ), true ) ) {
+		if ( function_exists( 'yneko_reimu_builtin_page_enabled' ) && ! yneko_reimu_builtin_page_enabled( $path ) ) {
+			yneko_reimu_i18n_mark_404_query( $query );
+			return;
+		}
+
 		yneko_reimu_i18n_mark_page_query( $query, $path );
 		return;
 	}
