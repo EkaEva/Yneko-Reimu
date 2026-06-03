@@ -294,3 +294,12 @@
 - Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 426 lines / score 503 to 353 lines / score 426.
 - This keeps decomposition in the low-risk admin-renderer layer and still avoids comments/profile PHP request handlers.
 - Next low-risk settings page candidates are the search and i18n panels; both are smaller, mostly field rendering, and have stable option names.
+
+## 2026-06-04 Settings Search/I18n Panels Split Findings
+
+- `inc/settings/panels.php` now also owns the i18n and search settings panels.
+- Public admin contracts are unchanged: `i18n` and `search` tab keys, `data-yneko-settings-panel` values, option keys, input names, labels, descriptions, and save/sanitize flow all remain the same.
+- `inc/settings/page.php` now calls `yneko_reimu_render_settings_i18n_panel( $i18n )` and `yneko_reimu_render_settings_search_panel( $search )`.
+- Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 353 lines / score 426 to 273 lines / score 353.
+- This still avoids runtime search behavior, URL/i18n routing helpers, and comments/profile request handlers.
+- Remaining settings page panels are higher risk than this batch because GitHub, comments, and users touch authentication/review workflows or larger admin helper surfaces; the next round should either split one cautiously or pause for manual admin UI checks.

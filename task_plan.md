@@ -520,3 +520,21 @@ Goal: continue settings page decomposition by moving the extensions and external
 - The external-comments panel keeps `data-yneko-settings-panel="external-comments"` and all `yneko_reimu_settings[external_comments]` names unchanged.
 - `inc/settings/page.php` now stays focused on the top-level form, tabs, and remaining unextracted panels.
 - The next round should continue with the search or i18n panel, which are smaller and self-contained, or pause PHP splitting to run manual admin UI checks.
+
+## 2026-06-04 Settings Search/I18n Panels Split
+
+Goal: continue low-risk settings page decomposition by moving the search and i18n settings panels into `inc/settings/panels.php` without changing tab keys, option names, field names, or save behavior.
+
+### Phases
+
+1. Identify search and i18n panel dependencies - complete
+2. Move both panel renderers into `inc/settings/panels.php` - complete
+3. Replace page markup with panel function calls - complete
+4. Verify PHP syntax, PHPCS, and complexity report impact - complete
+
+### Decisions
+
+- The i18n panel keeps `data-yneko-settings-panel="i18n"` and all `yneko_reimu_settings[i18n]` field names unchanged.
+- The search panel keeps `data-yneko-settings-panel="search"` and all `yneko_reimu_settings[search]` field names unchanged.
+- This split remains in the admin-renderer layer and does not touch settings sanitization, front-end search runtime, URL routing, or i18n helpers.
+- The next round should either split the remaining GitHub/admin comments/users panels cautiously or pause for manual admin UI checks before moving higher-risk review sections.

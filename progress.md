@@ -300,3 +300,13 @@
 - Ran `npm run lint:php`; PHPCS passed.
 - Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 353 lines and score 426.
 - Next round should continue with the search or i18n panel, or pause for manual admin UI checks.
+
+## 2026-06-04 Settings Search/I18n Panels Split
+
+- Moved the i18n panel and search panel from `inc/settings/page.php` into `inc/settings/panels.php`.
+- Replaced the moved markup with `yneko_reimu_render_settings_i18n_panel( $i18n )` and `yneko_reimu_render_settings_search_panel( $search )`.
+- Kept all `i18n` and `search` option names, tab keys, field names, and descriptive text unchanged.
+- Verified targeted syntax with `php -l` on `inc/settings/page.php` and `inc/settings/panels.php`.
+- Ran `npm run lint:php`; PHPCS passed.
+- Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 273 lines and score 353.
+- Next round should either split one remaining settings panel cautiously, likely GitHub, or pause for manual admin UI checks before moving comments/users review sections.
