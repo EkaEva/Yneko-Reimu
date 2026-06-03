@@ -276,3 +276,12 @@
 - Largest named functions by lines: `yneko_reimu_customize_register()` in `inc/customizer.php` (739), `yneko_reimu_render_settings_page()` in `inc/settings/page.php` (543), `yneko_reimu_enqueue_assets()` in `inc/enqueue.php` (287), and `yneko_reimu_ajax_profile_save()` in `inc/comments.php` (242).
 - Highest approximate branch scores: `yneko_reimu_render_settings_page()` (636), `yneko_reimu_sanitize_settings()` (159), `yneko_reimu_profile_modal_html()` (138), `yneko_reimu_render_comment_upload_admin()` (98), and `yneko_reimu_comment_callback()` (96).
 - The report should remain informational until a stable baseline and refactor budget exist. The next PHP refactor target should be renderer/schema decomposition rather than comments/profile request handlers unless manual QA is available.
+
+## 2026-06-04 Settings Panels Split Findings
+
+- `inc/settings/panels.php` now owns the friend-links and music-track settings panels, while `inc/settings/page.php` remains the top-level settings page/form/tab renderer.
+- Public admin contracts are unchanged: `friends` and `music` tab keys, `data-yneko-settings-panel` values, option keys, input names, repeatable row data attributes, and save/sanitize flow all remain the same.
+- `inc/settings.php` now requires `inc/settings/panels.php` before `inc/settings/page.php`, matching the existing internal module pattern for schema/admin/renderers/page.
+- Complexity report after the split: `yneko_reimu_render_settings_page()` dropped from 543 lines / score 636 to 426 lines / score 503.
+- The new `yneko_reimu_render_settings_music_panel()` appears as a contained hotspot at 86 lines / score 101, which is acceptable as an intermediate renderer split.
+- Next low-risk targets inside the settings page are `external-comments` and `extensions`; both are admin-only renderers with stable field names and no request handlers.

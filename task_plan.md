@@ -484,3 +484,21 @@ Goal: add a reproducible PHP complexity report so future refactors can track lar
 - The script reports largest files, largest named functions, and highest approximate branch-score functions under `theme/Yneko-Reimu`.
 - The current baseline should guide future PHP splits, especially `inc/comments.php`, `inc/settings/page.php`, `inc/customizer.php`, and `inc/template-tags.php`.
 - The next round should either add this report to CI/check documentation as a non-failing artifact step, or start a targeted split of the highest-risk PHP renderer only if public interfaces stay unchanged.
+
+## 2026-06-04 Settings Panels Split
+
+Goal: reduce `inc/settings/page.php` complexity by moving low-risk settings page panels into an internal renderer module without changing option names, tab keys, field names, or save behavior.
+
+### Phases
+
+1. Identify self-contained settings page panels - complete
+2. Move friend and music panel rendering into `inc/settings/panels.php` - complete
+3. Require the new panel module before `inc/settings/page.php` - complete
+4. Verify PHP syntax, PHPCS, and complexity report impact - complete
+
+### Decisions
+
+- `inc/settings/panels.php` is an internal admin renderer module.
+- The friend panel keeps `data-yneko-settings-panel="friends"` and all `yneko_reimu_settings[friend_site]` / `yneko_reimu_settings[friends]` field names unchanged.
+- The music panel keeps `data-yneko-settings-panel="music"` and all `yneko_reimu_settings[player]` / `yneko_reimu_settings[music]` field names unchanged.
+- The next round should continue settings page decomposition with another self-contained panel, likely external comments or extensions, before considering higher-risk comments/profile PHP handlers.

@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once YNEKO_REIMU_DIR . '/inc/settings/schema.php';
 require_once YNEKO_REIMU_DIR . '/inc/settings/admin.php';
 require_once YNEKO_REIMU_DIR . '/inc/settings/renderers.php';
+require_once YNEKO_REIMU_DIR . '/inc/settings/panels.php';
 require_once YNEKO_REIMU_DIR . '/inc/settings/page.php';
 
 function yneko_reimu_register_settings() {

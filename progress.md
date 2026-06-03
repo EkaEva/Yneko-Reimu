@@ -279,3 +279,14 @@
 - Initial hotspots: `inc/comments.php`, `inc/template-tags.php`, `inc/comments/uploads.php`, `inc/settings/page.php`, `inc/customizer.php`, and `inc/settings/schema.php`.
 - Ran `npm run check:js`; 26 JavaScript files passed syntax checks.
 - Next round should use the report to choose a low-risk PHP decomposition target or add CI/docs guidance for collecting this report without failing legacy code.
+
+## 2026-06-04 Settings Panels Split
+
+- Added `theme/Yneko-Reimu/inc/settings/panels.php`.
+- Moved the friend-links settings panel and music-track settings panel out of `inc/settings/page.php` into internal renderer functions.
+- Updated `inc/settings.php` to require the new panels module before `inc/settings/page.php`.
+- Replaced the moved panel markup in `yneko_reimu_render_settings_page()` with `yneko_reimu_render_settings_friends_panel( $settings )` and `yneko_reimu_render_settings_music_panel( $settings, $player )`.
+- Verified targeted syntax with `php -l` on `inc/settings.php`, `inc/settings/page.php`, and `inc/settings/panels.php`.
+- Ran `npm run lint:php`; PHPCS passed.
+- Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 426 lines and score 503.
+- Next round should continue with another self-contained settings panel, likely `external-comments` or `extensions`, while avoiding comments/profile PHP request handlers.
