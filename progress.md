@@ -221,3 +221,14 @@
 - Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, explicit classic-script parse checks for `reimu.js`, `reimu-search.js`, `reimu-photoswipe.js`, and `reimu-share.js`, `npm audit --audit-level=moderate`, `npm run lint:php`, full `php -l` over 72 theme PHP files, `npm run check`, `npm run package`, and `npm run check:package`.
 - Final package check used `Yneko-Reimu-v0.1.15-20260604-0011.zip`, reported 132 entries, included `assets/dist/reimu.js`, and excluded `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
 - Next round should extract comment popover/tool binding helpers or profile form UI helpers as source-only modules, still keeping AJAX request handlers in the main bundle.
+
+## 2026-06-04 Comment Tools Source Module Split
+
+- Started from a clean `main...origin/main` worktree.
+- Added `theme/Yneko-Reimu/assets/src/reimu/comment-tools.js` for comment popover state, toolbar binding, GIF library rendering, quick insert, URL insert, and preview refresh binding.
+- Kept comment upload row state and upload AJAX in `assets/src/reimu.js`, injecting `initCommentUploadRows()` into the module so upload behavior stays on the existing request path.
+- Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, explicit classic-script parse checks for `reimu.js`, `reimu-search.js`, `reimu-photoswipe.js`, and `reimu-share.js`, `npm audit --audit-level=moderate`, `npm run lint:php`, full `php -l` over 72 theme PHP files, and `npm run check`.
+- Ran `npm run package`; generated `releases/Yneko-Reimu-v0.1.15-20260604-0020.zip`.
+- `npm run check:package` was first started in parallel with packaging and inspected the previous `0011` ZIP; rerunning after package completion correctly inspected `Yneko-Reimu-v0.1.15-20260604-0020.zip`.
+- Final package check reported 132 entries, included `assets/dist/reimu.js`, and excluded `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
+- Next round should extract comment sorting/load-more helpers or profile form UI-only helpers, still keeping AJAX request handlers in the main bundle.

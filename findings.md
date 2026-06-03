@@ -218,3 +218,14 @@
 - Build results after the split: `reimu.js` is 105.6 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
 - The release ZIP check confirmed `assets/src/reimu/comment-media.js`, `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are not packaged, while `assets/dist/reimu.js` is included.
 - The next low-risk candidate is comment popover/tool binding extraction: `closeCommentPopovers`, `setCommentToolState`, `toggleCommentPopover`, `initCommentPopoverOutsideClose`, `initCommentGifLibrary`, and upload row UI visibility can move behind injected helpers before any AJAX runtime split is attempted.
+
+## 2026-06-04 Comment Tools Source Module Split Findings
+
+- `assets/src/reimu/comment-tools.js` now owns comment toolbar/popover behavior: popover close/open state, preview toolbar state, outside-click close delegation, GIF library rendering, GIF insertion, toolbar click binding, quick insert, URL insert, and preview refresh binding.
+- Upload row visibility and upload AJAX remain in `assets/src/reimu.js`; `comment-tools.js` only calls injected `initCommentUploadRows(form, textarea)`.
+- This keeps the sensitive upload payload unchanged: `yneko_reimu_comment_upload` still posts `nonce`, `type`, and `file` from the main bundle, and `yneko_reimu_comment_upload_discard` remains owned by `comment-media.js` cleanup helpers from the previous round.
+- `comment-tools.js` uses injected `getConfig()` for GIF library reads so PJAX-synced `window.REIMU_CONFIG` updates are preserved.
+- Build results after the split: `reimu.js` is 106.5 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
+- `npm run check:package` must be run after `npm run package` completes; running them in parallel can inspect the previous timestamped ZIP. The current package check correctly inspected `Yneko-Reimu-v0.1.15-20260604-0020.zip`.
+- The release ZIP check confirmed `assets/src/reimu/comment-tools.js`, `assets/src/reimu/comment-media.js`, `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are not packaged, while `assets/dist/reimu.js` is included.
+- The next low-risk candidate is comment sorting/load-more extraction (`commentHotScore`, `commentLatestActivityTime`, load-more helpers, and sorting controls) or profile form UI-only helpers. Comment submit, edit, delete, like, login, logout, profile save, and status polling should remain in the main source file.

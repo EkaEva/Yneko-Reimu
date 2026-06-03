@@ -376,3 +376,21 @@ Goal: start the comments/profile follow-up with a source-only extraction of low-
 - The module receives `getConfig()`, `t()`, `escapeHtml()`, and `dispatchInputEvent()` as injected dependencies so it can keep reading the current PJAX-synced config.
 - Comment submit/upload/like/edit/delete, login-state refresh, profile save, and profile polling remain in `assets/src/reimu.js`.
 - The next round can extract comment popover/tool binders or profile form UI helpers, but should still avoid moving AJAX request handlers.
+
+## 2026-06-04 Comment Tools Source Module Split
+
+Goal: continue comments/profile modularity with a source-only extraction of comment popover, GIF library, and toolbar binding helpers while leaving comment upload AJAX and all auth/profile/comment mutation flows in the main entrypoint.
+
+### Phases
+
+1. Extract comment popover/tool/GIF binding helpers into an internal source module - complete
+2. Keep comment upload row and upload AJAX request logic in `assets/src/reimu.js` - complete
+3. Verify classic script compatibility, size budgets, audit, PHP lint, package contents, and local-only exclusions - complete
+4. Record the next low-risk extraction target - complete
+
+### Decisions
+
+- `assets/src/reimu/comment-tools.js` is an internal source module, not a public API and not a release ZIP file.
+- The module receives `initCommentUploadRows()` as an injected dependency so upload UI can still initialize without moving upload request code.
+- Existing comment toolbar DOM attributes, preview behavior, GIF insertion, URL insertion, upload row behavior, and `window.ReimuWP.init()` rebinding remain unchanged.
+- The next round should target either comment sorting/load-more helpers or profile form-only helpers, still avoiding AJAX handler migration.
