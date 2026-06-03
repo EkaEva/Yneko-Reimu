@@ -116,3 +116,10 @@
 - Moving that schema/read layer into `inc/settings/schema.php` reduces the entry file by roughly 940 lines while keeping registration, admin menu badges, page rendering, review lists, and admin asset enqueue in the existing entrypoint.
 - This split does not change the stored `yneko_reimu_settings` option, the `yneko_reimu_sanitize_settings` callback name, admin page slug, or settings UI payload shape.
 - The release ZIP must include `inc/settings/schema.php`; the newest package check confirmed the file is present while development-only files remain excluded.
+
+## 2026-06-03 Settings Admin Helper Split Findings
+
+- After the schema split, `inc/settings.php` still had a clear admin-helper band before the main renderer plus a standalone admin asset enqueue function at the end.
+- Moving page registration, admin menu badges, bilingual helper output, pending review counters, media field helper, and admin asset enqueue into `inc/settings/admin.php` cuts the entry file down to the settings registration/cleanup hooks plus render functions.
+- The admin helper split does not change the `appearance_page_yneko-reimu-settings` hook, `yneko-reimu-admin-settings` style/script handles, settings page slug, or visible form structure.
+- The next safe settings split is the render layer: friend/music row renderers and review list renderers can move before the large tabbed form is templated.

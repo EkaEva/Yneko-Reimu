@@ -32,7 +32,7 @@ msgstr ""
 msgid "%d 分钟阅读"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/admin.php
 msgid "%d 个待处理项目"
 msgstr ""
 
@@ -2000,7 +2000,7 @@ msgstr ""
 msgid "Yneko-Reimu"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/admin.php inc/settings.php
 msgid "Yneko-Reimu 设置"
 msgstr ""
 

@@ -126,3 +126,11 @@
 - Ran `npm run lint:php`; fixed one PHPCS trailing-blank-line issue in the new schema module, then lint passed.
 - Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, `npm run check`, `npm audit --audit-level=moderate`, and full `php -l` over 69 theme PHP files.
 - Ran `npm run package` and `npm run check:package`; `Yneko-Reimu-v0.1.15-20260603-2251.zip` contains 126 entries, includes `inc/settings/schema.php`, and excludes development/local-only files.
+
+## 2026-06-03 Settings Admin Helper Split
+
+- Split admin settings helper functions from `inc/settings.php` into `inc/settings/admin.php`, including settings page registration, admin menu review badges, bilingual admin text helpers, review badge counters, media field helper, and admin settings asset enqueue.
+- Kept `inc/settings.php` as the public entrypoint with settings registration, post-save badge cleanup, the main settings page renderer, and the review/row renderers.
+- Verification passed: `npm run lint:php`, full `php -l` over 70 theme PHP files, `npm run check`, `npm audit --audit-level=moderate`, `npm run package`, and `npm run check:package`.
+- Confirmed built `assets/dist/reimu.js` still has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2259.zip`, includes `inc/settings/admin.php` and `inc/settings/schema.php`, and excludes development/local-only files.

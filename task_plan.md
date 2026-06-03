@@ -217,3 +217,20 @@ Goal: continue low-risk PHP modularity by separating settings defaults, sanitize
 - `inc/settings.php` remains the public settings entrypoint loaded by `functions.php`.
 - `inc/settings/schema.php` is an internal implementation module, not a public API.
 - The `yneko_reimu_settings` option name, sanitizer callback name, admin page slug, and menu hooks stay unchanged.
+
+## 2026-06-03 Settings Admin Helper Split
+
+Goal: continue the settings-page decomposition by moving admin helper functions and admin asset loading into an internal settings module while leaving the main settings page renderer and field markup in `inc/settings.php`.
+
+### Phases
+
+1. Inspect remaining `inc/settings.php` function groups after schema split - complete
+2. Move settings page registration, menu review badges, bilingual admin helpers, review counters, media-field helper, and admin asset enqueue into `inc/settings/admin.php` - complete
+3. Keep the settings form renderer and review list renderers in `inc/settings.php` - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- `inc/settings/admin.php` is internal and loaded by `inc/settings.php`.
+- The admin page slug `yneko-reimu-settings`, settings page callback name, menu hooks, badge behavior, and enqueued asset handles stay unchanged.
+- Large form rendering remains in `inc/settings.php` for now; moving it needs a separate render-template pass.
