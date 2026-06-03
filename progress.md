@@ -118,3 +118,11 @@
 - Verification passed after module split: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 68 theme PHP files, `npm run package`, and `npm run check:package`.
 - Confirmed built `assets/dist/reimu.js` has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
 - Final module-split package check used `Yneko-Reimu-v0.1.15-20260603-2238.zip` and reported 125 entries with no forbidden development files.
+
+## 2026-06-03 Settings Schema Split
+
+- Split settings defaults, normalization, sanitization, and read helper functions from `inc/settings.php` into `inc/settings/schema.php`.
+- Kept `inc/settings.php` as the runtime/admin entrypoint with settings registration, admin menu badges, page rendering, review admin sections, and admin asset enqueue.
+- Ran `npm run lint:php`; fixed one PHPCS trailing-blank-line issue in the new schema module, then lint passed.
+- Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, `npm run check`, `npm audit --audit-level=moderate`, and full `php -l` over 69 theme PHP files.
+- Ran `npm run package` and `npm run check:package`; `Yneko-Reimu-v0.1.15-20260603-2251.zip` contains 126 entries, includes `inc/settings/schema.php`, and excludes development/local-only files.

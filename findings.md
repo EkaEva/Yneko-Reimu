@@ -109,3 +109,10 @@
 - Comment upload/review functions form a mostly continuous block in `comments.php`, making `inc/comments/uploads.php` a low-risk first PHP extraction target while preserving existing function names and hook registrations.
 - `npm run check:js` should scan source and tool directories recursively; otherwise future internal JS modules can bypass syntax checks.
 - Lazy-loading candidates for later runtime splitting: search opens from `#nav-search-btn`; share only needs Weixin QR on Weixin click; comments/profile require `#comments` or profile triggers; APlayer depends on `config.aplayer`; PhotoSwipe depends on article images and `config.photoswipe`; Mermaid and KaTeX depend on their config flags and matching content blocks.
+
+## 2026-06-03 Settings Schema Split Findings
+
+- `inc/settings.php` had a clean first-phase split point: defaults, normalizers, sanitizers, settings getters, and fallback theme-mod readers all appear before `yneko_reimu_register_settings()`.
+- Moving that schema/read layer into `inc/settings/schema.php` reduces the entry file by roughly 940 lines while keeping registration, admin menu badges, page rendering, review lists, and admin asset enqueue in the existing entrypoint.
+- This split does not change the stored `yneko_reimu_settings` option, the `yneko_reimu_sanitize_settings` callback name, admin page slug, or settings UI payload shape.
+- The release ZIP must include `inc/settings/schema.php`; the newest package check confirmed the file is present while development-only files remain excluded.

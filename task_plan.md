@@ -200,3 +200,20 @@ Goal: establish the first front-end and PHP module boundaries while preserving c
 - Use Vite/Rollup single-entry IIFE builds for public classic scripts; the CSS build stays separate.
 - Treat `inc/comments.php` as the comment module entrypoint and `inc/comments/uploads.php` as an internal implementation module.
 - `npm run check:js` recursively checks source/tool JavaScript so new internal modules cannot bypass syntax checks.
+
+## 2026-06-03 Settings Schema Split
+
+Goal: continue low-risk PHP modularity by separating settings defaults, sanitizers, and read helpers from the admin settings page/rendering layer while preserving the `yneko_reimu_settings` option, registration hook, page slug, and admin UI behavior.
+
+### Phases
+
+1. Inspect `inc/settings.php` function boundaries - complete
+2. Move defaults/sanitizers/getters into `inc/settings/schema.php` - complete
+3. Keep registration, admin menu badges, rendering, and admin assets in `inc/settings.php` - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- `inc/settings.php` remains the public settings entrypoint loaded by `functions.php`.
+- `inc/settings/schema.php` is an internal implementation module, not a public API.
+- The `yneko_reimu_settings` option name, sanitizer callback name, admin page slug, and menu hooks stay unchanged.

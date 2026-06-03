@@ -637,7 +637,7 @@ msgstr ""
 msgid "控制文章页可见模块。评论上传、外部评论和登录服务请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/schema.php
 msgid "莉莉概念光标作者"
 msgstr "Lily concept cursor author"
 
@@ -1917,7 +1917,7 @@ msgstr ""
 msgid "GitHub profile is missing required fields."
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/schema.php
 msgid "hexo-theme-reimu 原作者"
 msgstr "Original hexo-theme-reimu author"
 
@@ -2021,7 +2021,7 @@ msgstr ""
 msgid "Yneko-Reimu 允许管理员为站点图标和 Logo 上传 SVG。SVG 可无限缩放，但也可能携带脚本或外链，请只上传可信来源文件。主题会做基础净化，不能替代专业 SVG 安全插件。"
 msgstr ""
 
-#: inc/settings.php
+#: inc/settings/schema.php
 msgid "Yneko-Reimu 主题作者"
 msgstr "Yneko-Reimu theme author"
 
