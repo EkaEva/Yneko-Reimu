@@ -260,3 +260,12 @@
 - Updated `task_plan.md` and `findings.md` with the new contract as a safety gate for later modularity work.
 - This round intentionally changed documentation/process files only; no runtime code or build artifacts were changed.
 - Next round should audit remaining comments/profile code in `assets/src/reimu.js` against the contract and decide whether one more request-free source module is safe, or whether to pause front-end splitting until manual WordPress QA can be run.
+
+## 2026-06-04 Profile Status UI Source Module Split
+
+- Audited the remaining comments/profile functions in `assets/src/reimu.js` against `docs/comments-profile-contract.md`.
+- Added `theme/Yneko-Reimu/assets/src/reimu/profile-status.js` for request-free profile review status UI: message mapping, status row normalization, inline current-user status rendering, pending-count badge rendering, and autohide scheduling.
+- Kept `ackProfileStatuses()`, profile polling, profile fetch/save/email/TOTP/avatar request handlers, comment mutation handlers, login-state DOM replacement, and rebind orchestration in `assets/src/reimu.js`.
+- Verification passed so far: `npm run check:js`, `npm run build`, `npm run check:size`, and explicit classic-script pattern checks for public runtime scripts.
+- Size check reported `reimu.js` at 108.7 KB / 120 KB, with lazy runtimes and CSS still under budget.
+- Next round should stop comments/profile source extraction unless manual WordPress QA is available, and should move to another low-risk optimization area.

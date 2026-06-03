@@ -448,3 +448,21 @@ Goal: create a written contract and manual QA checklist for the comments/profile
 - The contract explicitly blocks moving login/profile/comment request handlers or introducing `reimu-comments.js` / `reimu-profile.js` without a dedicated manual QA pass.
 - `docs/development.md` now points developers to the contract before changing comments/profile AJAX handlers, DOM replacement, or runtime boundaries.
 - The next round should use this contract to audit the remaining `assets/src/reimu.js` comments/profile code and identify whether any request-free module remains worth extracting.
+
+## 2026-06-04 Profile Status UI Source Module Split
+
+Goal: use the comments/profile contract to extract only request-free profile review status UI helpers, while keeping acknowledgement, polling, profile fetch/save, comment mutation, login-state refresh, and DOM replacement behavior in the main entrypoint.
+
+### Phases
+
+1. Audit remaining comments/profile functions against the contract - complete
+2. Extract profile status text/row/inline DOM rendering into an internal source module - complete
+3. Keep status acknowledgement, polling, and request handlers in `assets/src/reimu.js` - complete
+4. Verify classic script compatibility and size budget - complete
+
+### Decisions
+
+- `assets/src/reimu/profile-status.js` is an internal source module, not a public API and not a release ZIP file.
+- The module owns only status message lookup, review-status row normalization, current-user inline status DOM rendering, and autohide scheduling.
+- `ackProfileStatuses()`, `startProfileStatusPolling()`, `refreshProfile()`, `postProfileAction()`, comment submit/upload/like/edit/delete, and login-state DOM replacement remain in `assets/src/reimu.js`.
+- The next round should either stop comments/profile extraction until manual WordPress QA is available, or move to another low-risk area outside the AJAX/rebind contract.

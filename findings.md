@@ -257,3 +257,13 @@
 - The contract makes request-handler movement a gated change. Moving login/register/lost-password, profile request handlers, comment mutation handlers, or introducing `reimu-comments.js` / `reimu-profile.js` requires a before-and-after manual QA pass.
 - `docs/development.md` now links to the contract from development constraints so it is visible to contributors, while `PROJECT.md` / `AGENTS.md` remain local-only and uncommitted.
 - The next implementation round should audit the remaining `assets/src/reimu.js` comments/profile code against this contract and decide whether to extract a small request-free module or stop front-end splitting until manual WordPress QA is available.
+
+## 2026-06-04 Profile Status UI Source Module Split Findings
+
+- The remaining comments/profile code was audited against `docs/comments-profile-contract.md`. Most remaining functions touch AJAX, nonce refresh, polling, WordPress reply movement, login-state DOM replacement, or rebind orchestration and should not be moved without manual WordPress QA.
+- `assets/src/reimu/profile-status.js` now owns the one remaining request-free profile slice: status message lookup, avatar/tag/comment review row normalization, inline current-user status rendering, pending-count badge rendering, and autohide scheduling.
+- The module receives `ackProfileStatuses()` as an injected callback but does not create `FormData`, call `fetch()`, read nonces, or mutate `window.REIMU_CONFIG`.
+- `assets/src/reimu.js` still owns the sensitive paths required by the contract: `yneko_reimu_profile_status_ack`, `yneko_reimu_profile_get`, profile save/email/TOTP/avatar flows, comment submit/upload/discard/like/edit/delete, login/logout refresh, and `window.ReimuWP.init()` rebind orchestration.
+- Build results after the split: `reimu.js` is 108.7 KB / 120 KB, `reimu-search.js` is 9.8 KB / 24 KB, `reimu-photoswipe.js` is 5.6 KB / 24 KB, `reimu-share.js` is 4.6 KB / 24 KB, and `reimu.css` is 205.3 KB / 220 KB.
+- Public runtime scripts still contain no `import.meta`, unresolved dynamic `import(`, or top-level ESM import/export syntax.
+- This likely exhausts the safe comments/profile source-only extraction set. Further comments/profile runtime movement should wait for a local WordPress manual QA pass using the contract checklist.
