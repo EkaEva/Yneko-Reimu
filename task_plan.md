@@ -322,3 +322,21 @@ Goal: move the lightweight image-preview implementation out of the main public s
 - Keep the existing `yneko_reimu_photoswipe_enable` setting and `window.REIMU_CONFIG.photoswipe` gate unchanged.
 - Keep the main WordPress-enqueued script as `assets/dist/reimu.js`; do not enqueue the PhotoSwipe runtime through PHP.
 - The next runtime candidate should avoid comment/profile security flows until a focused review plan is ready.
+
+## 2026-06-03 Share Runtime Split
+
+Goal: move share popup and Weixin QR behavior out of the main public script while preserving share markup, share URLs, Customizer settings, and the lazy `qrcode.js` dependency.
+
+### Phases
+
+1. Inspect share module boundaries and template integration - complete
+2. Add a lazy classic share runtime entry - complete
+3. Extend build and size/classic checks to cover the share runtime - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- Use `assets/dist/reimu-share.js` as an internal lazy classic runtime file.
+- Keep `assets/dist/qrcode.js` as the Weixin-only QR dependency loaded from inside the share runtime.
+- Keep all share Customizer settings, share link URLs, template markup, and public post/virtual page placement unchanged.
+- The next round should either review comments/profile before runtime work there, or split a non-AJAX visual/content runtime with a similarly clear trigger.

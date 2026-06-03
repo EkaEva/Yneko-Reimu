@@ -10,6 +10,7 @@ const budgets = new Map([
   ['assets/dist/reimu.js', 120 * 1024],
   ['assets/dist/reimu-search.js', 24 * 1024],
   ['assets/dist/reimu-photoswipe.js', 24 * 1024],
+  ['assets/dist/reimu-share.js', 24 * 1024],
   ['assets/dist/reimu.css', 220 * 1024]
 ]);
 
@@ -39,7 +40,8 @@ for (const [relativePath, maxBytes] of budgets) {
 const classicScripts = [
   'assets/dist/reimu.js',
   'assets/dist/reimu-search.js',
-  'assets/dist/reimu-photoswipe.js'
+  'assets/dist/reimu-photoswipe.js',
+  'assets/dist/reimu-share.js'
 ];
 const classicScriptPatterns = [
   { pattern: /\bimport\.meta\b/, label: 'import.meta' },

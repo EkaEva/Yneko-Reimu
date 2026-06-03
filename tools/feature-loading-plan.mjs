@@ -11,13 +11,13 @@ export const featureLoadingPlan = [
   },
   {
     feature: 'share',
-    owner: 'assets/src/reimu/share.js',
-    status: 'partial-lazy',
-    currentLoading: 'main-bundle plus lazy qrcode.js',
+    owner: 'assets/src/reimu-share.js and assets/src/reimu/share.js',
+    status: 'lazy-runtime',
+    currentLoading: 'lazy classic runtime plus lazy qrcode.js',
     targetLoading: 'interaction',
-    trigger: '.reimu-post-share__button[data-share="weixin"] click',
+    trigger: '.share-wrapper present; qrcode.js on Weixin click',
     gate: '.reimu-post-share',
-    notes: 'The Weixin QR dependency already loads as a classic script only when needed.'
+    notes: 'Main reimu.js loads share runtime only on pages with share wrappers; QR dependency remains click-triggered.'
   },
   {
     feature: 'comments-profile',

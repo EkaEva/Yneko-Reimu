@@ -1,5 +1,4 @@
 import { createCore } from './reimu/core.js';
-import { createShareModule } from './reimu/share.js';
 
 (function () {
   'use strict';
@@ -19,13 +18,6 @@ import { createShareModule } from './reimu/share.js';
   var trimSlashes = core.trimSlashes;
   var relativePathFromUrl = core.relativePathFromUrl;
   var languageFromUrl = core.languageFromUrl;
-  var shareModule = createShareModule({
-    qs: qs,
-    qsa: qsa,
-    getAssetBaseUrl: getAssetBaseUrl
-  });
-  var initShare = shareModule.initShare;
-
   var root = document.documentElement;
   var body = null;
   var tooltipTimer = null;
@@ -48,6 +40,7 @@ import { createShareModule } from './reimu/share.js';
 
   var searchRuntimePromise = null;
   var photoSwipeRuntimePromise = null;
+  var shareRuntimePromise = null;
 
   function loadSearchRuntime() {
     if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
@@ -204,6 +197,58 @@ import { createShareModule } from './reimu/share.js';
     }).catch(function (error) {
       if (window.console && window.console.warn) {
         window.console.warn('[Yneko-Reimu] PhotoSwipe runtime skipped:', error);
+      }
+    });
+  }
+
+  function loadShareRuntime() {
+    if (window.ReimuShareRuntime && typeof window.ReimuShareRuntime.init === 'function') {
+      return Promise.resolve(window.ReimuShareRuntime);
+    }
+    if (shareRuntimePromise) {
+      return shareRuntimePromise;
+    }
+    shareRuntimePromise = new Promise(function (resolve, reject) {
+      var existing = qs('#yneko-reimu-share-runtime');
+      if (existing && window.ReimuShareRuntime) {
+        resolve(window.ReimuShareRuntime);
+        return;
+      }
+      var script = existing || document.createElement('script');
+      script.id = 'yneko-reimu-share-runtime';
+      script.async = true;
+      script.onload = function () {
+        if (window.ReimuShareRuntime && typeof window.ReimuShareRuntime.init === 'function') {
+          resolve(window.ReimuShareRuntime);
+        } else {
+          reject(new Error('Share runtime did not register.'));
+        }
+      };
+      script.onerror = function () {
+        reject(new Error('Unable to load share runtime.'));
+      };
+      if (!existing) {
+        script.src = getAssetBaseUrl() + 'reimu-share.js';
+        (document.head || document.body || document.documentElement).appendChild(script);
+      }
+    }).catch(function (error) {
+      shareRuntimePromise = null;
+      throw error;
+    });
+    return shareRuntimePromise;
+  }
+
+  function initShare() {
+    if (!qs('.share-wrapper')) {
+      return;
+    }
+    loadShareRuntime().then(function (runtime) {
+      if (runtime && typeof runtime.init === 'function') {
+        runtime.init();
+      }
+    }).catch(function (error) {
+      if (window.console && window.console.warn) {
+        window.console.warn('[Yneko-Reimu] share runtime skipped:', error);
       }
     });
   }

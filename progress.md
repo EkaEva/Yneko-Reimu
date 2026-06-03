@@ -189,3 +189,16 @@
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 72 theme PHP files, `npm run package`, and `npm run check:package`.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2345.zip`, reported 131 entries, included `assets/dist/reimu-photoswipe.js`, and excluded manifest/source/local-only files.
 - Next round should either split another low-risk visual/content runtime or pause runtime splitting to review comments/profile before touching AJAX-sensitive code.
+
+## 2026-06-03 Share Runtime Split
+
+- Started from a clean `main...origin/main` worktree.
+- Added `theme/Yneko-Reimu/assets/src/reimu-share.js` as a lazy classic runtime entry that registers `window.ReimuShareRuntime`.
+- Removed the direct `createShareModule` import from the main script and replaced it with a small loader that runs only when `.share-wrapper` is present.
+- Kept the existing `assets/dist/qrcode.js` lazy loading inside `assets/src/reimu/share.js`; Weixin QR generation remains click-triggered.
+- Updated `tools/build-reimu.mjs`, `tools/check-size.mjs`, `tools/feature-loading-plan.mjs`, and `docs/development.md` so `assets/dist/reimu-share.js` is built, budgeted at 24 KB, reported as lazy runtime, and checked for classic script compatibility.
+- Initial verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, plus explicit classic parse/import checks for `reimu.js`, `reimu-search.js`, `reimu-photoswipe.js`, and `reimu-share.js`.
+- Initial size results: `reimu.js` 104.5 KB / 120 KB, `reimu-search.js` 9.8 KB / 24 KB, `reimu-photoswipe.js` 5.6 KB / 24 KB, `reimu-share.js` 4.6 KB / 24 KB, and `reimu.css` 205.3 KB / 220 KB.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 72 theme PHP files, `npm run package`, and `npm run check:package`.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2353.zip`, reported 132 entries, included `assets/dist/reimu-share.js` and `assets/dist/qrcode.js`, and excluded manifest/source/local-only files.
+- Next round should pause runtime splitting for a focused comments/profile safety and interface review before touching AJAX-sensitive code, unless choosing another non-AJAX visual runtime.

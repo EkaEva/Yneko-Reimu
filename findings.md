@@ -158,3 +158,10 @@
 - `assets/src/reimu/photoswipe.js` now owns the implementation, and `assets/src/reimu-photoswipe.js` registers the internal `window.ReimuPhotoSwipeRuntime` classic runtime.
 - The main script now loads `assets/dist/reimu-photoswipe.js` only when `window.REIMU_CONFIG.photoswipe` is enabled and article images or existing PhotoSwipe items are present.
 - The compatibility surface is preserved: `window.REIMU_PHOTOSWIPE.destroy()` still exists while the overlay is open, and the setting/config gates are unchanged.
+
+## 2026-06-03 Share Runtime Split Findings
+
+- Share was a good low-risk follow-up split because the PHP/templates already output all share data and URLs, while JavaScript only manages the Weixin popup and QR rendering.
+- `assets/src/reimu-share.js` now registers the internal `window.ReimuShareRuntime`, and the main script only loads it on pages with `.share-wrapper`.
+- Weixin QR generation remains second-stage lazy: `assets/dist/reimu-share.js` loads `assets/dist/qrcode.js` only when the Weixin share link is clicked.
+- Public behavior is unchanged: share Customizer settings, share URLs, template placement, and non-Weixin outbound links are still owned by PHP markup.
