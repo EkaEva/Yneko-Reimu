@@ -12,8 +12,6 @@ export default defineConfig({
     outDir: resolve(themeRoot, 'assets/dist'),
     rollupOptions: {
       input: {
-        adminSettings: resolve(themeRoot, 'assets/src/admin-settings.js'),
-        reimu: resolve(themeRoot, 'assets/src/reimu.js'),
         style: resolve(themeRoot, 'assets/src/reimu.css')
       },
       output: {
@@ -22,15 +20,6 @@ export default defineConfig({
             return 'reimu.css';
           }
           return '[name][extname]';
-        },
-        entryFileNames: (chunkInfo) => {
-          if (chunkInfo.name === 'reimu') {
-            return 'reimu.js';
-          }
-          if (chunkInfo.name === 'adminSettings') {
-            return 'admin-settings.js';
-          }
-          return '[name].js';
         }
       }
     },

@@ -181,3 +181,22 @@ Goal: implement the follow-up optimization plan by adding local-only production/
 - Keep the main public front-end script compatible with WordPress classic script loading.
 - Use short-term budgets of 120 KB for `assets/dist/reimu.js` and 220 KB for `assets/dist/reimu.css`.
 - Treat package contents as a quality gate so development-only and local-only files cannot silently enter release ZIPs.
+
+## 2026-06-03 Module Boundaries and Lazy-Loading Prep
+
+Goal: establish the first front-end and PHP module boundaries while preserving classic script output, public settings/AJAX/template interfaces, and the v0.1.15 release line.
+
+### Phases
+
+1. Commit and push existing guardrails without creating a tag - complete
+2. Extract front-end core/search/share helpers into source modules while keeping a single classic `reimu.js` build - complete
+3. Move comment media upload/review functions into `inc/comments/uploads.php` - complete
+4. Record lazy-loading candidates and verification results - complete
+
+### Decisions
+
+- Keep `theme/Yneko-Reimu/assets/src/reimu.js` as the single public front-end entrypoint.
+- Internal front-end modules currently cover `core`, `dom`, `storage`, `events`, `search`, and `share`; these are not public APIs.
+- Use Vite/Rollup single-entry IIFE builds for public classic scripts; the CSS build stays separate.
+- Treat `inc/comments.php` as the comment module entrypoint and `inc/comments/uploads.php` as an internal implementation module.
+- `npm run check:js` recursively checks source/tool JavaScript so new internal modules cannot bypass syntax checks.

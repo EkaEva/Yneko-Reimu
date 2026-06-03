@@ -105,3 +105,16 @@
 - Updated the Lily cursor build to strip PNG metadata and exclude time/date chunks so repeated builds produce smaller, more stable cursor assets.
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 67 theme PHP files, `npm run package`, and `npm run check:package`.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2208.zip` and reported 124 entries with no forbidden development files.
+
+## 2026-06-03 Module Boundaries and Lazy-Loading Prep
+
+- Committed and pushed the guardrails baseline as `6f613de Add development guardrails and admin asset build`; no v0.1.15 tag was created.
+- Added `theme/Yneko-Reimu/assets/src/reimu/core.js` and wired `assets/src/reimu.js` to consume the extracted helpers while preserving `window.ReimuWP`.
+- Split the front-end source boundary further into `dom.js`, `storage.js`, `events.js`, `search.js`, and `share.js`; `assets/src/reimu.js` remains the single public entrypoint and keeps the existing init order.
+- Encapsulated Weixin share QR lazy loading inside the internal share module while continuing to load `assets/dist/qrcode.js` as a classic script.
+- Updated `npm run check:js` to use `tools/check-js.mjs`, recursively checking all JS/MJS files under `theme/Yneko-Reimu/assets/src` and `tools`.
+- Adjusted build ownership so CSS/static assets are built by Vite config and classic JS entries are built one at a time by `tools/build-reimu.mjs`.
+- Moved comment media upload/review functions from `inc/comments.php` into `inc/comments/uploads.php`, with `comments.php` requiring the internal module.
+- Verification passed after module split: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 68 theme PHP files, `npm run package`, and `npm run check:package`.
+- Confirmed built `assets/dist/reimu.js` has no `import.meta`, dynamic `import(`, or top-level ESM import/export and parses as a classic script.
+- Final module-split package check used `Yneko-Reimu-v0.1.15-20260603-2238.zip` and reported 125 entries with no forbidden development files.

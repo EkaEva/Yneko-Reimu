@@ -308,7 +308,7 @@ msgstr ""
 msgid "登录后可上传 GIF。"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/uploads.php inc/comments.php inc/enqueue.php
 msgid "登录后可上传图片。"
 msgstr ""
 
@@ -580,7 +580,7 @@ msgstr ""
 msgid "加载更多..."
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "仅支持 JPG、PNG、WebP 和 GIF。"
 msgstr ""
 
@@ -736,11 +736,11 @@ msgstr ""
 msgid "评论"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/uploads.php inc/enqueue.php
 msgid "评论 GIF 上传已关闭。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "评论 GIF：%s"
 msgstr ""
 
@@ -784,7 +784,7 @@ msgstr ""
 msgid "评论删除失败。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "评论上传：%s"
 msgstr ""
 
@@ -800,7 +800,7 @@ msgstr ""
 msgid "评论提交失败。"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/uploads.php inc/enqueue.php
 msgid "评论图片上传已关闭。"
 msgstr ""
 
@@ -828,7 +828,7 @@ msgstr ""
 msgid "评论已提交，正在等待审核。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "评论正在等待审核。"
 msgstr ""
 
@@ -864,7 +864,7 @@ msgstr ""
 msgid "切换明暗模式"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "请不要重复发送相同的评论。"
 msgstr ""
 
@@ -920,7 +920,7 @@ msgstr ""
 msgid "请先选择文件。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "请选择 GIF 文件。"
 msgstr ""
 
@@ -932,7 +932,7 @@ msgstr ""
 msgid "请选择要上传的 GIF。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "请选择要上传的文件。"
 msgstr ""
 
@@ -952,7 +952,7 @@ msgstr ""
 msgid "取消回复"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php inc/comments.php
 msgid "权限不足。"
 msgstr ""
 
@@ -992,7 +992,7 @@ msgstr ""
 msgid "上传"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/uploads.php inc/enqueue.php
 msgid "上传失败。"
 msgstr ""
 
@@ -1040,7 +1040,7 @@ msgstr ""
 msgid "申请方法"
 msgstr ""
 
-#: inc/comments.php inc/settings.php
+#: inc/comments/uploads.php inc/settings.php
 msgid "审核未通过"
 msgstr ""
 
@@ -1192,7 +1192,7 @@ msgstr ""
 msgid "图片待审核"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
 msgstr ""
 
@@ -1248,15 +1248,15 @@ msgstr ""
 msgid "未知用户"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "文件大小超出限制。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "文件已被评论使用。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "文件已上传，等待管理员审核。"
 msgstr ""
 
@@ -1312,7 +1312,7 @@ msgstr ""
 msgid "无效的 SVG 文件。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "无效的评论上传附件。"
 msgstr ""
 
@@ -1520,7 +1520,7 @@ msgstr ""
 msgid "一条评论"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php inc/comments.php
 msgid "一条评论最多只能添加一张图片或一个 GIF。"
 msgstr ""
 
@@ -1528,7 +1528,7 @@ msgstr ""
 msgid "移动端导航"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/uploads.php inc/enqueue.php
 msgid "已插入评论。"
 msgstr ""
 
@@ -1860,7 +1860,7 @@ msgstr ""
 msgid "GIF 上传失败。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/uploads.php
 msgid "GIF 已加入表情库。"
 msgstr ""
 

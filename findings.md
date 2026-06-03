@@ -97,3 +97,15 @@
 - `settings.php` previously embedded a very large admin settings JavaScript string. Moving that logic into `assets/src/admin-settings.js` makes it eligible for `node --check`, Vite minification, and future modular cleanup.
 - Release package checks should inspect ZIP contents directly because a whitelist can still drift when new generated assets or local-only files are introduced.
 - The Lily cursor build rewrote PNG files during validation. Adding metadata stripping and excluding PNG time/date chunks made the output smaller and more deterministic; cursor files now shrink by roughly 250 bytes each.
+
+## 2026-06-03 Module Boundary Findings
+
+- Rollup cannot emit IIFE output for a code-splitting or multi-input JS build. Keeping classic script compatibility requires building public JS entries one at a time with `inlineDynamicImports`.
+- The main Vite config now only needs to build CSS/static assets; `tools/build-reimu.mjs` can build `reimu.js` and `admin-settings.js` as separate single-entry IIFE scripts.
+- First safe front-end extraction target is `assets/src/reimu/core.js`: DOM helpers, storage helpers, event dispatch, HTML escaping, debounce, and URL/language path helpers.
+- The first source module boundary now covers `core`, `dom`, `storage`, `events`, `search`, and `share`. `assets/src/reimu.js` remains the only public front-end entrypoint and only composes modules/init order.
+- `share` is a clean runtime-splitting candidate because its QR dependency is already lazy-loaded through classic `assets/dist/qrcode.js`; the new module keeps that promise/cache state private.
+- `search` can be isolated behind injected DOM/config/i18n helpers without changing `window.ReimuSearchClose` or the search popup behavior.
+- Comment upload/review functions form a mostly continuous block in `comments.php`, making `inc/comments/uploads.php` a low-risk first PHP extraction target while preserving existing function names and hook registrations.
+- `npm run check:js` should scan source and tool directories recursively; otherwise future internal JS modules can bypass syntax checks.
+- Lazy-loading candidates for later runtime splitting: search opens from `#nav-search-btn`; share only needs Weixin QR on Weixin click; comments/profile require `#comments` or profile triggers; APlayer depends on `config.aplayer`; PhotoSwipe depends on article images and `config.photoswipe`; Mermaid and KaTeX depend on their config flags and matching content blocks.

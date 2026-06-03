@@ -1,6 +1,7 @@
 import { copyFile, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { build } from 'vite';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
@@ -32,6 +33,30 @@ try {
 } catch (error) {
   throw new Error('Unable to copy qrcode.js. Run npm install before building.');
 }
+
+async function buildClassicScript(input, outputName) {
+  await build({
+    configFile: false,
+    logLevel: 'silent',
+    build: {
+      emptyOutDir: false,
+      minify: 'esbuild',
+      outDir: distRoot,
+      sourcemap: Boolean(process.env.YNEKO_REIMU_SOURCEMAP),
+      rollupOptions: {
+        input,
+        output: {
+          format: 'iife',
+          entryFileNames: outputName,
+          inlineDynamicImports: true
+        }
+      }
+    }
+  });
+}
+
+await buildClassicScript(resolve(themeRoot, 'assets/src/reimu.js'), 'reimu.js');
+await buildClassicScript(resolve(themeRoot, 'assets/src/admin-settings.js'), 'admin-settings.js');
 
 async function listDistOutputs(dir, prefix = 'assets/dist') {
   const entries = await readdir(dir, { withFileTypes: true });
