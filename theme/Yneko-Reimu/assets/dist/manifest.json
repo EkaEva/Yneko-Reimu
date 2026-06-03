@@ -14,6 +14,7 @@
     "assets/dist/admin-settings.js",
     "assets/dist/loader.css",
     "assets/dist/qrcode.js",
+    "assets/dist/reimu-search.js",
     "assets/dist/reimu.css",
     "assets/dist/reimu.js",
     "assets/dist/xiaohongshu.svg"
@@ -22,8 +23,9 @@
     "assets/dist/admin-settings.js": 8278,
     "assets/dist/loader.css": 1753,
     "assets/dist/qrcode.js": 23468,
+    "assets/dist/reimu-search.js": 10032,
     "assets/dist/reimu.css": 210179,
-    "assets/dist/reimu.js": 117432,
+    "assets/dist/reimu.js": 111247,
     "assets/dist/xiaohongshu.svg": 8155
   }
 }

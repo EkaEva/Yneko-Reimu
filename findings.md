@@ -144,3 +144,10 @@
 - `tools/feature-loading-plan.mjs` now records the first loading backlog as machine-readable entries. Search, share, comments/profile, APlayer, PhotoSwipe, Mermaid, and KaTeX each have an owner, current loading mode, target loading mode, trigger, gate, and compatibility note.
 - This round intentionally does not change WordPress enqueue behavior or introduce dynamic imports in the main package. The quality gate now reports lazy-loading readiness while preserving the single classic `assets/dist/reimu.js` public interface.
 - Current statuses: `share` is partial-lazy because Weixin QR already loads `qrcode.js` on interaction; APlayer, Mermaid, and KaTeX are condition-loaded at the vendor layer; search, comments/profile, and PhotoSwipe remain main-bundle candidates for later extraction.
+
+## 2026-06-03 Search Runtime Split Findings
+
+- Search is now the first actual runtime split target because the source module already accepted injected DOM/config/i18n helpers and had a clear trigger at `#nav-search-btn` / `.popup-trigger`.
+- The main bundle now keeps only a small search loader and loads `assets/dist/reimu-search.js` as a classic script on first search interaction.
+- `reimu-search.js` exposes internal `window.ReimuSearchRuntime.init/open` methods; existing public behavior through `window.ReimuSearchClose` is preserved.
+- `npm run check:size` now budgets the lazy search runtime at 24 KB and checks both `reimu.js` and `reimu-search.js` for classic script compatibility.

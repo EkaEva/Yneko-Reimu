@@ -286,3 +286,21 @@ Goal: make the planned lazy-loading boundaries visible to quality gates before c
 - Keep `assets/dist/reimu.js` as a single classic script in this round.
 - Do not add dynamic imports or change WordPress script enqueue handles yet.
 - Use the loading plan as the source of truth for the next actual runtime split.
+
+## 2026-06-03 Search Runtime Split
+
+Goal: move the search implementation out of the main public script while preserving classic script loading, current search DOM behavior, and public compatibility.
+
+### Phases
+
+1. Inspect search module dependencies and public behavior - complete
+2. Add a lazy classic search runtime entry and main-bundle trigger loader - complete
+3. Extend size/classic checks to cover the lazy search runtime - complete
+4. Build, lint, package, and verify release ZIP contents - complete
+
+### Decisions
+
+- Use `assets/dist/reimu-search.js` as an internal lazy classic runtime file.
+- Keep `assets/dist/reimu.js` as the single WordPress-enqueued main script.
+- Do not expose the internal search runtime as a documented public API.
+- The next runtime split candidate should be PhotoSwipe because it has a visible page-context trigger and no AJAX/security payloads.

@@ -8,6 +8,7 @@ const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 const manifestPath = resolve(themeRoot, 'assets/dist/manifest.json');
 const budgets = new Map([
   ['assets/dist/reimu.js', 120 * 1024],
+  ['assets/dist/reimu-search.js', 24 * 1024],
   ['assets/dist/reimu.css', 220 * 1024]
 ]);
 
@@ -34,21 +35,28 @@ for (const [relativePath, maxBytes] of budgets) {
   console.log(`[size] ${relativePath} is ${formatBytes(bytes)} / ${formatBytes(maxBytes)}.`);
 }
 
-const mainScript = await readFile(resolve(themeRoot, 'assets/dist/reimu.js'), 'utf8');
+const classicScripts = [
+  'assets/dist/reimu.js',
+  'assets/dist/reimu-search.js'
+];
 const classicScriptPatterns = [
   { pattern: /\bimport\.meta\b/, label: 'import.meta' },
-  { pattern: /\bimport\s*\(/, label: 'dynamic import(' }
+  { pattern: /\bimport\s*\(/, label: 'dynamic import(' },
+  { pattern: /^\s*(?:import|export)\b/m, label: 'top-level ESM import/export' }
 ];
 
-for (const check of classicScriptPatterns) {
-  if (check.pattern.test(mainScript)) {
-    console.error(`[classic-script] assets/dist/reimu.js contains ${check.label}.`);
-    failed = true;
+for (const relativePath of classicScripts) {
+  const script = await readFile(resolve(themeRoot, relativePath), 'utf8');
+  for (const check of classicScriptPatterns) {
+    if (check.pattern.test(script)) {
+      console.error(`[classic-script] ${relativePath} contains ${check.label}.`);
+      failed = true;
+    }
   }
 }
 
 if (!failed) {
-  console.log('[classic-script] assets/dist/reimu.js is compatible with classic script loading.');
+  console.log('[classic-script] public runtime scripts are compatible with classic script loading.');
 }
 
 for (const line of featureLoadingSummary()) {

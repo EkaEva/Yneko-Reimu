@@ -1,5 +1,4 @@
 import { createCore } from './reimu/core.js';
-import { createSearchModule } from './reimu/search.js';
 import { createShareModule } from './reimu/share.js';
 
 (function () {
@@ -20,23 +19,11 @@ import { createShareModule } from './reimu/share.js';
   var trimSlashes = core.trimSlashes;
   var relativePathFromUrl = core.relativePathFromUrl;
   var languageFromUrl = core.languageFromUrl;
-  var searchModule = createSearchModule({
-    config: config,
-    t: t,
-    qs: qs,
-    qsa: qsa,
-    escapeHtml: escapeHtml,
-    debounce: debounce,
-    dispatchReimuEvent: dispatchReimuEvent,
-    getBody: function () { return body; },
-    setBody: function (value) { body = value; }
-  });
   var shareModule = createShareModule({
     qs: qs,
     qsa: qsa,
     getAssetBaseUrl: getAssetBaseUrl
   });
-  var initSearch = searchModule.initSearch;
   var initShare = shareModule.initShare;
 
   var root = document.documentElement;
@@ -57,6 +44,106 @@ import { createShareModule } from './reimu/share.js';
   function t(key, fallback) {
     var i18n = config.i18n || {};
     return i18n[key] || fallback;
+  }
+
+  var searchRuntimePromise = null;
+
+  function loadSearchRuntime() {
+    if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
+      return Promise.resolve(window.ReimuSearchRuntime);
+    }
+    if (searchRuntimePromise) {
+      return searchRuntimePromise;
+    }
+    searchRuntimePromise = new Promise(function (resolve, reject) {
+      var existing = qs('#yneko-reimu-search-runtime');
+      if (existing && window.ReimuSearchRuntime) {
+        resolve(window.ReimuSearchRuntime);
+        return;
+      }
+      var script = existing || document.createElement('script');
+      var done = function () {
+        if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
+          resolve(window.ReimuSearchRuntime);
+        } else {
+          reject(new Error('Search runtime did not register.'));
+        }
+      };
+      script.id = 'yneko-reimu-search-runtime';
+      script.async = true;
+      script.onload = done;
+      script.onerror = function () {
+        reject(new Error('Unable to load search runtime.'));
+      };
+      if (!existing) {
+        script.src = getAssetBaseUrl() + 'reimu-search.js';
+        (document.head || document.body || document.documentElement).appendChild(script);
+      }
+    }).catch(function (error) {
+      searchRuntimePromise = null;
+      throw error;
+    });
+    return searchRuntimePromise;
+  }
+
+  function runSearchRuntime(method) {
+    return loadSearchRuntime().then(function (runtime) {
+      if (runtime && typeof runtime[method] === 'function') {
+        runtime[method]();
+      }
+    }).catch(function (error) {
+      if (window.console && window.console.warn) {
+        window.console.warn('[Yneko-Reimu] search runtime skipped:', error);
+      }
+    });
+  }
+
+  function initSearch() {
+    var wrapper = qs('.site-search');
+    var popup = qs('.site-search .popup');
+    var trigger = qs('#nav-search-btn, .popup-trigger');
+    if (!trigger && !wrapper) {
+      return;
+    }
+    if (wrapper && popup && !popup.classList.contains('show')) {
+      wrapper.setAttribute('aria-hidden', 'true');
+      wrapper.hidden = true;
+      popup.inert = true;
+    }
+    if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
+      window.ReimuSearchRuntime.init();
+      return;
+    }
+    if (root.dataset.searchLazyReady) {
+      return;
+    }
+    root.dataset.searchLazyReady = 'true';
+    var openLazySearch = function (event) {
+      if (event.reimuSearchHandled) {
+        return;
+      }
+      var target = event.target && event.target.closest ? event.target.closest('#nav-search-btn, .popup-trigger') : null;
+      if (!target) {
+        return;
+      }
+      if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      event.reimuSearchHandled = true;
+      runSearchRuntime('open');
+    };
+    document.addEventListener('click', openLazySearch);
+    document.addEventListener('keydown', openLazySearch);
+    var lazyCloseSearch = function () {
+      runSearchRuntime('init').then(function () {
+        if (typeof window.ReimuSearchClose === 'function' && window.ReimuSearchClose !== lazyCloseSearch) {
+          window.ReimuSearchClose();
+        }
+      });
+    };
+    window.ReimuSearchClose = lazyCloseSearch;
   }
 
   function getHeadingFromHash(hash) {

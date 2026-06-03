@@ -1,13 +1,13 @@
 export const featureLoadingPlan = [
   {
     feature: 'search',
-    owner: 'assets/src/reimu/search.js',
-    status: 'candidate',
-    currentLoading: 'main-bundle',
+    owner: 'assets/src/reimu-search.js and assets/src/reimu/search.js',
+    status: 'lazy-runtime',
+    currentLoading: 'lazy classic runtime',
     targetLoading: 'interaction',
     trigger: '#nav-search-btn click or keyboard shortcut',
     gate: 'window.REIMU_CONFIG.search',
-    notes: 'Keep window.ReimuSearchClose available when the search popup is present.'
+    notes: 'Main reimu.js keeps a small trigger loader; search logic ships as assets/dist/reimu-search.js.'
   },
   {
     feature: 'share',

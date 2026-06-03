@@ -162,3 +162,17 @@
 - Confirmed built `assets/dist/reimu.js` parses as a classic script and contains no `import.meta`, dynamic `import(`, or top-level ESM import/export.
 - Final package check used `Yneko-Reimu-v0.1.15-20260603-2326.zip`, reported 129 entries, and excluded development/local-only files.
 - Next round should start the first actual runtime source extraction target from this loading plan, preferably search or PhotoSwipe, while preserving the single classic public entry.
+
+## 2026-06-03 Search Runtime Split
+
+- Started from a clean `main...origin/main` worktree.
+- Added `theme/Yneko-Reimu/assets/src/reimu-search.js` as a lazy classic search runtime entry.
+- Updated `theme/Yneko-Reimu/assets/src/reimu/search.js` to expose `openSearch()` in addition to `initSearch()`.
+- Replaced the main-bundle search module import with a small lazy search trigger loader in `assets/src/reimu.js`.
+- Updated `tools/build-reimu.mjs` so `assets/dist/reimu-search.js` is built as its own IIFE classic script.
+- Updated `tools/feature-loading-plan.mjs`, `tools/check-size.mjs`, and `docs/development.md` so search is marked as a lazy runtime, the lazy runtime has a 24 KB budget, and classic compatibility checks cover both public runtime scripts.
+- Verification passed: `npm run check:js`, `npm run build`, `npm run check:size`, `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 72 theme PHP files, `npm run package`, and `npm run check:package`.
+- Size check results: `reimu.js` 108.6 KB / 120 KB, `reimu-search.js` 9.8 KB / 24 KB, and `reimu.css` 205.3 KB / 220 KB.
+- Confirmed `assets/dist/reimu.js` and `assets/dist/reimu-search.js` parse as classic scripts and contain no `import.meta`, dynamic `import(`, or top-level ESM import/export.
+- Final package check used `Yneko-Reimu-v0.1.15-20260603-2336.zip`, reported 130 entries, included `assets/dist/reimu-search.js`, and excluded manifest/source/local-only files.
+- Next round should split or lazy-gate PhotoSwipe runtime behavior, because search now has the first interaction-loaded classic runtime.

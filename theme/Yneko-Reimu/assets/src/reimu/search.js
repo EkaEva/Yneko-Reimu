@@ -8,6 +8,7 @@ export function createSearchModule(deps) {
   var dispatchReimuEvent = deps.dispatchReimuEvent;
   var getBody = deps.getBody || function () { return document.body; };
   var setBody = deps.setBody || function () {};
+  var moduleOpenPopup = null;
 
   function initSearch() {
     var open = qs('#nav-search-btn');
@@ -156,6 +157,7 @@ export function createSearchModule(deps) {
     };
 
     window.ReimuSearchClose = closePopup;
+    moduleOpenPopup = openPopup;
 
     if (!open.dataset.searchReady) {
       open.dataset.searchReady = 'true';
@@ -397,8 +399,15 @@ export function createSearchModule(deps) {
     }
   }
 
+  function openSearch() {
+    initSearch();
+    if (moduleOpenPopup) {
+      moduleOpenPopup();
+    }
+  }
 
   return {
-    initSearch: initSearch
+    initSearch: initSearch,
+    openSearch: openSearch
   };
 }

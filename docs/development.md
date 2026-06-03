@@ -24,8 +24,9 @@ npm run lint:php
 `npm run check:size` enforces the short-term public asset budgets:
 
 - `assets/dist/reimu.js` must stay at or below 120 KB.
+- `assets/dist/reimu-search.js` must stay at or below 24 KB.
 - `assets/dist/reimu.css` must stay at or below 220 KB.
-- The main `reimu.js` build must remain compatible with classic script loading and must not contain `import.meta` or unresolved dynamic `import(` calls.
+- Public runtime script builds must remain compatible with classic script loading and must not contain `import.meta`, unresolved dynamic `import(` calls, or top-level ESM import/export syntax.
 - The feature loading report comes from `tools/feature-loading-plan.mjs`; update it before moving code out of the main bundle.
 
 ## Source Layout
