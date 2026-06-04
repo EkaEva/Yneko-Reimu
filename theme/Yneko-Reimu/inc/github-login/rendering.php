@@ -213,11 +213,12 @@ function yneko_reimu_github_login_enqueue_styles() {
 		}
 		body.login .wp-pwd {
 			position: relative;
-			display: block;
+			display: grid;
 			margin-top: 8px;
 		}
 		body.login .wp-pwd input[type="password"],
 		body.login .wp-pwd input[type="text"] {
+			grid-area: 1 / 1;
 			margin-top: 0;
 			padding-right: 54px;
 		}
@@ -225,17 +226,22 @@ function yneko_reimu_github_login_enqueue_styles() {
 		body.login .wp-pwd .wp-hide-pw.button,
 		body.login .wp-pwd .wp-hide-pw.button.button-secondary,
 		body.login .wp-pwd .wp-hide-pw.button-secondary {
-			position: absolute !important;
-			top: 50% !important;
+			position: relative !important;
+			top: auto !important;
+			right: auto !important;
 			bottom: auto !important;
-			right: 10px !important;
-			display: block !important;
+			display: inline-flex !important;
+			grid-area: 1 / 1;
 			appearance: none !important;
 			width: 30px !important;
 			min-width: 0 !important;
 			height: 30px !important;
 			min-height: 0 !important;
-			margin: 0 !important;
+			align-items: center !important;
+			align-self: center !important;
+			justify-content: center !important;
+			justify-self: end !important;
+			margin: 0 10px 0 0 !important;
 			padding: 0 !important;
 			color: #ff5252 !important;
 			background: transparent !important;
@@ -246,15 +252,12 @@ function yneko_reimu_github_login_enqueue_styles() {
 			box-shadow: none !important;
 			line-height: 1 !important;
 			text-decoration: none !important;
-			transform: translateY(-50%) !important;
+			transform: none !important;
 		}
 		body.login .wp-pwd .wp-hide-pw .dashicons {
 			display: none !important;
 		}
 		body.login .wp-pwd .wp-hide-pw::before {
-			position: absolute;
-			top: 50%;
-			left: 50%;
 			display: block;
 			width: 19px;
 			height: 19px;
@@ -262,7 +265,6 @@ function yneko_reimu_github_login_enqueue_styles() {
 			background-color: currentColor;
 			mask: url("' . esc_url( $password_hidden_icon ) . '") center / contain no-repeat;
 			-webkit-mask: url("' . esc_url( $password_hidden_icon ) . '") center / contain no-repeat;
-			transform: translate(-50%, -50%);
 		}
 		body.login .wp-pwd .wp-hide-pw[aria-pressed="true"]::before {
 			mask-image: url("' . esc_url( $password_visible_icon ) . '");

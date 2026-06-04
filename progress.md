@@ -973,3 +973,4 @@
 - Kept the WordPress `.wp-hide-pw` button DOM and native visibility script intact; the hidden Dashicons class still drives the visible/hidden mask state.
 - Updated the GitHub OAuth contract gate so the login password style contract protects the SVG mask icons and hidden Dashicons fallback.
 - Matched the backend icon color to the front-end theme red and changed the mask pseudo-element to absolute 50%/50% centering inside the button box.
+- Reworked the WordPress login password row to a CSS Grid overlay so the input and `.wp-hide-pw` button share the same grid cell; the button is now `align-self: center` and no longer depends on absolute-positioned top/transform centering.
