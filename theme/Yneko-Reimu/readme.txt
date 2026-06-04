@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.2
+Stable tag: 0.2.3
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,10 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.3 =
+* Splits comments rendering helpers into an internal PHP module while preserving existing markup, nonces, callbacks, and external comment output.
+* Extends the comments/profile contract gate to cover the new rendering module boundary.
 
 = 0.2.2 =
 * Fixes PJAX navigation into posts and virtual pages by keeping share/footer enhancement styles available before share markup is inserted.

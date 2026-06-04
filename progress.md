@@ -893,3 +893,19 @@
 - Ran `npm run check:package`; the ZIP contains 152 entries and no forbidden development files.
 - ZIP spot check confirmed `inc/comments/auth.php`, `inc/comments/profile.php`, `inc/comments/mutations.php`, `assets/dist/reimu-share.css`, and `docs/release-notes-v0.2.2.md` are included, while `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are absent.
 - Ran `git diff --check`; no whitespace errors were reported.
+
+## 2026-06-04 v0.2.3 Comments Rendering Split
+
+- Started the v0.2.3 maintenance round focused on comments rendering, without changing comment/profile/login/upload/PJAX behavior.
+- Added internal `theme/Yneko-Reimu/inc/comments/rendering.php` with an `ABSPATH` guard.
+- Kept `theme/Yneko-Reimu/inc/comments.php` as the comments/profile entrypoint and added a `require_once` for the rendering module.
+- Moved existing comment toolbar, guest fields, login link, current-user identity HTML, comment author link, comment summary, avatar rendering, UA/IP badge rendering, Markdown rendering, comment callback, comment field ordering, and external comment panel rendering into `rendering.php`.
+- Preserved existing function names, `comment_form_fields` filter registration, `wp_list_comments()` callback name, DOM classes, data attributes, dynamic nonce creation, external comment script output, and `ipwho.is` lookup behavior.
+- Updated `tools/check-comments-profile-contract.mjs` so it reads `rendering.php`, verifies that `comments.php` loads it, checks dynamic nonce creation in the rendering module, and protects comment/external-comment rendering anchors.
+- Updated version fields to `0.2.3` and added `docs/release-notes-v0.2.3.md`.
+- Updated `docs/comments-profile-contract.md`, `docs/development.md`, runtime `readme.txt`, and planning records to describe the rendering split.
+- Targeted checks passed: `php -l` for `inc/comments.php` and `inc/comments/rendering.php`, `npm run check:comments-profile`, `node --check tools/check-comments-profile-contract.mjs`, and `npm run report:php-complexity`.
+- Complexity report now scans 78 PHP files, and `inc/comments.php` is down to 986 nonblank lines after moving rendering responsibilities into the internal module.
+- Full verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 78 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated local validation package `releases/Yneko-Reimu-v0.2.3-20260604-2210.zip`; it contains `inc/comments/rendering.php` and `docs/release-notes-v0.2.3.md`, and excludes `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
+- `git diff --check` passed with only the existing CRLF normalization warning for `README.md`.

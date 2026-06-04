@@ -18,6 +18,7 @@ The PHP entrypoint remains `inc/comments.php`. Internal comments/profile modules
 - `auth.php` owns login-state, login, logout, registration, and lost-password AJAX handlers plus adjacent auth helpers.
 - `profile.php` owns profile payload, profile fetch/save/status/email/TOTP/avatar AJAX handlers, and adjacent TOTP/profile helpers.
 - `mutations.php` owns comment like, submit, edit, delete, visible-comment helpers, and comment review-status sync hooks.
+- `rendering.php` owns comment form helpers, current-user identity HTML, comment avatar/author/Markdown rendering, UA/IP badges, the `wp_list_comments()` callback, and external comment panel output.
 
 These files are implementation boundaries, not public APIs. Keep the existing function names, hooks, IDs, classes, request fields, response payloads, and data attributes stable when moving implementation details between these internal files.
 

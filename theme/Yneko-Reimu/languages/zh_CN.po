@@ -157,11 +157,11 @@ msgstr "本站信息"
 msgid "编辑"
 msgstr "编辑"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "编辑个人资料"
 msgstr "编辑个人资料"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "编辑评论"
 msgstr "编辑评论"
 
@@ -185,11 +185,11 @@ msgstr "标签已更新"
 msgid "标签云"
 msgstr "标签云"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "表情"
 msgstr "表情"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "表情包"
 msgstr "表情包"
 
@@ -241,15 +241,15 @@ msgstr "侧栏社交图标"
 msgid "侧栏小组件"
 msgstr "侧栏小组件"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "插入"
 msgstr "插入"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "插入 GIF 链接"
 msgstr "插入 GIF 链接"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "插入图片链接"
 msgstr "插入图片链接"
 
@@ -301,7 +301,7 @@ msgstr "导航文字：%s"
 msgid "到底了..."
 msgstr "到底了..."
 
-#: comments.php inc/comments/modals.php inc/comments.php inc/enqueue.php
+#: comments.php inc/comments/modals.php inc/comments/rendering.php inc/enqueue.php
 msgid "登录"
 msgstr "登录"
 
@@ -309,11 +309,11 @@ msgstr "登录"
 msgid "登录成功。"
 msgstr "登录成功。"
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/rendering.php inc/enqueue.php
 msgid "登录后可上传 GIF。"
 msgstr "登录后可上传 GIF。"
 
-#: inc/comments/uploads.php inc/comments.php inc/enqueue.php
+#: inc/comments/rendering.php inc/comments/uploads.php inc/enqueue.php
 msgid "登录后可上传图片。"
 msgstr "登录后可上传图片。"
 
@@ -329,7 +329,7 @@ msgstr "登录信息已过期，请重试。"
 msgid "登录中..."
 msgstr "登录中..."
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "点赞"
 msgstr "点赞"
 
@@ -561,7 +561,7 @@ msgstr "后台上传的 GIF"
 msgid "欢迎评论"
 msgstr "欢迎评论"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "回复"
 msgstr "回复"
 
@@ -697,7 +697,7 @@ msgstr "你不能编辑这条评论。"
 msgid "你不能删除这条评论。"
 msgstr "你不能删除这条评论。"
 
-#: inc/comments/modals.php inc/comments.php
+#: inc/comments/modals.php inc/comments/rendering.php
 msgid "昵称"
 msgstr "昵称"
 
@@ -761,7 +761,7 @@ msgstr "评论标签最多 8 个字符。"
 msgid "评论不存在。"
 msgstr "评论不存在。"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "评论操作"
 msgstr "评论操作"
 
@@ -769,7 +769,7 @@ msgstr "评论操作"
 msgid "评论更新失败。"
 msgstr "评论更新失败。"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "评论环境信息"
 msgstr "评论环境信息"
 
@@ -985,7 +985,7 @@ msgstr "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgid "删除"
 msgstr "删除"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "删除评论"
 msgstr "删除评论"
 
@@ -993,7 +993,7 @@ msgstr "删除评论"
 msgid "删除头像"
 msgstr "删除头像"
 
-#: inc/comments/modals.php inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/comments/rendering.php inc/enqueue.php
 msgid "上传"
 msgstr "上传"
 
@@ -1001,7 +1001,7 @@ msgstr "上传"
 msgid "上传失败。"
 msgstr "上传失败。"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "上传图片"
 msgstr "上传图片"
 
@@ -1213,15 +1213,15 @@ msgstr "图片预览"
 msgid "推荐项目待同步"
 msgstr "推荐项目待同步"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "退出"
 msgstr "退出"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "退出登录"
 msgstr "退出登录"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "网址（可选）"
 msgstr "网址（可选）"
 
@@ -1525,7 +1525,7 @@ msgstr "页面："
 msgid "页面内容"
 msgstr "页面内容"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "一条评论"
 msgstr "一条评论"
 
@@ -1597,7 +1597,7 @@ msgstr "用于放置上下文、链接或轻量的延伸解释。"
 msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
 msgstr "用于放置文章中的重点信息、更新说明或推荐阅读。"
 
-#: inc/comments/modals.php inc/comments.php
+#: inc/comments/modals.php inc/comments/rendering.php
 msgid "邮箱"
 msgstr "邮箱"
 
@@ -1633,7 +1633,7 @@ msgstr "语言菜单"
 msgid "语言选择"
 msgstr "语言选择"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "预览"
 msgstr "预览"
 
@@ -1933,7 +1933,7 @@ msgstr "Home"
 msgid "Main Reimu sidebar."
 msgstr "Main Reimu sidebar."
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "Markdown is supported"
 msgstr "Markdown is supported"
 

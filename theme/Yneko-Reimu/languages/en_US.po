@@ -157,11 +157,11 @@ msgstr "Site info"
 msgid "编辑"
 msgstr "Edit"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "编辑个人资料"
 msgstr "Edit profile"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "编辑评论"
 msgstr ""
 
@@ -185,11 +185,11 @@ msgstr ""
 msgid "标签云"
 msgstr "Tag cloud"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "表情"
 msgstr "Emoji"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "表情包"
 msgstr "Stickers"
 
@@ -241,15 +241,15 @@ msgstr ""
 msgid "侧栏小组件"
 msgstr "Sidebar widgets"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "插入"
 msgstr "Insert"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "插入 GIF 链接"
 msgstr "Insert GIF link"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "插入图片链接"
 msgstr "Insert image link"
 
@@ -301,7 +301,7 @@ msgstr "Navigation label: %s"
 msgid "到底了..."
 msgstr "No more..."
 
-#: comments.php inc/comments/modals.php inc/comments.php inc/enqueue.php
+#: comments.php inc/comments/modals.php inc/comments/rendering.php inc/enqueue.php
 msgid "登录"
 msgstr "Login"
 
@@ -309,11 +309,11 @@ msgstr "Login"
 msgid "登录成功。"
 msgstr "Login successful."
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/rendering.php inc/enqueue.php
 msgid "登录后可上传 GIF。"
 msgstr "Log in to upload GIFs."
 
-#: inc/comments/uploads.php inc/comments.php inc/enqueue.php
+#: inc/comments/rendering.php inc/comments/uploads.php inc/enqueue.php
 msgid "登录后可上传图片。"
 msgstr "Log in to upload images."
 
@@ -329,7 +329,7 @@ msgstr "Login information has expired. Please try again."
 msgid "登录中..."
 msgstr "Logging in..."
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "点赞"
 msgstr "Like"
 
@@ -561,7 +561,7 @@ msgstr ""
 msgid "欢迎评论"
 msgstr "Comments are welcome"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "回复"
 msgstr "Reply"
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "你不能删除这条评论。"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments.php
+#: inc/comments/modals.php inc/comments/rendering.php
 msgid "昵称"
 msgstr "Nickname"
 
@@ -761,7 +761,7 @@ msgstr ""
 msgid "评论不存在。"
 msgstr "Comment does not exist."
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "评论操作"
 msgstr "Comment actions"
 
@@ -769,7 +769,7 @@ msgstr "Comment actions"
 msgid "评论更新失败。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "评论环境信息"
 msgstr "Comment environment information"
 
@@ -985,7 +985,7 @@ msgstr "If this email is registered, a code will be sent to it."
 msgid "删除"
 msgstr "Remove"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "删除评论"
 msgstr ""
 
@@ -993,7 +993,7 @@ msgstr ""
 msgid "删除头像"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/comments/rendering.php inc/enqueue.php
 msgid "上传"
 msgstr "Upload"
 
@@ -1001,7 +1001,7 @@ msgstr "Upload"
 msgid "上传失败。"
 msgstr "Upload failed."
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "上传图片"
 msgstr "Upload image"
 
@@ -1213,15 +1213,15 @@ msgstr "Image preview"
 msgid "推荐项目待同步"
 msgstr "Recommended projects pending sync"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "退出"
 msgstr "Logout"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "退出登录"
 msgstr "Log out"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "网址（可选）"
 msgstr "Website (optional)"
 
@@ -1525,7 +1525,7 @@ msgstr "Page:"
 msgid "页面内容"
 msgstr "Page content"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "一条评论"
 msgstr ""
 
@@ -1597,7 +1597,7 @@ msgstr ""
 msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments.php
+#: inc/comments/modals.php inc/comments/rendering.php
 msgid "邮箱"
 msgstr "Email"
 
@@ -1633,7 +1633,7 @@ msgstr "Language menu"
 msgid "语言选择"
 msgstr "Language selection"
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "预览"
 msgstr "Preview"
 
@@ -1933,7 +1933,7 @@ msgstr "Home"
 msgid "Main Reimu sidebar."
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/rendering.php
 msgid "Markdown is supported"
 msgstr ""
 

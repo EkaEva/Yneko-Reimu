@@ -13,6 +13,7 @@ const files = {
   auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),
   profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
   mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
+  rendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
   frontend: await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8'),
   commentMedia: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-media.js'), 'utf8'),
   commentTools: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-tools.js'), 'utf8'),
@@ -57,7 +58,8 @@ for (const phpModule of [
   "require_once YNEKO_REIMU_DIR . '/inc/comments/modals.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/auth.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/profile.php';",
-  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations.php';"
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering.php';"
 ]) {
   requireSnippet('comments PHP module boundary', phpModule, files.comments);
 }
@@ -187,8 +189,29 @@ for (const dynamicNonce of [
   'yneko_reimu_comment_like_',
   'yneko_reimu_comment_manage_'
 ]) {
-  requireSnippet('dynamic nonce created in comment markup', `wp_create_nonce( '${dynamicNonce}`, files.comments);
+  requireSnippet('dynamic nonce created in comment markup', `wp_create_nonce( '${dynamicNonce}`, files.rendering);
   requireSnippet('dynamic nonce verified in handler', `check_ajax_referer( '${dynamicNonce}`, files.mutations);
+}
+
+for (const renderingContract of [
+  'function yneko_reimu_comment_callback',
+  'function yneko_reimu_render_comment_markdown',
+  'function yneko_reimu_get_comment_avatar',
+  'function yneko_reimu_external_comment_systems',
+  'function yneko_reimu_render_external_comment_panel',
+  "add_filter( 'comment_form_fields', 'yneko_reimu_comment_field_order' )",
+  'data-comment-raw',
+  'data-comment-like',
+  'data-comment-manage-nonce',
+  'data-like-nonce',
+  'giscus-comment',
+  'utterances-comment',
+  'disqus_thread',
+  'waline-comment',
+  'twikoo-comment',
+  'valine-comment'
+]) {
+  requireSnippet('comments rendering contract', renderingContract, files.rendering);
 }
 
 for (const payloadKey of [

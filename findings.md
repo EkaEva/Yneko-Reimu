@@ -630,3 +630,10 @@
 - `inc/comments/mutations.php` owns comment like, visible-comment checks, edit, delete, submit, AJAX item rendering, and comment review-status sync hooks.
 - Public behavior is intentionally unchanged: AJAX action names, nonce names, request fields, response JSON shapes, template markup, and front-end runtime behavior are preserved.
 - `tools/check-comments-profile-contract.mjs` now reads the new PHP modules and verifies that `inc/comments.php` requires them, so the contract gate covers both handler presence and module loading.
+
+## 2026-06-04 v0.2.3 Comments Rendering Split Findings
+
+- The next clean comments maintenance boundary is rendering, not another request-handler move: comment toolbar/form helpers, current-user identity HTML, author/avatar display, Markdown rendering, UA/IP badges, `wp_list_comments()` callback, and external comment panels are output-focused and do not own AJAX request handling.
+- `inc/comments/rendering.php` can own the rendering layer while preserving the existing function names called by `comments.php`, `auth.php`, `profile.php`, `mutations.php`, widgets, and template tags.
+- The existing `ipwho.is` region lookup remains behaviorally unchanged in this pass; moving it with the UA/IP badge renderer avoids adding a new setting or changing privacy/runtime behavior in a maintenance-only release.
+- The comments/profile contract gate should treat dynamic comment nonces and comment markup anchors as rendering-module contracts after this split, while nonce verification stays in `mutations.php`.
