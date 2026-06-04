@@ -230,6 +230,9 @@ for (const payloadKey of [
 }
 
 for (const selector of [
+  '.reimu-confirm-modal',
+  '[data-reimu-confirm-ok]',
+  '[data-reimu-confirm-cancel]',
   '#reimu-login-modal',
   '[data-reimu-login-form]',
   '[data-reimu-register-form]',
@@ -283,6 +286,7 @@ for (const formField of [
 }
 
 for (const functionName of [
+  'requestThemeConfirm',
   'refreshCommentLoginState',
   'applyCommentLoggedInState',
   'applyCommentLoggedOutState',
@@ -308,6 +312,9 @@ for (const moduleExport of [
 }
 
 for (const cssSelector of [
+  '.reimu-confirm-modal',
+  '.reimu-confirm-modal__dialog',
+  '.reimu-confirm-modal__ok',
   '.reimu-login-modal',
   '.reimu-profile-modal',
   '.reimu-profile-form',
@@ -330,6 +337,13 @@ for (const cssSelector of [
 requirePair('comment upload endpoint and nonce', "formData.append('action', 'yneko_reimu_comment_upload')", "check_ajax_referer( 'yneko_reimu_comment_upload', 'nonce' )", source);
 requirePair('comment submit endpoint and nonce', "formData.append('action', 'yneko_reimu_submit_comment')", "check_ajax_referer( 'yneko_reimu_submit_comment', 'nonce' )", source);
 requirePair('profile save endpoint and nonce', "postProfileAction('yneko_reimu_profile_save'", "check_ajax_referer( 'yneko_reimu_profile', 'nonce' )", source);
+
+if (files.frontend.includes('window.confirm')) {
+  fail('Front-end comments runtime should use the theme confirm dialog instead of window.confirm.');
+}
+if (files.commentMedia.includes('window.confirm')) {
+  fail('Comment media replacement should use the injected theme confirm dialog instead of window.confirm.');
+}
 
 if (failed) {
   process.exitCode = 1;

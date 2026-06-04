@@ -936,3 +936,17 @@
 - Updated `docs/release-notes-v0.2.3.md`, `docs/development.md`, `docs/github-oauth-qa.md`, and planning records with the GitHub OAuth split.
 - Full verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 88 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
 - Generated local validation package `releases/Yneko-Reimu-v0.2.3-20260604-2247.zip`; it contains all six `inc/github-login/*.php` modules, Template Tags modules, `inc/comments/rendering.php`, and `docs/release-notes-v0.2.3.md`, and excludes `assets/src`, `assets/dist/manifest.json`, tools, `PROJECT.md`, and `AGENTS.md`.
+
+## 2026-06-04 v0.2.4 Phase 1 Comment Dialog and Login Password Button
+
+- Started v0.2.4 phase 1 after the v0.2.3 release tag, focused on two UX regressions only.
+- Replaced the front-end comment media replacement `window.confirm()` path with an injected theme confirmation dialog that returns a Promise.
+- Updated GIF library insertion, image/GIF URL insertion, and local upload insertion paths so cancel preserves the existing comment content and confirm continues the old cleanup/insert flow.
+- Replaced front-end comment delete `window.confirm()` with the same theme confirmation dialog while preserving the existing `yneko_reimu_delete_comment` AJAX action, nonce, payload, count update, and load-more sync.
+- Left `assets/src/admin-settings.js` upload-delete confirmation unchanged because this phase only targets front-end comment interactions.
+- Updated the WordPress login inline stylesheet so `.wp-hide-pw` is absolutely centered inside `.wp-pwd`, with transparent background, no border/frame, no box shadow, and visible hover/focus states.
+- Updated comments/profile and GitHub OAuth contract gates to protect the new theme confirmation dialog and the login password button style contract.
+- Bumped the version line to `0.2.4` in npm metadata, theme headers/constants, runtime `readme.txt`, README examples, and release docs; added `docs/release-notes-v0.2.4.md`.
+- Targeted checks passed: `npm run check:js`, `npm run check:comments-profile`, `npm run check:github-oauth`, and `php -l theme\Yneko-Reimu\inc\github-login\rendering.php`.
+- Full verification passed: `npm run build`, `npm run check:size`, `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 88 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated local validation package `releases/Yneko-Reimu-v0.2.4-20260604-2323.zip`; it contains v0.2.4 release notes, built `reimu.js`, built `reimu-comments.css`, login rendering PHP, and runtime `readme.txt`, and excludes source assets, manifest, tools, `PROJECT.md`, and `AGENTS.md`.

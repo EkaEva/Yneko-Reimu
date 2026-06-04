@@ -96,9 +96,11 @@ export function createCommentTools(deps) {
       button.addEventListener('click', function () {
         var url = button.getAttribute('data-comment-gif-url') || '';
         if (url) {
-          if (insertCommentMedia(textarea, url, 'gif')) {
-            closeCommentPopovers(form);
-          }
+          insertCommentMedia(textarea, url, 'gif').then(function (inserted) {
+            if (inserted) {
+              closeCommentPopovers(form);
+            }
+          });
         }
       });
     });
@@ -179,12 +181,14 @@ export function createCommentTools(deps) {
           }
           return;
         }
-        if (insertCommentMedia(textarea, url, type)) {
-          if (input) {
-            input.value = '';
+        insertCommentMedia(textarea, url, type).then(function (inserted) {
+          if (inserted) {
+            if (input) {
+              input.value = '';
+            }
+            closeCommentPopovers(form);
           }
-          closeCommentPopovers(form);
-        }
+        });
       });
     });
 

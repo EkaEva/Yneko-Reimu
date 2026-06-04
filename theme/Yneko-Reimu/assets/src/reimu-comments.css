@@ -783,6 +783,119 @@ body.reimu-login-on #mobile-nav {
   line-height: 1.6;
 }
 
+.reimu-confirm-on {
+  overflow: hidden !important;
+}
+
+.reimu-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+
+.reimu-confirm-modal.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.reimu-confirm-modal__mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .34);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.reimu-confirm-modal__dialog {
+  position: relative;
+  width: min(440px, calc(100vw - 32px));
+  padding: 28px 30px 24px;
+  color: var(--color-default);
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .26);
+  border-radius: 12px;
+  box-shadow: 0 24px 70px rgba(30, 30, 30, .28);
+  transform: translateY(14px) scale(.98);
+  transition: transform .22s ease;
+}
+
+.reimu-confirm-modal.show .reimu-confirm-modal__dialog {
+  transform: translateY(0) scale(1);
+}
+
+.reimu-confirm-modal h2 {
+  margin: 0 0 10px;
+  color: var(--color-default);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.reimu-confirm-modal__message {
+  margin: 0;
+  color: var(--grey-7);
+  line-height: 1.7;
+}
+
+.reimu-confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.reimu-confirm-modal__cancel,
+.reimu-confirm-modal__ok {
+  display: inline-flex;
+  min-width: 78px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: var(--cursor-pointer) !important;
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.reimu-confirm-modal__cancel {
+  color: var(--color-link);
+  background: var(--color-wrap);
+  border: 1px solid rgba(255, 82, 82, .28);
+}
+
+.reimu-confirm-modal__ok {
+  color: #fff;
+  background: var(--red-1);
+  border: 0;
+  box-shadow: 0 8px 18px rgba(255, 82, 82, .20);
+}
+
+.reimu-confirm-modal__cancel:hover,
+.reimu-confirm-modal__ok:hover,
+.reimu-confirm-modal__cancel:focus,
+.reimu-confirm-modal__ok:focus {
+  opacity: .92;
+  transform: translateY(-1px);
+}
+
+.reimu-confirm-modal__cancel:focus,
+.reimu-confirm-modal__ok:focus {
+  outline: 2px solid rgba(255, 82, 82, .35);
+  outline-offset: 2px;
+}
+
 .reimu-login-panel[hidden] {
   display: none !important;
 }

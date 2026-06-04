@@ -4,6 +4,9 @@ export function createCommentMedia(deps) {
   var t = typeof deps.t === 'function' ? deps.t : function (_, fallback) { return fallback; };
   var escapeHtml = typeof deps.escapeHtml === 'function' ? deps.escapeHtml : function (value) { return String(value || ''); };
   var dispatchInputEvent = typeof deps.dispatchInputEvent === 'function' ? deps.dispatchInputEvent : function () {};
+  var requestConfirm = typeof deps.requestConfirm === 'function' ? deps.requestConfirm : function (message) {
+    return Promise.resolve(typeof globalThis.confirm === 'function' ? globalThis.confirm(message) : false);
+  };
 
   function insertIntoTextarea(textarea, text) {
     if (!textarea || !text) {
@@ -146,19 +149,25 @@ export function createCommentMedia(deps) {
 
   function confirmCommentMediaReplace(textarea) {
     var entries = commentMediaEntries(textarea ? textarea.value : '');
-    return !entries.length || window.confirm(commentMediaReplaceMessage(entries));
+    return !entries.length ? Promise.resolve(true) : requestConfirm(commentMediaReplaceMessage(entries));
   }
 
   function prepareCommentMediaInsert(textarea, confirmedReplace) {
     var entries = commentMediaEntries(textarea ? textarea.value : '');
     if (!entries.length) {
+      return Promise.resolve(true);
+    }
+    if (confirmedReplace) {
+      removeCommentMediaFromTextarea(textarea);
+      return Promise.resolve(true);
+    }
+    return requestConfirm(commentMediaReplaceMessage(entries)).then(function (confirmed) {
+      if (!confirmed) {
+        return false;
+      }
+      removeCommentMediaFromTextarea(textarea);
       return true;
-    }
-    if (!confirmedReplace && !window.confirm(commentMediaReplaceMessage(entries))) {
-      return false;
-    }
-    removeCommentMediaFromTextarea(textarea);
-    return true;
+    });
   }
 
   function commentMediaLimitOk(value) {
@@ -222,11 +231,13 @@ export function createCommentMedia(deps) {
   }
 
   function insertCommentMedia(textarea, url, type, options) {
-    if (!prepareCommentMediaInsert(textarea, options && options.confirmedReplace)) {
-      return false;
-    }
-    insertIntoTextarea(textarea, commentMediaToken(textarea, url, type, options || {}));
-    return true;
+    return prepareCommentMediaInsert(textarea, options && options.confirmedReplace).then(function (confirmed) {
+      if (!confirmed) {
+        return false;
+      }
+      insertIntoTextarea(textarea, commentMediaToken(textarea, url, type, options || {}));
+      return true;
+    });
   }
 
   return {

@@ -29,7 +29,8 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
     },
     t: t,
     escapeHtml: escapeHtml,
-    dispatchInputEvent: dispatchInputEvent
+    dispatchInputEvent: dispatchInputEvent,
+    requestConfirm: requestThemeConfirm
   });
   var insertIntoTextarea = commentMedia.insertIntoTextarea;
   var resolveCommentMediaTokens = commentMedia.resolveCommentMediaTokens;
@@ -70,6 +71,108 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
   function t(key, fallback) {
     var i18n = config.i18n || {};
     return i18n[key] || fallback;
+  }
+
+  var confirmDialog = null;
+  var confirmDialogState = null;
+
+  function ensureConfirmDialog() {
+    if (confirmDialog && document.body && document.body.contains(confirmDialog.root)) {
+      return confirmDialog;
+    }
+    var modal = document.createElement('div');
+    modal.className = 'reimu-confirm-modal';
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.innerHTML = '<div class="reimu-confirm-modal__mask" data-reimu-confirm-cancel></div><div class="reimu-confirm-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="reimu-confirm-title"><h2 id="reimu-confirm-title"></h2><p class="reimu-confirm-modal__message" data-reimu-confirm-message></p><div class="reimu-confirm-modal__actions"><button type="button" class="reimu-confirm-modal__cancel" data-reimu-confirm-cancel></button><button type="button" class="reimu-confirm-modal__ok" data-reimu-confirm-ok></button></div></div>';
+    (document.body || document.documentElement).appendChild(modal);
+    confirmDialog = {
+      root: modal,
+      title: qs('#reimu-confirm-title', modal),
+      message: qs('[data-reimu-confirm-message]', modal),
+      ok: qs('[data-reimu-confirm-ok]', modal),
+      cancel: qs('.reimu-confirm-modal__cancel', modal)
+    };
+    qsa('[data-reimu-confirm-cancel]', modal).forEach(function (button) {
+      button.addEventListener('click', function () {
+        closeThemeConfirm(false);
+      });
+    });
+    var ok = qs('[data-reimu-confirm-ok]', modal);
+    if (ok) {
+      ok.addEventListener('click', function () {
+        closeThemeConfirm(true);
+      });
+    }
+    return confirmDialog;
+  }
+
+  function closeThemeConfirm(confirmed) {
+    var state = confirmDialogState;
+    if (!state) {
+      return;
+    }
+    confirmDialogState = null;
+    document.removeEventListener('keydown', state.onKeydown);
+    if (confirmDialog) {
+      confirmDialog.root.classList.remove('show');
+      confirmDialog.root.setAttribute('aria-hidden', 'true');
+      confirmDialog.root.hidden = true;
+    }
+    if (body) {
+      body.classList.remove('reimu-confirm-on');
+    }
+    if (state.previousFocus && state.previousFocus.focus) {
+      state.previousFocus.focus();
+    }
+    state.resolve(!!confirmed);
+  }
+
+  function requestThemeConfirm(message, options) {
+    if (!document.body || typeof Promise === 'undefined') {
+      return Promise.resolve(typeof globalThis.confirm === 'function' ? globalThis.confirm(message) : false);
+    }
+    return new Promise(function (resolve) {
+      if (confirmDialogState) {
+        closeThemeConfirm(false);
+      }
+      var dialog = ensureConfirmDialog();
+      options = options || {};
+      if (dialog.title) {
+        dialog.title.textContent = options.title || t('confirmTitle', '请确认');
+      }
+      if (dialog.message) {
+        dialog.message.textContent = message || '';
+      }
+      if (dialog.cancel) {
+        dialog.cancel.textContent = options.cancelText || t('confirmCancel', '取消');
+      }
+      if (dialog.ok) {
+        dialog.ok.textContent = options.okText || t('confirmOk', '确定');
+      }
+      confirmDialogState = {
+        resolve: resolve,
+        previousFocus: document.activeElement,
+        onKeydown: function (event) {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            closeThemeConfirm(false);
+          }
+        }
+      };
+      dialog.root.hidden = false;
+      dialog.root.setAttribute('aria-hidden', 'false');
+      if (body) {
+        body.classList.add('reimu-confirm-on');
+      }
+      window.setTimeout(function () {
+        dialog.root.classList.add('show');
+        if (dialog.ok) {
+          dialog.ok.focus();
+        }
+      }, 0);
+      document.addEventListener('keydown', confirmDialogState.onKeydown);
+    });
   }
 
   var searchRuntimePromise = null;
@@ -2084,11 +2187,15 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
             }
             var replaceConfirmed = false;
             if (commentMediaEntries(textarea ? textarea.value : '').length) {
-              if (!confirmCommentMediaReplace(textarea)) {
-                input.value = '';
-                return;
-              }
-              replaceConfirmed = true;
+              confirmCommentMediaReplace(textarea).then(function (confirmed) {
+                if (!confirmed) {
+                  input.value = '';
+                  return;
+                }
+                replaceConfirmed = true;
+                uploadCommentFile(type, input, button, textarea, form, replaceConfirmed);
+              });
+              return;
             }
             uploadCommentFile(type, input, button, textarea, form, replaceConfirmed);
           }
@@ -2156,14 +2263,18 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
           confirmedReplace: !!replaceConfirmed,
           cleanupKey: payload.data.cleanupKey || '',
           uploaded: !!payload.data.cleanupKey
+        }).then(function (inserted) {
+          if (!inserted) {
+            return;
+          }
+          input.value = '';
+          if (status) {
+            status.textContent = Object.prototype.hasOwnProperty.call(payload.data, 'message') ? payload.data.message : t('commentUploadDone', '已插入评论。');
+          }
+          if (payload.data.requiresReview && payload.data.message) {
+            showTooltip(payload.data.message);
+          }
         });
-        input.value = '';
-        if (status) {
-          status.textContent = Object.prototype.hasOwnProperty.call(payload.data, 'message') ? payload.data.message : t('commentUploadDone', '已插入评论。');
-        }
-        if (payload.data.requiresReview && payload.data.message) {
-          showTooltip(payload.data.message);
-        }
       }).catch(function () {
         if (status) {
           status.textContent = t('commentUploadFailed', '上传失败。');
@@ -2573,42 +2684,50 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
       button.addEventListener('click', function () {
         var commentItem = button.closest('.reimu-comment');
         var commentId = button.getAttribute('data-comment-delete') || '';
-        if (!commentItem || !commentId || button.disabled || !window.confirm(t('commentDeleteConfirm', '确定删除这条评论吗？'))) {
+        if (!commentItem || !commentId || button.disabled) {
           return;
         }
-        var formData = new FormData();
-        formData.append('action', 'yneko_reimu_delete_comment');
-        formData.append('comment_id', commentId);
-        formData.append('nonce', button.getAttribute('data-comment-manage-nonce') || '');
-        button.disabled = true;
-        fetch(config.login.ajaxUrl, {
-          method: 'POST',
-          credentials: 'same-origin',
-          body: formData
-        }).then(function (response) {
-          return response.json().catch(function () {
-            return { success: false, data: { message: t('commentDeleteFailed', '评论删除失败。') } };
-          });
-        }).then(function (payload) {
-          if (!payload || !payload.success || !payload.data) {
-            showTooltip(payload && payload.data && payload.data.message ? payload.data.message : t('commentDeleteFailed', '评论删除失败。'));
+        requestThemeConfirm(t('commentDeleteConfirm', '确定删除这条评论吗？'), {
+          title: t('commentDeleteTitle', '删除评论'),
+          okText: t('commentDeleteOk', '删除')
+        }).then(function (confirmed) {
+          if (!confirmed || button.disabled) {
             return;
           }
-          var parentList = commentItem.parentNode;
-          commentItem.remove();
-          updateCommentCount(payload.data.count, payload.data.count_label);
-          if (parentList && parentList.classList && parentList.classList.contains('children') && !parentList.children.length) {
-            parentList.remove();
-          }
-          var rootList = qs('#comments .reimu-comment-list');
-          if (rootList) {
-            syncLoadMoreRoot(rootList);
-          }
-          showTooltip(payload.data.message || t('commentDeleteFailed', '评论删除失败。'));
-        }).catch(function () {
-          showTooltip(t('commentDeleteFailed', '评论删除失败。'));
-        }).finally(function () {
-          button.disabled = false;
+          var formData = new FormData();
+          formData.append('action', 'yneko_reimu_delete_comment');
+          formData.append('comment_id', commentId);
+          formData.append('nonce', button.getAttribute('data-comment-manage-nonce') || '');
+          button.disabled = true;
+          fetch(config.login.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+          }).then(function (response) {
+            return response.json().catch(function () {
+              return { success: false, data: { message: t('commentDeleteFailed', '评论删除失败。') } };
+            });
+          }).then(function (payload) {
+            if (!payload || !payload.success || !payload.data) {
+              showTooltip(payload && payload.data && payload.data.message ? payload.data.message : t('commentDeleteFailed', '评论删除失败。'));
+              return;
+            }
+            var parentList = commentItem.parentNode;
+            commentItem.remove();
+            updateCommentCount(payload.data.count, payload.data.count_label);
+            if (parentList && parentList.classList && parentList.classList.contains('children') && !parentList.children.length) {
+              parentList.remove();
+            }
+            var rootList = qs('#comments .reimu-comment-list');
+            if (rootList) {
+              syncLoadMoreRoot(rootList);
+            }
+            showTooltip(payload.data.message || t('commentDeleteFailed', '评论删除失败。'));
+          }).catch(function () {
+            showTooltip(t('commentDeleteFailed', '评论删除失败。'));
+          }).finally(function () {
+            button.disabled = false;
+          });
         });
       });
     });

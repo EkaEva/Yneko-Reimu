@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.3
+Stable tag: 0.2.4
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,11 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.4 =
+
+* Replaced front-end comment media-replacement and comment-delete browser confirmations with the theme-styled confirmation dialog.
+* Fixed the WordPress login password visibility button alignment and removed the unwanted button frame.
 
 = 0.2.3 =
 * Splits comments rendering helpers into an internal PHP module while preserving existing markup, nonces, callbacks, and external comment output.

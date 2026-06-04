@@ -210,12 +210,37 @@ function yneko_reimu_github_login_enqueue_styles() {
 			margin-top: 24px;
 		}
 		body.login .wp-pwd {
+			position: relative;
 			display: block;
 		}
 		body.login .wp-hide-pw {
-			top: 9px;
+			position: absolute;
+			top: 50%;
 			right: 8px;
-			color: #ff5252;
+			display: inline-flex !important;
+			width: 34px;
+			min-width: 34px;
+			height: 34px;
+			min-height: 34px;
+			align-items: center;
+			justify-content: center;
+			margin: 0;
+			padding: 0;
+			color: #2f64ff;
+			background: transparent;
+			border: 0;
+			border-radius: 50%;
+			box-shadow: none;
+			line-height: 1;
+			transform: translateY(-50%);
+		}
+		body.login .wp-hide-pw .dashicons {
+			display: block;
+			width: 20px;
+			height: 20px;
+			margin: 0;
+			font-size: 20px;
+			line-height: 20px;
 		}
 		body.login .button-primary:hover,
 		body.login .button-primary:focus {
@@ -234,6 +259,18 @@ function yneko_reimu_github_login_enqueue_styles() {
 			border-color: rgba(47, 100, 255, .55);
 			box-shadow: 0 10px 22px rgba(47, 100, 255, .12);
 			opacity: .92;
+		}
+		body.login .wp-hide-pw:hover,
+		body.login .wp-hide-pw:focus {
+			color: #2f64ff;
+			background: rgba(47, 100, 255, .08);
+			border: 0;
+			box-shadow: none;
+			opacity: 1;
+		}
+		body.login .wp-hide-pw:focus {
+			outline: 2px solid rgba(47, 100, 255, .30);
+			outline-offset: 2px;
 		}
 		body.login #nav,
 		body.login #backtoblog {

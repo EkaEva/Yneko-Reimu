@@ -652,3 +652,10 @@
 - The GitHub OAuth surface is public and regression-prone: login actions, legacy actions, bind nonce, settings field names, callback URL generation, OAuth scope/endpoints, state transient keys, popup message type, user meta keys, avatar fallback priority, and comment-user admin restrictions all need to remain stable.
 - The split keeps existing function names and hook callbacks while moving responsibility into `settings.php`, `rendering.php`, `oauth.php`, `users.php`, `avatars.php`, and `access.php`.
 - `tools/check-github-oauth-contract.mjs` now reads the entrypoint and all six internal modules, and checks that the entrypoint loads each module before validating the existing OAuth contract groups.
+
+## 2026-06-04 v0.2.4 Phase 1 UX Fix Findings
+
+- The front-end media replacement prompt for the "image + GIF <= 1" rule was implemented with `window.confirm()` in `assets/src/reimu/comment-media.js`, so replacing it requires an async Promise-based flow rather than only CSS.
+- Front-end comment deletion also used `window.confirm()` in the main runtime; the user chose to include this in the same theme-dialog replacement scope.
+- The admin settings upload deletion prompt still uses `window.confirm()` in `assets/src/admin-settings.js`; this remains intentionally out of scope for the first v0.2.4 phase.
+- The WordPress login password visibility button is styled by the GitHub login/rendering inline login stylesheet. The generic `body.login .button` rule was giving `.wp-hide-pw` a visible button frame, while the old top/right offset did not reliably center the icon.

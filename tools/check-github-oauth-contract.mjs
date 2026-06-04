@@ -190,6 +190,22 @@ const checks = [
     ]
   },
   {
+    label: 'Login password visibility style contract',
+    source: githubRendering,
+    snippets: [
+      'body.login .wp-pwd',
+      'position: relative;',
+      'body.login .wp-hide-pw',
+      'position: absolute;',
+      'top: 50%;',
+      'transform: translateY(-50%);',
+      'background: transparent;',
+      'border: 0;',
+      'box-shadow: none;',
+      'body.login .wp-hide-pw .dashicons'
+    ]
+  },
+  {
     label: 'OAuth user-facing error messages',
     source: github,
     snippets: [
