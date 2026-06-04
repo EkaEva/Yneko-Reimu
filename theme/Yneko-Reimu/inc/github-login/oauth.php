@@ -141,11 +141,19 @@ function yneko_reimu_github_login_popup_done( $redirect_to ) {
 		<script>
 			(function() {
 				var payload = { type: 'yneko-reimu-github-login', success: true, redirectTo: <?php echo wp_json_encode( esc_url_raw( $redirect_to ) ); ?> };
+				try {
+					window.localStorage.setItem('yneko-reimu-github-login', JSON.stringify(Object.assign({ time: Date.now() }, payload)));
+				} catch (error) {}
 				if (window.opener && !window.opener.closed) {
 					window.opener.postMessage(payload, <?php echo wp_json_encode( $origin ); ?>);
 					window.close();
 				} else {
-					window.location.href = payload.redirectTo || <?php echo wp_json_encode( home_url( '/' ) ); ?>;
+					document.body.setAttribute('data-yneko-reimu-github-login-done', '1');
+					window.setTimeout(function() {
+						if (!window.closed) {
+							window.close();
+						}
+					}, 120);
 				}
 			}());
 		</script>

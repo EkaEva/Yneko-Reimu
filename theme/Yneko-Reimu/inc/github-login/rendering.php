@@ -219,7 +219,7 @@ function yneko_reimu_github_login_enqueue_styles() {
 		body.login .wp-pwd input[type="password"],
 		body.login .wp-pwd input[type="text"] {
 			grid-area: 1 / 1;
-			margin-top: 0;
+			margin: 0 !important;
 			padding-right: 54px;
 		}
 		body.login .wp-pwd .wp-hide-pw,

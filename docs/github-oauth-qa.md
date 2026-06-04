@@ -62,6 +62,7 @@ Observable success signals:
 - GitHub authorization URL includes `client_id`, `redirect_uri`, `scope=read:user user:email`, `state`, and `allow_signup=true`.
 - The callback consumes the state transient and stores current `_yneko_reimu_github_*` user meta after a successful bind or auto-created login.
 - Popup flow posts message type `yneko-reimu-github-login` to the opener, closes the popup, and refreshes the comment login/profile UI.
+- Popup flow also writes a same-origin `yneko-reimu-github-login` localStorage signal and marks the callback body with `data-yneko-reimu-github-login-done` so the opener can recover when a browser drops `window.opener` after GitHub authorization.
 - Non-popup flow lands back on the original `redirect_to` URL and shows the expected logged-in comment/profile UI.
 - Reusing the linked GitHub account logs in to the same WordPress user without creating a duplicate account.
 

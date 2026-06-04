@@ -974,3 +974,16 @@
 - Updated the GitHub OAuth contract gate so the login password style contract protects the SVG mask icons and hidden Dashicons fallback.
 - Matched the backend icon color to the front-end theme red and changed the mask pseudo-element to absolute 50%/50% centering inside the button box.
 - Reworked the WordPress login password row to a CSS Grid overlay so the input and `.wp-hide-pw` button share the same grid cell; the button is now `align-self: center` and no longer depends on absolute-positioned top/transform centering.
+
+## 2026-06-05 v0.2.4 Login Password Icon Root Cause Fix
+
+- Measured the login password row and found the actual root cause of the vertical offset: the password input still inherited WordPress login CSS `margin-bottom: 16px`, making `.wp-pwd` 58px tall while the input itself was 42px tall.
+- Updated the login inline CSS so `.wp-pwd` password/text inputs use `margin: 0 !important`, keeping the grid overlay centered against the input's real border box instead of the taller wrapper.
+- Extended the GitHub OAuth contract gate to protect the `.wp-pwd` input margin reset alongside the existing SVG mask and grid overlay anchors.
+
+## 2026-06-05 v0.2.4 GitHub OAuth Popup Recovery
+
+- Investigated the screenshot where a newly authorized GitHub login left the popup on `/about/` instead of closing and refreshing the comment login state.
+- Kept the existing `postMessage` success path, and added a same-origin `localStorage` success signal plus a callback-body completion marker so the opener can recover when `window.opener` is unavailable after the GitHub authorization round-trip.
+- Updated the front-end GitHub popup handler to keep the popup window handle, close it once it returns to the same origin with a completed login marker, and run the same comment login-state refresh path used by the normal message handler.
+- Extended the GitHub OAuth contract gate and QA docs to protect the fallback popup recovery behavior.

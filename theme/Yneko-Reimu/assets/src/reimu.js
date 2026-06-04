@@ -3995,9 +3995,9 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
     var popup = window.open(url, name || 'yneko_reimu_auth', features);
     if (popup && popup.focus) {
       popup.focus();
-      return true;
+      return popup;
     }
-    return false;
+    return null;
   }
 
   function initGithubPopupLogin() {
@@ -4005,6 +4005,24 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
       return;
     }
     document.documentElement.dataset.githubPopupLoginReady = 'true';
+    var githubPopupPollTimer = null;
+    var githubPopupHandled = false;
+
+    function handleGithubLoginSuccess() {
+      if (githubPopupHandled) {
+        return;
+      }
+      githubPopupHandled = true;
+      setLoginModalOpen(false);
+      refreshCommentLoginState().then(function (updated) {
+        showTooltip(t('loginSuccess', updated ? '登录成功。' : '登录成功，正在刷新...'));
+        if (!updated) {
+          window.setTimeout(function () {
+            window.location.reload();
+          }, 380);
+        }
+      });
+    }
 
     window.addEventListener('message', function (event) {
       var expectedOrigin = window.location.origin;
@@ -4015,15 +4033,19 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
       if (!data || data.type !== 'yneko-reimu-github-login') {
         return;
       }
-      setLoginModalOpen(false);
-      refreshCommentLoginState().then(function (updated) {
-        showTooltip(t('loginSuccess', updated ? '登录成功。' : '登录成功，正在刷新...'));
-        if (!updated) {
-          window.setTimeout(function () {
-            window.location.reload();
-          }, 380);
+      handleGithubLoginSuccess();
+    });
+
+    window.addEventListener('storage', function (event) {
+      if (event.key !== 'yneko-reimu-github-login' || !event.newValue) {
+        return;
+      }
+      try {
+        var data = JSON.parse(event.newValue);
+        if (data && data.type === 'yneko-reimu-github-login') {
+          handleGithubLoginSuccess();
         }
-      });
+      } catch (error) {}
     });
 
     document.addEventListener('click', function (event) {
@@ -4032,9 +4054,30 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
         return;
       }
       event.preventDefault();
-      if (!openAuthPopup(link.href, 'yneko_reimu_github_login', 560, 720)) {
+      var popup = openAuthPopup(link.href, 'yneko_reimu_github_login', 560, 720);
+      if (!popup) {
         window.location.href = link.href;
+        return;
       }
+      githubPopupHandled = false;
+      window.clearInterval(githubPopupPollTimer);
+      githubPopupPollTimer = window.setInterval(function () {
+        if (popup.closed) {
+          window.clearInterval(githubPopupPollTimer);
+          return;
+        }
+        try {
+          var popupLocation = popup.location.href || '';
+          if (popupLocation && popupLocation.indexOf(window.location.origin) === 0) {
+            var done = popup.document && popup.document.body && popup.document.body.getAttribute('data-yneko-reimu-github-login-done') === '1';
+            if (done) {
+              popup.close();
+              window.clearInterval(githubPopupPollTimer);
+              handleGithubLoginSuccess();
+            }
+          }
+        } catch (error) {}
+      }, 300);
     });
   }
 
