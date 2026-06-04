@@ -809,3 +809,25 @@ Goal: verify the remaining Email/TOTP release-blocking paths with real SMTP deli
 - Real GitHub OAuth happy-path QA could not run in this environment because no real GitHub OAuth Client ID/Secret or staging callback credentials are configured in WordPress settings or environment variables.
 - Verification passed after record updates: `npm run check` and `npm audit --audit-level=moderate`.
 - The next round needs user-provided/staging OAuth credentials and a callback URL registered in a GitHub OAuth App, or confirmation to skip real GitHub OAuth happy-path until release staging.
+
+## 2026-06-04 GitHub OAuth Happy-Path Prerequisite Audit
+
+Goal: make concrete progress on the remaining GitHub OAuth real happy-path requirement by checking for usable credentials, callback/tunnel prerequisites, and documenting the exact staging runbook if the environment still cannot execute the flow.
+
+### Phases
+
+1. Reconfirm clean repo, no `v0.1.15` tag, and local WordPress/OAuth state - complete
+2. Check WordPress GitHub OAuth settings for real Client ID/Secret - complete
+3. Check local environment/GitHub CLI/tunnel tooling for real OAuth prerequisites - complete
+4. Update GitHub OAuth QA runbook with required inputs and observable success signals - complete
+5. Run focused verification and push public records without creating a tag - complete
+
+### Decisions
+
+- WordPress settings still have no GitHub OAuth Client ID or Client Secret.
+- No OAuth credential environment variables are present.
+- GitHub CLI is authenticated as `EkaEva`, but that repository token is not an OAuth App Client Secret and cannot prove the theme's real OAuth happy path.
+- No local tunnel tool such as `ngrok`, `cloudflared`, or `localtunnel` was found, so a public callback URL is also unavailable in this environment.
+- The real happy-path requirement remains unverified until credentials and a matching callback URL are provided.
+- `docs/github-oauth-qa.md` now includes the required inputs, callback URL format, popup/non-popup/bind success signals, and current blocked status.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, and `git diff --check`.

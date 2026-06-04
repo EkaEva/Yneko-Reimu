@@ -486,3 +486,15 @@
 - Verification passed: `npm run check` and `npm audit --audit-level=moderate`.
 - `git status --short --branch` shows only public docs/record files modified; local-only `wp-local/` helpers remain ignored.
 - Next step: commit and push public records; do not create the `v0.1.15` tag.
+
+## 2026-06-04 GitHub OAuth Happy-Path Prerequisite Audit
+
+- Started from clean `main...origin/main`; `git tag --list 'v0.1.15'` returned no tag.
+- Confirmed local WordPress, database, and Mailpit containers were running.
+- Checked WordPress GitHub OAuth settings through the local helper: no Client ID, no Client Secret, no callback override, auto-create disabled.
+- Checked environment variables for GitHub/OAuth/Yneko/tunnel credentials; none were present.
+- Checked GitHub CLI: logged in as `EkaEva` for repo operations, but this is not an OAuth App Client Secret.
+- Checked for local tunnel tools: `ngrok`, `cloudflared`, and `localtunnel` were not found.
+- Updated `docs/github-oauth-qa.md` with required real-app inputs, callback URL format, observable popup/non-popup/bind success signals, and current blocked status.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, and `git diff --check`.
+- Next step: commit and push public record/doc updates; do not create the `v0.1.15` tag.

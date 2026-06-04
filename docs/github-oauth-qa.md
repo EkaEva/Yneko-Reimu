@@ -35,6 +35,15 @@ Local helper scripts used for this QA must stay under `wp-local/` or another ign
 
 Use a real GitHub OAuth App only on a staging site or local tunnel whose callback URL exactly matches the theme setting or default login callback URL.
 
+Required inputs:
+
+- GitHub OAuth App Client ID.
+- GitHub OAuth App Client Secret.
+- A browser-accessible site URL that GitHub can call back to, usually a staging domain or HTTPS tunnel.
+- Authorization callback URL registered in the GitHub OAuth App:
+  `https://staging.example.com/wp-login.php?action=yneko_reimu_github_callback`
+  or the equivalent local tunnel URL.
+
 Checklist:
 
 - Configure Client ID and Client Secret in Appearance -> Yneko-Reimu Settings -> GitHub.
@@ -46,8 +55,18 @@ Checklist:
 - Verify an already-linked GitHub account logs in to the existing WordPress user.
 - Verify admin settings never expose the client secret outside the password input value and that release packages do not contain local credentials.
 
+Observable success signals:
+
+- GitHub authorization URL includes `client_id`, `redirect_uri`, `scope=read:user user:email`, `state`, and `allow_signup=true`.
+- The callback consumes the state transient and stores current `_yneko_reimu_github_*` user meta after a successful bind or auto-created login.
+- Popup flow posts message type `yneko-reimu-github-login` to the opener, closes the popup, and refreshes the comment login/profile UI.
+- Non-popup flow lands back on the original `redirect_to` URL and shows the expected logged-in comment/profile UI.
+- Reusing the linked GitHub account logs in to the same WordPress user without creating a duplicate account.
+
 ## Current Real-App Status
 
-The 2026-06-04 local QA environment has no real GitHub OAuth Client ID or Client Secret configured, and no OAuth credential environment variables were present. The real happy path is therefore still release-blocking until a staging callback URL and GitHub OAuth App credentials are available.
+The 2026-06-04 local QA environment has no real GitHub OAuth Client ID or Client Secret configured, no OAuth credential environment variables were present, and no local tunnel tool such as `ngrok` or `cloudflared` was available. GitHub CLI is logged in for repository operations, but that token is not a GitHub OAuth App Client Secret and cannot prove the theme's real OAuth happy path.
+
+The real happy path is therefore still release-blocking until a staging callback URL and GitHub OAuth App credentials are available.
 
 Do not create or push the `v0.1.15` tag as part of QA.

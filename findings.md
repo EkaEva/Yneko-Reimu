@@ -438,3 +438,12 @@
 - 2FA login browser flow: after logout, password-only login for the TOTP-enabled account showed `Please enter your two-factor code.` and revealed the two-factor input; entering the current generated code logged in successfully and hid the login modal.
 - Browser automation limitation: the in-app browser backend could not use clipboard-backed `fill()` / `type()` methods, so raw keyboard input was used. For the profile/TOTP user session, local `login-as.php` was used to set the browser cookie after server-side verification confirmed the password reset had succeeded.
 - Real GitHub OAuth happy-path remains unverified: local WordPress settings have no GitHub OAuth Client ID/Secret, environment variables contain no OAuth credentials, and the repo only has local fake OAuth helper scripts used for previous error-path QA.
+
+## 2026-06-04 GitHub OAuth Happy-Path Prerequisite Audit Findings
+
+- Current WordPress GitHub OAuth settings remain empty: no Client ID, no Client Secret, no callback override, and auto-create disabled.
+- No local environment variables matching GitHub OAuth/Yneko/tunnel credentials were present.
+- GitHub CLI is authenticated for repository operations as `EkaEva`, but that token cannot be used as the theme's OAuth App Client Secret and does not provide a real app callback configuration.
+- No local tunnel tooling was found (`ngrok`, `cloudflared`, or `localtunnel`), so the local `127.0.0.1:8095` WordPress site cannot currently receive a real callback from GitHub.
+- The real happy-path evidence still missing is: successful GitHub authorization, callback token exchange against GitHub, linked/account-created WordPress user state, popup `postMessage` close/refresh, and non-popup redirect back to `redirect_to`.
+- `docs/github-oauth-qa.md` now records the exact required inputs and observable success signals for the next staging run.
