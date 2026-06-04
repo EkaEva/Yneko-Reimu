@@ -972,3 +972,4 @@
 - Replaced the visible Dashicons glyph with the same standalone SVG mask icons used by the front-end comment login password toggle.
 - Kept the WordPress `.wp-hide-pw` button DOM and native visibility script intact; the hidden Dashicons class still drives the visible/hidden mask state.
 - Updated the GitHub OAuth contract gate so the login password style contract protects the SVG mask icons and hidden Dashicons fallback.
+- Matched the backend icon color to the front-end theme red and changed the mask pseudo-element to absolute 50%/50% centering inside the button box.

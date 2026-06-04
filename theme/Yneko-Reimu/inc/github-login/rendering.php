@@ -226,20 +226,18 @@ function yneko_reimu_github_login_enqueue_styles() {
 		body.login .wp-pwd .wp-hide-pw.button.button-secondary,
 		body.login .wp-pwd .wp-hide-pw.button-secondary {
 			position: absolute !important;
-			top: 0 !important;
-			bottom: 0 !important;
+			top: 50% !important;
+			bottom: auto !important;
 			right: 10px !important;
-			display: inline-flex !important;
+			display: block !important;
 			appearance: none !important;
 			width: 30px !important;
 			min-width: 0 !important;
 			height: 30px !important;
 			min-height: 0 !important;
-			align-items: center !important;
-			justify-content: center !important;
-			margin: auto 0 !important;
+			margin: 0 !important;
 			padding: 0 !important;
-			color: #2f64ff !important;
+			color: #ff5252 !important;
 			background: transparent !important;
 			background-image: none !important;
 			border: 0 !important;
@@ -248,18 +246,23 @@ function yneko_reimu_github_login_enqueue_styles() {
 			box-shadow: none !important;
 			line-height: 1 !important;
 			text-decoration: none !important;
-			transform: none !important;
+			transform: translateY(-50%) !important;
 		}
 		body.login .wp-pwd .wp-hide-pw .dashicons {
 			display: none !important;
 		}
 		body.login .wp-pwd .wp-hide-pw::before {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			display: block;
 			width: 19px;
 			height: 19px;
 			content: "";
 			background-color: currentColor;
 			mask: url("' . esc_url( $password_hidden_icon ) . '") center / contain no-repeat;
 			-webkit-mask: url("' . esc_url( $password_hidden_icon ) . '") center / contain no-repeat;
+			transform: translate(-50%, -50%);
 		}
 		body.login .wp-pwd .wp-hide-pw[aria-pressed="true"]::before {
 			mask-image: url("' . esc_url( $password_visible_icon ) . '");
@@ -289,7 +292,7 @@ function yneko_reimu_github_login_enqueue_styles() {
 		}
 		body.login .wp-pwd .wp-hide-pw:hover,
 		body.login .wp-pwd .wp-hide-pw:focus {
-			color: #2f64ff !important;
+			color: #ff5252 !important;
 			background: transparent !important;
 			border: 0 !important;
 			box-shadow: none !important;
