@@ -447,3 +447,15 @@
 - No local tunnel tooling was found (`ngrok`, `cloudflared`, or `localtunnel`), so the local `127.0.0.1:8095` WordPress site cannot currently receive a real callback from GitHub.
 - The real happy-path evidence still missing is: successful GitHub authorization, callback token exchange against GitHub, linked/account-created WordPress user state, popup `postMessage` close/refresh, and non-popup redirect back to `redirect_to`.
 - `docs/github-oauth-qa.md` now records the exact required inputs and observable success signals for the next staging run.
+
+## 2026-06-04 GitHub OAuth Real Happy-Path QA Findings
+
+- User-provided GitHub OAuth App credentials were configured only in the local WordPress QA site through ignored `wp-local/` helpers. The Client Secret is not recorded in repository files.
+- A local-only nginx proxy exposed WordPress at `http://localhost:8080`, matching the registered callback URL `http://localhost:8080/wp-login.php?action=yneko_github_callback`.
+- OAuth start redirected to GitHub with the expected Client ID, callback URL, `scope=read:user user:email`, state, and `allow_signup=true`.
+- Real non-popup OAuth login completed successfully and returned to `http://localhost:8080/yneko-qa-post/`, proving the authorization, callback token exchange, GitHub API profile/email lookup, and WordPress login path.
+- Real account binding succeeded for the local `qauser` account after clearing current and legacy GitHub meta from the auto-created test user. The final local state has `qauser` linked to GitHub login `EkaEva`.
+- The first bind attempt correctly detected a stale legacy-meta conflict, which confirmed that legacy `_yneko_github_*` compatibility keys remain active in conflict detection.
+- Real popup login from the comment modal opened and closed without leaving an extra browser tab, refreshed the opener state, closed the login modal, and showed the logged-in profile UI.
+- Linked non-popup login later logged in to the same existing `qauser` account and redirected back to the original post URL.
+- No settings keys, login actions, nonce names, meta keys, template paths, front-end globals, or OAuth runtime behavior were changed during this QA pass.

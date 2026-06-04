@@ -63,10 +63,35 @@ Observable success signals:
 - Non-popup flow lands back on the original `redirect_to` URL and shows the expected logged-in comment/profile UI.
 - Reusing the linked GitHub account logs in to the same WordPress user without creating a duplicate account.
 
+## 2026-06-04 Local Real-App QA
+
+Real GitHub OAuth happy-path QA was completed in the local WordPress environment with a real GitHub OAuth App configured through local-only helpers. The Client Secret was used only in local WordPress settings and is not recorded in repository files, public docs, or release packages.
+
+Local setup:
+
+- A local-only nginx proxy exposed WordPress at `http://localhost:8080`.
+- The registered Authorization callback URL was `http://localhost:8080/wp-login.php?action=yneko_github_callback`.
+- WordPress `home` and `siteurl` were temporarily set to `http://localhost:8080` for the QA pass.
+- GitHub OAuth settings were configured locally with Client ID, Client Secret, callback URL, and auto-create enabled.
+- Helper scripts stayed under ignored `wp-local/` and must not be committed.
+
+Verified paths:
+
+- OAuth start redirects to GitHub with the expected `client_id`, `redirect_uri`, `scope=read:user user:email`, generated `state`, and `allow_signup=true`.
+- Non-popup login completes GitHub authorization, returns to `http://localhost:8080/yneko-qa-post/`, and creates/logs in the GitHub-backed WordPress user.
+- Account binding succeeds for the existing local `qauser` account after clearing current and legacy GitHub meta from the auto-created user.
+- The final bind state stores the GitHub ID and login on `qauser`; no duplicate WordPress user remains linked to the same GitHub account.
+- Popup login from the comment login modal opens and closes without leaving an extra browser tab, posts the success message to the opener, closes the modal, refreshes the page state, and shows the logged-in profile UI.
+- A later non-popup login with the already-linked GitHub account logs in to the same existing WordPress user and redirects back to the original post URL.
+
+Compatibility notes:
+
+- The legacy callback action `yneko_github_callback` remains supported.
+- Current and legacy GitHub user meta keys were both considered during bind-conflict cleanup.
+- No settings keys, login actions, nonce names, meta keys, template paths, front-end globals, or OAuth runtime behavior were changed for this QA pass.
+
 ## Current Real-App Status
 
-The 2026-06-04 local QA environment has no real GitHub OAuth Client ID or Client Secret configured, no OAuth credential environment variables were present, and no local tunnel tool such as `ngrok` or `cloudflared` was available. GitHub CLI is logged in for repository operations, but that token is not a GitHub OAuth App Client Secret and cannot prove the theme's real OAuth happy path.
-
-The real happy path is therefore still release-blocking until a staging callback URL and GitHub OAuth App credentials are available.
+The real GitHub OAuth happy path is verified locally as of 2026-06-04. Before a public release tag, run the final package/check sequence again and confirm the local-only OAuth helpers and credentials are absent from Git status and the release ZIP.
 
 Do not create or push the `v0.1.15` tag as part of QA.

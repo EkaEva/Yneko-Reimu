@@ -831,3 +831,28 @@ Goal: make concrete progress on the remaining GitHub OAuth real happy-path requi
 - The real happy-path requirement remains unverified until credentials and a matching callback URL are provided.
 - `docs/github-oauth-qa.md` now includes the required inputs, callback URL format, popup/non-popup/bind success signals, and current blocked status.
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, and `git diff --check`.
+
+## 2026-06-04 GitHub OAuth Real Happy-Path QA
+
+Goal: complete the remaining real GitHub OAuth happy-path QA using user-provided local OAuth App credentials and the registered localhost callback, while keeping credentials and local helper files out of Git and avoiding the `v0.1.15` tag.
+
+### Phases
+
+1. Configure local WordPress OAuth settings and localhost callback proxy - complete
+2. Verify non-popup auto-create/login flow against GitHub - complete
+3. Verify account bind flow for the existing `qauser` account - complete
+4. Verify popup login close/postMessage/refresh behavior - complete
+5. Verify linked non-popup login returns to the same WordPress user - complete
+6. Record public evidence without secrets and run final pre-release checks - complete
+
+### Decisions
+
+- The OAuth Client Secret is local-only QA input and must not be written to public docs, planning records, commits, or release packages.
+- A local-only proxy exposed WordPress at `http://localhost:8080` to match the registered callback URL.
+- The legacy callback action `yneko_github_callback` was used and remains compatible.
+- Real OAuth success evidence now covers GitHub authorization, callback token/API exchange, auto-create login, existing-account bind, popup modal refresh, and linked non-popup login.
+- Current and legacy GitHub user meta were both considered while preparing the bind QA path.
+- No settings keys, login actions, nonce names, meta keys, template paths, front-end globals, or OAuth runtime behavior were changed.
+- Final verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1242.zip` and reported 136 entries with no forbidden development files.
+- Do not create or push the `v0.1.15` tag during this QA closure.

@@ -498,3 +498,21 @@
 - Updated `docs/github-oauth-qa.md` with required real-app inputs, callback URL format, observable popup/non-popup/bind success signals, and current blocked status.
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, and `git diff --check`.
 - Next step: commit and push public record/doc updates; do not create the `v0.1.15` tag.
+
+## 2026-06-04 GitHub OAuth Real Happy-Path QA
+
+- Received real GitHub OAuth App credentials from the user and treated the Client Secret as local-only QA input.
+- Started/used the local-only `wp-local-oauth-proxy` nginx proxy so WordPress was reachable at `http://localhost:8080`.
+- Configured the local WordPress site URL and GitHub OAuth settings through ignored `wp-local/` helpers, with callback `http://localhost:8080/wp-login.php?action=yneko_github_callback`.
+- Verified OAuth start redirects to GitHub with the expected authorization parameters.
+- Verified real non-popup GitHub OAuth login completes and returns to `http://localhost:8080/yneko-qa-post/`.
+- Verified real GitHub account binding for the existing `qauser` account after clearing current and legacy GitHub meta from the auto-created user.
+- Verified popup login from the comment login modal closes the popup, refreshes the opener state, closes the modal, and shows the logged-in profile UI.
+- Verified linked non-popup login returns to the same existing `qauser` account and redirects back to the original post URL.
+- Confirmed with the local helper that `qauser` is linked to GitHub login `EkaEva`.
+- Updated `docs/github-oauth-qa.md`, `task_plan.md`, and `findings.md` with public evidence while omitting the OAuth Client Secret.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1242.zip` and reported 136 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` returned no tag; no release tag was created.
+- `git status --short --branch` shows only public docs/record files modified; local-only OAuth helpers, `PROJECT.md`, and `AGENTS.md` remain untracked/ignored.
+- Next step: commit and push public records only; do not create the `v0.1.15` tag.
