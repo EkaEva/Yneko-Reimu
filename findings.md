@@ -385,3 +385,11 @@
 - The gate currently covers 27 user-visible messages, including login expiry/success, profile save success variants, password mismatch, avatar/tag/comment review statuses, comment submit/update/delete feedback, upload errors, and permission/invalid-upload errors.
 - Filled focused English translation gaps for review statuses and admin/upload feedback: avatar/tag/comment review rejected/pending, pending admin upload, invalid comment upload attachment, insufficient permissions, comment updated, and comment deleted.
 - This is intentionally not a full translation-completeness check; existing low-risk historical empty `en_US.po` entries remain outside the gate until they become high-impact feedback or are translated in a dedicated pass.
+
+## 2026-06-04 I18n Email/OAuth Contract Expansion Findings
+
+- The focused i18n message contract now covers 57 high-impact `en_US` messages, up from 27.
+- Added contract coverage for registration email-code feedback, lost-password code feedback, profile email/password/TOTP security messages, and GitHub OAuth callback/login/bind errors.
+- The first expanded contract run caught a real remaining gap: `请输入注册邮箱。` had no English translation source. Added it as `Please enter the registered email address.`.
+- Added English source translations for GitHub OAuth success/callback messages that were previously generated with empty `msgstr` values, including missing OAuth responses, expired state, token/API failures, missing profile fields, already-linked accounts, missing linked accounts, and existing-email bind guidance.
+- The contract remains intentionally scoped; low-risk historical empty strings such as widget/admin labels are still outside this gate unless they become high-impact user feedback.

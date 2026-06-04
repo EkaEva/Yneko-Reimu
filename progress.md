@@ -405,3 +405,17 @@
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1108.zip` and reported 134 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Next round should either expand the i18n contract to email/OAuth security messages or move to another high-risk QA surface such as GitHub OAuth callback behavior.
+
+## 2026-06-04 I18n Email/OAuth Contract Expansion
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Expanded `tools/check-i18n-messages.mjs` from 27 to 57 required high-impact English messages.
+- Added coverage for registration email verification, lost-password verification, profile email/password/TOTP feedback, and GitHub OAuth callback/login/bind errors.
+- Added missing English translation sources in `tools/build-i18n.mjs` for GitHub OAuth success/error messages and the lost-password registered-email prompt.
+- Ran `npm run i18n`; gettext files regenerated with 504 strings.
+- Ran `npm run check:i18n-messages`; the first run failed on missing `请输入注册邮箱。`, then passed after adding the translation source.
+- Updated `docs/development.md`, `task_plan.md`, and `findings.md` to describe the expanded contract.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1117.zip` and reported 134 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Next round should perform GitHub OAuth callback QA/error-path review or add a static OAuth endpoint/settings contract.

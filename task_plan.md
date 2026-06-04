@@ -692,3 +692,25 @@ Goal: add a focused i18n quality gate so high-impact AJAX/profile/comment/review
 - Adding a new high-impact AJAX/review message should require adding it to the checker and to the English translation table in the same change.
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, and `npm run check:package`.
 - The next round should either expand the i18n contract to email/OAuth security messages or move to another high-risk QA surface such as GitHub OAuth callback behavior.
+
+## 2026-06-04 I18n Email/OAuth Contract Expansion
+
+Goal: expand the focused i18n quality gate from auth/profile/comment/review messages into email verification, password reset, profile email/TOTP security feedback, and GitHub OAuth callback messages without changing runtime behavior or public interfaces.
+
+### Phases
+
+1. Identify email/OAuth high-impact message scope - complete
+2. Add selected messages to `tools/check-i18n-messages.mjs` - complete
+3. Add missing English translations to `tools/build-i18n.mjs` and regenerate gettext files - complete
+4. Update public development docs and persistent records - complete
+5. Run full verification, package checks, commit, and push without creating the `v0.1.15` tag - complete
+
+### Decisions
+
+- The i18n contract now covers 57 high-impact messages across login, registration email codes, lost-password codes, profile email/password/TOTP feedback, comment/profile review, upload, and GitHub OAuth callback flows.
+- This remains a focused contract, not a full `en_US.po` completeness requirement.
+- GitHub OAuth callback handlers, AJAX action names, nonce names, settings keys, user meta keys, template paths, and `window.ReimuWP` are unchanged.
+- `tools/build-i18n.mjs` remains the English translation source of truth; generated `.po`/`.mo` files are checked after regeneration.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1117.zip` and reported 134 entries with no forbidden development files.
+- The next round should perform GitHub OAuth callback QA/error-path review or add a static contract for OAuth public endpoints and settings keys.

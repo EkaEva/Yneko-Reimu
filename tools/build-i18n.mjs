@@ -294,6 +294,7 @@ const enTranslations = new Map(Object.entries({
   '验证码不正确。': 'The code is incorrect.',
   '验证码不正确或已失效。': 'The code is incorrect or has expired.',
   '如果该邮箱已注册，验证码将发送到对应邮箱。': 'If this email is registered, a code will be sent to it.',
+  '请输入注册邮箱。': 'Please enter the registered email address.',
   '密码至少需要 8 个字符。': 'Password must be at least 8 characters.',
   '密码已重置，请返回登录。': 'Password reset. Please return to login.',
   '个人资料': 'Profile',
@@ -519,6 +520,17 @@ const enTranslations = new Map(Object.entries({
   'WordPress 评论始终可用；第三方评论未启用或未填配置时不会加载。': 'WordPress comments are always available. Third-party comment systems load only when enabled and configured.',
   'Yneko-Reimu 主题设置': 'Yneko-Reimu Theme Settings',
   'Yneko-Reimu GitHub Login': 'Yneko-Reimu GitHub Login',
+  'GitHub 登录成功': 'GitHub login successful',
+  'GitHub 登录成功，正在返回评论区...': 'GitHub login successful. Returning to the comments...',
+  'GitHub login is not configured.': 'GitHub login is not configured.',
+  'Missing GitHub OAuth response.': 'Missing GitHub OAuth response.',
+  'GitHub login state expired. Please try again.': 'GitHub login state expired. Please try again.',
+  'GitHub did not return an access token.': 'GitHub did not return an access token.',
+  'GitHub API request failed.': 'GitHub API request failed.',
+  'GitHub profile is missing required fields.': 'GitHub profile is missing required fields.',
+  'This GitHub account is already linked to another WordPress account.': 'This GitHub account is already linked to another WordPress account.',
+  'No WordPress account is linked to this GitHub account.': 'No WordPress account is linked to this GitHub account.',
+  'This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub.': 'This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub.',
 }));
 
 async function listFiles(dir) {

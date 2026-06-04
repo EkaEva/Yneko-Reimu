@@ -911,7 +911,7 @@ msgstr "Please enter a valid email address."
 
 #: inc/comments.php
 msgid "请输入注册邮箱。"
-msgstr ""
+msgstr "Please enter the registered email address."
 
 #: inc/comments.php
 msgid "请先登录。"
@@ -1879,11 +1879,11 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "GitHub 登录成功"
-msgstr ""
+msgstr "GitHub login successful"
 
 #: inc/github-login.php
 msgid "GitHub 登录成功，正在返回评论区..."
-msgstr ""
+msgstr "GitHub login successful. Returning to the comments..."
 
 #: inc/customizer.php
 msgid "GitHub 链接"
@@ -1899,23 +1899,23 @@ msgstr "GitHub projects and works."
 
 #: inc/github-login.php
 msgid "GitHub API request failed."
-msgstr ""
+msgstr "GitHub API request failed."
 
 #: inc/github-login.php
 msgid "GitHub did not return an access token."
-msgstr ""
+msgstr "GitHub did not return an access token."
 
 #: inc/github-login.php
 msgid "GitHub login is not configured."
-msgstr ""
+msgstr "GitHub login is not configured."
 
 #: inc/github-login.php
 msgid "GitHub login state expired. Please try again."
-msgstr ""
+msgstr "GitHub login state expired. Please try again."
 
 #: inc/github-login.php
 msgid "GitHub profile is missing required fields."
-msgstr ""
+msgstr "GitHub profile is missing required fields."
 
 #: inc/settings/schema.php
 msgid "hexo-theme-reimu 原作者"
@@ -1935,7 +1935,7 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "Missing GitHub OAuth response."
-msgstr ""
+msgstr "Missing GitHub OAuth response."
 
 #: inc/setup.php
 msgid "Mobile Menu"
@@ -1943,7 +1943,7 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "No WordPress account is linked to this GitHub account."
-msgstr ""
+msgstr "No WordPress account is linked to this GitHub account."
 
 #: template-parts/meta/post-share.php
 msgid "Powered By %s"
@@ -1979,11 +1979,11 @@ msgstr ""
 
 #: inc/github-login.php
 msgid "This GitHub account is already linked to another WordPress account."
-msgstr ""
+msgstr "This GitHub account is already linked to another WordPress account."
 
 #: inc/github-login.php
 msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
-msgstr ""
+msgstr "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 
 #: inc/post-meta.php
 msgid "TOC"
