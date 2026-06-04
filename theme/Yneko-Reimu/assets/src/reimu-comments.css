@@ -322,6 +322,14 @@ body.reimu-login-on #mobile-nav {
   box-shadow: var(--shadow-card);
 }
 
+#comments .reimu-comment .comment-text.wl-content img,
+#comments .reimu-comment-preview-content.wl-content img {
+  display: block !important;
+  float: none !important;
+  margin: 8px auto 8px 0 !important;
+  text-align: left !important;
+}
+
 .comment-text pre,
 .reimu-comment-preview-content pre {
   overflow-x: auto;

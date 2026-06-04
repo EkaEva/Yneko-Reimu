@@ -224,7 +224,8 @@ function yneko_reimu_github_login_enqueue_styles() {
 		body.login .wp-pwd .wp-hide-pw.button.button-secondary,
 		body.login .wp-pwd .wp-hide-pw.button-secondary {
 			position: absolute !important;
-			top: 50% !important;
+			top: 0 !important;
+			bottom: 0 !important;
 			right: 7px !important;
 			display: inline-flex !important;
 			appearance: none !important;
@@ -234,7 +235,7 @@ function yneko_reimu_github_login_enqueue_styles() {
 			min-height: 0 !important;
 			align-items: center !important;
 			justify-content: center !important;
-			margin: 0 !important;
+			margin: auto 0 !important;
 			padding: 0 !important;
 			color: #2f64ff !important;
 			background: transparent !important;
@@ -245,15 +246,18 @@ function yneko_reimu_github_login_enqueue_styles() {
 			box-shadow: none !important;
 			line-height: 1 !important;
 			text-decoration: none !important;
-			transform: translateY(-50%) !important;
+			transform: none !important;
 		}
 		body.login .wp-pwd .wp-hide-pw .dashicons {
-			display: block !important;
+			display: inline-flex !important;
 			width: 20px !important;
 			height: 20px !important;
+			align-items: center !important;
+			justify-content: center !important;
 			margin: 0 !important;
 			font-size: 20px !important;
 			line-height: 20px !important;
+			transform: translateY(-1px) !important;
 		}
 		body.login .button-primary:hover,
 		body.login .button-primary:focus {

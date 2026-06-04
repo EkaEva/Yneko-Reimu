@@ -958,3 +958,10 @@
 - Added password-input right padding inside `.wp-pwd` so the centered visibility icon no longer crowds the typed password.
 - Fixed comment body and preview media alignment by explicitly left-aligning comment text containers, paragraphs, and image/GIF blocks.
 - Extended the GitHub OAuth contract gate to protect the stronger login password button override and extended the comments/profile contract gate to protect comment media alignment CSS anchors.
+
+## 2026-06-04 v0.2.4 Phase 1 Visual Follow-up 2
+
+- Started a second screenshot-driven visual pass after comment `.wl-content` media still appeared centered and the WordPress login password icon still sat slightly low.
+- Raised the comment media override to `#comments .reimu-comment .comment-text.wl-content img` and preview `.wl-content` media, forcing block display, no float, and left-side margins with `!important` to beat later content image rules.
+- Changed the login `.wp-hide-pw` positioning from `top: 50%` plus translate to top/bottom auto centering, and nudged the dashicons glyph up by 1px for visual centering.
+- Updated comments/profile and GitHub OAuth contract gates so the stronger selector and visual-centering contract are protected.

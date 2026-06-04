@@ -198,12 +198,16 @@ const checks = [
       'body.login .button-secondary:not(.wp-hide-pw)',
       'body.login .wp-pwd .wp-hide-pw.button.button-secondary',
       'position: absolute !important;',
-      'top: 50% !important;',
-      'transform: translateY(-50%) !important;',
+      'top: 0 !important;',
+      'bottom: 0 !important;',
+      'margin: auto 0 !important;',
+      'transform: none !important;',
       'background: transparent !important;',
       'border: 0 !important;',
       'box-shadow: none !important;',
-      'body.login .wp-pwd .wp-hide-pw .dashicons'
+      'body.login .wp-pwd .wp-hide-pw .dashicons',
+      'display: inline-flex !important;',
+      'transform: translateY(-1px) !important;'
     ]
   },
   {
