@@ -671,3 +671,24 @@ Goal: extend the local WordPress QA pass from smoke coverage into comments/profi
 - This QA round found and fixed an empty English translation for the profile-save comment-badge-review success message.
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, and `npm run check:package`.
 - The next round should add an i18n completeness guard for high-impact AJAX/user-facing strings so empty `en_US` translations cannot silently erase messages again.
+
+## 2026-06-04 I18n Message Contract Gate
+
+Goal: add a focused i18n quality gate so high-impact AJAX/profile/comment/review messages cannot ship with an empty `en_US` translation after `npm run build` regenerates gettext files.
+
+### Phases
+
+1. Identify high-impact message scope from comments/profile/review flows - complete
+2. Add a dependency-free i18n message contract checker - complete
+3. Wire the checker into `npm run check` and public development docs - complete
+4. Run full verification and package checks - complete
+5. Commit and push public changes only; do not create the `v0.1.15` tag - complete
+
+### Decisions
+
+- This gate is intentionally scoped to user-visible feedback in auth, profile, comment, upload, and review flows.
+- The gate does not require every historical `en_US.po` string to be translated.
+- The source of truth remains `tools/build-i18n.mjs`; the checker validates generated `theme/Yneko-Reimu/languages/en_US.po`.
+- Adding a new high-impact AJAX/review message should require adding it to the checker and to the English translation table in the same change.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, and `npm run check:package`.
+- The next round should either expand the i18n contract to email/OAuth security messages or move to another high-risk QA surface such as GitHub OAuth callback behavior.

@@ -377,3 +377,11 @@
 - Admin Users review UI renders one pending badge card and one pending avatar card for qauser. Approving the custom badge changes the action set from approve/reject to revoke; approving the avatar changes the action set from approve/reject to delete.
 - Admin Comments review UI renders a pending temporary image upload card with approve/reject/delete links. A direct admin-action verification promoted a temporary image into `yneko-reimu-comments/YYYY/MM/`, updated the comment content URL, approved the held comment, cleared temp review meta, and created an approved attachment record.
 - Limitation: browser text entry/file upload remained constrained by the in-app automation runtime, so profile form mutation and comment media upload were verified through the same PHP AJAX/admin handlers rather than direct browser file-selection.
+
+## 2026-06-04 I18n Message Contract Gate Findings
+
+- Added `tools/check-i18n-messages.mjs` as a dependency-free contract check for high-impact English feedback strings in auth, profile, comment, upload, and review flows.
+- `npm run check` now runs the i18n message contract after `npm run build`, so it validates regenerated `theme/Yneko-Reimu/languages/en_US.po` rather than stale files.
+- The gate currently covers 27 user-visible messages, including login expiry/success, profile save success variants, password mismatch, avatar/tag/comment review statuses, comment submit/update/delete feedback, upload errors, and permission/invalid-upload errors.
+- Filled focused English translation gaps for review statuses and admin/upload feedback: avatar/tag/comment review rejected/pending, pending admin upload, invalid comment upload attachment, insufficient permissions, comment updated, and comment deleted.
+- This is intentionally not a full translation-completeness check; existing low-risk historical empty `en_US.po` entries remain outside the gate until they become high-impact feedback or are translated in a dedicated pass.

@@ -171,11 +171,11 @@ msgstr "Tags"
 
 #: inc/comments.php inc/enqueue.php
 msgid "标签审核不通过"
-msgstr ""
+msgstr "Badge review rejected"
 
 #: inc/comments.php inc/enqueue.php
 msgid "标签审核中"
-msgstr ""
+msgstr "Badge pending review"
 
 #: inc/comments.php inc/enqueue.php
 msgid "标签已更新"
@@ -795,11 +795,11 @@ msgstr ""
 
 #: inc/comments.php inc/enqueue.php
 msgid "评论审核不通过"
-msgstr ""
+msgstr "Comment review rejected"
 
 #: inc/comments.php inc/enqueue.php
 msgid "评论审核中"
-msgstr ""
+msgstr "Comment pending review"
 
 #: inc/comments.php inc/enqueue.php
 msgid "评论提交失败。"
@@ -819,7 +819,7 @@ msgstr ""
 
 #: inc/comments.php
 msgid "评论已更新。"
-msgstr ""
+msgstr "Comment updated."
 
 #: comments.php
 msgid "评论已关闭。"
@@ -827,7 +827,7 @@ msgstr "Comments are closed."
 
 #: inc/comments.php
 msgid "评论已删除。"
-msgstr ""
+msgstr "Comment deleted."
 
 #: inc/comments.php inc/enqueue.php
 msgid "评论已提交，正在等待审核。"
@@ -959,7 +959,7 @@ msgstr "Cancel reply"
 
 #: inc/comments/uploads.php inc/comments.php
 msgid "权限不足。"
-msgstr ""
+msgstr "Insufficient permissions."
 
 #: inc/enqueue.php
 msgid "确定删除这条评论吗？"
@@ -1171,7 +1171,7 @@ msgstr "Avatar upload failed."
 
 #: inc/comments.php inc/enqueue.php
 msgid "头像审核不通过"
-msgstr ""
+msgstr "Avatar review rejected"
 
 #: inc/comments.php inc/enqueue.php inc/settings/renderers.php
 msgid "头像审核中"
@@ -1263,7 +1263,7 @@ msgstr ""
 
 #: inc/comments/uploads.php
 msgid "文件已上传，等待管理员审核。"
-msgstr ""
+msgstr "File uploaded and pending administrator review."
 
 #: template-parts/layout/sidebar-common.php
 msgid "文章"
@@ -1319,7 +1319,7 @@ msgstr ""
 
 #: inc/comments/uploads.php
 msgid "无效的评论上传附件。"
-msgstr ""
+msgstr "Invalid comment upload attachment."
 
 #: template-parts/content/content-single.php
 msgid "下一篇"

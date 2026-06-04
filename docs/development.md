@@ -9,6 +9,7 @@ npm install
 npm run check:js
 npm run check:settings-admin
 npm run build
+npm run check:i18n-messages
 npm run check:size
 npm run report:php-complexity
 npm run package
@@ -22,6 +23,8 @@ npm run lint:php
 ```
 
 `npm run build` generates gettext files, cursor PNGs, minified Vite assets, and the build manifest in `theme/Yneko-Reimu/assets/dist/`.
+
+`npm run check:i18n-messages` verifies that high-impact English feedback strings in auth, profile, comment, upload, and review flows are not empty after gettext files are regenerated. It is a focused user-facing message contract, not a requirement that every historical `en_US.po` entry is translated.
 
 `npm run check:size` enforces the short-term public asset budgets:
 

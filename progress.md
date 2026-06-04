@@ -392,3 +392,16 @@
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1100.zip` and reported 134 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Next round should broaden automated coverage around i18n completeness or add a targeted check that important AJAX success/error strings in `en_US.po` are not empty.
+
+## 2026-06-04 I18n Message Contract Gate
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Added `tools/check-i18n-messages.mjs` to verify 27 high-impact auth/profile/comment/upload/review `en_US.po` messages are present and non-empty.
+- Added `npm run check:i18n-messages` and wired it into `npm run check` after `npm run build`, so regenerated gettext files are checked.
+- Updated `tools/build-i18n.mjs` with focused English translations for avatar/tag/comment review statuses, pending upload review, invalid comment upload attachment, insufficient permissions, and comment update/delete feedback.
+- Regenerated `theme/Yneko-Reimu/languages/en_US.po` and `theme/Yneko-Reimu/languages/en_US.mo`.
+- Updated `docs/development.md` to document the focused i18n message contract.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1108.zip` and reported 134 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Next round should either expand the i18n contract to email/OAuth security messages or move to another high-risk QA surface such as GitHub OAuth callback behavior.
