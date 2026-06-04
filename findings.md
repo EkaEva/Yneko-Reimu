@@ -330,3 +330,11 @@
 - Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 177 lines / score 243 to 114 lines / score 133.
 - This split does not touch profile AJAX handlers, avatar review approval/rejection actions, user badge approval/revoke actions, nonce names, payload fields, user meta keys, or front-end profile behavior.
 - The first-stage settings page panel decomposition is now effectively complete: `inc/settings/page.php` owns the top-level form, tabs, general panel, submit controls, and admin GIF upload form, while all extracted tab panels live in `inc/settings/panels.php`.
+
+## 2026-06-04 Settings Admin Contract Gate Findings
+
+- `tools/check-settings-admin-contract.mjs` now verifies the extracted settings admin structure: 10 tabs, 10 matching panels, one page-level call for each extracted panel renderer, and required top-level form/GIF upload form snippets.
+- The gate checks key field contracts across GitHub OAuth, i18n, search, comments, users, extensions, external comments, friends, and music settings, plus repeatable friend/music row fields in `inc/settings/renderers.php`.
+- The gate also checks review-management contracts that are easy to break during renderer moves: comment GIF upload, comment upload review, user badge review, user avatar review, and user/avatar review badge headings.
+- `npm run check` now includes `npm run check:settings-admin`, so this structural contract runs before build/size/PHPCS.
+- This static gate is stronger than relying on diff review alone, but it does not prove browser-level admin UI behavior such as tab clicking, media modal interaction, repeatable add/remove actions, or save flows.

@@ -340,3 +340,11 @@
 - Ran `npm run lint:php`; PHPCS passed.
 - Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 114 lines and score 133.
 - Next round should perform a focused admin settings UI/manual checklist and decide whether the settings-page decomposition phase can be considered complete.
+
+## 2026-06-04 Settings Admin Contract Gate
+
+- Added `tools/check-settings-admin-contract.mjs` to verify settings tabs, matching panels, extracted renderer calls, key settings fields, repeatable friend/music row fields, admin GIF upload form ownership, and comments/users review helper contracts.
+- Added `npm run check:settings-admin` and included it in `npm run check`.
+- Updated `docs/development.md` with the new command and settings panel ownership notes.
+- Ran `npm run check:settings-admin`; it passed with 10 tabs and 10 panels verified.
+- Next round should perform a final completion audit against the full plan before deciding whether the persistent goal can be marked complete.

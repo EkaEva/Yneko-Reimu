@@ -7,6 +7,7 @@ Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in 
 ```bash
 npm install
 npm run check:js
+npm run check:settings-admin
 npm run build
 npm run check:size
 npm run report:php-complexity
@@ -34,6 +35,8 @@ npm run lint:php
 
 `npm run report:php-complexity` scans the runtime theme PHP files and reports the largest files, largest named functions, and highest approximate branch scores. It is informational for now so the project can track legacy complexity before turning any threshold into a failing quality gate.
 
+`npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the 10 settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields and review helper calls remain present.
+
 ## Source Layout
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.
@@ -41,6 +44,8 @@ npm run lint:php
 - `tools/` contains i18n, cursor, asset, and package scripts.
 
 Admin settings JavaScript is maintained in `theme/Yneko-Reimu/assets/src/admin-settings.js` and built to `assets/dist/admin-settings.js`. PHP should only enqueue the built admin script and inject the small `YNEKO_REIMU_ADMIN_I18N` configuration object before it.
+
+Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/settings/panels.php`. When changing tabs, panel names, field names, repeatable rows, or review sections, update `tools/check-settings-admin-contract.mjs` in the same change.
 
 ## Development Constraints
 

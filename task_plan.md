@@ -593,3 +593,21 @@ Goal: move the users settings panel into `inc/settings/panels.php` while preserv
 - Review badge counts are still provided by `yneko_reimu_admin_review_badge_counts()` and passed into the users panel renderer.
 - This split does not touch profile AJAX handlers, avatar review actions, badge review actions, user meta keys, nonce names, payload fields, or front-end profile behavior.
 - The next round should perform a focused admin settings UI/manual checklist and then decide whether the settings-page decomposition is complete for this phase.
+
+## 2026-06-04 Settings Admin Contract Gate
+
+Goal: add a reproducible settings admin contract check so future settings-page renderer changes cannot silently remove tabs, panels, key field names, repeatable row fields, or review helper sections.
+
+### Phases
+
+1. Identify settings admin structural contracts after panel extraction - complete
+2. Add `tools/check-settings-admin-contract.mjs` - complete
+3. Expose `npm run check:settings-admin` and include it in `npm run check` - complete
+4. Document the new gate and run full verification - complete
+
+### Decisions
+
+- The contract gate verifies 10 settings tabs, 10 matching panels, all extracted panel renderer calls, key settings fields, repeatable friend/music row fields, admin GIF upload form ownership, and comments/users review helper calls.
+- This is a static structural gate, not a replacement for manual WordPress admin UI testing.
+- The gate keeps `PROJECT.md` / `AGENTS.md` local-only behavior unchanged and does not alter runtime theme behavior.
+- The next round should perform a final completion audit against the original optimization plan and only mark the goal complete if current evidence proves all explicit requirements are satisfied.
