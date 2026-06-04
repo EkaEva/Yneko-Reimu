@@ -782,3 +782,30 @@ Goal: exercise registration email codes, password-reset email codes, profile ema
 - Verification passed: local stubbed Email/TOTP QA, `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1151.zip` and reported 136 entries with no forbidden development files.
 - The next round should perform staging/manual SMTP and browser-modal QA for email/TOTP, or move to another remaining high-risk area such as real GitHub OAuth happy-path staging.
+
+## 2026-06-04 Real SMTP and Browser Email/TOTP QA
+
+Goal: verify the remaining Email/TOTP release-blocking paths with real SMTP delivery through a local mail-capture service and browser-level modal interaction, then check whether GitHub OAuth happy-path QA can run with real OAuth credentials.
+
+### Phases
+
+1. Start a local mail-capture SMTP service and wire WordPress `wp_mail()` to it - complete
+2. Verify browser registration code send/countdown/mail/register flow - complete
+3. Verify browser password-reset code send/countdown/mail/reset flow - complete
+4. Verify browser profile email code send/countdown/mail/save flow - complete
+5. Verify browser profile TOTP generation, QR display, save, and login 2FA step - complete
+6. Check real GitHub OAuth happy-path prerequisites - complete
+7. Record evidence, limitations, and next release-blocking work - complete
+
+### Decisions
+
+- Mailpit was started as a local-only Docker container on the WordPress Docker network; WordPress used a local-only `wp-local/mailpit-smtp.php` mu-plugin to send real SMTP mail to Mailpit.
+- Local helper scripts and Mailpit configuration remain under ignored `wp-local/` or container state and must not be committed or packaged.
+- Browser QA used the real theme login/profile modals. The in-app browser backend could not use clipboard-based text filling, so text entry used raw keyboard input where needed; profile login was bootstrapped with the existing local `login-as.php` helper only after verifying password reset state, to avoid spending the round on browser-input tool limitations.
+- Verified real SMTP delivery for registration, password-reset, and profile-email verification messages, including non-empty subject/body, six-digit code, and five-minute expiry text.
+- Verified UI countdown states for registration, password reset, and profile email code buttons.
+- Verified profile modal displays current/new email fields, TOTP enablement, generated secret, and visible QR image.
+- Verified TOTP save succeeds and a later login requires the two-factor step, rejects password-only login by asking for a code, and succeeds with the current generated TOTP code.
+- Real GitHub OAuth happy-path QA could not run in this environment because no real GitHub OAuth Client ID/Secret or staging callback credentials are configured in WordPress settings or environment variables.
+- Verification passed after record updates: `npm run check` and `npm audit --audit-level=moderate`.
+- The next round needs user-provided/staging OAuth credentials and a callback URL registered in a GitHub OAuth App, or confirmation to skip real GitHub OAuth happy-path until release staging.

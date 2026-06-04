@@ -465,3 +465,24 @@
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1151.zip` and reported 136 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Next round should perform staging/manual SMTP and browser-modal QA for email/TOTP, or move to real GitHub OAuth happy-path staging.
+
+## 2026-06-04 Real SMTP and Browser Email/TOTP QA
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Confirmed WordPress Docker containers were running and the mounted Yneko-Reimu theme was active.
+- Started local-only Mailpit container `wp-local-mailpit` on the same Docker network as WordPress.
+- Added local-only `wp-local/mailpit-smtp.php` and copied it into the WordPress container as a mu-plugin so browser-triggered `wp_mail()` uses real SMTP delivery to Mailpit.
+- Proved SMTP delivery with a direct `wp_mail()` call captured by Mailpit.
+- Reset local QA users/transients with local-only helpers and cleared Mailpit by recreating the container.
+- Browser QA opened `http://127.0.0.1:8095/yneko-qa-post/` successfully.
+- Browser registration flow passed: code button countdown, real SMTP registration message, code submission, and return to login panel.
+- Browser password-reset flow passed: code button countdown, real SMTP password-reset message, code submission, password reset, and return to login panel.
+- Browser profile email flow passed: profile modal opened, code button countdown, real SMTP profile-email message, code submission, profile save, and current email display update.
+- Browser TOTP flow passed: TOTP checkbox, secret generation, visible QR image, profile save with generated code, and confirmed `_yneko_reimu_totp_enabled` with no pending secret.
+- Browser 2FA login flow passed: password-only login showed the two-factor prompt, entering the current generated TOTP code logged in successfully.
+- Browser input limitation: clipboard-backed `fill()` / `type()` failed in this in-app browser backend; raw keyboard input was used, and `login-as.php` was used only to establish a browser session after server-side verification of reset credentials.
+- Checked GitHub OAuth happy-path prerequisites: WordPress has no GitHub OAuth Client ID/Secret configured and no matching OAuth environment variables are present. Real GitHub OAuth happy-path QA cannot be completed without a real OAuth App and callback configuration.
+- Updated `docs/email-totp-qa.md`, `docs/github-oauth-qa.md`, `task_plan.md`, `findings.md`, and `progress.md` with real SMTP/browser QA evidence and GitHub OAuth credential limitation.
+- Verification passed: `npm run check` and `npm audit --audit-level=moderate`.
+- `git status --short --branch` shows only public docs/record files modified; local-only `wp-local/` helpers remain ignored.
+- Next step: commit and push public records; do not create the `v0.1.15` tag.

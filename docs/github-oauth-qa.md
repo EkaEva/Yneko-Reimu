@@ -46,4 +46,8 @@ Checklist:
 - Verify an already-linked GitHub account logs in to the existing WordPress user.
 - Verify admin settings never expose the client secret outside the password input value and that release packages do not contain local credentials.
 
+## Current Real-App Status
+
+The 2026-06-04 local QA environment has no real GitHub OAuth Client ID or Client Secret configured, and no OAuth credential environment variables were present. The real happy path is therefore still release-blocking until a staging callback URL and GitHub OAuth App credentials are available.
+
 Do not create or push the `v0.1.15` tag as part of QA.

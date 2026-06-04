@@ -57,4 +57,16 @@ Checklist:
 - Confirm the login modal transitions into the two-factor step and accepts a valid current TOTP code.
 - Confirm cleanup removes test users, pending TOTP secrets, and captured mail data.
 
+## Local Real SMTP Evidence
+
+The 2026-06-04 local browser QA pass used Mailpit on the same Docker network as WordPress and a local-only SMTP mu-plugin to route real `wp_mail()` messages into the capture service.
+
+Verified:
+
+- Registration, password-reset, and profile-email messages were delivered through SMTP.
+- Each captured verification message had a non-empty subject, body, six-digit code, and five-minute expiry text.
+- Registration, password-reset, and profile-email code buttons entered the resend countdown state in the browser.
+- Profile modal displayed the current email, new-email/code controls, TOTP toggle, generated secret, and visible QR image.
+- TOTP save enabled two-factor authentication, and the login modal required and accepted the current authenticator code.
+
 Do not create or push the `v0.1.15` tag as part of QA.
