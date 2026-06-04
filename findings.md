@@ -614,3 +614,10 @@
 - Existing inline SVG fragments in comments, GitHub login, template tags, and the Taichi component are small UI components rather than replaceable image assets, so they remain inline in this round.
 - `npm run check:assets` scans runtime PHP/CSS/JS and fails on `data:image`, SVG base64 MIME fragments, or generic `;base64,` payload markers.
 - Vite also copied Lily cursor PNGs into `assets/dist` because the main CSS references cursor files. The build script removes those duplicate dist copies after Vite completes; the runtime cursor files continue to ship from `assets/images/cursor`.
+
+## 2026-06-04 v0.2.2 PJAX Share/Footer Style Findings
+
+- The screenshot symptom matches a PJAX stylesheet availability bug: share/footer markup arrives through a partial content replacement, but `reimu-share.css` had only been enqueued on full page loads where PHP detected share links.
+- A full refresh fixes the layout because WordPress enqueue runs for the target post/virtual page and includes `assets/dist/reimu-share.css`.
+- The safest fix is to keep `reimu-share.css` globally available, like search and comments/profile enhancement CSS, while leaving the share JavaScript runtime lazy-loaded by `.share-wrapper` presence.
+- The global cost is small: `assets/dist/reimu-share.css` is about 2.9 KB and remains protected by the 14 KB size gate.

@@ -18,7 +18,7 @@ v0.2.1 是一次发布就绪与本地 QA 补强版本，重点修复审查中发
 - 新增 CSS 拆分计划门禁，记录评论/Profile、播放器、代码块、PhotoSwipe、分享和搜索样式的目标拆分边界与预算。
 - 将侧栏 APlayer 播放器增强样式拆分为条件加载的 `reimu-player.css`，降低主 `reimu.css` 体积。
 - 将 PhotoSwipe 图片灯箱增强样式拆分为条件加载的 `reimu-photoswipe.css`，与现有 PhotoSwipe 功能开关和懒加载运行时保持一致。
-- 将文章分享和微信弹窗增强样式拆分为页面上下文加载的 `reimu-share.css`，与现有懒加载分享运行时保持一致。
+- 将文章分享和微信弹窗增强样式拆分为 `reimu-share.css`，与现有懒加载分享运行时保持一致。
 - 将代码块/YML 编辑器、虚拟页 highlight 和 Mermaid 内容增强样式拆分为内容上下文加载的 `reimu-code.css`。
 - 将搜索页表单、搜索弹窗状态和结果标签增强样式拆分为 `reimu-search.css`，搜索运行时仍保持交互懒加载。
 - 将评论、登录弹窗和个人资料弹窗样式拆分为全局加载的 `reimu-comments.css`；评论/Profile 的 AJAX 与运行时逻辑仍保留在主经典脚本中。
@@ -52,7 +52,7 @@ v0.2.1 is a release-readiness and local-QA hardening release focused on metadata
 - Added a CSS split-plan gate covering target boundaries and budgets for comments/profile, player, code content, PhotoSwipe, share, and search styles.
 - Split sidebar APlayer enhancement styles into conditional `reimu-player.css`, reducing the main `reimu.css` payload.
 - Split PhotoSwipe lightbox enhancement styles into conditional `reimu-photoswipe.css`, aligned with the existing PhotoSwipe feature gate and lazy runtime.
-- Split article share and Weixin popup enhancement styles into page-context `reimu-share.css`, aligned with the existing lazy share runtime.
+- Split article share and Weixin popup enhancement styles into `reimu-share.css`, aligned with the existing lazy share runtime.
 - Split code/YML editor, virtual-page highlight, and Mermaid content enhancement styles into content-context `reimu-code.css`.
 - Split search form, search-popup state, and result-label enhancement styles into `reimu-search.css` while keeping the search runtime interaction-lazy.
 - Split comments, login modal, and profile modal styles into a global `reimu-comments.css`; comments/profile AJAX and runtime logic remain in the main classic script.

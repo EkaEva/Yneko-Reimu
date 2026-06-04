@@ -855,3 +855,22 @@
 - Package inline-image scan confirmed no `data:image`, SVG base64, or `;base64,` payloads in packaged PHP/CSS/JS.
 - Ran `git diff --check`; no whitespace errors were reported. Git printed existing CRLF normalization warnings for `README.md` and `theme/Yneko-Reimu/assets/src/reimu-comments.css`.
 - The image/SVG resource hygiene plan is complete. No next round is required for this plan unless a future icon system migration is desired.
+
+## 2026-06-04 v0.2.2 PJAX Share/Footer Style Fix
+
+- Started a focused bug-fix round for article/virtual-page footer layout disorder on first PJAX navigation.
+- Confirmed `reimu-share.css` was previously conditionally enqueued through `yneko_reimu_should_enqueue_share_styles()`, which works on full refresh but can miss share/footer markup inserted by PJAX.
+- Updated `theme/Yneko-Reimu/inc/enqueue.php` so `yneko-reimu-share` is globally enqueued before `yneko-reimu-main`, while `reimu-share.js` remains lazy-loaded only when `.share-wrapper` exists.
+- Removed the no-longer-needed `yneko_reimu_should_enqueue_share_styles()` helper.
+- Updated `tools/css-split-plan.mjs` and `docs/development.md` to document the global share stylesheet rationale for PJAX safety.
+- Updated the version line to `0.2.2` in `package.json`, `package-lock.json`, `style.css`, `functions.php`, runtime `readme.txt`, and README release examples.
+- Added `docs/release-notes-v0.2.2.md` following the previous bilingual release-note format.
+- Ran targeted checks: `npm run check:enqueue`, `npm run check:css-split`, and `npm run check:release-readiness`; all passed.
+- Ran `npm run build`; it passed and rebuilt v0.2.2 assets.
+- Ran `npm run check`; it passed across JS syntax, settings admin, Customizer, enqueue, comments/profile, GitHub OAuth, release-readiness, CSS split, build, asset hygiene, i18n message, size/classic-script, and PHP standards wrapper gates.
+- Ran `npm audit --audit-level=moderate`; it reported 0 vulnerabilities.
+- Ran full PHP syntax lint over 74 runtime theme PHP files; all passed.
+- Ran `npm run package`; generated `releases/Yneko-Reimu-v0.2.2-20260604-2114.zip`.
+- Ran `npm run check:package`; the ZIP contains 149 entries and no forbidden development files.
+- ZIP spot check confirmed `assets/dist/reimu-share.css`, `assets/dist/reimu.css`, `assets/dist/reimu-share.js`, and `docs/release-notes-v0.2.2.md` are included, while `assets/dist/manifest.json`, `assets/src/reimu-share.css`, `PROJECT.md`, and `AGENTS.md` are absent.
+- Ran `git diff --check`; no whitespace errors were reported. Git printed an existing CRLF normalization warning for `README.md`.

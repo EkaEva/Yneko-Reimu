@@ -73,11 +73,11 @@ export const cssSplitPlan = [
   {
     feature: 'share',
     owner: 'assets/src/reimu-share.css',
-    currentLoading: 'page-context reimu-share.css plus lazy share JS',
-    targetLoading: 'page-context stylesheet',
+    currentLoading: 'global reimu-share.css plus lazy share JS',
+    targetLoading: 'global share enhancement stylesheet',
     targetOutput: 'assets/dist/reimu-share.css',
-    trigger: '.share-wrapper present',
-    gate: '.reimu-post-share or .share-wrapper DOM presence',
+    trigger: '.share-wrapper present after full load or PJAX content replacement',
+    gate: 'share markup can appear after PJAX navigation, while share runtime still loads on .share-wrapper presence',
     maxBytes: 14 * 1024,
     selectors: [
       '.share-wrapper',
@@ -86,7 +86,7 @@ export const cssSplitPlan = [
       '.share-weixin',
       '.share-weixin-qr'
     ],
-    notes: 'Article share layout and Weixin popup enhancement styles now load only when PHP expects share markup on the current page.'
+    notes: 'Article share layout and Weixin popup enhancement styles stay globally enqueued so PJAX navigation into posts or virtual pages cannot render share/footer markup before the stylesheet exists.'
   },
   {
     feature: 'search',
