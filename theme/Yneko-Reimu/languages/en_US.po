@@ -569,7 +569,7 @@ msgstr "Reply"
 msgid "回复评论"
 msgstr "Reply to comment"
 
-#: inc/github-login.php
+#: inc/github-login/rendering.php
 msgid "或使用 GitHub 登录"
 msgstr "Or use GitHub"
 
@@ -1053,7 +1053,7 @@ msgstr ""
 msgid "生成密钥"
 msgstr "Generate key"
 
-#: inc/github-login.php
+#: inc/github-login/rendering.php
 msgid "使用 GitHub 登录"
 msgstr "Login with GitHub"
 
@@ -1817,23 +1817,23 @@ msgstr ""
 msgid "Archives"
 msgstr "Archives"
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Callback URL"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Client ID"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Client Secret"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Create a GitHub OAuth App and paste its credentials here. Keep the client secret private."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Create a subscriber account when a verified GitHub user logs in for the first time."
 msgstr ""
 
@@ -1881,11 +1881,11 @@ msgstr ""
 msgid "GIF 已通过"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub 登录成功"
 msgstr "GitHub login successful"
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub 登录成功，正在返回评论区..."
 msgstr "GitHub login successful. Returning to the comments..."
 
@@ -1901,23 +1901,23 @@ msgstr "GitHub Project"
 msgid "GitHub 项目与作品。"
 msgstr "GitHub projects and works."
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub API request failed."
 msgstr "GitHub API request failed."
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub did not return an access token."
 msgstr "GitHub did not return an access token."
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub login is not configured."
 msgstr "GitHub login is not configured."
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub login state expired. Please try again."
 msgstr "GitHub login state expired. Please try again."
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "GitHub profile is missing required fields."
 msgstr "GitHub profile is missing required fields."
 
@@ -1937,7 +1937,7 @@ msgstr ""
 msgid "Markdown is supported"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "Missing GitHub OAuth response."
 msgstr "Missing GitHub OAuth response."
 
@@ -1945,7 +1945,7 @@ msgstr "Missing GitHub OAuth response."
 msgid "Mobile Menu"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "No WordPress account is linked to this GitHub account."
 msgstr "No WordPress account is linked to this GitHub account."
 
@@ -1981,11 +1981,11 @@ msgstr ""
 msgid "SVG 包含不安全内容，已拒绝上传。"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "This GitHub account is already linked to another WordPress account."
 msgstr "This GitHub account is already linked to another WordPress account."
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 msgstr "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 
@@ -1993,7 +1993,7 @@ msgstr "This GitHub email already belongs to an existing WordPress account. Plea
 msgid "TOC"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Users"
 msgstr ""
 
@@ -2029,6 +2029,6 @@ msgstr ""
 msgid "Yneko-Reimu 主题作者"
 msgstr "Yneko-Reimu theme author"
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Yneko-Reimu GitHub Login"
 msgstr "Yneko-Reimu GitHub Login"

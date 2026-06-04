@@ -644,3 +644,11 @@
 - `functions.php` loads only `inc/template-tags.php`, so the safest compatibility boundary is to keep that entrypoint and have it require internal `inc/template-tags/` modules.
 - The public Template Tags surface is broader than the file name suggests: templates, Customizer, widgets, i18n helpers, virtual pages, share/social output, GitHub projects, navigation filters, `template_include`, and the sponsor shortcode all depend on existing helper names or hooks.
 - `tools/check-template-tags-contract.mjs` should protect the new split by checking module loading, key helper functions, virtual page slugs, navigation hooks, sponsor shortcode, share/social platforms, and GitHub project transient/filter contracts.
+
+## 2026-06-04 v0.2.3 GitHub OAuth Split Findings
+
+- After the Template Tags split, `inc/github-login.php` remained a meaningful maintenance hotspot because it mixed settings/defaults, button rendering, OAuth transport, user lookup/binding, avatar fallback, and access restrictions in one entrypoint.
+- `functions.php` loads only `inc/github-login.php`, so the safest compatibility boundary is to keep that entrypoint and have it require internal `inc/github-login/` modules.
+- The GitHub OAuth surface is public and regression-prone: login actions, legacy actions, bind nonce, settings field names, callback URL generation, OAuth scope/endpoints, state transient keys, popup message type, user meta keys, avatar fallback priority, and comment-user admin restrictions all need to remain stable.
+- The split keeps existing function names and hook callbacks while moving responsibility into `settings.php`, `rendering.php`, `oauth.php`, `users.php`, `avatars.php`, and `access.php`.
+- `tools/check-github-oauth-contract.mjs` now reads the entrypoint and all six internal modules, and checks that the entrypoint loads each module before validating the existing OAuth contract groups.

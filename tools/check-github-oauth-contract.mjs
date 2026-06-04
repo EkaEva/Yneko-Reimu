@@ -4,20 +4,68 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const githubPath = resolve(root, 'theme/Yneko-Reimu/inc/github-login.php');
+const githubModulePaths = {
+  settings: resolve(root, 'theme/Yneko-Reimu/inc/github-login/settings.php'),
+  rendering: resolve(root, 'theme/Yneko-Reimu/inc/github-login/rendering.php'),
+  oauth: resolve(root, 'theme/Yneko-Reimu/inc/github-login/oauth.php'),
+  users: resolve(root, 'theme/Yneko-Reimu/inc/github-login/users.php'),
+  avatars: resolve(root, 'theme/Yneko-Reimu/inc/github-login/avatars.php'),
+  access: resolve(root, 'theme/Yneko-Reimu/inc/github-login/access.php')
+};
 const settingsPagePath = resolve(root, 'theme/Yneko-Reimu/inc/settings/page.php');
 const settingsPanelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
 const settingsSchemaPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php');
 const reimuSourcePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu.js');
 
-const [github, settingsPage, settingsPanels, settingsSchema, reimuSource] = await Promise.all([
+const [
+  githubEntry,
+  githubSettings,
+  githubRendering,
+  githubOauth,
+  githubUsers,
+  githubAvatars,
+  githubAccess,
+  settingsPage,
+  settingsPanels,
+  settingsSchema,
+  reimuSource
+] = await Promise.all([
   readFile(githubPath, 'utf8'),
+  readFile(githubModulePaths.settings, 'utf8'),
+  readFile(githubModulePaths.rendering, 'utf8'),
+  readFile(githubModulePaths.oauth, 'utf8'),
+  readFile(githubModulePaths.users, 'utf8'),
+  readFile(githubModulePaths.avatars, 'utf8'),
+  readFile(githubModulePaths.access, 'utf8'),
   readFile(settingsPagePath, 'utf8'),
   readFile(settingsPanelsPath, 'utf8'),
   readFile(settingsSchemaPath, 'utf8'),
   readFile(reimuSourcePath, 'utf8')
 ]);
 
+const github = [
+  githubEntry,
+  githubSettings,
+  githubRendering,
+  githubOauth,
+  githubUsers,
+  githubAvatars,
+  githubAccess
+].join('\n');
+
 const checks = [
+  {
+    label: 'OAuth module boundaries',
+    source: githubEntry,
+    snippets: [
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/settings.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/rendering.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/oauth.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/users.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/avatars.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/access.php';"
+    ]
+  },
   {
     label: 'OAuth default option keys',
     source: github,

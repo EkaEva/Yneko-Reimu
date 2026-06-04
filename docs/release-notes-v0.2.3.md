@@ -2,7 +2,7 @@
 
 ## 中文
 
-v0.2.3 是一次维护性拆分版本，重点继续降低 Comments 与 Template Tags 两个高频入口的复杂度，同时保持评论、资料、登录、上传、PJAX、导航、虚拟页面、社交分享和 GitHub 项目行为不变。
+v0.2.3 是一次维护性拆分版本，重点继续降低 Comments、Template Tags 与 GitHub OAuth 三个高频入口的复杂度，同时保持评论、资料、登录、上传、PJAX、导航、虚拟页面、社交分享、GitHub 项目和 GitHub 登录/绑定行为不变。
 
 ### 主要更新
 
@@ -13,6 +13,9 @@ v0.2.3 是一次维护性拆分版本，重点继续降低 Comments 与 Template
 - 将 `inc/template-tags.php` 拆成内部 Template Tags 模块，分别承载 layout/content、social/share、navigation/virtual 和 content-tools 职责，入口仍由 `functions.php` 加载 `inc/template-tags.php`。
 - 保持现有模板 helper 函数名、虚拟页面 slug、导航 URL、本地化路径、分享 URL、GitHub transient key、`template_include` / `wp_nav_menu_objects` hook 和赞赏 shortcode 不变。
 - 新增 `npm run check:template-tags`，覆盖 Template Tags 入口加载、关键 helper、hook/filter/shortcode、虚拟页面、社交/分享平台和 GitHub project contract。
+- 将 `inc/github-login.php` 拆成内部 GitHub OAuth 模块，分别承载 settings、rendering、oauth、users、avatars 和 access 职责，入口仍由 `functions.php` 加载 `inc/github-login.php`。
+- 保持 GitHub 登录 action、legacy action、绑定 nonce、设置字段、OAuth scope/endpoint、state transient、popup message type、头像 fallback 和后台访问限制行为不变。
+- 扩展 `npm run check:github-oauth`，覆盖 GitHub OAuth 模块加载边界以及原有登录、绑定、回调、设置、legacy fallback、头像和 popup contract。
 - 将主题版本、PHP 常量、npm 包版本同步到 `0.2.3`。
 
 ### 验证提示
@@ -22,7 +25,7 @@ v0.2.3 是一次维护性拆分版本，重点继续降低 Comments 与 Template
 
 ## English
 
-v0.2.3 is a maintainability split focused on reducing complexity in the comments and Template Tags entrypoints while preserving comment, profile, login, upload, PJAX, navigation, virtual page, social/share, and GitHub project behavior.
+v0.2.3 is a maintainability split focused on reducing complexity in the comments, Template Tags, and GitHub OAuth entrypoints while preserving comment, profile, login, upload, PJAX, navigation, virtual page, social/share, GitHub project, and GitHub login/binding behavior.
 
 ### Highlights
 
@@ -33,6 +36,9 @@ v0.2.3 is a maintainability split focused on reducing complexity in the comments
 - Split `inc/template-tags.php` into internal Template Tags modules for layout/content, social/share, navigation/virtual, and content-tools responsibilities while keeping `functions.php` loading the same entrypoint.
 - Preserved existing template helper function names, virtual page slugs, navigation URLs, localized paths, share URLs, GitHub transient keys, `template_include` / `wp_nav_menu_objects` hooks, and the sponsor shortcode.
 - Added `npm run check:template-tags` to cover Template Tags module loading, key helpers, hooks/filters/shortcode, virtual pages, social/share platforms, and GitHub project contracts.
+- Split `inc/github-login.php` into internal GitHub OAuth modules for settings, rendering, oauth, users, avatars, and access responsibilities while keeping `functions.php` loading the same entrypoint.
+- Preserved GitHub login actions, legacy actions, the bind nonce, settings fields, OAuth scope/endpoints, state transient, popup message type, avatar fallback, and admin-access restrictions.
+- Extended `npm run check:github-oauth` to cover the GitHub OAuth module loading boundary plus the existing login, bind, callback, settings, legacy fallback, avatar, and popup contracts.
 - Synced the theme header, PHP constant, and npm package version to `0.2.3`.
 
 ### Verification Notes

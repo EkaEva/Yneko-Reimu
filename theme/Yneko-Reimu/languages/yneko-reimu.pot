@@ -564,7 +564,7 @@ msgstr ""
 msgid "回复评论"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/rendering.php
 msgid "或使用 GitHub 登录"
 msgstr ""
 
@@ -1048,7 +1048,7 @@ msgstr ""
 msgid "生成密钥"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/rendering.php
 msgid "使用 GitHub 登录"
 msgstr ""
 
@@ -1812,23 +1812,23 @@ msgstr ""
 msgid "Archives"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Callback URL"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Client ID"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Client Secret"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Create a GitHub OAuth App and paste its credentials here. Keep the client secret private."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Create a subscriber account when a verified GitHub user logs in for the first time."
 msgstr ""
 
@@ -1876,11 +1876,11 @@ msgstr ""
 msgid "GIF 已通过"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub 登录成功"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub 登录成功，正在返回评论区..."
 msgstr ""
 
@@ -1896,23 +1896,23 @@ msgstr ""
 msgid "GitHub 项目与作品。"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub API request failed."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub did not return an access token."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub login is not configured."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "GitHub login state expired. Please try again."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "GitHub profile is missing required fields."
 msgstr ""
 
@@ -1932,7 +1932,7 @@ msgstr ""
 msgid "Markdown is supported"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/oauth.php
 msgid "Missing GitHub OAuth response."
 msgstr ""
 
@@ -1940,7 +1940,7 @@ msgstr ""
 msgid "Mobile Menu"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "No WordPress account is linked to this GitHub account."
 msgstr ""
 
@@ -1976,11 +1976,11 @@ msgstr ""
 msgid "SVG 包含不安全内容，已拒绝上传。"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "This GitHub account is already linked to another WordPress account."
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/users.php
 msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 msgstr ""
 
@@ -1988,7 +1988,7 @@ msgstr ""
 msgid "TOC"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Users"
 msgstr ""
 
@@ -2024,6 +2024,6 @@ msgstr ""
 msgid "Yneko-Reimu 主题作者"
 msgstr ""
 
-#: inc/github-login.php
+#: inc/github-login/settings.php
 msgid "Yneko-Reimu GitHub Login"
 msgstr ""

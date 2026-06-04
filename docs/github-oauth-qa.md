@@ -10,7 +10,9 @@ Run:
 npm run check:github-oauth
 ```
 
-The check guards public login actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta fallback, GitHub API scope/endpoints, popup message type, and high-impact OAuth error strings.
+The check guards the internal module loading boundary plus public login actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta fallback, GitHub API scope/endpoints, avatar fallback, popup message type, and high-impact OAuth error strings.
+
+As of v0.2.3, `inc/github-login.php` is a thin entrypoint that loads internal `inc/github-login/` modules for settings, rendering, OAuth transport, user binding, avatar fallback, and admin-access restrictions. This is a maintenance-only split; the QA surface below remains the same because actions, settings, meta keys, state handling, popup behavior, and callback URLs are intentionally preserved.
 
 ## Local Error-Path QA
 
@@ -94,4 +96,4 @@ Compatibility notes:
 
 The real GitHub OAuth happy path is verified locally as of 2026-06-04. Before a public release tag, run the final package/check sequence again and confirm the local-only OAuth helpers and credentials are absent from Git status and the release ZIP.
 
-Do not create or push the `v0.2.1` tag as part of QA.
+Do not create or push the `v0.2.3` tag as part of this maintenance QA.

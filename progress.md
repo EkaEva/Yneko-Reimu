@@ -923,3 +923,16 @@
 - Updated `docs/release-notes-v0.2.3.md`, `docs/development.md`, and planning records with the Template Tags split and new contract gate.
 - Full verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 82 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
 - Generated local validation package `releases/Yneko-Reimu-v0.2.3-20260604-2230.zip`; it contains the new Template Tags modules, `inc/comments/rendering.php`, and `docs/release-notes-v0.2.3.md`, and excludes `assets/src`, `assets/dist/manifest.json`, tools, `PROJECT.md`, and `AGENTS.md`.
+
+## 2026-06-04 v0.2.3 GitHub OAuth Split
+
+- Started the next v0.2.3 maintenance expansion for GitHub OAuth after the Comments rendering and Template Tags splits.
+- Kept `theme/Yneko-Reimu/inc/github-login.php` as the GitHub OAuth entrypoint loaded by `functions.php`.
+- Added internal modules under `theme/Yneko-Reimu/inc/github-login/`: `settings.php`, `rendering.php`, `oauth.php`, `users.php`, `avatars.php`, and `access.php`.
+- Moved existing defaults/options/URL helpers, login button rendering, OAuth begin/bind/callback/token/API flow, user lookup/create/bind helpers, avatar fallback filters, and comment-user access restrictions into the internal modules without renaming functions or hook callbacks.
+- Preserved public OAuth actions, legacy actions, bind nonce, option keys, settings fields, meta keys, scope/endpoints, state transient shape, popup message type, avatar priority, and admin-access behavior.
+- Extended `tools/check-github-oauth-contract.mjs` so it reads the entrypoint plus all six modules and verifies that `github-login.php` requires each internal module.
+- Targeted checks passed: `php -l` for `inc/github-login.php` and all six new modules, `npm run check:github-oauth`, `node --check tools/check-github-oauth-contract.mjs`, and `npm run report:php-complexity`.
+- Updated `docs/release-notes-v0.2.3.md`, `docs/development.md`, `docs/github-oauth-qa.md`, and planning records with the GitHub OAuth split.
+- Full verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 88 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated local validation package `releases/Yneko-Reimu-v0.2.3-20260604-2247.zip`; it contains all six `inc/github-login/*.php` modules, Template Tags modules, `inc/comments/rendering.php`, and `docs/release-notes-v0.2.3.md`, and excludes `assets/src`, `assets/dist/manifest.json`, tools, `PROJECT.md`, and `AGENTS.md`.
