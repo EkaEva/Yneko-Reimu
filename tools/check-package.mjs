@@ -75,10 +75,22 @@ const entries = await listZipEntriesWithPowerShell(zipPath);
 
 const normalized = entries.map((entry) => entry.replace(/\\/g, '/'));
 const forbidden = normalized.filter((entry) => forbiddenPatterns.some((pattern) => pattern.test(entry)));
+const requiredEntries = [
+  'Yneko-Reimu/readme.txt'
+];
+const missingRequired = requiredEntries.filter((entry) => !normalized.includes(entry));
 
 if (forbidden.length) {
   console.error(`[package] ${basename(zipPath)} contains forbidden files:`);
   for (const entry of forbidden) {
+    console.error(`- ${entry}`);
+  }
+  process.exit(1);
+}
+
+if (missingRequired.length) {
+  console.error(`[package] ${basename(zipPath)} is missing required runtime files:`);
+  for (const entry of missingRequired) {
     console.error(`- ${entry}`);
   }
   process.exit(1);

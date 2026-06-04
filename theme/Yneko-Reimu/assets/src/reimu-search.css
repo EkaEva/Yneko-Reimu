@@ -1,0 +1,89 @@
+.reimu-search-form {
+  display: flex;
+  gap: 8px;
+  max-width: 520px;
+  margin: 18px auto;
+}
+
+.reimu-search-form__field {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  color: var(--color-default);
+  background: var(--color-wrap);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.reimu-search-form__submit {
+  padding: 8px 14px;
+  color: #fff;
+  background: var(--red-1);
+  border: 0;
+  border-radius: 8px;
+}
+
+.reimu-hit-type {
+  margin-left: 10px;
+  color: var(--grey-9);
+  font-size: 12px;
+  opacity: .72;
+}
+
+body.search-popup-on {
+  overflow: hidden !important;
+}
+
+body.search-popup-on #mask {
+  z-index: 9998;
+  background: rgba(0, 0, 0, .32);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+body.search-popup-on #wrap,
+body.search-popup-on #mobile-nav {
+  filter: blur(4px);
+  transform: translateZ(0);
+  transition: filter .3s ease;
+}
+
+body.search-popup-on .site-search {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+body.search-popup-on .site-search .popup {
+  pointer-events: auto;
+}
+
+body.search-popup-on .popup.show {
+  z-index: 10001;
+}
+
+#reimu-search-input input {
+  cursor: var(--cursor-text) !important;
+}
+
+.site-search .reimu-bg {
+  left: 0;
+  right: auto;
+  max-width: min(62%, 430px);
+  max-height: 78%;
+  object-fit: contain;
+  object-position: left bottom;
+  pointer-events: none;
+}
+
+@media screen and (max-width: 767px) {
+  .reimu-search-form {
+    flex-direction: column;
+  }
+
+  .site-search .reimu-bg {
+    max-width: 86%;
+    opacity: .28;
+  }
+}

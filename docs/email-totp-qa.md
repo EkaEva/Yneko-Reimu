@@ -69,7 +69,7 @@ Verified:
 - Profile modal displayed the current email, new-email/code controls, TOTP toggle, generated secret, and visible QR image.
 - TOTP save enabled two-factor authentication, and the login modal required and accepted the current authenticator code.
 
-Do not create or push the `v0.2.0` tag as part of QA.
+Do not create or push the `v0.2.1` tag as part of QA.
 
 ## Production Mail Troubleshooting
 

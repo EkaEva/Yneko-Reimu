@@ -11,6 +11,8 @@ The comments/profile runtime covers:
 - comment submit, upload, upload discard, like, edit, delete, sorting, load-more, reply form movement, toolbar, media preview, and GIF picker.
 - login-state DOM refresh after login, logout, profile save, and PJAX navigation.
 
+The PHP entrypoint remains `inc/comments.php`. Request-free login/profile modal rendering lives in the internal `inc/comments/modals.php` module, and comment upload/review helpers live in `inc/comments/uploads.php`. Keep the existing function names, hooks, IDs, classes, and data attributes stable when moving implementation details between these internal files.
+
 ## Public Surface To Preserve
 
 Do not rename or remove these front-end config keys without a compatibility plan:
@@ -161,6 +163,14 @@ Run this checklist on a local WordPress site when changing comments/profile requ
 - Confirm `window.ReimuWP.init()` does not duplicate click handlers, status timers, or upload row bindings.
 
 ## Verification Commands
+
+The static contract gate is:
+
+```bash
+npm run check:comments-profile
+```
+
+It checks high-risk AJAX action names, nonce creation and verification, `window.REIMU_CONFIG` keys, front-end request payload fields, DOM selector anchors, source module boundaries, internal PHP modal/upload modules, and CSS selectors. Keep this gate in the same change when intentionally changing any contract listed above.
 
 For source-only changes:
 

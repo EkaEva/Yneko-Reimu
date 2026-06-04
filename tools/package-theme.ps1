@@ -61,6 +61,7 @@ $allowedFiles = @(
   'index.php',
   'LICENSE.txt',
   'page.php',
+  'readme.txt',
   'screenshot.png',
   'search.php',
   'searchform.php',

@@ -11,7 +11,13 @@ const budgets = new Map([
   ['assets/dist/reimu-search.js', 24 * 1024],
   ['assets/dist/reimu-photoswipe.js', 24 * 1024],
   ['assets/dist/reimu-share.js', 24 * 1024],
-  ['assets/dist/reimu.css', 220 * 1024]
+  ['assets/dist/reimu.css', 150 * 1024],
+  ['assets/dist/reimu-player.css', 20 * 1024],
+  ['assets/dist/reimu-photoswipe.css', 12 * 1024],
+  ['assets/dist/reimu-share.css', 14 * 1024],
+  ['assets/dist/reimu-code.css', 24 * 1024],
+  ['assets/dist/reimu-search.css', 16 * 1024],
+  ['assets/dist/reimu-comments.css', 52 * 1024]
 ]);
 
 function formatBytes(bytes) {

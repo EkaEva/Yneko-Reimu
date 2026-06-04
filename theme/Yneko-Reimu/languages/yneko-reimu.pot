@@ -72,7 +72,7 @@ msgstr ""
 msgid "© %s. Powered by WordPress."
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "+ 新增自定义标签"
 msgstr ""
 
@@ -120,7 +120,7 @@ msgstr ""
 msgid "版权文本"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "保存"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "到底了..."
 msgstr ""
 
-#: comments.php inc/comments.php inc/enqueue.php
+#: comments.php inc/comments/modals.php inc/comments.php inc/enqueue.php
 msgid "登录"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "发送验证码"
 msgstr ""
 
@@ -344,7 +344,7 @@ msgstr ""
 msgid "发送中..."
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "返回登录"
 msgstr ""
 
@@ -408,11 +408,11 @@ msgstr ""
 msgid "该邮箱已被注册。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "个人主页"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "个人资料"
 msgstr ""
 
@@ -456,11 +456,11 @@ msgstr ""
 msgid "关闭"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "关闭登录窗口"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "关闭个人资料窗口"
 msgstr ""
 
@@ -572,7 +572,7 @@ msgstr ""
 msgid "基于 %1$s，Theme 基于 %2$s 改编"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "记住我"
 msgstr ""
 
@@ -608,7 +608,7 @@ msgstr ""
 msgid "开启后侧栏由主题自动生成，显示作者卡、站点统计、社交链接和菜单。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "开启认证器两步验证"
 msgstr ""
 
@@ -636,7 +636,7 @@ msgstr ""
 msgid "莉莉概念光标作者"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "两步验证码"
 msgstr ""
 
@@ -652,7 +652,7 @@ msgstr ""
 msgid "没有结果"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "密码"
 msgstr ""
 
@@ -692,7 +692,7 @@ msgstr ""
 msgid "你不能删除这条评论。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php inc/comments.php
 msgid "昵称"
 msgstr ""
 
@@ -744,7 +744,7 @@ msgstr ""
 msgid "评论 GIF：%s"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "评论标签"
 msgstr ""
 
@@ -944,7 +944,7 @@ msgstr ""
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "取消"
 msgstr ""
 
@@ -960,11 +960,11 @@ msgstr ""
 msgid "确定删除这条评论吗？"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "确认新密码"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "认证器验证码"
 msgstr ""
 
@@ -988,7 +988,7 @@ msgstr ""
 msgid "删除头像"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/comments.php inc/enqueue.php
 msgid "上传"
 msgstr ""
 
@@ -1044,7 +1044,7 @@ msgstr ""
 msgid "审核未通过"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "生成密钥"
 msgstr ""
 
@@ -1112,7 +1112,7 @@ msgstr ""
 msgid "搜索文章..."
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "特殊标签"
 msgstr ""
 
@@ -1156,7 +1156,7 @@ msgstr ""
 msgid "头像仅支持 JPG、PNG 或 WebP。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "头像链接"
 msgstr ""
 
@@ -1168,7 +1168,7 @@ msgstr ""
 msgid "头像审核不通过"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php inc/settings/renderers.php
+#: inc/comments/modals.php inc/comments.php inc/enqueue.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr ""
 
@@ -1220,7 +1220,7 @@ msgstr ""
 msgid "网址（可选）"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "忘记密码？"
 msgstr ""
 
@@ -1360,7 +1360,7 @@ msgstr ""
 msgid "显示过期提示"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "显示密码"
 msgstr ""
 
@@ -1376,7 +1376,7 @@ msgstr ""
 msgid "显示太极装饰"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "显示我的评论头像框"
 msgstr ""
 
@@ -1424,11 +1424,11 @@ msgstr ""
 msgid "小组件排序"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "新密码"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "新邮箱"
 msgstr ""
 
@@ -1436,7 +1436,7 @@ msgstr ""
 msgid "新邮箱地址不要与原邮箱地址重复。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "新邮箱验证码"
 msgstr ""
 
@@ -1464,11 +1464,11 @@ msgstr ""
 msgid "验证码错误次数过多，请重新获取。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "验证码会发送到您的邮箱，5 分钟内有效。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "验证码会发送到账号邮箱，5 分钟内有效。"
 msgstr ""
 
@@ -1588,11 +1588,11 @@ msgstr ""
 msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php inc/comments.php
 msgid "邮箱"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "邮箱验证码"
 msgstr ""
 
@@ -1732,11 +1732,11 @@ msgstr ""
 msgid "重点"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "重置密码"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "重置中..."
 msgstr ""
 
@@ -1752,7 +1752,7 @@ msgstr ""
 msgid "主要内容"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "注册"
 msgstr ""
 
@@ -1760,7 +1760,7 @@ msgstr ""
 msgid "注册成功，请返回登录。"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "注册中..."
 msgstr ""
 
@@ -1784,7 +1784,7 @@ msgstr ""
 msgid "总访问量"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "最多添加 5 个自定义标签；特殊标签和已勾选的自定义标签合计最多 2 个。自定义标签最多 8 个字符，保留标签不可自行设置。"
 msgstr ""
 

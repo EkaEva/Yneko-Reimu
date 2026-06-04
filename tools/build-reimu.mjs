@@ -7,7 +7,13 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 const cssSources = [
   'assets/src/yneko-reimu-base.css',
-  'assets/src/yneko-reimu-adapter.css'
+  'assets/src/yneko-reimu-adapter.css',
+  'assets/src/reimu-player.css',
+  'assets/src/reimu-photoswipe.css',
+  'assets/src/reimu-share.css',
+  'assets/src/reimu-code.css',
+  'assets/src/reimu-search.css',
+  'assets/src/reimu-comments.css'
 ];
 const distRoot = resolve(themeRoot, 'assets/dist');
 
@@ -24,6 +30,30 @@ const loaderSource = await readFile(resolve(themeRoot, 'assets/src/loader.css'),
 const loaderOutput = resolve(themeRoot, 'assets/dist/loader.css');
 await mkdir(dirname(loaderOutput), { recursive: true });
 await writeFile(loaderOutput, `${minifyCss(loaderSource)}\n`);
+
+const playerStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-player.css'), 'utf8');
+const playerStyleOutput = resolve(themeRoot, 'assets/dist/reimu-player.css');
+await writeFile(playerStyleOutput, `${minifyCss(playerStyleSource)}\n`);
+
+const photoswipeStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-photoswipe.css'), 'utf8');
+const photoswipeStyleOutput = resolve(themeRoot, 'assets/dist/reimu-photoswipe.css');
+await writeFile(photoswipeStyleOutput, `${minifyCss(photoswipeStyleSource)}\n`);
+
+const shareStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-share.css'), 'utf8');
+const shareStyleOutput = resolve(themeRoot, 'assets/dist/reimu-share.css');
+await writeFile(shareStyleOutput, `${minifyCss(shareStyleSource)}\n`);
+
+const codeStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-code.css'), 'utf8');
+const codeStyleOutput = resolve(themeRoot, 'assets/dist/reimu-code.css');
+await writeFile(codeStyleOutput, `${minifyCss(codeStyleSource)}\n`);
+
+const searchStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-search.css'), 'utf8');
+const searchStyleOutput = resolve(themeRoot, 'assets/dist/reimu-search.css');
+await writeFile(searchStyleOutput, `${minifyCss(searchStyleSource)}\n`);
+
+const commentsStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.css'), 'utf8');
+const commentsStyleOutput = resolve(themeRoot, 'assets/dist/reimu-comments.css');
+await writeFile(commentsStyleOutput, `${minifyCss(commentsStyleSource)}\n`);
 
 const qrcodeSource = resolve(root, 'node_modules/qrcode/build/qrcode.js');
 const qrcodeOutput = resolve(themeRoot, 'assets/dist/qrcode.js');

@@ -18,9 +18,11 @@ pwsh tools/package-theme.ps1 -Version v0.1.2
 
 ## Package Boundaries
 
-The ZIP includes PHP templates, `inc/`, `template-parts/`, translations, runtime images, and minified assets.
+The ZIP includes PHP templates, `inc/`, `template-parts/`, translations, runtime images, minified assets, `style.css`, `theme.json`, `screenshot.png`, `readme.txt`, and public docs/credits.
 
 The ZIP excludes development source mirrors, source CSS/JS, build tools, `manifest.json`, cache folders, large PNG background fallbacks, and local release artifacts.
+
+Before packaging a public release, make sure `theme/Yneko-Reimu/screenshot.png` has been regenerated as a standard `1200x900` PNG and that `style.css` / `readme.txt` compatibility fields match the version actually tested.
 
 ## CI
 

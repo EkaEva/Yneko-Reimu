@@ -467,3 +467,135 @@
 - Current release-facing files needing the new version are package metadata, theme headers/constants, README packaging examples, QA no-tag reminders, and release notes.
 - Historical `v0.1.15-YYYYMMDD-HHMM` package references in progress logs are previous validation artifacts and should remain as factual audit history.
 - The `v0.2.0` validation package was generated successfully as `Yneko-Reimu-v0.2.0-20260604-1254.zip` with 136 entries and no forbidden development files.
+
+## 2026-06-04 Release Readiness Hardening Findings
+
+- The direct-access guard audit found five top-level wrapper templates without `ABSPATH`: `author.php`, `category.php`, `home.php`, `search.php`, and `tag.php`.
+- Adding guards to those wrappers preserves their existing behavior because they still only delegate to `archive` or `index` through `get_template_part()`.
+- `style.css` compatibility metadata now declares `Tested up to: 7.0`, matching the WordPress 7.0 line used by earlier QA and release notes.
+- A runtime `readme.txt` is now needed in the installable theme so the ZIP carries install, privacy/remote-resource, credits, and license notes without requiring users to inspect the repository root README.
+- `npm run check:release-readiness` now checks all runtime PHP files for `ABSPATH`, validates `style.css` release fields, requires runtime `readme.txt`, and enforces a `1200x900` PNG screenshot.
+- `npm run check:package` now requires `Yneko-Reimu/readme.txt` in the newest release ZIP.
+- The first release-readiness run passed all new non-screenshot checks and failed only because the previous `screenshot.png` was still `1910x1433`.
+- The user provided `C:\Users\86135\Downloads\screenshot.png`; local inspection confirmed it is `1200x900`, and after copying it into the runtime theme, the release-readiness gate passed.
+- The final validation ZIP includes `Yneko-Reimu/readme.txt` and `Yneko-Reimu/screenshot.png`; a ZIP spot check confirmed the packaged screenshot is `1200x900` and `assets/dist/manifest.json` is absent.
+- The complexity hotspots remain `inc/comments.php`, `inc/customizer.php`, `inc/enqueue.php`, and settings render/schema functions; this pass intentionally avoids broad refactors across those high-risk public-interface areas.
+
+## 2026-06-04 v0.2.1 Version and Template Smoke QA Findings
+
+- Version-facing files now need the `0.2.1` line because the release-readiness hardening is a follow-up patch after the `v0.2.0` milestone.
+- Local WordPress was running, but `home` and `siteurl` were still set to `http://localhost:8080` from the prior real OAuth QA proxy. This caused redirects away from the active `127.0.0.1:8095` host.
+- Host PowerShell/HTTP requests to `127.0.0.1:8095` can return 502 when the system proxy is used. `curl.exe --noproxy "*"` reaches the local WordPress container correctly.
+- After restoring `home` and `siteurl` to `http://127.0.0.1:8095`, wrapper-template smoke results were: homepage 200, category 200, author 200, search 200, and tag 404 because the local QA tag slug has no matching content. No tested response contained fatal/parse/warning output.
+- The tag 404 is content-state dependent, not an `ABSPATH` guard regression.
+
+## 2026-06-04 Customizer Contract Prep Findings
+
+- `inc/customizer.php` still contains the main maintenance hotspot `yneko_reimu_register_customizer_sections()` after the public callback was thinned; this is intentional so the public hook can stay stable while the next round splits internals.
+- The Customizer contract surface includes the `yneko_reimu_panel` panel, nine visual-preview sections, saved `theme_mod` IDs, two option-backed GitHub settings, and sanitizer callbacks.
+- A static contract check is now in place before deeper decomposition, reducing the chance that future helper extraction silently renames a public Customizer key.
+
+## 2026-06-04 Customizer Helper Split and Missing Image Findings
+
+- The user-provided `C:\Users\86135\Downloads\comment-missing.webp` exactly matches the new runtime `theme/Yneko-Reimu/assets/images/comment-missing.webp` by SHA256 (`F269AD5AA32128E321A44CC25D9F1D6435403D5F9945B581B123431600FD7DF7`) and is 10,234 bytes, replacing the previous 141,380-byte fallback.
+- The only code reference to the missing-image fallback remains `inc/comments/uploads.php`, so replacing the binary asset does not change PHP behavior or public URLs.
+- `inc/customizer.php` now keeps the public `yneko_reimu_customize_register()` callback as a thin hook target, and `yneko_reimu_register_customizer_sections()` only dispatches to internal helpers.
+- Customizer helper boundaries now map to panel, preset, sidebar widgets, visual, images, cards, articles, social, and footer/virtual sections. The split preserves existing Customizer IDs and option-backed setting names.
+- A mechanical split briefly created a nested `yneko_reimu_register_customizer_footer_virtual_sections()` declaration inside the social helper. PHP syntax still passed, but the boundary was corrected so all Customizer helpers are top-level functions.
+- Complexity improved at the function level: the former 739-line Customizer registration function is gone. The largest Customizer helpers are now social at 157 lines and preset at 146 lines.
+- The latest validation ZIP includes the refreshed `assets/images/comment-missing.webp`, runtime `readme.txt`, and `inc/customizer.php`; it excludes `screenshot.webp`, `assets/src`, `PROJECT.md`, and `AGENTS.md`.
+- The next maintenance hotspot is `inc/enqueue.php`, where `yneko_reimu_enqueue_assets()` is still 287 lines and owns many asset/config concerns. The next safe pass should extract internal context/config helpers without renaming script handles, localized config keys, lazy runtime paths, or classic script behavior.
+
+## 2026-06-04 Enqueue Contract and Helper Split Findings
+
+- `inc/enqueue.php` owns a broad public runtime surface even though most functions are internal: WordPress script/style handles, vendor package paths and versions, `window.REIMU_CONFIG` keys, nonce names, and classic script enqueue behavior.
+- `tools/check-enqueue-contract.mjs` now checks the `wp_enqueue_scripts` callback, key script/style handles, asset paths, `window.REIMU_CONFIG` fields, and nonce names before build/package checks.
+- `npm run check` now includes `npm run check:enqueue`, so future enqueue/helper refactors cannot silently remove `yneko-reimu-main`, optional vendor handles, login/comment nonces, or high-impact `REIMU_CONFIG` keys.
+- `yneko_reimu_enqueue_assets()` is now a small dispatcher. Focused helper boundaries cover theme styles, search config and Algolia dependency, front-end i18n strings, front-end config shape, optional vendor assets, and main runtime localization.
+- Public behavior is intentionally unchanged: `REIMU_CONFIG` is still injected before `yneko-reimu-main`, `comment-reply` still loads on threaded singular comments, optional third-party assets keep the same feature gates, and public scripts remain classic-script compatible.
+- Complexity shifted from one large 287-line enqueue function into smaller helpers. The file is slightly longer at 520 nonblank lines because of function boundaries, but `yneko_reimu_enqueue_assets()` no longer appears in the largest named functions report.
+- The next asset-budget risk is CSS rather than PHP: `assets/dist/reimu.css` remains about 205.3 KB against the 220 KB budget. A safe next pass should inventory comment/player/code/settings/page-context CSS candidates and add a CSS split/budget contract before moving styles.
+
+## 2026-06-04 CSS Split Plan Gate Findings
+
+- The runtime CSS build currently takes two source inputs: `assets/src/yneko-reimu-base.css` at about 67.6 KB and `assets/src/yneko-reimu-adapter.css` at about 125.7 KB. The built `assets/dist/reimu.css` is 210,179 bytes, about 205.3 KB against the 220 KB budget.
+- Selector density by keyword confirms the likely split opportunities: comments/profile has the most matches, followed by APlayer/player, code/highlight editor, share/Weixin popup, PhotoSwipe, search, Mermaid, and KaTeX.
+- `tools/css-split-plan.mjs` now records six split candidates with target outputs and budgets: `reimu-comments.css` (48 KB), `reimu-player.css` (20 KB), `reimu-code.css` (24 KB), `reimu-photoswipe.css` (12 KB), `reimu-share.css` (14 KB), and `reimu-search.css` (16 KB).
+- `tools/check-css-split-plan.mjs` now verifies every planned candidate has trigger, gate, target output, budget, notes, and source selectors that still exist in the current CSS. This prevents the split plan from drifting while CSS remains bundled.
+- The first check caught a stale planned selector, `#reimu-stats`, because current CSS uses `.reimu-results` and `#reimu-hits` for search output styling. The plan now uses selectors that exist in current source.
+- Runtime loading intentionally did not change in this round. `reimu.css` remains the single main stylesheet, so no visual regression should come from the new gate itself.
+- The safest first actual CSS split is APlayer/player styles. Comments/profile has higher size payoff but shares risk with auth, upload review, profile modal, and comment states, so it should wait until after a smaller CSS split proves the build/enqueue/package path.
+
+## 2026-06-04 APlayer CSS Runtime Split Findings
+
+- The safe player split boundary is the readable sidebar/player enhancement block in `assets/src/yneko-reimu-adapter.css`. The compressed upstream `.aplayer` base rules in `assets/src/yneko-reimu-base.css` remain in the main CSS for now because they are embedded in a single-line reference snapshot and are higher-risk to cut manually.
+- `assets/src/reimu-player.css` now owns sidebar player layout, APlayer title/author/LRC fitting, sidebar list animation, custom list scrollbar cursor zones, and sidebar list row colors.
+- `tools/build-reimu.mjs` now emits `assets/dist/reimu-player.css` and records `assets/src/reimu-player.css` in the build manifest `cssSources`.
+- `inc/enqueue.php` now enqueues `yneko-reimu-player` only when `$enable_aplayer` is true, with `yneko-reimu-aplayer` as a dependency. This keeps default installs from loading the split player stylesheet when the player is disabled.
+- Size gates now enforce the split: main `assets/dist/reimu.css` has a 212 KB budget, and `assets/dist/reimu-player.css` has a 20 KB budget.
+- Build output after the split: `reimu.css` is 200,770 bytes / 196.1 KB, down from 210,179 bytes / 205.3 KB; `reimu-player.css` is 9,505 bytes / 9.3 KB.
+- The ZIP entry count rose from 138 to 139 because `assets/dist/reimu-player.css` is now a runtime asset. Source CSS and build tools remain excluded.
+- The next low-risk stylesheet split is PhotoSwipe because it already has `reimu-photoswipe.js`, a feature gate, and a compact isolated selector block. Comments/profile should still wait because it has larger behavioral blast radius.
+
+## 2026-06-04 PhotoSwipe CSS Runtime Split Findings
+
+- PhotoSwipe has a compact, safe CSS boundary in `assets/src/yneko-reimu-adapter.css`: `.article-entry .reimu-photoswipe-item`, `.reimu-photoswipe-on`, overlay, stage, close button, navigation buttons, and the mobile overlay/navigation media rules.
+- Generic image and cursor rules remain in the main CSS because they are not PhotoSwipe-only: `.wp-block-image img`, `.wp-block-gallery img`, dark-mode image handling, `.pswp__img`, and `.article-gallery-item img`.
+- `assets/src/reimu-photoswipe.css` now owns the theme lightbox enhancement styles, pairing with the existing lazy `assets/dist/reimu-photoswipe.js` runtime.
+- `inc/enqueue.php` preserves the vendor style handle `yneko-reimu-photoswipe` and adds the theme enhancement handle `yneko-reimu-photoswipe-enhance` only when `yneko_reimu_photoswipe_enable` is enabled.
+- Size gates now enforce the split: main `assets/dist/reimu.css` has a 208 KB budget, `assets/dist/reimu-player.css` keeps its 20 KB budget, and `assets/dist/reimu-photoswipe.css` has a 12 KB budget.
+- Build output after the split: `reimu.css` is 198,949 bytes / 194.3 KB, down from 200,770 bytes / 196.1 KB after the player split; `reimu-photoswipe.css` is 1,842 bytes / 1.8 KB.
+
+## 2026-06-04 Share CSS Runtime Split Findings
+
+- The share markup output path is `template-parts/meta/post-share.php`, which renders `.share-wrapper` only when `yneko_reimu_share_links()` returns at least one enabled share service.
+- The safe share split boundary is the readable adapter CSS block covering `.share-wrapper`, `.article-footer > .share-wrapper`, `.share-link`, `.share-icon`, `.share-weixin`, Weixin card children, active state, and mobile positioning.
+- Shared icon glyph and color rules remain in the main CSS because they serve both sidebar social links and article share icons. The compressed upstream/base share rules in `assets/src/yneko-reimu-base.css` also remain in the main CSS for this pass.
+- `assets/src/reimu-share.css` now owns article share layout and Weixin popup enhancement styles, pairing with the existing lazy `assets/dist/reimu-share.js` runtime.
+- `inc/enqueue.php` now enqueues `yneko-reimu-share` only when `yneko_reimu_should_enqueue_share_styles()` determines share markup can render on a singular or virtual page.
+- Size gates now enforce the split: main `assets/dist/reimu.css` has a 204 KB budget, and `assets/dist/reimu-share.css` has a 14 KB budget.
+- Build output after the split: `reimu.css` is 195,989 bytes / 191.4 KB, down from 198,949 bytes / 194.3 KB after the PhotoSwipe split; `reimu-share.css` is 2,940 bytes / 2.9 KB.
+
+## 2026-06-04 Code/Content CSS Runtime Split Findings
+
+- The safe code/content CSS boundary is the readable adapter block for `.reimu-yml-editor`, `.code-figcaption`, code editor table/pre children, virtual-page `.highlight` wrappers, and `.article-entry .mermaid`.
+- Generic article typography, image sizing, base highlight variables/colors, broad cursor rules, and compressed upstream/base CSS remain in the main CSS to avoid changing common reading-page behavior.
+- `assets/src/reimu-code.css` now owns YML/code editor styling, virtual-page highlight layout fixes, Mermaid content presentation, and the related mobile code-editor spacing rules.
+- `inc/enqueue.php` now enqueues `yneko-reimu-code` after `yneko-reimu-main` in singular and virtual-page contexts. This intentionally uses a conservative page-context gate because `assets/src/reimu.js` can transform ordinary `.article-entry pre` nodes into `.reimu-yml-editor` after PHP has already enqueued styles.
+- Size gates now enforce the split: main `assets/dist/reimu.css` has a 200 KB budget, and `assets/dist/reimu-code.css` has a 24 KB budget.
+- Build output after the split: `reimu.css` is 192,348 bytes / 187.8 KB, down from 195,989 bytes / 191.4 KB after the share split; `reimu-code.css` is 3,601 bytes / 3.5 KB.
+
+## 2026-06-04 Search CSS Runtime Split Findings
+
+- Search CSS is split in two layers: compressed upstream/base popup and result-list layout remains in `assets/src/yneko-reimu-base.css`, while readable adapter search enhancements can move safely.
+- The safe readable search boundary covers `.reimu-search-form`, `.reimu-hit-type`, `body.search-popup-on`, `#reimu-search-input input`, and `.site-search .reimu-bg`.
+- `assets/src/reimu-search.css` now owns search result form layout, search-popup background lock/blur state, search result type labels, text cursor for the popup input, and search background image positioning.
+- `inc/enqueue.php` now enqueues `yneko-reimu-search` globally before `yneko-reimu-main`. This matches the global search popup template and keeps the existing lazy `assets/dist/reimu-search.js` runtime interaction-loaded.
+- Size gates now enforce the split: main `assets/dist/reimu.css` has a 198 KB budget, and `assets/dist/reimu-search.css` has a 16 KB budget.
+- Build output after the split: `reimu.css` is 191,405 bytes / 186.9 KB, down from 192,348 bytes / 187.8 KB after the code split; `reimu-search.css` is 1,289 bytes / 1.3 KB.
+
+## 2026-06-04 Comments/Profile Static Contract Gate Findings
+
+- The comments/profile surface remains the highest-risk remaining split candidate because it combines login, registration, lost password, profile save, avatar upload, email/TOTP, comment submit/upload/discard/like/edit/delete, login-state DOM replacement, PJAX rebinds, and review-status polling.
+- `tools/check-comments-profile-contract.mjs` now automates the existing contract by checking AJAX action names, nonce creation and verification, `window.REIMU_CONFIG` keys, front-end request payload fields, key DOM selectors, source module boundaries, and CSS anchors.
+- The first draft of the gate caught useful reality mismatches: some flow functions are named `refreshCommentLoginState`, `applyCommentLoggedInState`, `applyCommentLoggedOutState`, and `startProfileStatusPolling`; the current primary avatar upload path posts `avatar_file` through `yneko_reimu_profile_save` while preserving the older `yneko_reimu_profile_avatar_upload` PHP endpoint.
+- `npm run check` now includes `npm run check:comments-profile`, so future comments/profile CSS or runtime work has to preserve the high-risk contract before build, size, PHPCS, and package checks.
+- This pass intentionally did not move comments/profile JavaScript, PHP handlers, CSS, settings keys, AJAX actions, nonce names, or DOM output.
+
+## 2026-06-04 Comments/Profile CSS Runtime Split Findings
+
+- The safe stylesheet boundary covers comments, comment form/tooling, login modal, profile modal, profile tag controls, comment upload controls, dark-mode comment/profile states, and login/profile body blur/overflow state.
+- The split remains stylesheet-only: no comments/profile AJAX actions, nonce names, request payloads, PHP handlers, or main classic runtime handlers were moved.
+- `footer.php` renders the login modal globally, and logged-in users can receive the profile modal shell globally through the same path. For that reason, `assets/dist/reimu-comments.css` is globally enqueued rather than singular/comment-page conditional.
+- Generic `.reimu-load-more` styles remain in the main stylesheet because the projects virtual page also uses that class for pagination.
+- Some mobile comment rules remain in the main stylesheet because they share a mixed responsive block with project/category/friend mobile layout rules; moving that block safely would require a separate responsive-CSS cleanup pass.
+- Build output after the split: `reimu.css` is 142,448 bytes / 139.1 KB against a 150 KB budget, and `reimu-comments.css` is 48,592 bytes / 47.5 KB against a 52 KB budget.
+- The release ZIP entry count increased to 144 because `assets/dist/reimu-comments.css` is now a runtime asset. Source CSS, contract tools, manifest, and local-only agent files remain excluded from the package.
+
+## 2026-06-04 Comments/Profile Modal Renderer Split Findings
+
+- `inc/comments.php` still remains the PHP entrypoint for comments/profile behavior, but request-free login/profile modal rendering now lives in `inc/comments/modals.php`.
+- The split preserves the existing modal function names, `#reimu-login-modal`, `#reimu-profile-modal`, form field names, data attributes, hooks, AJAX actions, nonce names, and front-end runtime behavior.
+- `tools/check-comments-profile-contract.mjs` now reads `inc/comments/modals.php` so the DOM selector contract continues to cover modal markup after the internal PHP move.
+- Targeted checks passed: `php -l` for both comments PHP files, `npm run check:comments-profile`, `npm run check:release-readiness`, and `npm run report:php-complexity`.
+- The complexity report now scans 74 PHP files. `inc/comments.php` dropped from 3012 to 2764 nonblank lines, while `inc/comments/modals.php` owns the two larger modal HTML renderer functions.

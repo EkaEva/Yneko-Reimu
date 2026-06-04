@@ -8,7 +8,12 @@ Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in 
 npm install
 npm run check:js
 npm run check:settings-admin
+npm run check:customizer
+npm run check:enqueue
+npm run check:comments-profile
 npm run check:github-oauth
+npm run check:release-readiness
+npm run check:css-split
 npm run build
 npm run check:i18n-messages
 npm run check:size
@@ -33,7 +38,13 @@ npm run lint:php
 - `assets/dist/reimu-search.js` must stay at or below 24 KB.
 - `assets/dist/reimu-photoswipe.js` must stay at or below 24 KB.
 - `assets/dist/reimu-share.js` must stay at or below 24 KB.
-- `assets/dist/reimu.css` must stay at or below 220 KB.
+- `assets/dist/reimu.css` must stay at or below 150 KB.
+- `assets/dist/reimu-player.css` must stay at or below 20 KB.
+- `assets/dist/reimu-photoswipe.css` must stay at or below 12 KB.
+- `assets/dist/reimu-share.css` must stay at or below 14 KB.
+- `assets/dist/reimu-code.css` must stay at or below 24 KB.
+- `assets/dist/reimu-search.css` must stay at or below 16 KB.
+- `assets/dist/reimu-comments.css` must stay at or below 52 KB.
 - Public runtime script builds must remain compatible with classic script loading and must not contain `import.meta`, unresolved dynamic `import(` calls, or top-level ESM import/export syntax.
 - The feature loading report comes from `tools/feature-loading-plan.mjs`; update it before moving code out of the main bundle.
 
@@ -41,7 +52,21 @@ npm run lint:php
 
 `npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the 10 settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields and review helper calls remain present.
 
+`npm run check:customizer` verifies the Customizer visual-preview contract before further decomposition. It checks the public customize hook, panel/section IDs, key setting/control IDs, and sanitizer callbacks so future helper extraction does not silently rename saved `theme_mod` or option-backed Customizer fields.
+
+`npm run check:enqueue` verifies the front-end enqueue contract after PHP helper splits. It checks the public enqueue hook, critical script/style handles, third-party asset paths, `window.REIMU_CONFIG` keys, and nonce names so future asset-configuration cleanup does not silently change the front-end runtime contract.
+
+`npm run check:comments-profile` verifies the comments/profile runtime contract before any further split. It checks high-risk AJAX actions, nonce creation and verification, front-end config keys, request payload fields, DOM selectors, source module boundaries, and CSS anchors used by login, profile, comment upload, comment mutation, and review-status flows.
+
+The comments/profile PHP entrypoint is `theme/Yneko-Reimu/inc/comments.php`. Internal helpers may live under `theme/Yneko-Reimu/inc/comments/`; currently `uploads.php` owns comment media upload/review helpers and `modals.php` owns request-free login/profile modal rendering. Keep function names and front-end markup contracts unchanged unless the migration is documented in `docs/comments-profile-contract.md`.
+
 `npm run check:github-oauth` verifies the GitHub OAuth public contract: login form actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta compatibility, GitHub API scope/endpoints, popup message type, and high-impact OAuth error strings. Update it in the same change only when an intentional compatibility migration is documented.
+
+`npm run check:release-readiness` verifies release-facing theme basics before the build: every runtime PHP file has an `ABSPATH` direct-access guard, `style.css` declares the expected `Tested up to` version, required theme header fields are present, runtime `readme.txt` exists with privacy/licensing notes, and `screenshot.png` is the standard `1200x900` PNG. If screenshot artwork is being refreshed manually, replace `theme/Yneko-Reimu/screenshot.png` before running the full release check.
+
+`npm run check:css-split` verifies the planned CSS split candidates before and after stylesheets move out of `reimu.css`. It checks the machine-readable plan in `tools/css-split-plan.mjs`, candidate selectors in the current source CSS, target output names, per-component budgets, the post-comments-split 150 KB main CSS budget, the 20 KB player CSS budget, the 12 KB PhotoSwipe enhancement CSS budget, the 14 KB share CSS budget, the 24 KB code/content CSS budget, the 16 KB search CSS budget, and the 52 KB comments/profile CSS budget.
+
+`assets/dist/reimu-comments.css` is intentionally enqueued globally. The footer can render the login/profile modal shell outside singular comment pages, so making this stylesheet page-conditional would require a separate PHP output change and manual WordPress QA.
 
 GitHub OAuth local/staging QA is documented in `docs/github-oauth-qa.md`.
 
@@ -69,6 +94,8 @@ Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/setti
 ## Package Checks
 
 `npm run check:package` inspects the newest ZIP in `releases/` and fails if development-only files are present, including `assets/src`, `node_modules`, `vendor`, `tools`, planning files, local-only agent files, or `assets/dist/manifest.json`.
+
+The package check also requires the runtime `readme.txt` to be present in the installable ZIP.
 
 ## Performance Defaults
 

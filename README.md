@@ -395,16 +395,17 @@ npm run package
 脚本说明：
 
 - `npm run check:js`：检查前端 JS 和构建脚本语法。
+- `npm run check:release-readiness`：检查所有运行时 PHP 文件的 `ABSPATH` 防直访保护、主题头部兼容字段、运行时 `readme.txt` 和 `1200x900` 发布截图。
 - `npm run i18n`：提取 gettext 字符串，生成 `languages/yneko-reimu.pot`、`zh_CN.po/mo` 和 `en_US.po/mo`。
 - `npm run build`：生成语言文件、光标 PNG，并通过 Vite 压缩输出 `assets/dist/`。
 - `npm run lint:php`：通过 Composer 调用 PHPCS/WPCS 检查 PHP 代码。
-- `npm run check`：依次执行 JS 检查、构建和 PHP 规范检查。
+- `npm run check`：依次执行 JS 检查、公开契约检查、发布就绪检查、构建和 PHP 规范检查。
 - `npm run package`：先构建，再按白名单生成带版本号和时间戳的本地验证包，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`。
 
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.2.0
+pwsh tools/package-theme.ps1 -Version v0.2.1
 ```
 
 生成结果：
@@ -430,15 +431,15 @@ theme/Yneko-Reimu/inc/
 theme/Yneko-Reimu/template-parts/
 ```
 
-打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`，不是 GitHub 仓库根目录的 ZIP。
+打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`，不是 GitHub 仓库根目录的 ZIP。发布前请确认 `theme/Yneko-Reimu/screenshot.png` 已更新为 `1200x900` PNG。
 
 ## GitHub Actions 自动打包
 
 仓库内置了 `.github/workflows/release-package.yml`。当你向 GitHub 推送版本 tag 时会自动触发构建，例如：
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.2.1
+git push origin v0.2.1
 ```
 
 Action 会执行：
@@ -448,18 +449,18 @@ npm run check:js
 npm run build
 composer install --no-interaction --prefer-dist
 composer run lint:php
-pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.0.zip
+pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.1.zip
 ```
 
 随后生成并上传：
 
 ```text
-Yneko-Reimu-v0.2.0.zip
+Yneko-Reimu-v0.2.1.zip
 ```
 
 如果同名 GitHub Release 不存在，Action 会根据 tag 创建 Release；如果 Release 已存在，则会把 ZIP 上传到该 Release。也可以在 GitHub Actions 页面手动运行该 workflow，输入版本号后生成同名 artifact。
 
-推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.0`。如果手动输入 `0.2.0`，打包脚本会自动补成 `v0.2.0`。
+推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.1`。如果手动输入 `0.2.1`，打包脚本会自动补成 `v0.2.1`。
 
 ## 开发文档
 
@@ -527,7 +528,7 @@ CI 会在 GitHub Actions 中继续执行 PHPCS/WPCS。
 
 ## License
 
-Yneko-Reimu 使用 MIT License 发布，详见 [LICENSE](LICENSE)。
+Yneko-Reimu 使用 MIT License 发布，详见 [LICENSE](LICENSE)。WordPress 本身基于 GPL 授权；如果你重新分发完整站点包或衍生发行包，请同时遵守 WordPress 生态和依赖库的许可证要求。
 
 本主题包含对 [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) 的参考、移植与 WordPress 适配。原主题由 D-Sketon 创作并以 MIT License 发布。
 
@@ -847,16 +848,17 @@ npm run package
 Scripts:
 
 - `npm run check:js`: checks front-end and tool JavaScript syntax.
+- `npm run check:release-readiness`: checks `ABSPATH` direct-access guards, theme header compatibility fields, runtime `readme.txt`, and the `1200x900` release screenshot.
 - `npm run i18n`: extracts gettext strings and generates `languages/yneko-reimu.pot`, `zh_CN.po/mo`, and `en_US.po/mo`.
 - `npm run build`: generates language files, cursor PNGs, and minified Vite assets.
 - `npm run lint:php`: runs PHPCS/WPCS through Composer.
-- `npm run check`: runs JS checks, build, and PHP coding standards.
+- `npm run check`: runs JS checks, public contract checks, release-readiness checks, build, and PHP coding standards.
 - `npm run package`: builds first, then creates a local validation ZIP with a version and timestamp, for example `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`.
 
 To build a versioned package:
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.2.0
+pwsh tools/package-theme.ps1 -Version v0.2.1
 ```
 
 Output:
@@ -865,21 +867,21 @@ Output:
 releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip
 ```
 
-Upload the ZIP in `releases/`, not the GitHub repository ZIP.
+Upload the ZIP in `releases/`, not the GitHub repository ZIP. Before a public release, replace `theme/Yneko-Reimu/screenshot.png` with a `1200x900` PNG.
 
 ### GitHub Actions Release Packaging
 
 The workflow `.github/workflows/release-package.yml` runs when a version tag is pushed:
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.2.1
+git push origin v0.2.1
 ```
 
 It checks JavaScript, builds assets, runs PHPCS/WPCS, packages the theme, and uploads:
 
 ```text
-Yneko-Reimu-v0.2.0.zip
+Yneko-Reimu-v0.2.1.zip
 ```
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
@@ -928,7 +930,7 @@ The theme provides baseline hardening: XML-RPC is off by default, WordPress gene
 
 ### License
 
-Yneko-Reimu is released under the MIT License. See [LICENSE](LICENSE).
+Yneko-Reimu is released under the MIT License. See [LICENSE](LICENSE). WordPress itself is GPL-licensed; redistributors should also follow WordPress ecosystem and dependency license requirements when packaging a complete site or derivative distribution.
 
 This theme references [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) and includes WordPress ports and adaptations inspired by it. The original theme was created by D-Sketon and released under the MIT License.
 

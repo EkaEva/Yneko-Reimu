@@ -71,4 +71,4 @@ Notes:
 
 This theme is built for WordPress and may integrate with frontend libraries loaded by configuration, such as APlayer, AOS, LazyLoad, PhotoSwipe, KaTeX, Mermaid, or comment-related integrations when enabled. Those libraries retain their own licenses and are not relicensed by Yneko-Reimu.
 
-WordPress is licensed under GPL. Yneko-Reimu is distributed as a WordPress theme under MIT for this project repository; downstream users should still follow WordPress ecosystem and dependency license requirements when redistributing complete site packages.
+WordPress is licensed under GPL. Yneko-Reimu is distributed as a WordPress theme under MIT for this project repository; downstream users should still follow WordPress ecosystem and dependency license requirements when redistributing complete site packages or derivative distributions. Optional integrations and bundled/runtime libraries keep their own licenses and are not relicensed by this notice.

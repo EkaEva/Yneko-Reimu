@@ -6,6 +6,7 @@ Yneko-Reimu targets GitHub Release distribution rather than the WordPress.org th
 
 ```bash
 npm run check:js
+npm run check:release-readiness
 npm run build
 composer install
 npm run lint:php
@@ -18,6 +19,8 @@ npm run package
 - GitHub OAuth, third-party comments, music, statistics, and visual effects are optional and off by default where they add weight.
 - JSON-LD schema is lightweight and can be disabled with `yneko_reimu_schema_enabled`.
 - Release packaging is whitelist-based to prevent development files from entering the installable ZIP.
+- Runtime PHP files use `ABSPATH` guards, and `npm run check:release-readiness` enforces that coverage together with `style.css`, `readme.txt`, and screenshot release metadata.
+- The runtime `readme.txt` documents GitHub Release distribution, privacy/remote resources, credits, and the MIT license / WordPress GPL ecosystem compatibility note.
 - PHPCS/WPCS is currently enforced as an incremental gate for new and high-risk entrypoint files. The legacy template tree is intentionally not made a hard blocker until it can be normalized without mixing a huge style-only rewrite into feature work.
 
 ## Manual Checks

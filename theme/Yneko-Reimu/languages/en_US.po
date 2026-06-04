@@ -77,7 +77,7 @@ msgstr "%s words"
 msgid "© %s. Powered by WordPress."
 msgstr "© %s. Powered by WordPress."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "+ 新增自定义标签"
 msgstr ""
 
@@ -125,7 +125,7 @@ msgstr "Copyright box"
 msgid "版权文本"
 msgstr "Copyright text"
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "保存"
 msgstr "Save"
 
@@ -301,7 +301,7 @@ msgstr "Navigation label: %s"
 msgid "到底了..."
 msgstr "No more..."
 
-#: comments.php inc/comments.php inc/enqueue.php
+#: comments.php inc/comments/modals.php inc/comments.php inc/enqueue.php
 msgid "登录"
 msgstr "Login"
 
@@ -341,7 +341,7 @@ msgstr ""
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr "After publishing posts, archives will be generated here by year."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "发送验证码"
 msgstr "Send code"
 
@@ -349,7 +349,7 @@ msgstr "Send code"
 msgid "发送中..."
 msgstr "Sending..."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "返回登录"
 msgstr "Back to login"
 
@@ -413,11 +413,11 @@ msgstr "This code expires in %2$d minutes. If this was not you, please check you
 msgid "该邮箱已被注册。"
 msgstr "This email is already registered."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "个人主页"
 msgstr "Website"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "个人资料"
 msgstr "Profile"
 
@@ -461,11 +461,11 @@ msgstr "Fixed navigation"
 msgid "关闭"
 msgstr "Off"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "关闭登录窗口"
 msgstr "Close login window"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "关闭个人资料窗口"
 msgstr "Close profile window"
 
@@ -577,7 +577,7 @@ msgstr "Or use GitHub"
 msgid "基于 %1$s，Theme 基于 %2$s 改编"
 msgstr "Based on %1$s. Theme adapted from %2$s."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "记住我"
 msgstr "Remember me"
 
@@ -613,7 +613,7 @@ msgstr "Recent post count"
 msgid "开启后侧栏由主题自动生成，显示作者卡、站点统计、社交链接和菜单。"
 msgstr "When enabled, the theme generates the sidebar with the author card, site stats, social links, and menu."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "开启认证器两步验证"
 msgstr "Enable authenticator two-factor verification"
 
@@ -641,7 +641,7 @@ msgstr ""
 msgid "莉莉概念光标作者"
 msgstr "Lily concept cursor author"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "两步验证码"
 msgstr "Two-factor code"
 
@@ -657,7 +657,7 @@ msgstr "The two passwords do not match."
 msgid "没有结果"
 msgstr "No results"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "密码"
 msgstr "Password"
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "你不能删除这条评论。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php inc/comments.php
 msgid "昵称"
 msgstr "Nickname"
 
@@ -749,7 +749,7 @@ msgstr ""
 msgid "评论 GIF：%s"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "评论标签"
 msgstr ""
 
@@ -949,7 +949,7 @@ msgstr "Scan with your authenticator app, then enter the 6-digit code and save."
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr "Please configure your GitHub profile URL in Appearance -> Yneko-Reimu Settings."
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "取消"
 msgstr "Cancel"
 
@@ -965,11 +965,11 @@ msgstr "Insufficient permissions."
 msgid "确定删除这条评论吗？"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "确认新密码"
 msgstr "Confirm new password"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "认证器验证码"
 msgstr "Authenticator code"
 
@@ -993,7 +993,7 @@ msgstr ""
 msgid "删除头像"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/comments.php inc/enqueue.php
 msgid "上传"
 msgstr "Upload"
 
@@ -1049,7 +1049,7 @@ msgstr "How to apply"
 msgid "审核未通过"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "生成密钥"
 msgstr "Generate key"
 
@@ -1117,7 +1117,7 @@ msgstr "Search popup background"
 msgid "搜索文章..."
 msgstr "Search posts..."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "特殊标签"
 msgstr ""
 
@@ -1161,7 +1161,7 @@ msgstr ""
 msgid "头像仅支持 JPG、PNG 或 WebP。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "头像链接"
 msgstr "Avatar URL"
 
@@ -1173,7 +1173,7 @@ msgstr "Avatar upload failed."
 msgid "头像审核不通过"
 msgstr "Avatar review rejected"
 
-#: inc/comments.php inc/enqueue.php inc/settings/renderers.php
+#: inc/comments/modals.php inc/comments.php inc/enqueue.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr "Avatar pending review"
 
@@ -1225,7 +1225,7 @@ msgstr "Log out"
 msgid "网址（可选）"
 msgstr "Website (optional)"
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "忘记密码？"
 msgstr "Forgot password?"
 
@@ -1365,7 +1365,7 @@ msgstr "Show categories"
 msgid "显示过期提示"
 msgstr "Show outdated notice"
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "显示密码"
 msgstr "Show password"
 
@@ -1381,7 +1381,7 @@ msgstr "Show previous/next post"
 msgid "显示太极装饰"
 msgstr "Show Taichi decoration"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "显示我的评论头像框"
 msgstr ""
 
@@ -1429,11 +1429,11 @@ msgstr "Friends"
 msgid "小组件排序"
 msgstr "Widget order"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "新密码"
 msgstr "New password"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "新邮箱"
 msgstr "New email"
 
@@ -1441,7 +1441,7 @@ msgstr "New email"
 msgid "新邮箱地址不要与原邮箱地址重复。"
 msgstr "The new email must differ from the current email."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "新邮箱验证码"
 msgstr "New email code"
 
@@ -1469,11 +1469,11 @@ msgstr "The code is incorrect or has expired."
 msgid "验证码错误次数过多，请重新获取。"
 msgstr "Too many incorrect code attempts. Please request a new one."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "验证码会发送到您的邮箱，5 分钟内有效。"
 msgstr "The code will be sent to your email and is valid for 5 minutes."
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "验证码会发送到账号邮箱，5 分钟内有效。"
 msgstr "The code will be sent to the account email and is valid for 5 minutes."
 
@@ -1593,11 +1593,11 @@ msgstr ""
 msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php inc/comments.php
 msgid "邮箱"
 msgstr "Email"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "邮箱验证码"
 msgstr "Email verification code"
 
@@ -1737,11 +1737,11 @@ msgstr "Sticky marker"
 msgid "重点"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "重置密码"
 msgstr "Reset password"
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "重置中..."
 msgstr "Resetting..."
 
@@ -1757,7 +1757,7 @@ msgstr "The theme always keeps WordPress and hexo-theme-reimu/MIT credits."
 msgid "主要内容"
 msgstr "Main content"
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "注册"
 msgstr "Register"
 
@@ -1765,7 +1765,7 @@ msgstr "Register"
 msgid "注册成功，请返回登录。"
 msgstr "Registration successful. Please return to login."
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue.php
 msgid "注册中..."
 msgstr "Registering..."
 
@@ -1789,7 +1789,7 @@ msgstr "Total Visitors"
 msgid "总访问量"
 msgstr "Total Views"
 
-#: inc/comments.php
+#: inc/comments/modals.php
 msgid "最多添加 5 个自定义标签；特殊标签和已勾选的自定义标签合计最多 2 个。自定义标签最多 8 个字符，保留标签不可自行设置。"
 msgstr ""
 
