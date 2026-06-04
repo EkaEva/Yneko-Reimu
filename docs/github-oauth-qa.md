@@ -94,4 +94,4 @@ Compatibility notes:
 
 The real GitHub OAuth happy path is verified locally as of 2026-06-04. Before a public release tag, run the final package/check sequence again and confirm the local-only OAuth helpers and credentials are absent from Git status and the release ZIP.
 
-Do not create or push the `v0.1.15` tag as part of QA.
+Do not create or push the `v0.2.0` tag as part of QA.

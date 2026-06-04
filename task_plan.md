@@ -856,3 +856,22 @@ Goal: complete the remaining real GitHub OAuth happy-path QA using user-provided
 - Final verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1242.zip` and reported 136 entries with no forbidden development files.
 - Do not create or push the `v0.1.15` tag during this QA closure.
+
+## 2026-06-04 v0.2.0 Version Line
+
+Goal: promote the completed architecture, quality-gate, Email/TOTP, and GitHub OAuth QA milestone from the reserved `v0.1.15` patch line to `v0.2.0`, without creating a tag until the user explicitly asks for release tagging.
+
+### Phases
+
+1. Inventory current `0.1.15` / `v0.1.15` release-facing references - complete
+2. Update package/theme version fields and release-facing docs to `0.2.0` / `v0.2.0` - complete
+3. Regenerate build/package and verify the `v0.2.0` validation ZIP - complete
+4. Commit and push public version-line changes without creating `v0.2.0` tag - in progress
+
+### Decisions
+
+- Treat historical `v0.1.15-YYYYMMDD-HHMM` package names in progress logs as audit history, not current release instructions.
+- Rename the release notes file to `docs/release-notes-v0.2.0.md`.
+- Keep the no-tag policy until the user explicitly confirms final release tagging.
+- Verification passed after the version-line change: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.2.0-20260604-1254.zip` and reported 136 entries with no forbidden development files.

@@ -516,3 +516,16 @@
 - `git tag --list 'v0.1.15'` returned no tag; no release tag was created.
 - `git status --short --branch` shows only public docs/record files modified; local-only OAuth helpers, `PROJECT.md`, and `AGENTS.md` remain untracked/ignored.
 - Next step: commit and push public records only; do not create the `v0.1.15` tag.
+
+## 2026-06-04 v0.2.0 Version Line
+
+- User confirmed the pending release should be promoted from `v0.1.15` to `v0.2.0`.
+- Started from a clean `main...origin/main` worktree.
+- Updated npm package metadata to `0.2.0` with `npm version --no-git-tag-version 0.2.0`; no Git tag was created.
+- Updated `YNEKO_REIMU_VERSION`, the theme `style.css` header, README release examples, QA no-tag reminders, and release notes content to `0.2.0` / `v0.2.0`.
+- Renamed `docs/release-notes-v0.1.15.md` to `docs/release-notes-v0.2.0.md`.
+- Preserved historical progress entries that name earlier `v0.1.15` validation ZIPs because those are audit facts, not current release instructions.
+- Verification passed after the version-line change: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.2.0-20260604-1254.zip` and reported 136 entries with no forbidden development files.
+- `git tag --list 'v0.2.0'` and `git tag --list 'v0.1.15'` returned no tags; no release tag was created.
+- Next step: commit and push public version-line changes only.

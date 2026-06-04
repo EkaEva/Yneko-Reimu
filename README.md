@@ -404,7 +404,7 @@ npm run package
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.1.15
+pwsh tools/package-theme.ps1 -Version v0.2.0
 ```
 
 生成结果：
@@ -437,8 +437,8 @@ theme/Yneko-Reimu/template-parts/
 仓库内置了 `.github/workflows/release-package.yml`。当你向 GitHub 推送版本 tag 时会自动触发构建，例如：
 
 ```bash
-git tag v0.1.15
-git push origin v0.1.15
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 Action 会执行：
@@ -448,18 +448,18 @@ npm run check:js
 npm run build
 composer install --no-interaction --prefer-dist
 composer run lint:php
-pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.1.15.zip
+pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.0.zip
 ```
 
 随后生成并上传：
 
 ```text
-Yneko-Reimu-v0.1.15.zip
+Yneko-Reimu-v0.2.0.zip
 ```
 
 如果同名 GitHub Release 不存在，Action 会根据 tag 创建 Release；如果 Release 已存在，则会把 ZIP 上传到该 Release。也可以在 GitHub Actions 页面手动运行该 workflow，输入版本号后生成同名 artifact。
 
-推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.1.15`。如果手动输入 `0.1.15`，打包脚本会自动补成 `v0.1.15`。
+推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.0`。如果手动输入 `0.2.0`，打包脚本会自动补成 `v0.2.0`。
 
 ## 开发文档
 
@@ -856,7 +856,7 @@ Scripts:
 To build a versioned package:
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.1.15
+pwsh tools/package-theme.ps1 -Version v0.2.0
 ```
 
 Output:
@@ -872,14 +872,14 @@ Upload the ZIP in `releases/`, not the GitHub repository ZIP.
 The workflow `.github/workflows/release-package.yml` runs when a version tag is pushed:
 
 ```bash
-git tag v0.1.15
-git push origin v0.1.15
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 It checks JavaScript, builds assets, runs PHPCS/WPCS, packages the theme, and uploads:
 
 ```text
-Yneko-Reimu-v0.1.15.zip
+Yneko-Reimu-v0.2.0.zip
 ```
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.

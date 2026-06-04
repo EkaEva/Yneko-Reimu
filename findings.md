@@ -459,3 +459,11 @@
 - Real popup login from the comment modal opened and closed without leaving an extra browser tab, refreshed the opener state, closed the login modal, and showed the logged-in profile UI.
 - Linked non-popup login later logged in to the same existing `qauser` account and redirected back to the original post URL.
 - No settings keys, login actions, nonce names, meta keys, template paths, front-end globals, or OAuth runtime behavior were changed during this QA pass.
+
+## 2026-06-04 v0.2.0 Version Line Findings
+
+- The completed work is large enough for a `v0.2.0` milestone: front-end runtime splits, PHP module boundaries, quality gates, package hygiene, real Email/TOTP QA, and real GitHub OAuth happy-path QA.
+- No `v0.1.15` tag existed before the version-line change, so promoting the pending release to `v0.2.0` does not require deleting or moving a published tag.
+- Current release-facing files needing the new version are package metadata, theme headers/constants, README packaging examples, QA no-tag reminders, and release notes.
+- Historical `v0.1.15-YYYYMMDD-HHMM` package references in progress logs are previous validation artifacts and should remain as factual audit history.
+- The `v0.2.0` validation package was generated successfully as `Yneko-Reimu-v0.2.0-20260604-1254.zip` with 136 entries and no forbidden development files.
