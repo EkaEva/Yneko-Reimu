@@ -649,3 +649,25 @@ Goal: run the previously deferred real WordPress admin/front-end QA pass against
 - Do not create or push the `v0.1.15` tag during this QA pass.
 - Manual QA found and fixed one admin settings regression: adding a friend/music repeatable row did not refresh its row heading because `refreshNumbers()` ignored the repeatable element when it was passed as the root.
 - Comments/profile request handlers remain in the main runtime; this QA pass validates smoke paths but does not unlock a broad comments/profile lazy-runtime split by itself.
+
+## 2026-06-04 Comments/Profile Review Flow QA
+
+Goal: extend the local WordPress QA pass from smoke coverage into comments/profile review-state coverage, without moving AJAX handlers, changing settings keys, changing nonce names, or creating the `v0.1.15` tag.
+
+### Phases
+
+1. Enable local comment upload, avatar upload, and user badge review switches - complete
+2. Exercise logged-in profile save and user badge review status paths - complete
+3. Exercise comment media upload/review state and admin review sections - complete
+4. Verify admin approve/reject/revoke links or record limitations - complete
+5. Record QA findings, run relevant checks, and push only public records/fixes - complete
+
+### Decisions
+
+- This round is a QA/de-risking pass, not a new source split.
+- Local helper scripts under `wp-local/` remain untracked and are not release artifacts.
+- Any bug fix must preserve `window.REIMU_CONFIG`, `window.ReimuWP`, AJAX action names, nonces, meta keys, and template paths.
+- If browser file upload cannot be exercised reliably, use seeded WordPress state to verify admin review surfaces and server-side review actions.
+- This QA round found and fixed an empty English translation for the profile-save comment-badge-review success message.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, and `npm run check:package`.
+- The next round should add an i18n completeness guard for high-impact AJAX/user-facing strings so empty `en_US` translations cannot silently erase messages again.

@@ -423,7 +423,7 @@ msgstr "Profile"
 
 #: inc/comments.php
 msgid "个人资料已保存，评论标签审核中。"
-msgstr ""
+msgstr "Profile saved. Comment badges are pending review."
 
 #: inc/comments.php
 msgid "个人资料已保存，头像审核中。"

@@ -365,3 +365,15 @@
 - PhotoSwipe lazy runtime QA passed after enabling `yneko_reimu_settings.features.photoswipe_enable` in the local test site: `reimu-photoswipe.js` loads only when the feature is enabled and an article image is present.
 - Comments/profile smoke QA passed: the profile modal opens and renders profile fields; an AJAX comment submit inserted a new comment into the list, cleared the textarea, and produced no console warnings/errors.
 - Limitation: this was a smoke QA pass, not the full comments/profile contract matrix. Email delivery, TOTP validation, avatar/media file upload review, admin approval/rejection, and OAuth callbacks still require a deeper local or staging QA session.
+
+## 2026-06-04 Comments/Profile Review Flow QA Findings
+
+- Local review switches were enabled in the WordPress test site only: comment image/GIF upload, image/GIF review, avatar upload/review, and user badge review.
+- Seeded qauser with pending avatar, pending custom badge, and a held comment containing a pending temporary image upload. This uses local-only `wp-local/` helper scripts and does not change public repository files.
+- Front-end qauser session at `http://127.0.0.1:8095/yneko-qa-post/` renders as logged-in: `[data-reimu-profile-open]` exists, `.reimu-comment-login-link` is absent, and current-user identity markup is present.
+- Opening the profile modal shows the expected pending-avatar notice text `头像审核中`; the profile form and tag list render with no site console errors.
+- Server-side profile save QA found a real localized response bug: with site locale `en_US`, `yneko_reimu_ajax_profile_save()` returned an empty success `message` for the comment-badge-review path because `languages/en_US.po` had an empty `msgstr` for `个人资料已保存，评论标签审核中。`.
+- Added the missing English translation through `tools/build-i18n.mjs` and regenerated `en_US.po` / `en_US.mo`; the same profile save path now returns `Profile saved. Comment badges are pending review.`. Password mismatch still returns the expected error.
+- Admin Users review UI renders one pending badge card and one pending avatar card for qauser. Approving the custom badge changes the action set from approve/reject to revoke; approving the avatar changes the action set from approve/reject to delete.
+- Admin Comments review UI renders a pending temporary image upload card with approve/reject/delete links. A direct admin-action verification promoted a temporary image into `yneko-reimu-comments/YYYY/MM/`, updated the comment content URL, approved the held comment, cleared temp review meta, and created an approved attachment record.
+- Limitation: browser text entry/file upload remained constrained by the in-app automation runtime, so profile form mutation and comment media upload were verified through the same PHP AJAX/admin handlers rather than direct browser file-selection.

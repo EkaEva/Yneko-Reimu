@@ -2074,14 +2074,14 @@ function yneko_reimu_ajax_profile_save() {
 
 	wp_send_json_success(
 		array_merge(
+			yneko_reimu_user_profile_payload( $user_id ),
 			array(
 				'message' => $avatar_pending ? esc_html__( '个人资料已保存，头像审核中。', 'yneko-reimu' ) : ( yneko_reimu_comment_tag_review_enabled() && ! yneko_reimu_comment_user_can_bypass_tag_review( $user_id ) && $comment_tags ? esc_html__( '个人资料已保存，评论标签审核中。', 'yneko-reimu' ) : esc_html__( '个人资料已保存。', 'yneko-reimu' ) ),
 				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
 				'logoutNonce' => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
 				'identity' => yneko_reimu_comment_current_user_identity_html( $redirect ),
 				'tagsPending' => $tags_pending,
-			),
-			yneko_reimu_user_profile_payload( $user_id )
+			)
 		)
 	);
 }

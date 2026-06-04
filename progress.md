@@ -376,3 +376,19 @@
 - Final package check used `Yneko-Reimu-v0.1.15-20260604-1037.zip` and reported 134 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Remaining QA depth: email/TOTP/avatar upload/media review/OAuth/admin approval-rejection flows were not fully exercised in this smoke pass.
+
+## 2026-06-04 Comments/Profile Review Flow QA
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Added this QA round to `task_plan.md`.
+- Created local-only `wp-local/seed-review-qa.php` and `wp-local/login-as.php`; `wp-local/` remains ignored and is not a public change.
+- Enabled local review settings and seeded qauser with pending avatar, pending user badge, and a held comment containing a pending temporary image.
+- Browser QA as qauser confirmed the post renders as logged in, the profile modal opens, and pending avatar text `头像审核中` is visible with no site console errors.
+- Server-side profile save QA found and fixed an English localization gap: `个人资料已保存，评论标签审核中。` had an empty `en_US` translation, causing successful profile saves with pending comment badges to return an empty `message`.
+- Updated `tools/build-i18n.mjs`, regenerated `theme/Yneko-Reimu/languages/en_US.po` and `theme/Yneko-Reimu/languages/en_US.mo`, and confirmed the profile save AJAX response now returns `Profile saved. Comment badges are pending review.`.
+- Browser admin QA confirmed Users review cards render for pending badge/avatar states; approving the badge exposes revoke, and approving the avatar exposes delete.
+- Browser/server admin QA confirmed Comments review cards render for pending temporary image uploads; direct admin-action verification promoted a temp image, approved the held comment, replaced the temp URL with the permanent upload URL, and created an approved attachment.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1100.zip` and reported 134 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Next round should broaden automated coverage around i18n completeness or add a targeted check that important AJAX success/error strings in `en_US.po` are not empty.

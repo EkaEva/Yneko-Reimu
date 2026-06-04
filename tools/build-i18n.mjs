@@ -298,6 +298,7 @@ const enTranslations = new Map(Object.entries({
   '密码已重置，请返回登录。': 'Password reset. Please return to login.',
   '个人资料': 'Profile',
   '个人资料已保存，头像审核中。': 'Profile saved. Avatar is pending review.',
+  '个人资料已保存，评论标签审核中。': 'Profile saved. Comment badges are pending review.',
   '个人资料已保存。': 'Profile saved.',
   '头像链接': 'Avatar URL',
   '头像上传失败。': 'Avatar upload failed.',
