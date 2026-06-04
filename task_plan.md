@@ -556,3 +556,21 @@ Goal: continue cautious settings page decomposition by moving the GitHub OAuth s
 - The panel still receives the same callback URL value calculated by `yneko_reimu_render_settings_page()`.
 - GitHub OAuth callbacks, binding helper functions, user meta keys, and front-end login behavior are untouched.
 - The next round should pause for an admin UI/manual settings-page check or split only the comments/users renderer panels with extra care because they include review-management surfaces.
+
+## 2026-06-04 Settings Comments Panel Split
+
+Goal: move the comments settings panel into `inc/settings/panels.php` while preserving comment upload settings keys, review helper calls, admin upload form behavior, and all comment/profile AJAX surfaces.
+
+### Phases
+
+1. Identify comments panel dependencies and review helper calls - complete
+2. Move comments panel rendering into `inc/settings/panels.php` - complete
+3. Replace page markup with a panel function call - complete
+4. Verify PHP syntax, PHPCS, and complexity report impact - complete
+
+### Decisions
+
+- The comments panel keeps `data-yneko-settings-panel="comments"` and all `comment_avatar_url` / `comment_upload` field names unchanged.
+- Existing calls to `yneko_reimu_render_admin_comment_gif_upload()` and `yneko_reimu_render_comment_upload_admin()` remain in the same visual section and order.
+- This split does not touch comment upload AJAX handlers, review approval/rejection actions, nonce names, payload fields, or front-end comment behavior.
+- The next round should split the users panel or perform an admin settings UI check, since users is now the last large panel left in `inc/settings/page.php`.

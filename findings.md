@@ -312,3 +312,12 @@
 - Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 273 lines / score 353 to 219 lines / score 298.
 - This split does not touch GitHub OAuth callback handlers, login AJAX, binding URL generation logic, user meta keys, or sanitizer behavior.
 - Remaining `comments` and `users` panels include review lists and upload/avatar/badge management. They can still be renderer splits, but should be treated as higher risk and ideally checked in the admin UI after moving.
+
+## 2026-06-04 Settings Comments Panel Split Findings
+
+- `inc/settings/panels.php` now also owns the comments settings panel and comment upload manager section.
+- Public admin contracts are unchanged: the `comments` tab key, `data-yneko-settings-panel` value, `comment_avatar_url` setting field, `comment_upload` option keys, upload/review checkboxes, size inputs, cleanup inputs, and review list helper calls all remain the same.
+- `inc/settings/page.php` now calls `yneko_reimu_render_settings_comments_panel( $settings )`.
+- Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 219 lines / score 298 to 177 lines / score 243.
+- This split does not touch comment upload AJAX handlers, admin review actions, nonce names, payload fields, temporary file cleanup logic, GIF library approval, or front-end comment behavior.
+- The users panel is now the last large admin panel left in `inc/settings/page.php`; moving it should be a renderer-only pass with extra attention to badge counts and review helper calls.

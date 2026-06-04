@@ -320,3 +320,13 @@
 - Ran `npm run lint:php`; PHPCS passed.
 - Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 219 lines and score 298.
 - Next round should pause for an admin settings UI check or split the comments/users renderer panels with extra care because they include review-management UI.
+
+## 2026-06-04 Settings Comments Panel Split
+
+- Moved the comments settings panel and comment upload manager section from `inc/settings/page.php` into `inc/settings/panels.php`.
+- Replaced the moved markup with `yneko_reimu_render_settings_comments_panel( $settings )`.
+- Kept all `comment_avatar_url` and `comment_upload` field names, tab keys, review helper calls, and admin descriptions unchanged.
+- Verified targeted syntax with `php -l` on `inc/settings/page.php` and `inc/settings/panels.php`.
+- Ran `npm run lint:php`; PHPCS passed.
+- Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 177 lines and score 243.
+- Next round should either split the users renderer panel or run a focused admin settings UI check before closing the settings-page decomposition.
