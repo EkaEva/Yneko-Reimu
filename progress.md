@@ -448,3 +448,20 @@
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1135.zip` and reported 135 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Next round should either do real GitHub OAuth happy-path staging QA or move to another remaining high-risk surface such as email/TOTP QA.
+
+## 2026-06-04 Email and TOTP QA
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Confirmed local Docker WordPress containers were running and the mounted Yneko-Reimu theme was active.
+- Created/updated local-only ignored `wp-local/email-totp-qa.php` and copied it into the WordPress container; the helper is not staged and must not be committed.
+- The first successful local helper run after fixes passed all targeted paths: registration invalid/code/cooldown/wrong/success, lost-password invalid/unknown/code/weak/wrong/success, profile email same/code/wrong/success, TOTP missing/generate/wrong/success, and 2FA login require/wrong/success.
+- The helper captured 6 outbound messages through `pre_wp_mail`.
+- QA exposed blank English verification emails because `en_US.po` had empty translations for verification email subjects/body template strings.
+- Added English translation sources for registration, password-reset, and profile-email verification subjects/body/expiry messages in `tools/build-i18n.mjs`.
+- Expanded `tools/check-i18n-messages.mjs` to require those 9 verification email template strings; `npm run check:i18n-messages` now reports 66 high-impact messages translated.
+- Ran `npm run i18n`; regenerated `theme/Yneko-Reimu/languages/en_US.po` and `theme/Yneko-Reimu/languages/en_US.mo`.
+- Added `docs/email-totp-qa.md` and linked it from `docs/development.md`.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1151.zip` and reported 136 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Next round should perform staging/manual SMTP and browser-modal QA for email/TOTP, or move to real GitHub OAuth happy-path staging.

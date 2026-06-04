@@ -414,3 +414,15 @@
 - Verified fake token exchange failure returns `GitHub did not return an access token.` and consumes the state transient.
 - Stubbed HTTP responses verified API failure, invalid profile, no linked account with auto-create disabled, existing WordPress email with auto-create enabled, and bind conflict with a GitHub ID already linked to another user.
 - Added `docs/github-oauth-qa.md` so future staging QA can cover the real success path, popup close/postMessage behavior, non-popup redirect, and real GitHub binding flow.
+
+## 2026-06-04 Email and TOTP QA Findings
+
+- Local WordPress QA used an ignored `wp-local/email-totp-qa.php` helper with `pre_wp_mail` capture, AJAX `wp_die` interception, and transient cleanup so registration, lost-password, profile email, TOTP, and 2FA login handlers could be exercised without a real SMTP server.
+- Verified registration invalid input, code send, cooldown, wrong code, and successful registration.
+- Verified password-reset invalid email, unknown-email generic success without mail, known-email code send, weak password rejection, wrong code rejection, and successful reset.
+- Verified profile email same-email rejection, new-email code send, wrong-code rejection, and successful email change.
+- Verified TOTP missing-secret rejection, secret/URI generation, wrong-code rejection, successful enablement, login requiring 2FA, wrong 2FA rejection, and successful login with the current generated TOTP code.
+- QA exposed a real English localization defect: `en_US.po` had empty translations for verification email subjects and body templates, causing captured English registration/password-reset/profile-email messages to have blank subject/body and no code.
+- Added English source translations and expanded the high-impact i18n contract from 57 to 66 messages so the verification email templates cannot become empty again after `npm run build`.
+- Added `docs/email-totp-qa.md` to document static, local/stubbed, and staging/manual SMTP coverage.
+- Limitation: this pass stubs `wp_mail`; a staging/manual pass with real SMTP and browser modal interaction is still needed before final release tagging.

@@ -45,6 +45,8 @@ npm run lint:php
 
 GitHub OAuth local/staging QA is documented in `docs/github-oauth-qa.md`.
 
+Email verification, password-reset, profile email, and TOTP QA is documented in `docs/email-totp-qa.md`.
+
 ## Source Layout
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.

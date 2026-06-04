@@ -19,15 +19,15 @@ msgstr "(Untitled)"
 
 #: inc/comments.php
 msgid "[%s] 密码重置验证码"
-msgstr ""
+msgstr "[%s] Password reset verification code"
 
 #: inc/comments.php
 msgid "[%s] 邮箱修改验证码"
-msgstr ""
+msgstr "[%s] Email change verification code"
 
 #: inc/comments.php
 msgid "[%s] 注册验证码"
-msgstr ""
+msgstr "[%s] Registration verification code"
 
 #: inc/customizer.php
 msgid "%1$s %2$d"
@@ -399,15 +399,15 @@ msgstr ""
 
 #: inc/comments.php
 msgid "该验证码将在 %2$d 分钟后失效。"
-msgstr ""
+msgstr "This code expires in %2$d minutes."
 
 #: inc/comments.php
 msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请忽略这封邮件。"
-msgstr ""
+msgstr "This code expires in %2$d minutes. If this was not you, please ignore this email."
 
 #: inc/comments.php
 msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请立即检查账号安全。"
-msgstr ""
+msgstr "This code expires in %2$d minutes. If this was not you, please check your account security immediately."
 
 #: inc/comments.php
 msgid "该邮箱已被注册。"
@@ -707,15 +707,15 @@ msgstr "Nickname cannot exceed 50 characters."
 
 #: inc/comments.php
 msgid "您的密码重置验证码是：%1$s"
-msgstr ""
+msgstr "Your password reset verification code is: %1$s"
 
 #: inc/comments.php
 msgid "您的邮箱修改验证码是：%1$s"
-msgstr ""
+msgstr "Your email change verification code is: %1$s"
 
 #: inc/comments.php
 msgid "您的注册验证码是：%1$s"
-msgstr ""
+msgstr "Your registration verification code is: %1$s"
 
 #: template-parts/virtual/projects.php
 msgid "配置 GitHub 主页链接后会自动同步 starred 项目。"

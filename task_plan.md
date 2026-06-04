@@ -759,3 +759,26 @@ Goal: exercise GitHub OAuth callback and account-linking error paths in the loca
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, `npm run check:package`, and `git diff --check`.
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1135.zip` and reported 135 entries with no forbidden development files.
 - The next round should either do real GitHub OAuth happy-path staging QA or move to another remaining high-risk surface such as email/TOTP QA.
+
+## 2026-06-04 Email and TOTP QA
+
+Goal: exercise registration email codes, password-reset email codes, profile email changes, authenticator TOTP setup, and 2FA login in the local WordPress QA environment without changing public AJAX actions, nonce names, settings keys, user meta keys, template paths, or creating the `v0.1.15` tag.
+
+### Phases
+
+1. Confirm email/TOTP public interfaces and local QA method - complete
+2. Run local WordPress/stubbed `wp_mail` QA for register, lost-password, profile email, TOTP, and 2FA login paths - complete
+3. Fix any QA-exposed localization contract gaps and document the checklist - complete
+4. Run full verification and package checks - complete
+5. Commit and push public changes only; do not create the `v0.1.15` tag - complete
+
+### Decisions
+
+- Local helper scripts stay under ignored `wp-local/` and are not public repository files or release artifacts.
+- This round preserves all auth/profile AJAX action names, nonce names, payload fields, transient naming, TOTP user meta keys, front-end globals, and login/profile runtime behavior.
+- QA found a real `en_US` localization bug: verification email subject/body templates were empty translations, which produced blank registration/password-reset/profile-email messages on English sites.
+- The fix adds the three verification email subjects, three code lines, and three expiry/body lines to `tools/build-i18n.mjs` and `tools/check-i18n-messages.mjs`; the focused i18n contract now covers 66 high-impact messages.
+- Added `docs/email-totp-qa.md` and linked it from `docs/development.md`.
+- Verification passed: local stubbed Email/TOTP QA, `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 73 theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1151.zip` and reported 136 entries with no forbidden development files.
+- The next round should perform staging/manual SMTP and browser-modal QA for email/TOTP, or move to another remaining high-risk area such as real GitHub OAuth happy-path staging.
