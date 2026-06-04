@@ -950,3 +950,11 @@
 - Targeted checks passed: `npm run check:js`, `npm run check:comments-profile`, `npm run check:github-oauth`, and `php -l theme\Yneko-Reimu\inc\github-login\rendering.php`.
 - Full verification passed: `npm run build`, `npm run check:size`, `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 88 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
 - Generated local validation package `releases/Yneko-Reimu-v0.2.4-20260604-2323.zip`; it contains v0.2.4 release notes, built `reimu.js`, built `reimu-comments.css`, login rendering PHP, and runtime `readme.txt`, and excludes source assets, manifest, tools, `PROJECT.md`, and `AGENTS.md`.
+
+## 2026-06-04 v0.2.4 Phase 1 Visual Follow-up
+
+- Started a focused follow-up after screenshot review showed the WordPress login password visibility button still inherited a rounded button frame and was not visually centered.
+- Excluded `.wp-hide-pw` from the generic login-page button styling and added a stronger `.wp-pwd .wp-hide-pw.button.button-secondary` override with transparent background, no border, no shadow, no focus frame, and absolute vertical centering.
+- Added password-input right padding inside `.wp-pwd` so the centered visibility icon no longer crowds the typed password.
+- Fixed comment body and preview media alignment by explicitly left-aligning comment text containers, paragraphs, and image/GIF blocks.
+- Extended the GitHub OAuth contract gate to protect the stronger login password button override and extended the comments/profile contract gate to protect comment media alignment CSS anchors.

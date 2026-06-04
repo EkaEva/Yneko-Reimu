@@ -195,14 +195,15 @@ const checks = [
     snippets: [
       'body.login .wp-pwd',
       'position: relative;',
-      'body.login .wp-hide-pw',
-      'position: absolute;',
-      'top: 50%;',
-      'transform: translateY(-50%);',
-      'background: transparent;',
-      'border: 0;',
-      'box-shadow: none;',
-      'body.login .wp-hide-pw .dashicons'
+      'body.login .button-secondary:not(.wp-hide-pw)',
+      'body.login .wp-pwd .wp-hide-pw.button.button-secondary',
+      'position: absolute !important;',
+      'top: 50% !important;',
+      'transform: translateY(-50%) !important;',
+      'background: transparent !important;',
+      'border: 0 !important;',
+      'box-shadow: none !important;',
+      'body.login .wp-pwd .wp-hide-pw .dashicons'
     ]
   },
   {

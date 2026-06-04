@@ -325,6 +325,8 @@ for (const cssSelector of [
   '.reimu-comment-popover',
   '.reimu-comment-upload-row',
   '.reimu-comment-preview-panel',
+  '.reimu-comment-preview-content',
+  '.comment-text img',
   '.reimu-comment-current-user',
   '.reimu-comment-current-user__statuses',
   '.reimu-comment-like',

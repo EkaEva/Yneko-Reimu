@@ -198,6 +198,7 @@ body.reimu-login-on #mobile-nav {
   min-width: 0;
   color: var(--color-default);
   line-height: 1.67;
+  text-align: left;
 }
 
 .reimu-comment__meta,
@@ -311,6 +312,7 @@ body.reimu-login-on #mobile-nav {
 
 .comment-text img,
 .reimu-comment-preview-content img {
+  display: block;
   max-width: 200px;
   max-height: 200px;
   height: auto;
@@ -1966,6 +1968,11 @@ body.reimu-login-on #mobile-nav {
   padding: 0 0 6px;
   color: var(--color-default);
   line-height: 1.67;
+  text-align: left;
+}
+
+.comment-text p,
+.reimu-comment-preview-content p {
   text-align: left;
 }
 

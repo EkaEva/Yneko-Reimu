@@ -168,11 +168,11 @@ function yneko_reimu_github_login_enqueue_styles() {
 			box-shadow: 0 0 0 3px rgba(255, 82, 82, .10);
 			outline: none;
 		}
-		body.login .button,
-		body.login .button-secondary,
-		body.login .button-primary,
-		body.login .wp-generate-pw,
-		body.login .wp-cancel-pw,
+		body.login .button:not(.wp-hide-pw),
+		body.login .button-secondary:not(.wp-hide-pw),
+		body.login .button-primary:not(.wp-hide-pw),
+		body.login .wp-generate-pw:not(.wp-hide-pw),
+		body.login .wp-cancel-pw:not(.wp-hide-pw),
 		body.login .reset-pass-submit .button {
 			display: inline-flex !important;
 			min-height: 40px;
@@ -196,9 +196,9 @@ function yneko_reimu_github_login_enqueue_styles() {
 			font-weight: 700;
 			line-height: 40px;
 		}
-		body.login .button-secondary,
-		body.login .wp-generate-pw,
-		body.login .wp-cancel-pw {
+		body.login .button-secondary:not(.wp-hide-pw),
+		body.login .wp-generate-pw:not(.wp-hide-pw),
+		body.login .wp-cancel-pw:not(.wp-hide-pw) {
 			color: #2f64ff;
 			background: #fff;
 			border: 1px solid rgba(47, 100, 255, .38);
@@ -212,35 +212,48 @@ function yneko_reimu_github_login_enqueue_styles() {
 		body.login .wp-pwd {
 			position: relative;
 			display: block;
+			margin-top: 8px;
 		}
-		body.login .wp-hide-pw {
-			position: absolute;
-			top: 50%;
-			right: 8px;
+		body.login .wp-pwd input[type="password"],
+		body.login .wp-pwd input[type="text"] {
+			margin-top: 0;
+			padding-right: 54px;
+		}
+		body.login .wp-pwd .wp-hide-pw,
+		body.login .wp-pwd .wp-hide-pw.button,
+		body.login .wp-pwd .wp-hide-pw.button.button-secondary,
+		body.login .wp-pwd .wp-hide-pw.button-secondary {
+			position: absolute !important;
+			top: 50% !important;
+			right: 7px !important;
 			display: inline-flex !important;
-			width: 34px;
-			min-width: 34px;
-			height: 34px;
-			min-height: 34px;
-			align-items: center;
-			justify-content: center;
-			margin: 0;
-			padding: 0;
-			color: #2f64ff;
-			background: transparent;
-			border: 0;
-			border-radius: 50%;
-			box-shadow: none;
-			line-height: 1;
-			transform: translateY(-50%);
+			appearance: none !important;
+			width: 36px !important;
+			min-width: 0 !important;
+			height: 36px !important;
+			min-height: 0 !important;
+			align-items: center !important;
+			justify-content: center !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			color: #2f64ff !important;
+			background: transparent !important;
+			background-image: none !important;
+			border: 0 !important;
+			border-color: transparent !important;
+			border-radius: 0 !important;
+			box-shadow: none !important;
+			line-height: 1 !important;
+			text-decoration: none !important;
+			transform: translateY(-50%) !important;
 		}
-		body.login .wp-hide-pw .dashicons {
-			display: block;
-			width: 20px;
-			height: 20px;
-			margin: 0;
-			font-size: 20px;
-			line-height: 20px;
+		body.login .wp-pwd .wp-hide-pw .dashicons {
+			display: block !important;
+			width: 20px !important;
+			height: 20px !important;
+			margin: 0 !important;
+			font-size: 20px !important;
+			line-height: 20px !important;
 		}
 		body.login .button-primary:hover,
 		body.login .button-primary:focus {
@@ -248,29 +261,31 @@ function yneko_reimu_github_login_enqueue_styles() {
 			box-shadow: 0 10px 22px rgba(31, 191, 117, .24);
 			opacity: .92;
 		}
-		body.login .button-secondary:hover,
-		body.login .button-secondary:focus,
-		body.login .wp-generate-pw:hover,
-		body.login .wp-generate-pw:focus,
-		body.login .wp-cancel-pw:hover,
-		body.login .wp-cancel-pw:focus {
+		body.login .button-secondary:not(.wp-hide-pw):hover,
+		body.login .button-secondary:not(.wp-hide-pw):focus,
+		body.login .wp-generate-pw:not(.wp-hide-pw):hover,
+		body.login .wp-generate-pw:not(.wp-hide-pw):focus,
+		body.login .wp-cancel-pw:not(.wp-hide-pw):hover,
+		body.login .wp-cancel-pw:not(.wp-hide-pw):focus {
 			color: #2f64ff;
 			background: #fff;
 			border-color: rgba(47, 100, 255, .55);
 			box-shadow: 0 10px 22px rgba(47, 100, 255, .12);
 			opacity: .92;
 		}
-		body.login .wp-hide-pw:hover,
-		body.login .wp-hide-pw:focus {
-			color: #2f64ff;
-			background: rgba(47, 100, 255, .08);
-			border: 0;
-			box-shadow: none;
+		body.login .wp-pwd .wp-hide-pw:hover,
+		body.login .wp-pwd .wp-hide-pw:focus {
+			color: #2f64ff !important;
+			background: transparent !important;
+			border: 0 !important;
+			box-shadow: none !important;
 			opacity: 1;
 		}
-		body.login .wp-hide-pw:focus {
-			outline: 2px solid rgba(47, 100, 255, .30);
-			outline-offset: 2px;
+		body.login .wp-pwd .wp-hide-pw:focus {
+			outline: 0 !important;
+		}
+		body.login .wp-pwd .wp-hide-pw:focus-visible {
+			outline: 0 !important;
 		}
 		body.login #nav,
 		body.login #backtoblog {
