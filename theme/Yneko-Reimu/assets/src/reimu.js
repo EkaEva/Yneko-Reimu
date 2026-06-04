@@ -4493,7 +4493,7 @@ import { createProfileStatusUi } from './reimu/profile-status.js';
     replaceElement('.sidebar-widget', nextDoc);
     replaceElement('#mobile-nav', nextDoc, { appendTo: qs('#container') || document.body });
     replaceElement('.site-search', nextDoc, { appendTo: qs('#container') || document.body });
-    replaceElement('#footer', nextDoc);
+    replaceElement('footer#footer', nextDoc);
     replaceElement('#reimu-login-modal', nextDoc, { appendTo: qs('#container') || document.body });
     replaceElement('#reimu-profile-modal', nextDoc, { appendTo: qs('#container') || document.body, keepMissing: true });
 

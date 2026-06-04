@@ -70,3 +70,14 @@ Verified:
 - TOTP save enabled two-factor authentication, and the login modal required and accepted the current authenticator code.
 
 Do not create or push the `v0.2.0` tag as part of QA.
+
+## Production Mail Troubleshooting
+
+The theme sends registration, password-reset, and profile-email verification codes through WordPress `wp_mail()`. It does not bypass WP Mail SMTP or use its own SMTP transport.
+
+When a user reports that a code email was not received:
+
+- If the modal shows `Failed to send the verification email. Please try again later.` or the Chinese equivalent, `wp_mail()` returned `false`; check WP Mail SMTP connection/authentication and server logs first.
+- If the modal shows the success/countdown state, the theme reached `wp_mail()` successfully. Check WP Mail SMTP email logs or send a WP Mail SMTP test email to confirm whether the plugin accepted and delivered the message.
+- If WP Mail SMTP logs the message as sent but the recipient does not receive it, check spam, provider suppression/bounce logs, DNS authentication, rate limits, and whether the destination mailbox rejects the sender.
+- If only one form fails, compare the recipient address and plugin log entry for that form. Registration sends to the new email, password reset sends to the existing account email, and profile email change sends to the new email.
