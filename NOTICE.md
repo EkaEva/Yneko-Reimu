@@ -13,7 +13,7 @@ See [LICENSE](LICENSE) for the full license text of this WordPress theme project
 
 ## Upstream Theme: hexo-theme-reimu
 
-Yneko-Reimu is a WordPress adaptation and second-development project based on the visual design and interaction ideas of `hexo-theme-reimu`.
+Yneko-Reimu is a WordPress port and adaptation inspired by the visual design and interaction ideas of `hexo-theme-reimu`. It is not the official WordPress version of the upstream Hexo theme, nor a direct continuation of the original Hexo theme source.
 
 - Original project: hexo-theme-reimu
 - Original author: D-Sketon
@@ -49,7 +49,7 @@ SOFTWARE.
 
 Notes:
 
-- The overall Reimu-style layout, visual language, navigation feel, loader style, sidebar composition, card style, dark mode atmosphere, and several frontend interaction ideas are adapted from `hexo-theme-reimu`.
+- The overall Reimu-style layout, visual language, navigation feel, loader style, sidebar composition, card style, dark mode atmosphere, and several frontend interaction ideas are ported and adapted from `hexo-theme-reimu`.
 - Yneko-Reimu rewrites and adapts these ideas for WordPress using PHP templates, WordPress APIs, Customizer settings, media library configuration, native comments, and theme-specific frontend scripts.
 - `hexo-theme-reimu` remains the original design source. All credit for the original Hexo theme design belongs to D-Sketon.
 
@@ -72,4 +72,3 @@ Notes:
 This theme is built for WordPress and may integrate with frontend libraries loaded by configuration, such as APlayer, AOS, LazyLoad, PhotoSwipe, KaTeX, Mermaid, or comment-related integrations when enabled. Those libraries retain their own licenses and are not relicensed by Yneko-Reimu.
 
 WordPress is licensed under GPL. Yneko-Reimu is distributed as a WordPress theme under MIT for this project repository; downstream users should still follow WordPress ecosystem and dependency license requirements when redistributing complete site packages.
-

@@ -2,7 +2,7 @@
   "name": "yneko-reimu",
   "version": "0.2.0",
   "private": true,
-  "description": "WordPress classic hybrid port of hexo-theme-reimu.",
+  "description": "WordPress Classic Hybrid port inspired by hexo-theme-reimu.",
   "scripts": {
     "i18n": "node tools/build-i18n.mjs",
     "check:i18n": "node --check tools/build-i18n.mjs && npm run i18n",

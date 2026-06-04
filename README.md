@@ -7,7 +7,7 @@
 <p align="center">
   一个面向 WordPress 的 Reimu 风格经典主题。
   <br>
-  A Reimu-style classic WordPress theme port inspired by hexo-theme-reimu.
+  A WordPress Classic Hybrid port inspired by hexo-theme-reimu.
 </p>
 
 <p align="center">
@@ -27,20 +27,20 @@
 
 ## 中文
 
-Yneko-Reimu 是一个面向 WordPress 的经典主题，目标是在 WordPress 内容系统中复刻并延展 [D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) 的视觉与交互体验。
+Yneko-Reimu 是一个受 [D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) 启发的 WordPress Classic Hybrid 主题移植版，目标是在 WordPress 内容系统中重新实现并适配 Reimu 风格的视觉语言与交互体验。
 
-本项目不是 hexo-theme-reimu 的官方 WordPress 版本，而是一个学习、复刻与二次开发项目。主题保留了 Reimu 风格的顶部导航、头图、文章卡片、侧栏作者卡、归档、友链、项目页、搜索弹窗、加载动画、暗色模式、音乐播放器、评论视觉、代码块样式和自定义鼠标指针等体验，并将它们适配到 WordPress 模板、Customizer、媒体库和后台设置中。
+本项目不是 hexo-theme-reimu 的官方 WordPress 版本，也不是原 Hexo 主题源码的直接延续。它以 WordPress 主题架构重新实现模板、Customizer、媒体库、后台设置、评论、登录、搜索、项目页和发布流程，同时保留 Reimu 风格的顶部导航、头图、文章卡片、侧栏作者卡、归档、友链、搜索弹窗、加载动画、暗色模式、音乐播放器、评论视觉、代码块样式和自定义鼠标指针等体验。
 
 ## 项目来源
 
-Yneko-Reimu 的整体设计语言、页面结构、交互动效与部分前端样式参考并改编自 [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu)。
+Yneko-Reimu 的整体设计语言、页面结构、交互动效与部分前端样式参考并移植/适配自 [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu)。
 
 - 原主题作者：D-Sketon
 - 原主题仓库：[https://github.com/D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu)
 - 原主题许可证：MIT License
 - 原主题官网 / 演示站：[https://d-sketon.github.io/](https://d-sketon.github.io/)
 
-Yneko-Reimu 在此基础上完成了 WordPress 主题化，包括 PHP 模板、WordPress 查询、评论系统、后台设置、媒体库配置、项目页 GitHub 拉取、PJAX/软导航适配、本地搜索索引、主题打包与发布清理等工作。
+Yneko-Reimu 在此基础上完成了 WordPress 侧的实现，包括 PHP 模板、WordPress 查询、评论系统、后台设置、媒体库配置、项目页 GitHub 拉取、PJAX/软导航适配、本地搜索索引、主题打包与发布清理等工作。
 
 ## 鼠标指针来源
 
@@ -529,7 +529,7 @@ CI 会在 GitHub Actions 中继续执行 PHPCS/WPCS。
 
 Yneko-Reimu 使用 MIT License 发布，详见 [LICENSE](LICENSE)。
 
-本主题包含对 [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) 的参考、移植和改编。原主题由 D-Sketon 创作并以 MIT License 发布。
+本主题包含对 [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) 的参考、移植与 WordPress 适配。原主题由 D-Sketon 创作并以 MIT License 发布。
 
 主题中包含的莉莉概念鼠标指针素材归原作者「天羊EdSky」所有。该素材的具体使用边界请以原作者发布说明为准。详细来源和版权声明见 [NOTICE.md](NOTICE.md)。
 
@@ -541,13 +541,13 @@ Yneko-Reimu 使用 MIT License 发布，详见 [LICENSE](LICENSE)。
 
 ## English
 
-Yneko-Reimu is a classic WordPress theme that recreates and extends the visual and interaction style of [D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) inside the WordPress content system.
+Yneko-Reimu is a WordPress Classic Hybrid theme port inspired by [D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu), reimplementing and adapting the Reimu visual language and interaction patterns for WordPress.
 
-This project is not the official WordPress version of hexo-theme-reimu. It is a learning, porting, and secondary-development project. It adapts the Reimu-style header, hero image, post cards, author sidebar, archives, friend links, project page, search popup, loader, dark mode, music player, comment visuals, code blocks, and custom cursors to WordPress templates, the Customizer, the Media Library, and a built-in settings page.
+This project is not the official WordPress version of hexo-theme-reimu, and it is not a direct continuation of the original Hexo theme source. It reimplements the theme for WordPress templates, the Customizer, the Media Library, a built-in settings page, comments, login, search, project pages, and release packaging while preserving the Reimu-style header, hero image, post cards, author sidebar, archives, friend links, search popup, loader, dark mode, music player, comment visuals, code blocks, and custom cursors.
 
 ### Origins
 
-Yneko-Reimu’s design language, page structure, interactions, and part of its front-end styling are based on and adapted from [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu).
+Yneko-Reimu's design language, page structure, interactions, and part of its front-end styling are ported and adapted from [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu).
 
 - Original theme author: D-Sketon
 - Original repository: [https://github.com/D-Sketon/hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu)
@@ -930,7 +930,7 @@ The theme provides baseline hardening: XML-RPC is off by default, WordPress gene
 
 Yneko-Reimu is released under the MIT License. See [LICENSE](LICENSE).
 
-This theme includes references, ports, and adaptations of [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu), created by D-Sketon and released under the MIT License.
+This theme references [hexo-theme-reimu](https://github.com/D-Sketon/hexo-theme-reimu) and includes WordPress ports and adaptations inspired by it. The original theme was created by D-Sketon and released under the MIT License.
 
 The bundled Lily concept cursor assets belong to their original creator, 天羊EdSky. Please follow the original creator’s usage terms. See [NOTICE.md](NOTICE.md) for detailed credits.
 
