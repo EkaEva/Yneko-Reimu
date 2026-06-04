@@ -432,3 +432,19 @@
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1125.zip` and reported 134 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Next round should perform OAuth error-path QA with local/stubbed callback states, or document a manual GitHub OAuth staging checklist.
+
+## 2026-06-04 GitHub OAuth Error-Path QA
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Confirmed local Docker WordPress containers were running and the mounted Yneko-Reimu theme was active.
+- Observed host-side `127.0.0.1:8095/wp-login.php?action=...` requests returning proxy-level 502, while container-internal requests reached WordPress normally.
+- Verified missing callback response, unconfigured login start, expired state, configured GitHub redirect, fake token failure, and state transient consumption using container-internal requests.
+- Created local-only ignored `wp-local/oauth-qa-*.php` helper scripts and copied them into the container to stub GitHub HTTP responses through WordPress filters.
+- Verified stubbed API failure, invalid profile, no linked account, existing email, and bind-conflict error paths.
+- Reset local OAuth settings back to empty and removed the temporary admin GitHub ID meta used for bind-conflict QA.
+- Added `docs/github-oauth-qa.md` and linked it from `docs/development.md`.
+- Updated `task_plan.md` and `findings.md` with the QA scope, evidence, and remaining real-app staging path.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1135.zip` and reported 135 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Next round should either do real GitHub OAuth happy-path staging QA or move to another remaining high-risk surface such as email/TOTP QA.

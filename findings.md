@@ -402,3 +402,15 @@
 - Settings compatibility coverage includes `github_oauth` keys, legacy `yneko_reimu_github_login_options` and `yneko_github_login_options` fallback, admin field names, and the callback URL fallback.
 - User compatibility coverage includes both current `_yneko_reimu_github_*` meta keys and legacy `_yneko_github_*` meta keys.
 - This gate is static and does not prove a live GitHub OAuth callback. The next QA target should exercise missing-code/state-expired/token/API/profile/account-link error paths with a local or staging callback setup.
+
+## 2026-06-04 GitHub OAuth Error-Path QA Findings
+
+- The local WordPress QA environment was still active with the current Yneko-Reimu theme mounted and activated.
+- Host-side requests to `http://127.0.0.1:8095/wp-login.php?action=...` returned a proxy-level 502, but container-internal requests to `http://127.0.0.1/wp-login.php?action=...` reached WordPress and produced expected statuses and messages. This appears to be an environment/proxy artifact rather than a theme callback failure.
+- Verified callback with no `code` / `state`: HTTP 400 and `Missing GitHub OAuth response.`.
+- Verified login start with empty OAuth settings: HTTP 403 and `GitHub login is not configured.`.
+- Verified callback with fake code and missing/expired state: HTTP 403 and `GitHub login state expired. Please try again.`.
+- Verified configured OAuth start redirects to GitHub with `client_id`, callback `redirect_uri`, `scope=read:user user:email`, generated `state`, and `allow_signup=true`.
+- Verified fake token exchange failure returns `GitHub did not return an access token.` and consumes the state transient.
+- Stubbed HTTP responses verified API failure, invalid profile, no linked account with auto-create disabled, existing WordPress email with auto-create enabled, and bind conflict with a GitHub ID already linked to another user.
+- Added `docs/github-oauth-qa.md` so future staging QA can cover the real success path, popup close/postMessage behavior, non-popup redirect, and real GitHub binding flow.

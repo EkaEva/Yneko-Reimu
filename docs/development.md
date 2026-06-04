@@ -43,6 +43,8 @@ npm run lint:php
 
 `npm run check:github-oauth` verifies the GitHub OAuth public contract: login form actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta compatibility, GitHub API scope/endpoints, popup message type, and high-impact OAuth error strings. Update it in the same change only when an intentional compatibility migration is documented.
 
+GitHub OAuth local/staging QA is documented in `docs/github-oauth-qa.md`.
+
 ## Source Layout
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.

@@ -736,3 +736,26 @@ Goal: add a dependency-free static contract check for GitHub OAuth public endpoi
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, `npm run check:package`, and `git diff --check`.
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1125.zip` and reported 134 entries with no forbidden development files.
 - The next round should perform OAuth error-path QA with local/stubbed callback states, or document a manual GitHub OAuth staging checklist.
+
+## 2026-06-04 GitHub OAuth Error-Path QA
+
+Goal: exercise GitHub OAuth callback and account-linking error paths in the local WordPress QA environment without changing OAuth runtime behavior, committing local helper scripts, or creating the `v0.1.15` tag.
+
+### Phases
+
+1. Check local WordPress QA environment and OAuth settings state - complete
+2. Verify callback missing-response, unconfigured login, expired state, redirect, token failure, API failure, invalid profile, no linked account, existing email, and bind conflict paths - complete
+3. Add public OAuth QA checklist documentation and persistent records - complete
+4. Run verification and package checks - complete
+5. Commit and push public records/docs only; do not create the `v0.1.15` tag - in progress
+
+### Decisions
+
+- Local helper scripts were created only under ignored `wp-local/` and copied into the WordPress container for this QA pass.
+- Host requests to `127.0.0.1:8095/wp-login.php?action=...` returned a proxy-level 502, but the same requests inside the WordPress container reached Apache/WordPress and returned the expected WordPress HTTP statuses. OAuth error-path assertions therefore used container-internal requests and PHP bootstrap scripts.
+- The local site was reset to empty OAuth settings after the QA pass.
+- Added `docs/github-oauth-qa.md` to document static, local/stubbed, and staging/real-app QA coverage.
+- No settings keys, login actions, nonce names, meta keys, template paths, front-end globals, or OAuth runtime behavior were changed.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1135.zip` and reported 135 entries with no forbidden development files.
+- The next round should either do real GitHub OAuth happy-path staging QA or move to another remaining high-risk surface such as email/TOTP QA.
