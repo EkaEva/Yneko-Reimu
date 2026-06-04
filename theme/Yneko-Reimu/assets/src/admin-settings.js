@@ -127,7 +127,17 @@
   }
 
   function refreshNumbers(root) {
-    (root || document).querySelectorAll('.yneko-reimu-repeatable').forEach(function (section) {
+    var scope = root || document;
+    var sections = [];
+
+    if (scope.matches && scope.matches('.yneko-reimu-repeatable')) {
+      sections.push(scope);
+    }
+    scope.querySelectorAll('.yneko-reimu-repeatable').forEach(function (section) {
+      sections.push(section);
+    });
+
+    sections.forEach(function (section) {
       var type = section.dataset.repeatable === 'music' ? 'music' : 'friend';
       section.querySelectorAll('.yneko-reimu-repeatable-row').forEach(function (row, index) {
         var heading = row.querySelector('.yneko-reimu-row-heading');

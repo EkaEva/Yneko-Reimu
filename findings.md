@@ -350,3 +350,18 @@
 - `git tag --list 'v0.1.15'` returns no tag, matching the explicit no-tag requirement.
 - `git status --short --branch` was clean before final record updates; `PROJECT.md` and `AGENTS.md` do not appear in Git status because they are excluded through `.git/info/exclude`.
 - Remaining unverified area: manual WordPress admin UI/browser QA was not performed locally. Static coverage now includes `tools/check-settings-admin-contract.mjs`, and manual comments/profile coverage is documented in `docs/comments-profile-contract.md`.
+
+## 2026-06-04 Local WordPress QA Findings
+
+- Docker Desktop was available after starting the daemon, so a local-only WordPress 6.9 / PHP 8.3 / MariaDB environment was created under `.gitignore`-excluded `wp-local/`.
+- The current `theme/Yneko-Reimu` directory was mounted into WordPress and activated successfully; no release tag was created.
+- Admin settings page QA at `http://127.0.0.1:8095/wp-admin/themes.php?page=yneko-reimu-settings` confirmed 10 settings tabs and 10 panels render in a real WordPress admin session with no browser console warnings/errors.
+- Admin settings tab switching works: selecting the Friend links tab activates the `friends` panel and updates the hash to `#friends`.
+- Real admin QA exposed a small regression missed by the static contract check: when a repeatable friend/music row was added, `refreshNumbers(repeatable)` did not update the new row heading because it only scanned descendant `.yneko-reimu-repeatable` nodes, not the passed repeatable root itself.
+- `assets/src/admin-settings.js` now includes the passed `.yneko-reimu-repeatable` root before scanning descendants. Browser retest confirmed a newly added friend row receives `Friend #4`.
+- Front-end post QA confirmed the main classic runtime initializes DOM bindings with no console warnings/errors; comment/profile binding markers are present, and no `type="module"` loading is required.
+- Search lazy runtime QA passed: `reimu-search.js` is not present before interaction, then loads after the search button is clicked, opens the popup, and focuses the search input.
+- Share lazy runtime QA passed: `reimu-share.js` loads on pages with `.share-wrapper`, and Weixin QR generation loads `qrcode.js` only after the Weixin share link is clicked. The QR image receives a data URL.
+- PhotoSwipe lazy runtime QA passed after enabling `yneko_reimu_settings.features.photoswipe_enable` in the local test site: `reimu-photoswipe.js` loads only when the feature is enabled and an article image is present.
+- Comments/profile smoke QA passed: the profile modal opens and renders profile fields; an AJAX comment submit inserted a new comment into the list, cleared the textarea, and produced no console warnings/errors.
+- Limitation: this was a smoke QA pass, not the full comments/profile contract matrix. Email delivery, TOTP validation, avatar/media file upload review, admin approval/rejection, and OAuth callbacks still require a deeper local or staging QA session.

@@ -361,3 +361,18 @@
 - `PROJECT.md` and `AGENTS.md` remain local-only and absent from Git status.
 - Manual WordPress admin UI/browser QA was not performed in this environment; settings structure is protected by the static contract gate, and comments/profile manual coverage is documented in `docs/comments-profile-contract.md`.
 - This completes the current optimization plan. The next meaningful work should be a real WordPress admin/front-end manual QA pass before any further comments/profile runtime or request-handler split.
+
+## 2026-06-04 Local WordPress QA Pass
+
+- Started Docker Desktop and created a local-only WordPress QA environment under `.gitignore`-excluded `wp-local/`.
+- Installed WordPress through a local-only PHP setup script, activated the mounted `Yneko-Reimu` theme, and seeded a QA post, test user, and baseline comment.
+- Browser QA confirmed the real WordPress admin settings page renders 10 tabs and 10 panels, loads `assets/dist/admin-settings.js`, switches tabs without console errors, and keeps the Friend links panel reachable.
+- Found a real admin settings regression: newly added repeatable rows did not get a row number/title because `refreshNumbers()` ignored the passed repeatable root.
+- Fixed `theme/Yneko-Reimu/assets/src/admin-settings.js` so `refreshNumbers(root)` processes the root when it is itself `.yneko-reimu-repeatable`, then scans descendant repeatable sections.
+- Rebuilt `theme/Yneko-Reimu/assets/dist/admin-settings.js`; `theme/Yneko-Reimu/assets/dist/manifest.json` now only reflects the new admin script size.
+- Browser retest confirmed adding a friend row now updates headings through `Friend #4`.
+- Front-end browser QA passed for search lazy loading, share runtime loading, Weixin QR second-stage `qrcode.js` loading, PhotoSwipe runtime loading after enabling the feature, profile modal smoke rendering, and AJAX comment insertion.
+- Verification passed after the fix: `npm run check:js`, `npm run build`, `npm run check`, `npm audit --audit-level=moderate`, `npm run package`, `npm run check:package`, and full PHP syntax lint over all theme PHP files.
+- Final package check used `Yneko-Reimu-v0.1.15-20260604-1037.zip` and reported 134 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Remaining QA depth: email/TOTP/avatar upload/media review/OAuth/admin approval-rejection flows were not fully exercised in this smoke pass.

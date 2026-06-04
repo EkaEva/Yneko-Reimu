@@ -629,3 +629,23 @@ Goal: close the v0.1.15 follow-up optimization plan by verifying the implemented
 - `PROJECT.md` and `AGENTS.md` remain local-only through `.git/info/exclude` and must not be committed or packaged.
 - No `v0.1.15` tag is created or pushed because the user explicitly reserved the tag for later work.
 - Manual WordPress admin UI/browser QA was not performed in this environment; the settings admin contract gate and comments/profile contract checklist remain the protection until a real WordPress admin session is available.
+
+## 2026-06-04 Local WordPress QA Pass
+
+Goal: run the previously deferred real WordPress admin/front-end QA pass against the current v0.1.15 theme, focusing on the extracted settings panels, admin settings JavaScript, classic front-end runtime compatibility, and comments/profile contract.
+
+### Phases
+
+1. Prepare a local-only WordPress test environment - complete
+2. Install and activate the current theme build - complete
+3. Verify admin settings tabs, panels, repeatable controls, and review sections - complete
+4. Verify front-end runtime basics, lazy search/share/photoswipe loading, and comments/profile smoke paths - complete
+5. Record QA evidence and remaining limitations - complete
+
+### Decisions
+
+- Use `.gitignore`-excluded `wp-local/` or another local-only path for Docker/WordPress state.
+- Do not commit Docker state, WordPress uploads, credentials, or local QA scaffolding unless a later public dev-environment plan explicitly approves it.
+- Do not create or push the `v0.1.15` tag during this QA pass.
+- Manual QA found and fixed one admin settings regression: adding a friend/music repeatable row did not refresh its row heading because `refreshNumbers()` ignored the repeatable element when it was passed as the root.
+- Comments/profile request handlers remain in the main runtime; this QA pass validates smoke paths but does not unlock a broad comments/profile lazy-runtime split by itself.
