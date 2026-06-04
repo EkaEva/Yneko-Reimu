@@ -9,6 +9,7 @@ npm install
 npm run check:js
 npm run check:settings-admin
 npm run check:customizer
+npm run check:template-tags
 npm run check:enqueue
 npm run check:comments-profile
 npm run check:github-oauth
@@ -56,6 +57,10 @@ npm run lint:php
 `npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the 10 settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields and review helper calls remain present.
 
 `npm run check:customizer` verifies the Customizer visual-preview contract before further decomposition. It checks the public customize hook, panel/section IDs, key setting/control IDs, and sanitizer callbacks so future helper extraction does not silently rename saved `theme_mod` or option-backed Customizer fields.
+
+`npm run check:template-tags` verifies the Template Tags contract after helper splits. It checks the `inc/template-tags.php` entrypoint, internal module loading, key template helper functions, virtual page slugs, navigation hooks, sponsor shortcode, share/social platform definitions, and GitHub project transient/filter contracts.
+
+The Template Tags PHP entrypoint is `theme/Yneko-Reimu/inc/template-tags.php`. Internal helpers may live under `theme/Yneko-Reimu/inc/template-tags/`; currently `layout-content.php` owns layout/content display helpers, `social-share.php` owns social/share helpers, `navigation-virtual.php` owns navigation and virtual pages, and `content-tools.php` owns home category capsules, YML rendering, sponsor/friend/project helpers, sticky/word-count helpers, and Taichi SVG output. Keep function names, virtual page slugs, template paths, public URLs, hooks, filters, shortcodes, and transient keys unchanged unless a compatibility note is added.
 
 `npm run check:enqueue` verifies the front-end enqueue contract after PHP helper splits. It checks the public enqueue hook, critical script/style handles, third-party asset paths, `window.REIMU_CONFIG` keys, and nonce names so future asset-configuration cleanup does not silently change the front-end runtime contract.
 

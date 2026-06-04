@@ -637,3 +637,10 @@
 - `inc/comments/rendering.php` can own the rendering layer while preserving the existing function names called by `comments.php`, `auth.php`, `profile.php`, `mutations.php`, widgets, and template tags.
 - The existing `ipwho.is` region lookup remains behaviorally unchanged in this pass; moving it with the UA/IP badge renderer avoids adding a new setting or changing privacy/runtime behavior in a maintenance-only release.
 - The comments/profile contract gate should treat dynamic comment nonces and comment markup anchors as rendering-module contracts after this split, while nonce verification stays in `mutations.php`.
+
+## 2026-06-04 v0.2.3 Template Tags Split Findings
+
+- After the comments rendering split, `inc/template-tags.php` became the largest runtime PHP file at 1328 nonblank lines, with mixed layout/content, social/share, navigation/virtual, and content-tool responsibilities.
+- `functions.php` loads only `inc/template-tags.php`, so the safest compatibility boundary is to keep that entrypoint and have it require internal `inc/template-tags/` modules.
+- The public Template Tags surface is broader than the file name suggests: templates, Customizer, widgets, i18n helpers, virtual pages, share/social output, GitHub projects, navigation filters, `template_include`, and the sponsor shortcode all depend on existing helper names or hooks.
+- `tools/check-template-tags-contract.mjs` should protect the new split by checking module loading, key helper functions, virtual page slugs, navigation hooks, sponsor shortcode, share/social platforms, and GitHub project transient/filter contracts.

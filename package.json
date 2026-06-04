@@ -10,6 +10,7 @@
     "check:js": "node tools/check-js.mjs",
     "check:settings-admin": "node tools/check-settings-admin-contract.mjs",
     "check:customizer": "node tools/check-customizer-contract.mjs",
+    "check:template-tags": "node tools/check-template-tags-contract.mjs",
     "check:enqueue": "node tools/check-enqueue-contract.mjs",
     "check:comments-profile": "node tools/check-comments-profile-contract.mjs",
     "check:github-oauth": "node tools/check-github-oauth-contract.mjs",
@@ -21,7 +22,7 @@
     "check:package": "node tools/check-package.mjs",
     "report:php-complexity": "node tools/report-php-complexity.mjs",
     "lint:php": "node tools/run-phpcs.mjs",
-    "check": "npm run check:js && npm run check:settings-admin && npm run check:customizer && npm run check:enqueue && npm run check:comments-profile && npm run check:github-oauth && npm run check:release-readiness && npm run check:css-split && npm run build && npm run check:assets && npm run check:i18n-messages && npm run check:size && npm run lint:php",
+    "check": "npm run check:js && npm run check:settings-admin && npm run check:customizer && npm run check:template-tags && npm run check:enqueue && npm run check:comments-profile && npm run check:github-oauth && npm run check:release-readiness && npm run check:css-split && npm run build && npm run check:assets && npm run check:i18n-messages && npm run check:size && npm run lint:php",
     "package": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -Command \"& './tools/package-theme.ps1' -Version ('v' + $env:npm_package_version)\""
   },
   "license": "MIT",

@@ -33,7 +33,7 @@ msgstr "[%s] 注册验证码"
 msgid "%1$s %2$d"
 msgstr "%1$s %2$d"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "%d 分钟阅读"
 msgstr "%d 分钟阅读"
 
@@ -41,11 +41,11 @@ msgstr "%d 分钟阅读"
 msgid "%d 个待处理项目"
 msgstr "%d 个待处理项目"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "%d 篇文章"
 msgstr "%d 篇文章"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "%d 字"
 msgstr "%d 字"
 
@@ -69,11 +69,11 @@ msgstr "%s 评论"
 msgid "%s 阅读量"
 msgstr "%s 阅读量"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "%s 字"
 msgstr "%s 字"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "© %s. Powered by WordPress."
 msgstr "© %s. Powered by WordPress."
 
@@ -81,7 +81,7 @@ msgstr "© %s. Powered by WordPress."
 msgid "+ 新增自定义标签"
 msgstr "+ 新增自定义标签"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "404（´◔ ₃ ◔`)"
 msgstr "404（´◔ ₃ ◔`)"
 
@@ -101,7 +101,7 @@ msgstr "按热度"
 msgid "按热度：按点赞、回复和近期活跃综合排序"
 msgstr "按热度：按点赞、回复和近期活跃综合排序"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "按时间整理全部文章。"
 msgstr "按时间整理全部文章。"
 
@@ -381,7 +381,7 @@ msgstr "分页导航"
 msgid "辅助导航"
 msgstr "辅助导航"
 
-#: inc/enqueue.php inc/template-tags.php
+#: inc/enqueue.php inc/template-tags/content-tools.php
 msgid "复制"
 msgstr "复制"
 
@@ -485,7 +485,7 @@ msgstr "关闭预览"
 msgid "关键词"
 msgstr "关键词"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "关于"
 msgstr "关于"
 
@@ -501,7 +501,7 @@ msgstr "关于页简介"
 msgid "关于与友链"
 msgstr "关于与友链"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "关于这个站点与作者。"
 msgstr "关于这个站点与作者。"
 
@@ -517,7 +517,7 @@ msgstr "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器
 msgid "广告/官方/测试"
 msgstr "广告/官方/测试"
 
-#: inc/customizer.php inc/template-tags.php template-parts/widgets/default-widgets.php
+#: inc/customizer.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
 msgid "归档"
 msgstr "归档"
 
@@ -721,7 +721,7 @@ msgstr "您的注册验证码是：%1$s"
 msgid "配置 GitHub 主页链接后会自动同步 starred 项目。"
 msgstr "配置 GitHub 主页链接后会自动同步 starred 项目。"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "朋友们的站点入口。"
 msgstr "朋友们的站点入口。"
 
@@ -873,7 +873,7 @@ msgstr "切换明暗模式"
 msgid "请不要重复发送相同的评论。"
 msgstr "请不要重复发送相同的评论。"
 
-#: inc/template-tags.php
+#: inc/template-tags/social-share.php
 msgid "请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr "请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 
@@ -1029,7 +1029,7 @@ msgstr "上一页"
 msgid "上一张图片"
 msgstr "上一张图片"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "少年，你迷路了吗？"
 msgstr "少年，你迷路了吗？"
 
@@ -1069,7 +1069,7 @@ msgstr "使用主题内置侧栏"
 msgid "视觉主题"
 msgstr "视觉主题"
 
-#: inc/schema.php inc/template-tags.php
+#: inc/schema.php inc/template-tags/navigation-virtual.php
 msgid "首页"
 msgstr "首页"
 
@@ -1101,7 +1101,7 @@ msgstr "说些什么吧！"
 msgid "搜索"
 msgstr "搜索"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "搜索：%s"
 msgstr "搜索：%s"
 
@@ -1229,7 +1229,7 @@ msgstr "网址（可选）"
 msgid "忘记密码？"
 msgstr "忘记密码？"
 
-#: inc/template-tags.php
+#: inc/template-tags/social-share.php
 msgid "微信"
 msgstr "微信"
 
@@ -1293,7 +1293,7 @@ msgstr "文章引言卡片"
 msgid "文章摘要/副标题"
 msgstr "文章摘要/副标题"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "我的 GitHub 主页与项目索引。"
 msgstr "我的 GitHub 主页与项目索引。"
 
@@ -1309,7 +1309,7 @@ msgstr "无标题"
 msgid "无对应内容"
 msgstr "无对应内容"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "无限进步"
 msgstr "无限进步"
 
@@ -1397,7 +1397,7 @@ msgstr "显示右上角 GitHub 三角标"
 msgid "显示阅读时间"
 msgstr "显示阅读时间"
 
-#: inc/customizer.php inc/template-tags.php template-parts/widgets/default-widgets.php
+#: inc/customizer.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
 msgid "项目"
 msgstr "项目"
 
@@ -1421,7 +1421,7 @@ msgstr "项目信息"
 msgid "小工具之后"
 msgstr "小工具之后"
 
-#: inc/template-tags.php
+#: inc/template-tags/social-share.php
 msgid "小红书"
 msgstr "小红书"
 
@@ -1453,7 +1453,7 @@ msgstr "新邮箱验证码"
 msgid "选择文件"
 msgstr "选择文件"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "学习笔记"
 msgstr "学习笔记"
 
@@ -1565,7 +1565,7 @@ msgstr "已退出登录。"
 msgid "已应用头像"
 msgstr "已应用头像"
 
-#: inc/template-tags.php
+#: inc/template-tags/layout-content.php
 msgid "以下是与你输入关键词相关的文章。"
 msgstr "以下是与你输入关键词相关的文章。"
 
@@ -1609,7 +1609,7 @@ msgstr "邮箱验证码"
 msgid "邮箱验证码不正确或已失效。"
 msgstr "邮箱验证码不正确或已失效。"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "友链"
 msgstr "友链"
 
@@ -1677,11 +1677,11 @@ msgstr "暂无用户上传头像。"
 msgid "暂无用户自定义标签。"
 msgstr "暂无用户自定义标签。"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "赞助"
 msgstr "赞助"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "赞助二维码"
 msgstr "赞助二维码"
 
@@ -1709,7 +1709,7 @@ msgstr "站长"
 msgid "找到 {count} 条结果"
 msgstr "找到 {count} 条结果"
 
-#: inc/enqueue.php inc/template-tags.php
+#: inc/enqueue.php inc/template-tags/content-tools.php
 msgid "折叠代码"
 msgstr "折叠代码"
 
@@ -1781,7 +1781,7 @@ msgstr "自定义 Banner URL"
 msgid "自定义封面 URL"
 msgstr "自定义封面 URL"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "自定义链接"
 msgstr "自定义链接"
 
@@ -1805,7 +1805,7 @@ msgstr "左侧"
 msgid "作者"
 msgstr "作者"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "About"
 msgstr "About"
 
@@ -1813,7 +1813,7 @@ msgstr "About"
 msgid "anchor"
 msgstr "anchor"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "Archives"
 msgstr "Archives"
 
@@ -1837,11 +1837,11 @@ msgstr "Create a GitHub OAuth App and paste its credentials here. Keep the clien
 msgid "Create a subscriber account when a verified GitHub user logs in for the first time."
 msgstr "Create a subscriber account when a verified GitHub user logs in for the first time."
 
-#: inc/template-tags.php
+#: inc/template-tags/social-share.php
 msgid "Email"
 msgstr "Email"
 
-#: inc/template-tags.php
+#: inc/template-tags/social-share.php
 msgid "Email URL 或 mailto:"
 msgstr "Email URL 或 mailto:"
 
@@ -1853,7 +1853,7 @@ msgstr "Footer Column %d"
 msgid "Footer Menu"
 msgstr "Footer Menu"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "Friends"
 msgstr "Friends"
 
@@ -1893,11 +1893,11 @@ msgstr "GitHub 登录成功，正在返回评论区..."
 msgid "GitHub 链接"
 msgstr "GitHub 链接"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "GitHub 项目"
 msgstr "GitHub 项目"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "GitHub 项目与作品。"
 msgstr "GitHub 项目与作品。"
 
@@ -1925,7 +1925,7 @@ msgstr "GitHub profile is missing required fields."
 msgid "hexo-theme-reimu 原作者"
 msgstr "hexo-theme-reimu 原作者"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "Home"
 msgstr "Home"
 
@@ -1961,7 +1961,7 @@ msgstr "Primary Menu"
 msgid "Primary Sidebar"
 msgstr "Primary Sidebar"
 
-#: inc/template-tags.php
+#: inc/template-tags/navigation-virtual.php
 msgid "Projects"
 msgstr "Projects"
 
@@ -2001,7 +2001,7 @@ msgstr "Users"
 msgid "WARNING"
 msgstr "WARNING"
 
-#: inc/template-tags.php
+#: inc/template-tags/content-tools.php
 msgid "Yneko"
 msgstr "Yneko"
 

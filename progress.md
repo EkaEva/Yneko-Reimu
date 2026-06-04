@@ -909,3 +909,17 @@
 - Full verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 78 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
 - Generated local validation package `releases/Yneko-Reimu-v0.2.3-20260604-2210.zip`; it contains `inc/comments/rendering.php` and `docs/release-notes-v0.2.3.md`, and excludes `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md`.
 - `git diff --check` passed with only the existing CRLF normalization warning for `README.md`.
+
+## 2026-06-04 v0.2.3 Template Tags Split
+
+- Started the v0.2.3 extension round after confirming the comments rendering split alone felt too small for the release.
+- Kept `theme/Yneko-Reimu/inc/template-tags.php` as the Template Tags entrypoint loaded by `functions.php`.
+- Added internal modules under `theme/Yneko-Reimu/inc/template-tags/`: `layout-content.php`, `social-share.php`, `navigation-virtual.php`, and `content-tools.php`.
+- Moved existing Template Tags functions and hook/filter/shortcode registrations into the internal modules without renaming functions, virtual page slugs, template paths, navigation URLs, share URLs, GitHub transient keys, or public hooks.
+- Added `tools/check-template-tags-contract.mjs`, exposed it as `npm run check:template-tags`, and wired it into `npm run check`.
+- Ran targeted syntax checks for `inc/template-tags.php` and the four new Template Tags modules; all passed.
+- Ran `npm run check:template-tags`; it passed after matching the contract gate to the current dynamic setting-key and virtual-template structure, and after adding the public menu Walker classes to the navigation module contract.
+- Ran `npm run report:php-complexity`; it now scans 82 PHP files and `inc/template-tags.php` no longer appears among the largest files after the split.
+- Updated `docs/release-notes-v0.2.3.md`, `docs/development.md`, and planning records with the Template Tags split and new contract gate.
+- Full verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over 82 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated local validation package `releases/Yneko-Reimu-v0.2.3-20260604-2230.zip`; it contains the new Template Tags modules, `inc/comments/rendering.php`, and `docs/release-notes-v0.2.3.md`, and excludes `assets/src`, `assets/dist/manifest.json`, tools, `PROJECT.md`, and `AGENTS.md`.
