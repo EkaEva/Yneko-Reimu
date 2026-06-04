@@ -310,3 +310,13 @@
 - Ran `npm run lint:php`; PHPCS passed.
 - Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 273 lines and score 353.
 - Next round should either split one remaining settings panel cautiously, likely GitHub, or pause for manual admin UI checks before moving comments/users review sections.
+
+## 2026-06-04 Settings GitHub Panel Split
+
+- Moved the GitHub OAuth settings panel from `inc/settings/page.php` into `inc/settings/panels.php`.
+- Replaced the moved markup with `yneko_reimu_render_settings_github_panel( $oauth, $callback )`.
+- Kept all `github_oauth` option names, field names, callback placeholder behavior, client secret field behavior, auto-create checkbox, and bind/rebind UI unchanged.
+- Verified targeted syntax with `php -l` on `inc/settings/page.php` and `inc/settings/panels.php`.
+- Ran `npm run lint:php`; PHPCS passed.
+- Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 219 lines and score 298.
+- Next round should pause for an admin settings UI check or split the comments/users renderer panels with extra care because they include review-management UI.

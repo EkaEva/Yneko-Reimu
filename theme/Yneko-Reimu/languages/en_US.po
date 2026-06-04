@@ -281,7 +281,7 @@ msgstr "Avatar upload is currently disabled."
 msgid "当前用户无权上传 SVG。"
 msgstr ""
 
-#: inc/settings/page.php
+#: inc/settings/panels.php
 msgid "当前账户已绑定 GitHub：%s"
 msgstr ""
 

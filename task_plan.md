@@ -538,3 +538,21 @@ Goal: continue low-risk settings page decomposition by moving the search and i18
 - The search panel keeps `data-yneko-settings-panel="search"` and all `yneko_reimu_settings[search]` field names unchanged.
 - This split remains in the admin-renderer layer and does not touch settings sanitization, front-end search runtime, URL routing, or i18n helpers.
 - The next round should either split the remaining GitHub/admin comments/users panels cautiously or pause for manual admin UI checks before moving higher-risk review sections.
+
+## 2026-06-04 Settings GitHub Panel Split
+
+Goal: continue cautious settings page decomposition by moving the GitHub OAuth settings panel into `inc/settings/panels.php` without changing OAuth settings keys, callback URL behavior, bind URL behavior, or login actions.
+
+### Phases
+
+1. Identify GitHub panel dependencies - complete
+2. Move GitHub panel rendering into `inc/settings/panels.php` - complete
+3. Replace page markup with a panel function call - complete
+4. Verify PHP syntax, PHPCS, and complexity report impact - complete
+
+### Decisions
+
+- The GitHub panel keeps `data-yneko-settings-panel="github"` and all `yneko_reimu_settings[github_oauth]` field names unchanged.
+- The panel still receives the same callback URL value calculated by `yneko_reimu_render_settings_page()`.
+- GitHub OAuth callbacks, binding helper functions, user meta keys, and front-end login behavior are untouched.
+- The next round should pause for an admin UI/manual settings-page check or split only the comments/users renderer panels with extra care because they include review-management surfaces.

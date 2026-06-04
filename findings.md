@@ -303,3 +303,12 @@
 - Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 353 lines / score 426 to 273 lines / score 353.
 - This still avoids runtime search behavior, URL/i18n routing helpers, and comments/profile request handlers.
 - Remaining settings page panels are higher risk than this batch because GitHub, comments, and users touch authentication/review workflows or larger admin helper surfaces; the next round should either split one cautiously or pause for manual admin UI checks.
+
+## 2026-06-04 Settings GitHub Panel Split Findings
+
+- `inc/settings/panels.php` now also owns the GitHub OAuth settings panel.
+- Public admin contracts are unchanged: the `github` tab key, `data-yneko-settings-panel` value, `github_oauth` option keys, input names, callback placeholder display, client secret field, auto-create checkbox, and bind/rebind button behavior all remain the same.
+- `inc/settings/page.php` now calls `yneko_reimu_render_settings_github_panel( $oauth, $callback )`.
+- Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 273 lines / score 353 to 219 lines / score 298.
+- This split does not touch GitHub OAuth callback handlers, login AJAX, binding URL generation logic, user meta keys, or sanitizer behavior.
+- Remaining `comments` and `users` panels include review lists and upload/avatar/badge management. They can still be renderer splits, but should be treated as higher risk and ideally checked in the admin UI after moving.
