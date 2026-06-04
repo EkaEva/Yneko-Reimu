@@ -621,3 +621,12 @@
 - A full refresh fixes the layout because WordPress enqueue runs for the target post/virtual page and includes `assets/dist/reimu-share.css`.
 - The safest fix is to keep `reimu-share.css` globally available, like search and comments/profile enhancement CSS, while leaving the share JavaScript runtime lazy-loaded by `.share-wrapper` presence.
 - The global cost is small: `assets/dist/reimu-share.css` is about 2.9 KB and remains protected by the 14 KB size gate.
+
+## 2026-06-04 v0.2.2 Comments/Profile/Auth Handler Split Findings
+
+- `inc/comments.php` remains the single comments/profile PHP entrypoint, but high-risk request handlers now have clearer internal file boundaries under `inc/comments/`.
+- `inc/comments/auth.php` owns login-state, logout, login, registration-code, registration, lost-password-code, lost-password handlers, and adjacent auth/rate-limit helpers.
+- `inc/comments/profile.php` owns the profile payload, TOTP helpers, profile get/status/email-code/TOTP/avatar/save handlers, and the existing profile-save avatar-file fallback.
+- `inc/comments/mutations.php` owns comment like, visible-comment checks, edit, delete, submit, AJAX item rendering, and comment review-status sync hooks.
+- Public behavior is intentionally unchanged: AJAX action names, nonce names, request fields, response JSON shapes, template markup, and front-end runtime behavior are preserved.
+- `tools/check-comments-profile-contract.mjs` now reads the new PHP modules and verifies that `inc/comments.php` requires them, so the contract gate covers both handler presence and module loading.

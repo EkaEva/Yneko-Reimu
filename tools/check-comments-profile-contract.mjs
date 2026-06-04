@@ -10,6 +10,9 @@ const files = {
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   uploads: await readFile(resolve(themeRoot, 'inc/comments/uploads.php'), 'utf8'),
   modals: await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8'),
+  auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),
+  profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
+  mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
   frontend: await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8'),
   commentMedia: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-media.js'), 'utf8'),
   commentTools: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-tools.js'), 'utf8'),
@@ -47,6 +50,16 @@ for (const moduleImport of [
   "import { createProfileStatusUi } from './reimu/profile-status.js';"
 ]) {
   requireSnippet('source module boundary', moduleImport, files.frontend);
+}
+
+for (const phpModule of [
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/modals.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/auth.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations.php';"
+]) {
+  requireSnippet('comments PHP module boundary', phpModule, files.comments);
 }
 
 for (const globalContract of [
@@ -100,11 +113,47 @@ const ajaxContracts = [
   ['yneko_reimu_comment_upload_discard', 'yneko_reimu_ajax_comment_upload_discard', 'auth-upload']
 ];
 
+function phpSourceForAction(action, exposure) {
+  if (exposure === 'auth-upload') {
+    return files.uploads;
+  }
+  if ([
+    'yneko_reimu_login_state',
+    'yneko_reimu_logout',
+    'yneko_reimu_login',
+    'yneko_reimu_register_code',
+    'yneko_reimu_register',
+    'yneko_reimu_lostpassword_code',
+    'yneko_reimu_lostpassword'
+  ].includes(action)) {
+    return files.auth;
+  }
+  if ([
+    'yneko_reimu_profile_get',
+    'yneko_reimu_profile_status_ack',
+    'yneko_reimu_profile_email_code',
+    'yneko_reimu_profile_totp_generate',
+    'yneko_reimu_profile_avatar_upload',
+    'yneko_reimu_profile_save'
+  ].includes(action)) {
+    return files.profile;
+  }
+  if ([
+    'yneko_reimu_comment_like',
+    'yneko_reimu_edit_comment',
+    'yneko_reimu_delete_comment',
+    'yneko_reimu_submit_comment'
+  ].includes(action)) {
+    return files.mutations;
+  }
+  return files.comments;
+}
+
 for (const [action, callback, exposure] of ajaxContracts) {
-  const phpSource = exposure === 'auth-upload' ? files.uploads : files.comments;
+  const phpSource = phpSourceForAction(action, exposure);
   requireSnippet(`${action} PHP function`, `function ${callback}`, phpSource);
   if (action === 'yneko_reimu_profile_avatar_upload') {
-    requireSnippet(`${action} profile-save file fallback`, "yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file']", files.comments);
+    requireSnippet(`${action} profile-save file fallback`, "yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file']", files.profile);
   } else {
     requireSnippet(`${action} front-end action`, `'${action}'`, source);
   }
@@ -139,7 +188,7 @@ for (const dynamicNonce of [
   'yneko_reimu_comment_manage_'
 ]) {
   requireSnippet('dynamic nonce created in comment markup', `wp_create_nonce( '${dynamicNonce}`, files.comments);
-  requireSnippet('dynamic nonce verified in handler', `check_ajax_referer( '${dynamicNonce}`, files.comments);
+  requireSnippet('dynamic nonce verified in handler', `check_ajax_referer( '${dynamicNonce}`, files.mutations);
 }
 
 for (const payloadKey of [
@@ -154,7 +203,7 @@ for (const payloadKey of [
   "'logoutNonce'",
   "'profile'"
 ]) {
-  requireSnippet('login-state refresh payload key', payloadKey, files.comments);
+  requireSnippet('login-state refresh payload key', payloadKey, files.auth);
 }
 
 for (const selector of [

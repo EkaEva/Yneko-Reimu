@@ -874,3 +874,22 @@
 - Ran `npm run check:package`; the ZIP contains 149 entries and no forbidden development files.
 - ZIP spot check confirmed `assets/dist/reimu-share.css`, `assets/dist/reimu.css`, `assets/dist/reimu-share.js`, and `docs/release-notes-v0.2.2.md` are included, while `assets/dist/manifest.json`, `assets/src/reimu-share.css`, `PROJECT.md`, and `AGENTS.md` are absent.
 - Ran `git diff --check`; no whitespace errors were reported. Git printed an existing CRLF normalization warning for `README.md`.
+
+## 2026-06-04 v0.2.2 Comments/Profile/Auth Handler Split
+
+- Started the v0.2.2 extension pass to keep the PJAX share/footer fix and add a safer comments/profile/auth PHP handler boundary split.
+- Added internal `theme/Yneko-Reimu/inc/comments/auth.php`, `profile.php`, and `mutations.php` modules, each with an `ABSPATH` guard.
+- Kept `theme/Yneko-Reimu/inc/comments.php` as the comments/profile entrypoint and added `require_once` calls for the three new modules.
+- Moved existing login-state, logout, login, registration, lost-password, profile, TOTP, avatar, comment like, comment submit, comment edit, comment delete, visible-comment, render-item, and review-status-sync functions without changing function names or hook callback names.
+- Left shared rendering and later comment-moderation/upload helpers in `comments.php` or their existing modules where they already belonged.
+- Updated `tools/check-comments-profile-contract.mjs` so it reads `auth.php`, `profile.php`, and `mutations.php`, routes handler checks to the owning module, checks dynamic comment nonces in `mutations.php`, and verifies `comments.php` loads each internal module.
+- Updated `docs/comments-profile-contract.md`, `docs/development.md`, `docs/release-notes-v0.2.2.md`, runtime `readme.txt`, and planning records to describe the internal handler split and preserved public contracts.
+- Ran targeted PHP syntax checks for `comments.php`, `auth.php`, `profile.php`, and `mutations.php`; all passed.
+- Ran `npm run check:comments-profile`, `npm run check:js`, `npm run build`, and `npm run check:size`; all passed.
+- Ran `npm run check`; it passed across JS syntax, settings admin, Customizer, enqueue, comments/profile, GitHub OAuth, release-readiness, CSS split, build, asset hygiene, i18n messages, size/classic-script, and PHP standards wrapper gates.
+- Ran `npm audit --audit-level=moderate`; it reported 0 vulnerabilities.
+- Ran full PHP syntax lint over 77 runtime theme PHP files; all passed.
+- Ran `npm run package`; generated `releases/Yneko-Reimu-v0.2.2-20260604-2140.zip`.
+- Ran `npm run check:package`; the ZIP contains 152 entries and no forbidden development files.
+- ZIP spot check confirmed `inc/comments/auth.php`, `inc/comments/profile.php`, `inc/comments/mutations.php`, `assets/dist/reimu-share.css`, and `docs/release-notes-v0.2.2.md` are included, while `assets/src`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are absent.
+- Ran `git diff --check`; no whitespace errors were reported.

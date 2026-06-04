@@ -11,7 +11,15 @@ The comments/profile runtime covers:
 - comment submit, upload, upload discard, like, edit, delete, sorting, load-more, reply form movement, toolbar, media preview, and GIF picker.
 - login-state DOM refresh after login, logout, profile save, and PJAX navigation.
 
-The PHP entrypoint remains `inc/comments.php`. Request-free login/profile modal rendering lives in the internal `inc/comments/modals.php` module, and comment upload/review helpers live in `inc/comments/uploads.php`. Keep the existing function names, hooks, IDs, classes, and data attributes stable when moving implementation details between these internal files.
+The PHP entrypoint remains `inc/comments.php`. Internal comments/profile modules live under `inc/comments/`:
+
+- `uploads.php` owns comment media upload/review helpers.
+- `modals.php` owns request-free login/profile modal rendering.
+- `auth.php` owns login-state, login, logout, registration, and lost-password AJAX handlers plus adjacent auth helpers.
+- `profile.php` owns profile payload, profile fetch/save/status/email/TOTP/avatar AJAX handlers, and adjacent TOTP/profile helpers.
+- `mutations.php` owns comment like, submit, edit, delete, visible-comment helpers, and comment review-status sync hooks.
+
+These files are implementation boundaries, not public APIs. Keep the existing function names, hooks, IDs, classes, request fields, response payloads, and data attributes stable when moving implementation details between these internal files.
 
 ## Public Surface To Preserve
 
@@ -103,11 +111,10 @@ These are acceptable low-risk moves if they keep the same public `assets/dist/re
 
 These require a dedicated manual QA pass before and after the change:
 
-- Moving login/register/lost-password request handlers.
-- Moving profile fetch/save/email/TOTP/avatar/status request handlers.
-- Moving comment submit/upload/discard/like/edit/delete request handlers.
+- Moving request handlers across files without changing the existing actions, nonces, payload fields, or JSON shapes.
 - Introducing a lazy `reimu-comments.js` or `reimu-profile.js` runtime.
 - Changing how login-state DOM is replaced or rebound.
+- Changing profile payload structure, comment item markup, upload review state, or polling behavior.
 
 ## Manual QA Checklist
 

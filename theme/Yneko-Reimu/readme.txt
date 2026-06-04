@@ -53,6 +53,7 @@ Theme images ship as files under `assets/images` or generated runtime files unde
 = 0.2.2 =
 * Fixes PJAX navigation into posts and virtual pages by keeping share/footer enhancement styles available before share markup is inserted.
 * Keeps the share JavaScript runtime lazy-loaded on pages that actually render share markup.
+* Splits comments/profile/auth AJAX handlers into internal PHP modules while preserving existing actions, nonces, payloads, and response shapes.
 
 = 0.2.1 =
 * Adds release-readiness hardening for PHP direct-access guards, runtime metadata, package checks, and the standard release screenshot.
