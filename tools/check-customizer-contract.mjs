@@ -53,6 +53,7 @@ for (const setting of [
   'yneko_reimu_search_background',
   'yneko_reimu_excerpt_length',
   'yneko_reimu_show_toc',
+  'yneko_reimu_show_update_time',
   'yneko_reimu_code_expand_threshold',
   'yneko_reimu_social_share_heading',
   'yneko_reimu_social_sidebar_heading',

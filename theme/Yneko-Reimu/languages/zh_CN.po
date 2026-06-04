@@ -1362,6 +1362,10 @@ msgid "显示分类"
 msgstr "显示分类"
 
 #: inc/customizer.php
+msgid "显示更新时间"
+msgstr "显示更新时间"
+
+#: inc/customizer.php
 msgid "显示过期提示"
 msgstr "显示过期提示"
 

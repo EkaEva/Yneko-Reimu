@@ -599,3 +599,10 @@
 - `tools/check-comments-profile-contract.mjs` now reads `inc/comments/modals.php` so the DOM selector contract continues to cover modal markup after the internal PHP move.
 - Targeted checks passed: `php -l` for both comments PHP files, `npm run check:comments-profile`, `npm run check:release-readiness`, and `npm run report:php-complexity`.
 - The complexity report now scans 74 PHP files. `inc/comments.php` dropped from 3012 to 2764 nonblank lines, while `inc/comments/modals.php` owns the two larger modal HTML renderer functions.
+
+## 2026-06-04 Customizer Update Time Control Findings
+
+- The only current front-end `theme_mod` display option found without a proper UI entry is `yneko_reimu_show_update_time`.
+- Existing false positives are covered elsewhere or are intentionally legacy-only: media helper fields in the settings page, loop-rendered feature/external-comment controls, `yneko_reimu_friend_links`, `yneko_reimu_aplayer_audio_json`, and old social URL fallbacks.
+- `site_avatar_url` and `author_avatar_url` are database compatibility fields used by image fallback helpers, but the preferred current UI remains WordPress Site Icon/Logo plus the Customizer `默认头像/角色图` control. They should not be exposed in this pass.
+- The new control belongs in the Customizer article section because it changes visible article-page output and uses the existing `theme_mod` key.

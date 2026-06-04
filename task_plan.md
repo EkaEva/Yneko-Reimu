@@ -1188,3 +1188,23 @@ Goal: finish the last low-risk maintainability pass by moving request-free login
 - Final verification passed: `npm run check`, `npm audit --audit-level=moderate`, full `php -l` over 74 theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
 - Final validation ZIP is `Yneko-Reimu-v0.2.1-20260604-1751.zip` with 145 entries and no forbidden development files. It includes `inc/comments/modals.php`, `assets/dist/reimu-comments.css`, runtime `readme.txt`, and `screenshot.png`, while excluding source CSS, build manifest, tools, `PROJECT.md`, and `AGENTS.md`.
 - The original “Yneko-Reimu 当前不足审查与优化计划” is complete for the GitHub Release professional theme target. Remaining high-risk comments/profile request-handler decomposition and a possible future WordPress.org plugin-boundary migration are documented future work, not required to close this plan.
+
+## 2026-06-04 Customizer Update Time Control
+
+Goal: expose the existing article updated-date display switch in the proper visual-preview UI without changing front-end behavior.
+
+### Phases
+
+1. Audit front-end `theme_mod` reads against Customizer and settings-page UI coverage - complete
+2. Add the missing `yneko_reimu_show_update_time` Customizer control under the article section - complete
+3. Extend the Customizer contract check and docs - complete
+4. Run targeted and full verification - complete
+
+### Decisions
+
+- Add only the true missing UI entry: `yneko_reimu_show_update_time`.
+- Keep the setting as a `theme_mod`, default `false`, sanitized by `yneko_reimu_sanitize_checkbox`.
+- Place it in `Yneko-Reimu 视觉预览 -> 文章页`, matching the existing front-end-visible article module controls.
+- Do not expose `site_avatar_url`, `author_avatar_url`, old friend-link text, old APlayer JSON, or old social URL fallbacks; they remain compatibility/migration fallbacks.
+- Front-end article display logic is unchanged: when enabled, the existing template shows the modified date with `get_the_modified_date( 'Y-m-d' )`.
+- Verification passed: `php -l` for `inc/customizer.php`, `npm run check:customizer`, `npm run check:js`, `npm run build`, and `npm run check`.

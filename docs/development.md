@@ -88,6 +88,7 @@ Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/setti
 - Keep front-end scripts compatible with WordPress classic script enqueueing unless a release plan explicitly changes that public behavior.
 - Do not rename saved settings, post meta keys, AJAX action names, nonce names, documented filters/actions, template paths, virtual page slugs, or public URLs without a compatibility plan.
 - New settings need a default value, sanitizer, UI location, migration decision, and a note about whether they affect front-end loading.
+- Front-end-visible article/card/sidebar modules that are stored as `theme_mod` values should have a Customizer control and be covered by `npm run check:customizer`.
 - Heavy or third-party features should stay disabled by default and gated by a setting, page context, or user interaction.
 - Before moving comments/profile AJAX handlers, login-state DOM replacement, or runtime boundaries, follow `docs/comments-profile-contract.md`.
 

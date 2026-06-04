@@ -818,3 +818,19 @@
 - ZIP spot check confirmed `inc/comments/modals.php`, `assets/dist/reimu-comments.css`, runtime `readme.txt`, and `screenshot.png` are included, while `assets/src/reimu-comments.css`, `assets/dist/manifest.json`, tools, `PROJECT.md`, and `AGENTS.md` are absent.
 - Ran `git diff --check`; no whitespace errors were reported. Git printed existing CRLF normalization warnings for `README.md`, `theme/Yneko-Reimu/assets/src/yneko-reimu-adapter.css`, and `theme/Yneko-Reimu/inc/customizer.php`.
 - Closed the approved “Yneko-Reimu 当前不足审查与优化计划” for the GitHub Release professional theme target. No next round is required for this plan.
+
+## 2026-06-04 Customizer Update Time Control
+
+- Audited front-end `theme_mod` reads against Customizer and settings-page UI coverage.
+- Confirmed `yneko_reimu_show_update_time` was the true missing UI entry; legacy friend links, APlayer JSON, old social URL fallbacks, and compatibility avatar settings were intentionally not exposed.
+- Added `yneko_reimu_show_update_time` to the Customizer article-page controls with default `false` and `yneko_reimu_sanitize_checkbox`.
+- Updated `tools/check-customizer-contract.mjs` so the updated-date control is protected by `npm run check:customizer`.
+- Updated README and `docs/development.md` to mention the article updated-date control and the Customizer coverage rule for front-end-visible `theme_mod` modules.
+- Ran `php -l theme\Yneko-Reimu\inc\customizer.php`; it passed.
+- Ran `npm run check:customizer`; it passed.
+- Ran `npm run check:js`; it passed.
+- Ran `npm run build`; it regenerated 505 gettext strings and completed successfully.
+- Ran `npm run check`; it passed across all configured gates.
+- Generated local validation package with `npm run package`: `releases/Yneko-Reimu-v0.2.1-20260604-1837.zip`.
+- Ran `npm run check:package`; the ZIP contains 145 entries and no forbidden development files.
+- ZIP spot check confirmed runtime `readme.txt`, `screenshot.png`, `inc/customizer.php`, language MO files, `assets/dist/reimu.css`, and `assets/dist/reimu-comments.css` are included, while `assets/src/reimu.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are absent.

@@ -474,23 +474,24 @@ function yneko_reimu_register_customizer_articles_section( $wp_customize ) {
 
 	foreach (
 		array(
-			'yneko_reimu_show_toc'       => __( '显示 TOC', 'yneko-reimu' ),
-			'yneko_reimu_show_copyright' => __( '显示版权框', 'yneko-reimu' ),
-			'yneko_reimu_show_outdated'  => __( '显示过期提示', 'yneko-reimu' ),
-			'yneko_reimu_show_post_nav'  => __( '显示上一篇/下一篇', 'yneko-reimu' ),
+			'yneko_reimu_show_toc'         => array( __( '显示 TOC', 'yneko-reimu' ), true ),
+			'yneko_reimu_show_copyright'   => array( __( '显示版权框', 'yneko-reimu' ), true ),
+			'yneko_reimu_show_outdated'    => array( __( '显示过期提示', 'yneko-reimu' ), true ),
+			'yneko_reimu_show_post_nav'    => array( __( '显示上一篇/下一篇', 'yneko-reimu' ), true ),
+			'yneko_reimu_show_update_time' => array( __( '显示更新时间', 'yneko-reimu' ), false ),
 		) as $id => $label
 	) {
 		$wp_customize->add_setting(
 			$id,
 			array(
-				'default'           => true,
+				'default'           => $label[1],
 				'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
 			)
 		);
 		$wp_customize->add_control(
 			$id,
 			array(
-				'label'   => $label,
+				'label'   => $label[0],
 				'section' => 'yneko_reimu_articles',
 				'type'    => 'checkbox',
 			)
