@@ -206,8 +206,11 @@ const checks = [
       'border: 0 !important;',
       'box-shadow: none !important;',
       'body.login .wp-pwd .wp-hide-pw .dashicons',
-      'display: inline-flex !important;',
-      'transform: translateY(-1px) !important;'
+      'display: none !important;',
+      'body.login .wp-pwd .wp-hide-pw::before',
+      'password-hidden.svg',
+      'password-visible.svg',
+      'body.login .wp-pwd .wp-hide-pw:has(.dashicons-hidden)::before'
     ]
   },
   {

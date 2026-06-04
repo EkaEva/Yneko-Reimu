@@ -965,3 +965,10 @@
 - Raised the comment media override to `#comments .reimu-comment .comment-text.wl-content img` and preview `.wl-content` media, forcing block display, no float, and left-side margins with `!important` to beat later content image rules.
 - Changed the login `.wp-hide-pw` positioning from `top: 50%` plus translate to top/bottom auto centering, and nudged the dashicons glyph up by 1px for visual centering.
 - Updated comments/profile and GitHub OAuth contract gates so the stronger selector and visual-centering contract are protected.
+
+## 2026-06-05 v0.2.4 Login Password Icon Match
+
+- Started a focused login-page follow-up after the WordPress password visibility icon still appeared visually low in the screenshot.
+- Replaced the visible Dashicons glyph with the same standalone SVG mask icons used by the front-end comment login password toggle.
+- Kept the WordPress `.wp-hide-pw` button DOM and native visibility script intact; the hidden Dashicons class still drives the visible/hidden mask state.
+- Updated the GitHub OAuth contract gate so the login password style contract protects the SVG mask icons and hidden Dashicons fallback.

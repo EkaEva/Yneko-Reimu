@@ -48,6 +48,8 @@ function yneko_reimu_github_login_enqueue_styles() {
 	if ( ! $login_logo ) {
 		$login_logo = YNEKO_REIMU_URI . '/assets/images/avatar.svg';
 	}
+	$password_hidden_icon  = YNEKO_REIMU_URI . '/assets/images/icons/password-hidden.svg';
+	$password_visible_icon = YNEKO_REIMU_URI . '/assets/images/icons/password-visible.svg';
 	$css = '
 		.reimu-login-social { margin: 0; }
 		.yneko-reimu-button {
@@ -226,12 +228,12 @@ function yneko_reimu_github_login_enqueue_styles() {
 			position: absolute !important;
 			top: 0 !important;
 			bottom: 0 !important;
-			right: 7px !important;
+			right: 10px !important;
 			display: inline-flex !important;
 			appearance: none !important;
-			width: 36px !important;
+			width: 30px !important;
 			min-width: 0 !important;
-			height: 36px !important;
+			height: 30px !important;
 			min-height: 0 !important;
 			align-items: center !important;
 			justify-content: center !important;
@@ -249,15 +251,23 @@ function yneko_reimu_github_login_enqueue_styles() {
 			transform: none !important;
 		}
 		body.login .wp-pwd .wp-hide-pw .dashicons {
-			display: inline-flex !important;
-			width: 20px !important;
-			height: 20px !important;
-			align-items: center !important;
-			justify-content: center !important;
-			margin: 0 !important;
-			font-size: 20px !important;
-			line-height: 20px !important;
-			transform: translateY(-1px) !important;
+			display: none !important;
+		}
+		body.login .wp-pwd .wp-hide-pw::before {
+			width: 19px;
+			height: 19px;
+			content: "";
+			background-color: currentColor;
+			mask: url("' . esc_url( $password_hidden_icon ) . '") center / contain no-repeat;
+			-webkit-mask: url("' . esc_url( $password_hidden_icon ) . '") center / contain no-repeat;
+		}
+		body.login .wp-pwd .wp-hide-pw[aria-pressed="true"]::before {
+			mask-image: url("' . esc_url( $password_visible_icon ) . '");
+			-webkit-mask-image: url("' . esc_url( $password_visible_icon ) . '");
+		}
+		body.login .wp-pwd .wp-hide-pw:has(.dashicons-hidden)::before {
+			mask-image: url("' . esc_url( $password_visible_icon ) . '");
+			-webkit-mask-image: url("' . esc_url( $password_visible_icon ) . '");
 		}
 		body.login .button-primary:hover,
 		body.login .button-primary:focus {
