@@ -13,7 +13,7 @@ The package script builds assets first, then copies runtime files from `theme/Yn
 For a versioned package:
 
 ```powershell
-pwsh tools/package-theme.ps1 -Version v0.1.2
+pwsh tools/package-theme.ps1 -Version v0.2.2
 ```
 
 ## Package Boundaries
@@ -35,3 +35,5 @@ Before packaging a public release, make sure `theme/Yneko-Reimu/screenshot.png` 
 - Release ZIP packaging.
 
 Tag pushes matching `v*.*.*` upload the package to the GitHub Release.
+
+Release notes are read from `docs/release-notes-<tag>.md` when that file exists. For the current release, tag `v0.2.2` uses `docs/release-notes-v0.2.2.md`.

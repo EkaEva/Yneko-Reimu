@@ -470,6 +470,7 @@ Yneko-Reimu-v0.2.2.zip
 - [开发与构建](docs/development.md)
 - [Hooks / Filters](docs/hooks.md)
 - [发布流程](docs/release.md)
+- [v0.2.2 发布说明](docs/release-notes-v0.2.2.md)
 - [Theme Check 说明](docs/theme-check.md)
 
 ## 目录结构
@@ -891,6 +892,8 @@ Yneko-Reimu-v0.2.2.zip
 ```
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
+
+Current release notes: [v0.2.2](docs/release-notes-v0.2.2.md).
 
 ### Repository Layout
 
