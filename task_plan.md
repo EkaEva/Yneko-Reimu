@@ -611,3 +611,21 @@ Goal: add a reproducible settings admin contract check so future settings-page r
 - This is a static structural gate, not a replacement for manual WordPress admin UI testing.
 - The gate keeps `PROJECT.md` / `AGENTS.md` local-only behavior unchanged and does not alter runtime theme behavior.
 - The next round should perform a final completion audit against the original optimization plan and only mark the goal complete if current evidence proves all explicit requirements are satisfied.
+
+## 2026-06-04 Final Optimization Completion Audit
+
+Goal: close the v0.1.15 follow-up optimization plan by verifying the implemented guardrails, module splits, package hygiene, local-only file policy, and no-tag release constraint before marking the current plan complete.
+
+### Phases
+
+1. Verify full quality gates and audit status - complete
+2. Regenerate and inspect the final v0.1.15 validation package - complete
+3. Confirm local-only files and no-tag policy - complete
+4. Record remaining manual QA boundary - complete
+
+### Decisions
+
+- The current optimization plan is complete based on local automated evidence and static contracts.
+- `PROJECT.md` and `AGENTS.md` remain local-only through `.git/info/exclude` and must not be committed or packaged.
+- No `v0.1.15` tag is created or pushed because the user explicitly reserved the tag for later work.
+- Manual WordPress admin UI/browser QA was not performed in this environment; the settings admin contract gate and comments/profile contract checklist remain the protection until a real WordPress admin session is available.
