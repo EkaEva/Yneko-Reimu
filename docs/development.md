@@ -8,6 +8,7 @@ Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in 
 npm install
 npm run check:js
 npm run check:settings-admin
+npm run check:github-oauth
 npm run build
 npm run check:i18n-messages
 npm run check:size
@@ -39,6 +40,8 @@ npm run lint:php
 `npm run report:php-complexity` scans the runtime theme PHP files and reports the largest files, largest named functions, and highest approximate branch scores. It is informational for now so the project can track legacy complexity before turning any threshold into a failing quality gate.
 
 `npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the 10 settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields and review helper calls remain present.
+
+`npm run check:github-oauth` verifies the GitHub OAuth public contract: login form actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta compatibility, GitHub API scope/endpoints, popup message type, and high-impact OAuth error strings. Update it in the same change only when an intentional compatibility migration is documented.
 
 ## Source Layout
 

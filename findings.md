@@ -393,3 +393,12 @@
 - The first expanded contract run caught a real remaining gap: `请输入注册邮箱。` had no English translation source. Added it as `Please enter the registered email address.`.
 - Added English source translations for GitHub OAuth success/callback messages that were previously generated with empty `msgstr` values, including missing OAuth responses, expired state, token/API failures, missing profile fields, already-linked accounts, missing linked accounts, and existing-email bind guidance.
 - The contract remains intentionally scoped; low-risk historical empty strings such as widget/admin labels are still outside this gate unless they become high-impact user feedback.
+
+## 2026-06-04 GitHub OAuth Static Contract Findings
+
+- Added a static GitHub OAuth contract gate covering 10 contract groups.
+- The gate locks the public login form actions `yneko_reimu_github_login`, `yneko_reimu_github_bind`, `yneko_reimu_github_callback`, and the legacy `yneko_github_login` / `yneko_github_callback` actions.
+- It also checks the bind nonce `yneko_reimu_github_bind`, state transient prefix, 10-minute state TTL, redirect validation, popup `data-reimu-github-popup` selector, popup message type `yneko-reimu-github-login`, and popup window name/size.
+- Settings compatibility coverage includes `github_oauth` keys, legacy `yneko_reimu_github_login_options` and `yneko_github_login_options` fallback, admin field names, and the callback URL fallback.
+- User compatibility coverage includes both current `_yneko_reimu_github_*` meta keys and legacy `_yneko_github_*` meta keys.
+- This gate is static and does not prove a live GitHub OAuth callback. The next QA target should exercise missing-code/state-expired/token/API/profile/account-link error paths with a local or staging callback setup.

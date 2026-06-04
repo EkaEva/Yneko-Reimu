@@ -714,3 +714,25 @@ Goal: expand the focused i18n quality gate from auth/profile/comment/review mess
 - Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, `npm run check:package`, and `git diff --check`.
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1117.zip` and reported 134 entries with no forbidden development files.
 - The next round should perform GitHub OAuth callback QA/error-path review or add a static contract for OAuth public endpoints and settings keys.
+
+## 2026-06-04 GitHub OAuth Static Contract Gate
+
+Goal: add a dependency-free static contract check for GitHub OAuth public endpoints, settings keys, compatibility fallbacks, popup integration, and security-sensitive callback surfaces without changing OAuth runtime behavior.
+
+### Phases
+
+1. Identify GitHub OAuth public interface and compatibility surface - complete
+2. Add `tools/check-github-oauth-contract.mjs` - complete
+3. Add `npm run check:github-oauth` and wire it into `npm run check` - complete
+4. Update development docs and persistent records - complete
+5. Run full verification, package checks, commit, and push without creating the `v0.1.15` tag - complete
+
+### Decisions
+
+- The OAuth contract gate checks login form actions, callback/bind URL actions, bind nonce, state transient naming, redirect validation, GitHub OAuth scope/endpoints, settings option keys, legacy option fallback, user meta compatibility keys, popup selector/message type, and high-impact OAuth error strings.
+- This is a static structural gate. It does not replace a real GitHub OAuth App callback test.
+- The gate is intentionally focused on public/compatibility contracts and does not assert every internal implementation detail in `inc/github-login.php`.
+- No settings keys, login actions, nonce names, meta keys, filters, template paths, or front-end globals were changed.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1125.zip` and reported 134 entries with no forbidden development files.
+- The next round should perform OAuth error-path QA with local/stubbed callback states, or document a manual GitHub OAuth staging checklist.

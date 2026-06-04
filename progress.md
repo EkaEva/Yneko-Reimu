@@ -419,3 +419,16 @@
 - Package check used `Yneko-Reimu-v0.1.15-20260604-1117.zip` and reported 134 entries with no forbidden development files.
 - `git tag --list 'v0.1.15'` remains empty; no release tag was created.
 - Next round should perform GitHub OAuth callback QA/error-path review or add a static OAuth endpoint/settings contract.
+
+## 2026-06-04 GitHub OAuth Static Contract Gate
+
+- Started from a clean `main...origin/main` worktree with no `v0.1.15` tag.
+- Added `tools/check-github-oauth-contract.mjs` as a dependency-free static check for GitHub OAuth public and compatibility contracts.
+- Added `npm run check:github-oauth` and wired it into `npm run check` before build/i18n/size/PHPCS.
+- Updated `docs/development.md` to document the GitHub OAuth contract check.
+- Ran `npm run check:github-oauth`; it passed with 10 contract groups verified.
+- Updated `task_plan.md` and `findings.md` with this round's scope and next-round target.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Package check used `Yneko-Reimu-v0.1.15-20260604-1125.zip` and reported 134 entries with no forbidden development files.
+- `git tag --list 'v0.1.15'` remains empty; no release tag was created.
+- Next round should perform OAuth error-path QA with local/stubbed callback states, or document a manual GitHub OAuth staging checklist.
