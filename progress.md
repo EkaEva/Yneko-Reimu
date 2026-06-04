@@ -330,3 +330,13 @@
 - Ran `npm run lint:php`; PHPCS passed.
 - Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 177 lines and score 243.
 - Next round should either split the users renderer panel or run a focused admin settings UI check before closing the settings-page decomposition.
+
+## 2026-06-04 Settings Users Panel Split
+
+- Moved the users settings panel from `inc/settings/page.php` into `inc/settings/panels.php`.
+- Replaced the moved markup with `yneko_reimu_render_settings_users_panel( $review_badges )`.
+- Kept all `user_badges`, avatar-frame, avatar upload, badge review, avatar review field names, tab keys, badge counts, helper calls, and admin descriptions unchanged.
+- Verified targeted syntax with `php -l` on `inc/settings/page.php` and `inc/settings/panels.php`.
+- Ran `npm run lint:php`; PHPCS passed.
+- Ran `npm run report:php-complexity`; `yneko_reimu_render_settings_page()` dropped to 114 lines and score 133.
+- Next round should perform a focused admin settings UI/manual checklist and decide whether the settings-page decomposition phase can be considered complete.

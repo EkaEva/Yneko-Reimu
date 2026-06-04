@@ -513,7 +513,7 @@ msgstr ""
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 msgstr "Manages the theme built-in navigation, sidebar author card, home capsules, and player position. Widgets below the sidebar can be controlled separately in Sidebar Widgets."
 
-#: inc/settings/page.php
+#: inc/settings/panels.php
 msgid "广告/官方/测试"
 msgstr ""
 

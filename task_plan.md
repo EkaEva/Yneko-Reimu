@@ -574,3 +574,22 @@ Goal: move the comments settings panel into `inc/settings/panels.php` while pres
 - Existing calls to `yneko_reimu_render_admin_comment_gif_upload()` and `yneko_reimu_render_comment_upload_admin()` remain in the same visual section and order.
 - This split does not touch comment upload AJAX handlers, review approval/rejection actions, nonce names, payload fields, or front-end comment behavior.
 - The next round should split the users panel or perform an admin settings UI check, since users is now the last large panel left in `inc/settings/page.php`.
+
+## 2026-06-04 Settings Users Panel Split
+
+Goal: move the users settings panel into `inc/settings/panels.php` while preserving user badge/avatar-frame settings, review badge counts, admin review helper calls, and all profile/comment runtime behavior.
+
+### Phases
+
+1. Identify users panel dependencies and review badge usage - complete
+2. Move users panel rendering into `inc/settings/panels.php` - complete
+3. Replace page markup with a panel function call - complete
+4. Verify PHP syntax, PHPCS, and complexity report impact - complete
+
+### Decisions
+
+- The users panel keeps `data-yneko-settings-panel="users"` and all `user_badges` / avatar upload field names unchanged.
+- Existing calls to `yneko_reimu_render_user_badge_admin()` and `yneko_reimu_render_user_avatar_admin()` remain in the same visual section and order.
+- Review badge counts are still provided by `yneko_reimu_admin_review_badge_counts()` and passed into the users panel renderer.
+- This split does not touch profile AJAX handlers, avatar review actions, badge review actions, user meta keys, nonce names, payload fields, or front-end profile behavior.
+- The next round should perform a focused admin settings UI/manual checklist and then decide whether the settings-page decomposition is complete for this phase.

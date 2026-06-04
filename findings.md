@@ -321,3 +321,12 @@
 - Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 219 lines / score 298 to 177 lines / score 243.
 - This split does not touch comment upload AJAX handlers, admin review actions, nonce names, payload fields, temporary file cleanup logic, GIF library approval, or front-end comment behavior.
 - The users panel is now the last large admin panel left in `inc/settings/page.php`; moving it should be a renderer-only pass with extra attention to badge counts and review helper calls.
+
+## 2026-06-04 Settings Users Panel Split Findings
+
+- `inc/settings/panels.php` now also owns the users settings panel, including user badge/avatar-frame fields and user badge/avatar review sections.
+- Public admin contracts are unchanged: the `users` tab key, `data-yneko-settings-panel` value, `user_badges` option keys, avatar-frame media fields, avatar upload settings, user badge review heading badge, avatar review heading badge, and review helper calls all remain the same.
+- `inc/settings/page.php` now calls `yneko_reimu_render_settings_users_panel( $review_badges )`.
+- Complexity report after this split: `yneko_reimu_render_settings_page()` dropped from 177 lines / score 243 to 114 lines / score 133.
+- This split does not touch profile AJAX handlers, avatar review approval/rejection actions, user badge approval/revoke actions, nonce names, payload fields, user meta keys, or front-end profile behavior.
+- The first-stage settings page panel decomposition is now effectively complete: `inc/settings/page.php` owns the top-level form, tabs, general panel, submit controls, and admin GIF upload form, while all extracted tab panels live in `inc/settings/panels.php`.
