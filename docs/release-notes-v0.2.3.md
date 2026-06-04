@@ -21,7 +21,7 @@ v0.2.3 是一次维护性拆分版本，重点继续降低 Comments、Template T
 ### 验证提示
 
 - 本地验证包使用时间戳命名，例如 `Yneko-Reimu-v0.2.3-YYYYMMDD-HHMM.zip`。
-- 本轮只生成开发验证包，不创建 `v0.2.3` tag；正式 GitHub Release 后续单独执行。
+- GitHub Actions 会为本 tag 生成 `Yneko-Reimu-v0.2.3.zip`，请上传 Release 附件中的主题 ZIP，不要上传 GitHub 自动源码包。
 
 ## English
 
@@ -44,4 +44,4 @@ v0.2.3 is a maintainability split focused on reducing complexity in the comments
 ### Verification Notes
 
 - Local validation packages use timestamped names such as `Yneko-Reimu-v0.2.3-YYYYMMDD-HHMM.zip`.
-- This round creates a local development validation package only. Do not create the `v0.2.3` tag until the formal GitHub Release step is requested.
+- GitHub Actions will generate `Yneko-Reimu-v0.2.3.zip` for this tag. Upload the theme ZIP release asset, not GitHub's automatic source archive.
