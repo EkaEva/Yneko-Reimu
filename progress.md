@@ -834,3 +834,24 @@
 - Generated local validation package with `npm run package`: `releases/Yneko-Reimu-v0.2.1-20260604-1837.zip`.
 - Ran `npm run check:package`; the ZIP contains 145 entries and no forbidden development files.
 - ZIP spot check confirmed runtime `readme.txt`, `screenshot.png`, `inc/customizer.php`, language MO files, `assets/dist/reimu.css`, and `assets/dist/reimu-comments.css` are included, while `assets/src/reimu.js`, `assets/dist/manifest.json`, `PROJECT.md`, and `AGENTS.md` are absent.
+
+## 2026-06-04 Image And SVG Resource Hygiene
+
+- Started the image/SVG resource hygiene round after confirming the desired rule: cacheable/reusable images should be standalone files, while small UI SVG components can remain inline.
+- Set `vite.config.mjs` `build.assetsInlineLimit` to `0`, so small CSS-referenced images no longer become base64 payloads in `assets/dist/reimu.css`.
+- Added `tools/check-assets.mjs`, exposed it as `npm run check:assets`, and wired it into `npm run check` after build.
+- Preserved the original comment-login password visibility SVG shapes by extracting them into `theme/Yneko-Reimu/assets/images/icons/password-hidden.svg` and `password-visible.svg`.
+- Updated `theme/Yneko-Reimu/assets/src/reimu-comments.css` to reference the standalone password icon SVG files through CSS masks.
+- Updated `tools/build-reimu.mjs` to remove duplicate Vite-copied Lily cursor PNGs from `assets/dist`; the canonical cursor files remain in `assets/images/cursor`.
+- Ran `npm run build`; it passed and produced standalone `assets/dist/taichi.png` without the duplicate Lily cursor files in `assets/dist`.
+- Ran `npm run check:assets`; it passed across 116 runtime PHP/CSS/JS files, and a targeted `rg` found no `data:image`, SVG base64, or `;base64,` payloads in runtime source/build paths.
+- Updated README, `docs/development.md`, runtime `readme.txt`, release notes, `task_plan.md`, `findings.md`, and this progress log with the resource convention and new gate.
+- Ran `npm run check`; it passed across JS syntax, settings admin, Customizer, enqueue, comments/profile, GitHub OAuth, release-readiness, CSS split, build, asset hygiene, i18n message, size/classic-script, and PHP standards wrapper gates.
+- Ran `npm audit --audit-level=moderate`; it reported 0 vulnerabilities.
+- Ran full PHP syntax lint over 74 runtime theme PHP files; all passed.
+- Ran `npm run package`; generated `releases/Yneko-Reimu-v0.2.1-20260604-1906.zip`.
+- Ran `npm run check:package`; the ZIP contains 148 entries and no forbidden development files.
+- ZIP spot check confirmed `assets/images/icons/password-hidden.svg`, `assets/images/icons/password-visible.svg`, `assets/dist/taichi.png`, `assets/dist/reimu.css`, and `assets/dist/reimu-comments.css` are included, while `assets/dist/manifest.json`, `assets/src/reimu-comments.css`, `PROJECT.md`, and `AGENTS.md` are absent.
+- Package inline-image scan confirmed no `data:image`, SVG base64, or `;base64,` payloads in packaged PHP/CSS/JS.
+- Ran `git diff --check`; no whitespace errors were reported. Git printed existing CRLF normalization warnings for `README.md` and `theme/Yneko-Reimu/assets/src/reimu-comments.css`.
+- The image/SVG resource hygiene plan is complete. No next round is required for this plan unless a future icon system migration is desired.

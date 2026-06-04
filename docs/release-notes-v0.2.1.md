@@ -23,6 +23,8 @@ v0.2.1 是一次发布就绪与本地 QA 补强版本，重点修复审查中发
 - 将搜索页表单、搜索弹窗状态和结果标签增强样式拆分为 `reimu-search.css`，搜索运行时仍保持交互懒加载。
 - 将评论、登录弹窗和个人资料弹窗样式拆分为全局加载的 `reimu-comments.css`；评论/Profile 的 AJAX 与运行时逻辑仍保留在主经典脚本中。
 - 将登录/个人资料弹窗渲染拆分到内部 `inc/comments/modals.php` 模块，保留原函数名和前端 DOM 合同。
+- 新增图片/SVG 资源卫生门禁，禁止运行时 PHP/CSS/JS 写入 `data:image` 或 base64 图片；构建产物中的小图片改为独立文件。
+- 将评论登录密码显示/隐藏按钮继续使用原 SVG 图形，但改为 `assets/images/icons/password-hidden.svg` 和 `password-visible.svg` 独立资源。
 - 扩展发布包检查，要求 ZIP 必须包含运行时 `readme.txt`。
 - 替换发布截图为标准 `1200x900` PNG，并移除未使用的 `screenshot.webp`。
 
@@ -55,6 +57,8 @@ v0.2.1 is a release-readiness and local-QA hardening release focused on metadata
 - Split search form, search-popup state, and result-label enhancement styles into `reimu-search.css` while keeping the search runtime interaction-lazy.
 - Split comments, login modal, and profile modal styles into a global `reimu-comments.css`; comments/profile AJAX and runtime logic remain in the main classic script.
 - Split login/profile modal rendering into the internal `inc/comments/modals.php` module while preserving function names and front-end DOM contracts.
+- Added an image/SVG hygiene gate that rejects `data:image` and base64 image payloads in runtime PHP/CSS/JS while keeping small built images as standalone files.
+- Kept the original comment-login password visibility SVG artwork, but moved it into standalone `assets/images/icons/password-hidden.svg` and `password-visible.svg` files.
 - Extended package checks so release ZIPs must include runtime `readme.txt`.
 - Replaced the release screenshot with a standard `1200x900` PNG and removed the unused `screenshot.webp`.
 

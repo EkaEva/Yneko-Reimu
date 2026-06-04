@@ -15,6 +15,7 @@ npm run check:github-oauth
 npm run check:release-readiness
 npm run check:css-split
 npm run build
+npm run check:assets
 npm run check:i18n-messages
 npm run check:size
 npm run report:php-complexity
@@ -31,6 +32,8 @@ npm run lint:php
 `npm run build` generates gettext files, cursor PNGs, minified Vite assets, and the build manifest in `theme/Yneko-Reimu/assets/dist/`.
 
 `npm run check:i18n-messages` verifies that high-impact English feedback strings in auth, profile, comment, upload, review, email verification, password reset, and GitHub OAuth flows are not empty after gettext files are regenerated. It is a focused user-facing message contract, not a requirement that every historical `en_US.po` entry is translated.
+
+`npm run check:assets` verifies that runtime PHP/CSS/JS files do not contain `data:image` URLs or base64 image payloads. Large, replaceable, or cacheable images should stay as files under `assets/images` or be emitted into `assets/dist` by the build. Small UI SVG components may remain inline when they are part of markup behavior rather than replaceable media.
 
 `npm run check:size` enforces the short-term public asset budgets:
 
@@ -78,6 +81,8 @@ Email verification, password-reset, profile email, and TOTP QA is documented in 
 - `theme/Yneko-Reimu/assets/dist/` contains runtime assets loaded by WordPress.
 - `tools/` contains i18n, cursor, asset, and package scripts.
 
+Images and standalone SVG icons should be committed as files instead of encoded into CSS or PHP strings. Use `theme/Yneko-Reimu/assets/images/` for theme images, `theme/Yneko-Reimu/assets/images/icons/` for standalone icon files, and build-emitted `assets/dist/` files for generated runtime assets. Vite is configured with `assetsInlineLimit: 0`, so even small images such as `taichi.png` remain independently cacheable files.
+
 Admin settings JavaScript is maintained in `theme/Yneko-Reimu/assets/src/admin-settings.js` and built to `assets/dist/admin-settings.js`. PHP should only enqueue the built admin script and inject the small `YNEKO_REIMU_ADMIN_I18N` configuration object before it.
 
 Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/settings/panels.php`. When changing tabs, panel names, field names, repeatable rows, or review sections, update `tools/check-settings-admin-contract.mjs` in the same change.
@@ -90,6 +95,7 @@ Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/setti
 - New settings need a default value, sanitizer, UI location, migration decision, and a note about whether they affect front-end loading.
 - Front-end-visible article/card/sidebar modules that are stored as `theme_mod` values should have a Customizer control and be covered by `npm run check:customizer`.
 - Heavy or third-party features should stay disabled by default and gated by a setting, page context, or user interaction.
+- Do not add hand-written base64 image payloads or `data:image` URLs to runtime PHP, CSS, or JavaScript. Add image files to `assets/images` or use a small inline SVG component when it is truly UI markup.
 - Before moving comments/profile AJAX handlers, login-state DOM replacement, or runtime boundaries, follow `docs/comments-profile-contract.md`.
 
 ## Package Checks

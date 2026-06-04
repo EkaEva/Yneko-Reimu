@@ -46,11 +46,14 @@ Development sources live outside the runtime theme package. Before release, run:
 
 The release ZIP excludes source assets, build tools, local planning files, dependency directories, and `assets/dist/manifest.json`.
 
+Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
+
 == Changelog ==
 
 = 0.2.1 =
 * Adds release-readiness hardening for PHP direct-access guards, runtime metadata, package checks, and the standard release screenshot.
 * Keeps the GitHub Release distribution target while documenting privacy, remote resources, credits, and license expectations in the runtime theme package.
+* Adds image/SVG resource hygiene checks so build outputs keep cacheable image files instead of base64 image payloads.
 
 = 0.2.0 =
 * Promotes the completed architecture, quality-gate, Email/TOTP, and real GitHub OAuth QA milestone.

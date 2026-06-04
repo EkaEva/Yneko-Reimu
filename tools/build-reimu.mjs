@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'vite';
@@ -90,6 +90,26 @@ await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-search.js'), 'reim
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'reimu-photoswipe.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-share.js'), 'reimu-share.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/admin-settings.js'), 'admin-settings.js');
+
+const viteCopiedCursorFiles = [
+  'lily-alternate.png',
+  'lily-busy.png',
+  'lily-cross.png',
+  'lily-hand.png',
+  'lily-help.png',
+  'lily-link.png',
+  'lily-move.png',
+  'lily-resize-ew.png',
+  'lily-resize-nesw.png',
+  'lily-resize-ns.png',
+  'lily-resize-nwse.png',
+  'lily-text.png',
+  'lily-unavailable.png'
+];
+
+for (const file of viteCopiedCursorFiles) {
+  await rm(resolve(distRoot, file), { force: true });
+}
 
 async function listDistOutputs(dir, prefix = 'assets/dist') {
   const entries = await readdir(dir, { withFileTypes: true });

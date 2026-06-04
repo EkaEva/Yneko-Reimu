@@ -1208,3 +1208,22 @@ Goal: expose the existing article updated-date display switch in the proper visu
 - Do not expose `site_avatar_url`, `author_avatar_url`, old friend-link text, old APlayer JSON, or old social URL fallbacks; they remain compatibility/migration fallbacks.
 - Front-end article display logic is unchanged: when enabled, the existing template shows the modified date with `get_the_modified_date( 'Y-m-d' )`.
 - Verification passed: `php -l` for `inc/customizer.php`, `npm run check:customizer`, `npm run check:js`, `npm run build`, and `npm run check`.
+
+## 2026-06-04 Image And SVG Resource Hygiene
+
+Goal: make runtime image assets cacheable and auditable by preventing build outputs and runtime PHP/CSS/JS from carrying `data:image` or base64 image payloads, while allowing small UI SVG components to remain inline when they are part of markup behavior.
+
+### Phases
+
+1. Confirm existing inline image sources and acceptable inline SVG components - complete
+2. Configure Vite and comments CSS so cacheable images output as files - complete
+3. Add an automated asset hygiene gate and documentation - complete
+4. Run full verification, package checks, and ZIP spot checks - complete
+
+### Decisions
+
+- Set Vite `build.assetsInlineLimit` to `0` so small images such as `taichi.png` are emitted as standalone runtime assets instead of being inlined into CSS.
+- Keep existing PHP-rendered UI SVG components inline where they are part of buttons or markup fragments.
+- Preserve the original comment-login password show/hide SVG artwork, but store it as standalone `assets/images/icons/password-hidden.svg` and `assets/images/icons/password-visible.svg` files instead of CSS `data:image` masks.
+- Add `npm run check:assets` to reject `data:image`, SVG base64 MIME fragments, and generic `;base64,` image payload markers in runtime PHP/CSS/JS.
+- Remove duplicate Vite-copied Lily cursor files from `assets/dist` after build because cursor runtime assets already load from `assets/images/cursor`.

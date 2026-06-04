@@ -606,3 +606,11 @@
 - Existing false positives are covered elsewhere or are intentionally legacy-only: media helper fields in the settings page, loop-rendered feature/external-comment controls, `yneko_reimu_friend_links`, `yneko_reimu_aplayer_audio_json`, and old social URL fallbacks.
 - `site_avatar_url` and `author_avatar_url` are database compatibility fields used by image fallback helpers, but the preferred current UI remains WordPress Site Icon/Logo plus the Customizer `默认头像/角色图` control. They should not be exposed in this pass.
 - The new control belongs in the Customizer article section because it changes visible article-page output and uses the existing `theme_mod` key.
+
+## 2026-06-04 Image And SVG Resource Hygiene Findings
+
+- Vite previously inlined small image references from CSS when they were under the default inline-size threshold. The `taichi.png` footer/sponsor/top icon now emits as `assets/dist/taichi.png`.
+- The comment login password visibility control previously used two CSS `data:image/svg+xml` masks. Those exact SVG shapes are now standalone files under `assets/images/icons` and are referenced by CSS masks.
+- Existing inline SVG fragments in comments, GitHub login, template tags, and the Taichi component are small UI components rather than replaceable image assets, so they remain inline in this round.
+- `npm run check:assets` scans runtime PHP/CSS/JS and fails on `data:image`, SVG base64 MIME fragments, or generic `;base64,` payload markers.
+- Vite also copied Lily cursor PNGs into `assets/dist` because the main CSS references cursor files. The build script removes those duplicate dist copies after Vite completes; the runtime cursor files continue to ship from `assets/images/cursor`.

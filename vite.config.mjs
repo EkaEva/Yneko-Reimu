@@ -6,6 +6,7 @@ const themeRoot = resolve('theme/Yneko-Reimu');
 export default defineConfig({
   base: './',
   build: {
+    assetsInlineLimit: 0,
     emptyOutDir: true,
     manifest: false,
     minify: 'esbuild',

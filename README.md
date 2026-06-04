@@ -398,6 +398,7 @@ npm run package
 - `npm run check:release-readiness`：检查所有运行时 PHP 文件的 `ABSPATH` 防直访保护、主题头部兼容字段、运行时 `readme.txt` 和 `1200x900` 发布截图。
 - `npm run i18n`：提取 gettext 字符串，生成 `languages/yneko-reimu.pot`、`zh_CN.po/mo` 和 `en_US.po/mo`。
 - `npm run build`：生成语言文件、光标 PNG，并通过 Vite 压缩输出 `assets/dist/`。
+- `npm run check:assets`：检查运行时 PHP/CSS/JS 中没有 `data:image` 或 base64 图片载荷。
 - `npm run lint:php`：通过 Composer 调用 PHPCS/WPCS 检查 PHP 代码。
 - `npm run check`：依次执行 JS 检查、公开契约检查、发布就绪检查、构建和 PHP 规范检查。
 - `npm run package`：先构建，再按白名单生成带版本号和时间戳的本地验证包，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`。
@@ -432,6 +433,8 @@ theme/Yneko-Reimu/template-parts/
 ```
 
 打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`，不是 GitHub 仓库根目录的 ZIP。发布前请确认 `theme/Yneko-Reimu/screenshot.png` 已更新为 `1200x900` PNG。
+
+图片和独立 SVG 图标应作为文件维护：主题图片放在 `theme/Yneko-Reimu/assets/images/`，独立图标放在 `theme/Yneko-Reimu/assets/images/icons/`，构建生成的小图片输出到 `assets/dist/`。小型 UI SVG 组件可以继续内联，但不要在 PHP/CSS/JS 中手写 `data:image` 或 base64 图片。
 
 ## GitHub Actions 自动打包
 
@@ -851,6 +854,7 @@ Scripts:
 - `npm run check:release-readiness`: checks `ABSPATH` direct-access guards, theme header compatibility fields, runtime `readme.txt`, and the `1200x900` release screenshot.
 - `npm run i18n`: extracts gettext strings and generates `languages/yneko-reimu.pot`, `zh_CN.po/mo`, and `en_US.po/mo`.
 - `npm run build`: generates language files, cursor PNGs, and minified Vite assets.
+- `npm run check:assets`: checks runtime PHP/CSS/JS for forbidden `data:image` and base64 image payloads.
 - `npm run lint:php`: runs PHPCS/WPCS through Composer.
 - `npm run check`: runs JS checks, public contract checks, release-readiness checks, build, and PHP coding standards.
 - `npm run package`: builds first, then creates a local validation ZIP with a version and timestamp, for example `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`.
@@ -868,6 +872,8 @@ releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip
 ```
 
 Upload the ZIP in `releases/`, not the GitHub repository ZIP. Before a public release, replace `theme/Yneko-Reimu/screenshot.png` with a `1200x900` PNG.
+
+Images and standalone SVG icons should be maintained as files: theme images in `theme/Yneko-Reimu/assets/images/`, standalone icons in `theme/Yneko-Reimu/assets/images/icons/`, and generated small images in `assets/dist/`. Small UI SVG components may stay inline, but do not hand-write `data:image` or base64 image payloads in PHP/CSS/JS.
 
 ### GitHub Actions Release Packaging
 
