@@ -26,7 +26,7 @@
     "report:php-complexity": "node tools/report-php-complexity.mjs",
     "lint:php": "node tools/run-phpcs.mjs",
     "check": "npm run check:js && npm run check:settings-admin && npm run check:auth-security && npm run check:config-surface && npm run check:customizer && npm run check:template-tags && npm run check:enqueue && npm run check:comments-profile && npm run check:pjax-runtime && npm run check:github-oauth && npm run check:release-readiness && npm run check:css-split && npm run build && npm run check:assets && npm run check:i18n-messages && npm run check:size && npm run lint:php",
-    "package": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -Command \"& './tools/package-theme.ps1' -Version ('v' + $env:npm_package_version)\""
+    "package": "npm run build && node tools/package-theme.mjs"
   },
   "license": "MIT",
   "devDependencies": {

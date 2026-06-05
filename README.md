@@ -418,7 +418,7 @@ npm run package
 - `npm run check:assets`：检查运行时 PHP/CSS/JS 中没有 `data:image` 或 base64 图片载荷。
 - `npm run lint:php`：通过 Composer 调用 PHPCS/WPCS 检查 PHP 代码。
 - `npm run check`：依次执行 JS 检查、公开契约检查、发布就绪检查、构建和 PHP 规范检查。
-- `npm run package`：先构建，再按白名单生成带版本号和时间戳的本地验证包，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`。
+- `npm run package`：先构建，再通过跨平台 Node 包装器调用 PowerShell 打包脚本，按白名单生成带版本号和时间戳的本地验证包，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`。
 
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
@@ -451,6 +451,8 @@ theme/Yneko-Reimu/template-parts/
 
 打包脚本会从 `theme/Yneko-Reimu/` 按白名单复制主题运行文件，并排除开发源文件、构建工具、本地媒体和不应发布的个人内容。上传 WordPress 的是 `releases/` 目录中的主题 ZIP，例如 `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`，不是 GitHub 仓库根目录的 ZIP。发布前请确认 `theme/Yneko-Reimu/screenshot.png` 已更新为 `1200x900` PNG。
 
+本地开发工具版本建议与 CI 保持一致：Node.js 24、`package-lock.json` 锁定的 npm 依赖、PHP 8.0+、Composer，以及 PowerShell 7 (`pwsh`)。Windows 环境下 `npm run package` 会在找不到 `pwsh` 时回退到 Windows PowerShell。
+
 图片和独立 SVG 图标应作为文件维护：主题图片放在 `theme/Yneko-Reimu/assets/images/`，独立图标放在 `theme/Yneko-Reimu/assets/images/icons/`，构建生成的小图片输出到 `assets/dist/`。小型 UI SVG 组件可以继续内联，但不要在 PHP/CSS/JS 中手写 `data:image` 或 base64 图片。
 
 ## GitHub Actions 自动打包
@@ -465,11 +467,12 @@ git push origin v0.2.6
 Action 会执行：
 
 ```bash
-npm run check:js
-npm run build
+npm ci
 composer install --no-interaction --prefer-dist
-composer run lint:php
+npm run check
+npm audit --audit-level=moderate
 pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.6.zip
+npm run check:package
 ```
 
 随后生成并上传：
@@ -888,7 +891,7 @@ Scripts:
 - `npm run check:assets`: checks runtime PHP/CSS/JS for forbidden `data:image` and base64 image payloads.
 - `npm run lint:php`: runs PHPCS/WPCS through Composer.
 - `npm run check`: runs JS checks, public contract checks, release-readiness checks, build, and PHP coding standards.
-- `npm run package`: builds first, then creates a local validation ZIP with a version and timestamp, for example `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`.
+- `npm run package`: builds first, then uses the cross-platform Node wrapper for the PowerShell package script to create a local validation ZIP with a version and timestamp, for example `releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip`.
 
 To build a versioned package:
 
@@ -904,6 +907,8 @@ releases/Yneko-Reimu-vX.Y.Z-YYYYMMDD-HHMM.zip
 
 Upload the ZIP in `releases/`, not the GitHub repository ZIP. Before a public release, replace `theme/Yneko-Reimu/screenshot.png` with a `1200x900` PNG.
 
+Use the same toolchain as CI when possible: Node.js 24, npm dependencies from `package-lock.json`, PHP 8.0+, Composer, and PowerShell 7 (`pwsh`). On Windows, `npm run package` falls back to Windows PowerShell if `pwsh` is unavailable.
+
 Images and standalone SVG icons should be maintained as files: theme images in `theme/Yneko-Reimu/assets/images/`, standalone icons in `theme/Yneko-Reimu/assets/images/icons/`, and generated small images in `assets/dist/`. Small UI SVG components may stay inline, but do not hand-write `data:image` or base64 image payloads in PHP/CSS/JS.
 
 ### GitHub Actions Release Packaging
@@ -915,7 +920,7 @@ git tag v0.2.6
 git push origin v0.2.6
 ```
 
-It checks JavaScript, builds assets, runs PHPCS/WPCS, packages the theme, and uploads:
+It installs Node and Composer dependencies, runs the full project check, runs `npm audit --audit-level=moderate`, packages the theme, validates the ZIP, and uploads:
 
 ```text
 Yneko-Reimu-v0.2.6.zip

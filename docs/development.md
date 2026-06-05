@@ -9,7 +9,7 @@ Public maintenance summaries live in `docs/maintenance-notes/`. Root-level `task
 ## Commands
 
 ```bash
-npm install
+npm ci
 npm run check:js
 npm run check:settings-admin
 npm run check:auth-security
@@ -36,6 +36,8 @@ PHP coding standards require Composer:
 composer install
 npm run lint:php
 ```
+
+Use the same toolchain as CI when possible: Node.js 24, npm dependencies from `package-lock.json`, PHP 8.0+, Composer, and PowerShell 7 (`pwsh`). On Windows, `npm run package` falls back to Windows PowerShell if `pwsh` is unavailable.
 
 `npm run build` generates gettext files, cursor PNGs, minified Vite assets, and the build manifest in `theme/Yneko-Reimu/assets/dist/`.
 
