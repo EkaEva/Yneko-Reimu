@@ -20,6 +20,19 @@ const settingsSchemaPaths = [
   resolve(themeRoot, 'inc/settings/schema/compat.php')
 ];
 const settingsSchema = (await Promise.all(settingsSchemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const customizerPaths = [
+  resolve(themeRoot, 'inc/customizer.php'),
+  resolve(themeRoot, 'inc/customizer/panel.php'),
+  resolve(themeRoot, 'inc/customizer/preset.php'),
+  resolve(themeRoot, 'inc/customizer/sidebar-widgets.php'),
+  resolve(themeRoot, 'inc/customizer/visual.php'),
+  resolve(themeRoot, 'inc/customizer/images.php'),
+  resolve(themeRoot, 'inc/customizer/cards.php'),
+  resolve(themeRoot, 'inc/customizer/articles.php'),
+  resolve(themeRoot, 'inc/customizer/social.php'),
+  resolve(themeRoot, 'inc/customizer/footer-virtual.php')
+];
+const customizer = (await Promise.all(customizerPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   schema: settingsSchema,
@@ -29,7 +42,7 @@ const files = {
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   commentsContext: await readFile(resolve(themeRoot, 'inc/comments/context.php'), 'utf8'),
   commentsRendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
-  customizer: await readFile(resolve(themeRoot, 'inc/customizer.php'), 'utf8'),
+  customizer,
   migrations: await readFile(resolve(themeRoot, 'inc/migrations.php'), 'utf8'),
   contentTools: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8'),
   hooks: await readFile(resolve(root, 'docs/hooks.md'), 'utf8'),

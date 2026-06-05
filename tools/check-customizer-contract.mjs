@@ -3,8 +3,20 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const customizerPath = resolve(root, 'theme/Yneko-Reimu/inc/customizer.php');
-const source = await readFile(customizerPath, 'utf8');
+const themeRoot = resolve(root, 'theme/Yneko-Reimu');
+const files = {
+  entry: await readFile(resolve(themeRoot, 'inc/customizer.php'), 'utf8'),
+  panel: await readFile(resolve(themeRoot, 'inc/customizer/panel.php'), 'utf8'),
+  preset: await readFile(resolve(themeRoot, 'inc/customizer/preset.php'), 'utf8'),
+  sidebarWidgets: await readFile(resolve(themeRoot, 'inc/customizer/sidebar-widgets.php'), 'utf8'),
+  visual: await readFile(resolve(themeRoot, 'inc/customizer/visual.php'), 'utf8'),
+  images: await readFile(resolve(themeRoot, 'inc/customizer/images.php'), 'utf8'),
+  cards: await readFile(resolve(themeRoot, 'inc/customizer/cards.php'), 'utf8'),
+  articles: await readFile(resolve(themeRoot, 'inc/customizer/articles.php'), 'utf8'),
+  social: await readFile(resolve(themeRoot, 'inc/customizer/social.php'), 'utf8'),
+  footerVirtual: await readFile(resolve(themeRoot, 'inc/customizer/footer-virtual.php'), 'utf8')
+};
+const source = Object.values(files).join('\n');
 let failed = false;
 
 function requireSnippet(label, snippet) {
@@ -12,6 +24,20 @@ function requireSnippet(label, snippet) {
     console.error(`[customizer] Missing ${label}: ${snippet}`);
     failed = true;
   }
+}
+
+for (const moduleImport of [
+  "require_once get_template_directory() . '/inc/customizer/panel.php';",
+  "require_once get_template_directory() . '/inc/customizer/preset.php';",
+  "require_once get_template_directory() . '/inc/customizer/sidebar-widgets.php';",
+  "require_once get_template_directory() . '/inc/customizer/visual.php';",
+  "require_once get_template_directory() . '/inc/customizer/images.php';",
+  "require_once get_template_directory() . '/inc/customizer/cards.php';",
+  "require_once get_template_directory() . '/inc/customizer/articles.php';",
+  "require_once get_template_directory() . '/inc/customizer/social.php';",
+  "require_once get_template_directory() . '/inc/customizer/footer-virtual.php';"
+]) {
+  requireSnippet('customizer module boundary', moduleImport);
 }
 
 for (const snippet of [

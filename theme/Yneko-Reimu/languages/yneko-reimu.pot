@@ -28,7 +28,7 @@ msgstr ""
 msgid "[%s] 注册验证码"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "%1$s %2$d"
 msgstr ""
 
@@ -48,7 +48,7 @@ msgstr ""
 msgid "%d 字"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "%s 链接"
 msgstr ""
 
@@ -108,11 +108,11 @@ msgstr ""
 msgid "按正序"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "暗色"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "暗色模式默认值"
 msgstr ""
 
@@ -120,7 +120,7 @@ msgstr ""
 msgid "版权框"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "版权文本"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgstr ""
 msgid "标签已更新"
 msgstr ""
 
-#: inc/customizer.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php template-parts/widgets/default-widgets.php
 msgid "标签云"
 msgstr ""
 
@@ -192,7 +192,7 @@ msgstr ""
 msgid "表情包"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "播放器位置"
 msgstr ""
 
@@ -204,7 +204,7 @@ msgstr ""
 msgid "驳回并删除"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "博客卡片"
 msgstr ""
 
@@ -220,23 +220,23 @@ msgstr ""
 msgid "侧边栏"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "侧边栏位置"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "侧栏卡片之后"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "侧栏卡片之前"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "侧栏社交图标"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "侧栏小组件"
 msgstr ""
 
@@ -260,7 +260,7 @@ msgstr ""
 msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "代码块折叠高度"
 msgstr ""
 
@@ -284,15 +284,15 @@ msgstr ""
 msgid "当前账户已绑定 GitHub：%s"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "导航滚动隐藏"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "导航链接：%s"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "导航文字：%s"
 msgstr ""
 
@@ -368,11 +368,11 @@ msgstr ""
 msgid "返回登录"
 msgstr ""
 
-#: inc/customizer.php template-parts/layout/sidebar-common.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php template-parts/layout/sidebar-common.php template-parts/widgets/default-widgets.php
 msgid "分类"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "分类数量"
 msgstr ""
 
@@ -384,7 +384,7 @@ msgstr ""
 msgid "分享到 %s"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "分享与社交链接"
 msgstr ""
 
@@ -460,7 +460,7 @@ msgstr ""
 msgid "跟随文章设置"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "跟随系统"
 msgstr ""
 
@@ -468,11 +468,11 @@ msgstr ""
 msgid "贡献者"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "固定导航"
 msgstr ""
 
-#: inc/customizer.php inc/post-meta.php
+#: inc/customizer/visual.php inc/post-meta.php
 msgid "关闭"
 msgstr ""
 
@@ -484,7 +484,7 @@ msgstr ""
 msgid "关闭个人资料窗口"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "关闭后，页面右上角不再显示 GitHub 三角标。"
 msgstr ""
 
@@ -508,11 +508,11 @@ msgstr ""
 msgid "关于页待编辑"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "关于页简介"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "关于与友链"
 msgstr ""
 
@@ -524,7 +524,7 @@ msgstr ""
 msgid "管理员"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 msgstr ""
 
@@ -532,11 +532,11 @@ msgstr ""
 msgid "广告/官方/测试"
 msgstr ""
 
-#: inc/customizer.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
 msgid "归档"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "归档数量"
 msgstr ""
 
@@ -544,7 +544,7 @@ msgstr ""
 msgid "过期提示"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "过期天数阈值"
 msgstr ""
 
@@ -560,11 +560,11 @@ msgstr ""
 msgid "还没有文章"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/images.php
 msgid "横幅、封面、作者头像和搜索背景会立即体现在预览中；评论头像审核等用户数据请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/images.php
 msgid "横幅与图片"
 msgstr ""
 
@@ -612,23 +612,23 @@ msgstr ""
 msgid "仅支持未超出大小限制的 GIF 文件。"
 msgstr ""
 
-#: inc/customizer.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php template-parts/widgets/default-widgets.php
 msgid "近期评论"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "近期评论数量"
 msgstr ""
 
-#: inc/customizer.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php template-parts/widgets/default-widgets.php
 msgid "近期文章"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "近期文章数量"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "开启后侧栏由主题自动生成，显示作者卡、站点统计、社交链接和菜单。"
 msgstr ""
 
@@ -636,7 +636,7 @@ msgstr ""
 msgid "开启认证器两步验证"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "可使用 {year} 作为年份占位。"
 msgstr ""
 
@@ -644,15 +644,15 @@ msgstr ""
 msgid "可在 Customizer 的“关于与友链”中配置，或创建 slug 为 friend 的真实页面覆盖。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "控制侧栏作者卡下方的主题内置小组件。标签云默认开启，其它默认关闭；搜索入口已在顶部导航中提供。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "控制首页与归档卡片的可见信息，方便在预览中检查密度和排版。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "控制文章页可见模块。评论上传、外部评论和登录服务请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
@@ -688,23 +688,23 @@ msgstr ""
 msgid "密码至少需要 8 个字符。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/images.php
 msgid "默认横幅图片"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/images.php
 msgid "默认卡片封面"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "默认启用 QQ 和微信，其它分享按钮默认关闭。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/images.php
 msgid "默认头像/角色图"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "默认只启用 GitHub。其它社交链接可先填写保存，启用后才会显示。"
 msgstr ""
 
@@ -860,23 +860,23 @@ msgstr ""
 msgid "启用"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "启用侧栏社交：%s"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "启用文章分享：%s"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "起始年份"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "浅色"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "强调色"
 msgstr ""
 
@@ -1048,7 +1048,7 @@ msgstr ""
 msgid "上传中..."
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "上方管理文章分享按钮；下方管理侧栏社交图标。链接可以先填写，只有启用后才会在前台显示。"
 msgstr ""
 
@@ -1096,15 +1096,15 @@ msgstr ""
 msgid "使用 GitHub 登录"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "使用英文逗号分隔：tagcloud, projects, recent_posts, categories, archives, recent_comments。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "使用主题内置侧栏"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "视觉主题"
 msgstr ""
 
@@ -1112,15 +1112,15 @@ msgstr ""
 msgid "首页"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "首页胶囊标题"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "首页胶囊封面 %d"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "首页胶囊链接"
 msgstr ""
 
@@ -1148,7 +1148,7 @@ msgstr ""
 msgid "搜索....."
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/images.php
 msgid "搜索弹窗背景图"
 msgstr ""
 
@@ -1188,7 +1188,7 @@ msgstr ""
 msgid "通过"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "同时用于顶部 GitHub 三角标、侧栏 GitHub 图标和项目页拉取来源。"
 msgstr ""
 
@@ -1312,7 +1312,7 @@ msgstr ""
 msgid "文章导航"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "文章分享链接"
 msgstr ""
 
@@ -1320,7 +1320,7 @@ msgstr ""
 msgid "文章目录"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "文章页"
 msgstr ""
 
@@ -1380,31 +1380,31 @@ msgstr ""
 msgid "显示"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "显示 TOC"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "显示暗色模式切换"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "显示版权框"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "显示标签"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "显示分类"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "显示更新时间"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "显示过期提示"
 msgstr ""
 
@@ -1412,15 +1412,15 @@ msgstr ""
 msgid "显示密码"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "显示评论数"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/articles.php
 msgid "显示上一篇/下一篇"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "显示太极装饰"
 msgstr ""
 
@@ -1428,15 +1428,15 @@ msgstr ""
 msgid "显示我的评论头像框"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "显示右上角 GitHub 三角标"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "显示阅读时间"
 msgstr ""
 
-#: inc/customizer.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
 msgid "项目"
 msgstr ""
 
@@ -1444,7 +1444,7 @@ msgstr ""
 msgid "项目待同步"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "项目数量"
 msgstr ""
 
@@ -1456,7 +1456,7 @@ msgstr ""
 msgid "项目信息"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "小工具之后"
 msgstr ""
 
@@ -1468,7 +1468,7 @@ msgstr ""
 msgid "小伙伴们"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/sidebar-widgets.php
 msgid "小组件排序"
 msgstr ""
 
@@ -1500,7 +1500,7 @@ msgstr ""
 msgid "学习笔记"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/visual.php
 msgid "颜色、暗色模式和导航布局适合在这里实时预览；第三方脚本与装饰扩展请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
@@ -1548,15 +1548,15 @@ msgstr ""
 msgid "验证邮箱后即可重置密码。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "页脚"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "页脚额外署名"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "页脚文本适合通过右侧预览确认；赞助二维码请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
@@ -1660,7 +1660,7 @@ msgstr ""
 msgid "友链待添加"
 msgstr ""
 
-#: inc/customizer.php inc/post-meta.php
+#: inc/customizer/visual.php inc/post-meta.php
 msgid "右侧"
 msgstr ""
 
@@ -1684,7 +1684,7 @@ msgstr ""
 msgid "预览:"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/preset.php
 msgid "预设"
 msgstr ""
 
@@ -1728,7 +1728,7 @@ msgstr ""
 msgid "赞助二维码"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/cards.php
 msgid "摘要字数"
 msgstr ""
 
@@ -1756,15 +1756,15 @@ msgstr ""
 msgid "折叠代码"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "这里记录项目、学习笔记和日常灵感。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "这里只保留可预览的虚拟页面文案；友链列表请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/panel.php
 msgid "这里作为视觉预览工作台，保留能通过右侧预览判断效果的项目；搜索、音乐、友链、OAuth 和第三方服务请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
@@ -1796,7 +1796,7 @@ msgstr ""
 msgid "主导航"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/footer-virtual.php
 msgid "主题会始终保留 WordPress 与 hexo-theme-reimu/MIT 署名。"
 msgstr ""
 
@@ -1840,7 +1840,7 @@ msgstr ""
 msgid "最多添加 5 个自定义标签；特殊标签和已勾选的自定义标签合计最多 2 个。自定义标签最多 8 个字符，保留标签不可自行设置。"
 msgstr ""
 
-#: inc/customizer.php inc/post-meta.php
+#: inc/customizer/visual.php inc/post-meta.php
 msgid "左侧"
 msgstr ""
 
@@ -1932,7 +1932,7 @@ msgstr ""
 msgid "GitHub 登录成功，正在返回评论区..."
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/social.php
 msgid "GitHub 链接"
 msgstr ""
 
@@ -2064,7 +2064,7 @@ msgstr ""
 msgid "Yneko-Reimu 设置分类"
 msgstr ""
 
-#: inc/customizer.php
+#: inc/customizer/panel.php
 msgid "Yneko-Reimu 视觉预览"
 msgstr ""
 
