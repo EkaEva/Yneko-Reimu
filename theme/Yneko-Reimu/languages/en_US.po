@@ -157,15 +157,15 @@ msgstr "Author:"
 msgid "本站信息"
 msgstr "Site info"
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "编辑"
 msgstr "Edit"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/identity.php
 msgid "编辑个人资料"
 msgstr "Edit profile"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/list.php
 msgid "编辑评论"
 msgstr ""
 
@@ -189,11 +189,11 @@ msgstr ""
 msgid "标签云"
 msgstr "Tag cloud"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "表情"
 msgstr "Emoji"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "表情包"
 msgstr "Stickers"
 
@@ -245,15 +245,15 @@ msgstr ""
 msgid "侧栏小组件"
 msgstr "Sidebar widgets"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "插入"
 msgstr "Insert"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "插入 GIF 链接"
 msgstr "Insert GIF link"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "插入图片链接"
 msgstr "Insert image link"
 
@@ -305,7 +305,7 @@ msgstr "Navigation label: %s"
 msgid "到底了..."
 msgstr "No more..."
 
-#: comments.php inc/comments/modals.php inc/comments/rendering.php inc/enqueue/config.php
+#: comments.php inc/comments/modals.php inc/comments/rendering/toolbar.php inc/enqueue/config.php
 msgid "登录"
 msgstr "Login"
 
@@ -313,11 +313,11 @@ msgstr "Login"
 msgid "登录成功。"
 msgstr "Login successful."
 
-#: inc/comments/rendering.php inc/enqueue/config.php
+#: inc/comments/rendering/toolbar.php inc/enqueue/config.php
 msgid "登录后可上传 GIF。"
 msgstr "Log in to upload GIFs."
 
-#: inc/comments/rendering.php inc/comments/uploads/ajax.php inc/enqueue/config.php
+#: inc/comments/rendering/toolbar.php inc/comments/uploads/ajax.php inc/enqueue/config.php
 msgid "登录后可上传图片。"
 msgstr "Log in to upload images."
 
@@ -337,11 +337,11 @@ msgstr "Login information has expired. Please try again."
 msgid "登录中..."
 msgstr "Logging in..."
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/list.php
 msgid "点赞"
 msgstr "Like"
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "订阅者"
 msgstr ""
 
@@ -469,7 +469,7 @@ msgstr "Follow post setting"
 msgid "跟随系统"
 msgstr "Follow system"
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "贡献者"
 msgstr ""
 
@@ -525,7 +525,7 @@ msgstr "About and friends"
 msgid "关于这个站点与作者。"
 msgstr "About this site and author."
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "管理员"
 msgstr ""
 
@@ -585,7 +585,7 @@ msgstr "Comments are welcome"
 msgid "恢复码模块尚未加载。"
 msgstr ""
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/list.php
 msgid "回复"
 msgstr "Reply"
 
@@ -721,7 +721,7 @@ msgstr ""
 msgid "你不能删除这条评论。"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments/rendering.php
+#: inc/comments/modals.php inc/comments/rendering/toolbar.php
 msgid "昵称"
 msgstr "Nickname"
 
@@ -785,7 +785,7 @@ msgstr ""
 msgid "评论不存在。"
 msgstr "Comment does not exist."
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/list.php
 msgid "评论操作"
 msgstr "Comment actions"
 
@@ -793,7 +793,7 @@ msgstr "Comment actions"
 msgid "评论更新失败。"
 msgstr ""
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/environment.php
 msgid "评论环境信息"
 msgstr "Comment environment information"
 
@@ -1029,7 +1029,7 @@ msgstr "If this email is registered, a code will be sent to it."
 msgid "删除"
 msgstr "Remove"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/list.php
 msgid "删除评论"
 msgstr ""
 
@@ -1037,7 +1037,7 @@ msgstr ""
 msgid "删除头像"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments/rendering.php inc/enqueue/config.php
+#: inc/comments/modals.php inc/comments/rendering/toolbar.php inc/enqueue/config.php
 msgid "上传"
 msgstr "Upload"
 
@@ -1045,7 +1045,7 @@ msgstr "Upload"
 msgid "上传失败。"
 msgstr "Upload failed."
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "上传图片"
 msgstr "Upload image"
 
@@ -1257,15 +1257,15 @@ msgstr "Image preview"
 msgid "推荐项目待同步"
 msgstr "Recommended projects pending sync"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/identity.php
 msgid "退出"
 msgstr "Logout"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/identity.php
 msgid "退出登录"
 msgstr "Log out"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "网址（可选）"
 msgstr "Website (optional)"
 
@@ -1573,7 +1573,7 @@ msgstr "Page:"
 msgid "页面内容"
 msgstr "Page content"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "一条评论"
 msgstr ""
 
@@ -1625,7 +1625,7 @@ msgstr "Hide"
 msgid "隐藏密码"
 msgstr "Hide password"
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "用户标签"
 msgstr ""
 
@@ -1645,7 +1645,7 @@ msgstr ""
 msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments/rendering.php
+#: inc/comments/modals.php inc/comments/rendering/toolbar.php
 msgid "邮箱"
 msgstr "Email"
 
@@ -1681,7 +1681,7 @@ msgstr "Language menu"
 msgid "语言选择"
 msgstr "Language selection"
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "预览"
 msgstr "Preview"
 
@@ -1749,7 +1749,7 @@ msgstr "Site header image"
 msgid "站点页脚"
 msgstr "Site footer"
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "站长"
 msgstr ""
 
@@ -1849,7 +1849,7 @@ msgstr ""
 msgid "左侧"
 msgstr "Left"
 
-#: inc/comments/badges.php
+#: inc/comments/badges/special.php
 msgid "作者"
 msgstr "Artist"
 
@@ -1981,7 +1981,7 @@ msgstr "Home"
 msgid "Main Reimu sidebar."
 msgstr ""
 
-#: inc/comments/rendering.php
+#: inc/comments/rendering/toolbar.php
 msgid "Markdown is supported"
 msgstr ""
 

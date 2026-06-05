@@ -33,6 +33,16 @@ const customizerPaths = [
   resolve(themeRoot, 'inc/customizer/footer-virtual.php')
 ];
 const customizer = (await Promise.all(customizerPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentsRenderingPaths = [
+  resolve(themeRoot, 'inc/comments/rendering.php'),
+  resolve(themeRoot, 'inc/comments/rendering/toolbar.php'),
+  resolve(themeRoot, 'inc/comments/rendering/identity.php'),
+  resolve(themeRoot, 'inc/comments/rendering/environment.php'),
+  resolve(themeRoot, 'inc/comments/rendering/markdown.php'),
+  resolve(themeRoot, 'inc/comments/rendering/list.php'),
+  resolve(themeRoot, 'inc/comments/rendering/external.php')
+];
+const commentsRendering = (await Promise.all(commentsRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   schema: settingsSchema,
@@ -41,7 +51,7 @@ const files = {
   svg: await readFile(resolve(themeRoot, 'inc/svg.php'), 'utf8'),
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   commentsContext: await readFile(resolve(themeRoot, 'inc/comments/context.php'), 'utf8'),
-  commentsRendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
+  commentsRendering,
   customizer,
   migrations: await readFile(resolve(themeRoot, 'inc/migrations.php'), 'utf8'),
   contentTools: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8'),

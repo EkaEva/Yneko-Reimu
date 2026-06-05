@@ -14,6 +14,23 @@ const enqueuePaths = [
   resolve(themeRoot, 'inc/enqueue/runtime.php')
 ];
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentBadgePaths = [
+  resolve(themeRoot, 'inc/comments/badges.php'),
+  resolve(themeRoot, 'inc/comments/badges/identity.php'),
+  resolve(themeRoot, 'inc/comments/badges/tags.php'),
+  resolve(themeRoot, 'inc/comments/badges/special.php')
+];
+const commentRenderingPaths = [
+  resolve(themeRoot, 'inc/comments/rendering.php'),
+  resolve(themeRoot, 'inc/comments/rendering/toolbar.php'),
+  resolve(themeRoot, 'inc/comments/rendering/identity.php'),
+  resolve(themeRoot, 'inc/comments/rendering/environment.php'),
+  resolve(themeRoot, 'inc/comments/rendering/markdown.php'),
+  resolve(themeRoot, 'inc/comments/rendering/list.php'),
+  resolve(themeRoot, 'inc/comments/rendering/external.php')
+];
+const commentBadgeSource = (await Promise.all(commentBadgePaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentRenderingSource = (await Promise.all(commentRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
 const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'utf8');
@@ -23,7 +40,7 @@ const files = {
   enqueue: enqueueSource,
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   context: await readFile(resolve(themeRoot, 'inc/comments/context.php'), 'utf8'),
-  badges: await readFile(resolve(themeRoot, 'inc/comments/badges.php'), 'utf8'),
+  badges: commentBadgeSource,
   avatars: await readFile(resolve(themeRoot, 'inc/comments/avatars.php'), 'utf8'),
   admin: await readFile(resolve(themeRoot, 'inc/comments/admin.php'), 'utf8'),
   uploads: await readFile(resolve(themeRoot, 'inc/comments/uploads.php'), 'utf8'),
@@ -39,7 +56,7 @@ const files = {
   profileSave: await readFile(resolve(themeRoot, 'inc/comments/profile-save.php'), 'utf8'),
   profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
   mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
-  rendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
+  rendering: commentRenderingSource,
   frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
   commentsEntry,
@@ -102,6 +119,25 @@ for (const phpModule of [
   "require_once YNEKO_REIMU_DIR . '/inc/comments/admin.php';"
 ]) {
   requireSnippet('comments PHP module boundary', phpModule, files.comments);
+}
+
+for (const badgeModule of [
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/badges/identity.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/badges/tags.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/badges/special.php';"
+]) {
+  requireSnippet('comment badge module boundary', badgeModule, files.badges);
+}
+
+for (const renderingModule of [
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/toolbar.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/identity.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/environment.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/markdown.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/list.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/external.php';"
+]) {
+  requireSnippet('comment rendering module boundary', renderingModule, files.rendering);
 }
 
 for (const uploadModule of [

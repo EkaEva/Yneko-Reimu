@@ -14,6 +14,17 @@ const enqueuePaths = [
   resolve(themeRoot, 'inc/enqueue/runtime.php')
 ];
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentModalSource = await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8');
+const commentRenderingPaths = [
+  resolve(themeRoot, 'inc/comments/rendering.php'),
+  resolve(themeRoot, 'inc/comments/rendering/toolbar.php'),
+  resolve(themeRoot, 'inc/comments/rendering/identity.php'),
+  resolve(themeRoot, 'inc/comments/rendering/environment.php'),
+  resolve(themeRoot, 'inc/comments/rendering/markdown.php'),
+  resolve(themeRoot, 'inc/comments/rendering/list.php'),
+  resolve(themeRoot, 'inc/comments/rendering/external.php')
+];
+const commentRenderingSource = (await Promise.all(commentRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const runtimeScripts = [
   'assets/dist/reimu.js',
@@ -37,7 +48,7 @@ const sourceFiles = {
   searchEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-search.js'), 'utf8'),
   shareEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-share.js'), 'utf8'),
   photoswipeEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'utf8'),
-  modals: await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8'),
+  modals: `${commentModalSource}\n${commentRenderingSource}`,
   enqueue: enqueueSource
 };
 
