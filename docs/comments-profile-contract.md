@@ -13,8 +13,17 @@ The comments/profile runtime covers:
 
 The PHP entrypoint remains `inc/comments.php`. Internal comments/profile modules live under `inc/comments/`:
 
-- `uploads.php` owns front-end comment media upload, discard, promotion, cleanup, duplicate/media-count checks, and upload-library query helpers.
+- `context.php` owns canonical comment post IDs, virtual project comment carriers, and AJAX language context.
+- `badges.php` owns public profile/GitHub URL helpers plus comment user badge/tag normalization, review preparation, payloads, and rendered badge HTML.
+- `avatars.php` owns user avatar/profile avatar helpers, avatar upload handling, avatar frames, and user-facing review-status payloads.
+- `admin.php` owns administrator avatar and user badge/tag review actions.
+- `uploads.php` is the upload module entrypoint.
+- `uploads/media.php` owns upload settings, paths, media URL parsing, temporary review meta, and upload status helpers.
 - `uploads/helpers.php` owns shared upload validation, cleanup-token, request-file, and attachment-registration helpers.
+- `uploads/library.php` owns GIF/upload library queries, pending temporary upload discovery, and comment lookup by temporary URL.
+- `uploads/ajax.php` owns front-end upload and discard AJAX handlers.
+- `uploads/lifecycle.php` owns temporary upload promotion, comment-status/delete cleanup, expiration cleanup, and scheduling.
+- `uploads/filters.php` owns GIF-only approval, duplicate-simple-comment prevention, media-count enforcement, and pending-upload moderation filters.
 - `uploads/admin.php` owns administrator GIF-library uploads, Media Library upload filtering, and comment upload review actions.
 - `modals.php` owns request-free login/profile modal rendering.
 - `auth.php` owns login-state, login, logout, registration, and lost-password AJAX handlers plus adjacent auth helpers.

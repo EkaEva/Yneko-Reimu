@@ -18,6 +18,7 @@ const files = {
   page: await readFile(resolve(themeRoot, 'inc/settings/page.php'), 'utf8'),
   svg: await readFile(resolve(themeRoot, 'inc/svg.php'), 'utf8'),
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
+  commentsContext: await readFile(resolve(themeRoot, 'inc/comments/context.php'), 'utf8'),
   commentsRendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
   customizer: await readFile(resolve(themeRoot, 'inc/customizer.php'), 'utf8'),
   migrations: await readFile(resolve(themeRoot, 'inc/migrations.php'), 'utf8'),

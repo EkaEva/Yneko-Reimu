@@ -152,7 +152,7 @@ msgstr ""
 msgid "本站信息"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "编辑"
 msgstr ""
 
@@ -168,15 +168,15 @@ msgstr ""
 msgid "标签"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "标签审核不通过"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "标签审核中"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "标签已更新"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgstr ""
 msgid "当前未开放注册。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/avatars.php
 msgid "当前未开启头像上传。"
 msgstr ""
 
@@ -312,7 +312,7 @@ msgstr ""
 msgid "登录后可上传 GIF。"
 msgstr ""
 
-#: inc/comments/rendering.php inc/comments/uploads.php inc/enqueue.php
+#: inc/comments/rendering.php inc/comments/uploads/ajax.php inc/enqueue.php
 msgid "登录后可上传图片。"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 msgid "点赞"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "订阅者"
 msgstr ""
 
@@ -464,7 +464,7 @@ msgstr ""
 msgid "跟随系统"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "贡献者"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgstr ""
 msgid "关于这个站点与作者。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "管理员"
 msgstr ""
 
@@ -760,7 +760,7 @@ msgstr ""
 msgid "评论"
 msgstr ""
 
-#: inc/comments/uploads.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/enqueue.php
 msgid "评论 GIF 上传已关闭。"
 msgstr ""
 
@@ -808,15 +808,15 @@ msgstr ""
 msgid "评论删除失败。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/lifecycle.php
 msgid "评论上传：%s"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "评论审核不通过"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "评论审核中"
 msgstr ""
 
@@ -824,7 +824,7 @@ msgstr ""
 msgid "评论提交失败。"
 msgstr ""
 
-#: inc/comments/uploads.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/enqueue.php
 msgid "评论图片上传已关闭。"
 msgstr ""
 
@@ -832,7 +832,7 @@ msgstr ""
 msgid "评论已发布。"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "评论已更新"
 msgstr ""
 
@@ -852,7 +852,7 @@ msgstr ""
 msgid "评论已提交，正在等待审核。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/media.php
 msgid "评论正在等待审核。"
 msgstr ""
 
@@ -888,7 +888,7 @@ msgstr ""
 msgid "切换明暗模式"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/filters.php
 msgid "请不要重复发送相同的评论。"
 msgstr ""
 
@@ -936,7 +936,7 @@ msgstr ""
 msgid "请输入注册邮箱。"
 msgstr ""
 
-#: inc/comments/profile.php inc/comments.php
+#: inc/comments/avatars.php inc/comments/profile.php
 msgid "请先登录。"
 msgstr ""
 
@@ -956,7 +956,7 @@ msgstr ""
 msgid "请选择 GIF 文件。"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/avatars.php
 msgid "请选择头像文件。"
 msgstr ""
 
@@ -964,7 +964,7 @@ msgstr ""
 msgid "请选择要上传的 GIF。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/ajax.php
 msgid "请选择要上传的文件。"
 msgstr ""
 
@@ -988,7 +988,7 @@ msgstr ""
 msgid "取消回复"
 msgstr ""
 
-#: inc/comments/uploads/admin.php inc/comments/uploads.php inc/comments.php inc/security-auth-mail.php inc/settings/admin.php
+#: inc/comments/admin.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php inc/security-auth-mail.php inc/settings/admin.php
 msgid "权限不足。"
 msgstr ""
 
@@ -1036,7 +1036,7 @@ msgstr ""
 msgid "上传"
 msgstr ""
 
-#: inc/comments/uploads/helpers.php inc/comments/uploads.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/comments/uploads/helpers.php inc/enqueue.php
 msgid "上传失败。"
 msgstr ""
 
@@ -1084,7 +1084,7 @@ msgstr ""
 msgid "申请方法"
 msgstr ""
 
-#: inc/comments/uploads.php inc/settings/renderers.php
+#: inc/comments/uploads/media.php inc/settings/renderers.php
 msgid "审核未通过"
 msgstr ""
 
@@ -1196,7 +1196,7 @@ msgstr ""
 msgid "头像更新中"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "头像仅支持 JPG、PNG 或 WebP。"
 msgstr ""
 
@@ -1204,23 +1204,23 @@ msgstr ""
 msgid "头像链接"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/avatars.php
 msgid "头像上传失败。"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "头像审核不通过"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments/profile.php inc/comments.php inc/enqueue.php inc/settings/renderers.php
+#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile.php inc/enqueue.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr ""
 
-#: inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue.php
 msgid "头像文件超过大小限制。"
 msgstr ""
 
-#: inc/comments/profile.php inc/comments.php inc/enqueue.php
+#: inc/comments/avatars.php inc/comments/profile.php inc/enqueue.php
 msgid "头像已更新"
 msgstr ""
 
@@ -1296,11 +1296,11 @@ msgstr ""
 msgid "文件大小超出限制。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/ajax.php
 msgid "文件已被评论使用。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/ajax.php
 msgid "文件已上传，等待管理员审核。"
 msgstr ""
 
@@ -1356,7 +1356,7 @@ msgstr ""
 msgid "无效的 SVG 文件。"
 msgstr ""
 
-#: inc/comments/uploads/admin.php inc/comments/uploads.php
+#: inc/comments/uploads/admin.php inc/comments/uploads/ajax.php
 msgid "无效的评论上传附件。"
 msgstr ""
 
@@ -1572,7 +1572,7 @@ msgstr ""
 msgid "一条评论"
 msgstr ""
 
-#: inc/comments/mutations.php inc/comments/uploads.php
+#: inc/comments/mutations.php inc/comments/uploads/filters.php
 msgid "一条评论最多只能添加一张图片或一个 GIF。"
 msgstr ""
 
@@ -1580,7 +1580,7 @@ msgstr ""
 msgid "移动端导航"
 msgstr ""
 
-#: inc/comments/uploads.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/enqueue.php
 msgid "已插入评论。"
 msgstr ""
 
@@ -1620,7 +1620,7 @@ msgstr ""
 msgid "隐藏密码"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "用户标签"
 msgstr ""
 
@@ -1744,7 +1744,7 @@ msgstr ""
 msgid "站点页脚"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "站长"
 msgstr ""
 
@@ -1844,7 +1844,7 @@ msgstr ""
 msgid "左侧"
 msgstr ""
 
-#: inc/comments.php
+#: inc/comments/badges.php
 msgid "作者"
 msgstr ""
 
