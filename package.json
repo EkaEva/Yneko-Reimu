@@ -31,8 +31,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "esbuild": "^0.25.12",
-    "qrcode": "^1.5.1",
-    "vite": "^6.4.3"
+    "esbuild": "^0.28.0",
+    "qrcode": "^1.5.4",
+    "vite": "^8.0.16"
   }
 }
