@@ -1,0 +1,43 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Full quality gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install PHP tooling
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run full project checks
+        run: npm run check
+
+      - name: Audit Node dependencies
+        run: npm audit --audit-level=moderate
+
+      - name: Build validation package
+        run: npm run package
+
+      - name: Check validation package
+        run: npm run check:package
