@@ -20,7 +20,14 @@ const settingsPanelModulePaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/security.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/music.php')
 ];
-const settingsSchemaPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php');
+const settingsSchemaPaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/normalizers.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/getters.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
+];
 const reimuSourcePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu.js');
 
 const [
@@ -34,9 +41,8 @@ const [
   githubLogin2fa,
   settingsPage,
   settingsPanelsEntry,
-  settingsSchema,
   reimuSource,
-  ...settingsPanelModules
+  ...settingsModules
 ] = await Promise.all([
   readFile(githubPath, 'utf8'),
   readFile(githubModulePaths.settings, 'utf8'),
@@ -48,12 +54,15 @@ const [
   readFile(githubModulePaths.login2fa, 'utf8'),
   readFile(settingsPagePath, 'utf8'),
   readFile(settingsPanelsPath, 'utf8'),
-  readFile(settingsSchemaPath, 'utf8'),
   readFile(reimuSourcePath, 'utf8'),
-  ...settingsPanelModulePaths.map((path) => readFile(path, 'utf8'))
+  ...settingsPanelModulePaths.map((path) => readFile(path, 'utf8')),
+  ...settingsSchemaPaths.map((path) => readFile(path, 'utf8'))
 ]);
 
+const settingsPanelModules = settingsModules.slice(0, settingsPanelModulePaths.length);
+const settingsSchemaModules = settingsModules.slice(settingsPanelModulePaths.length);
 const settingsPanels = [settingsPanelsEntry, ...settingsPanelModules].join('\n');
+const settingsSchema = settingsSchemaModules.join('\n');
 
 const github = [
   githubEntry,
@@ -94,6 +103,11 @@ const checks = [
     label: 'Theme settings OAuth keys',
     source: settingsSchema,
     snippets: [
+      "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/normalizers.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/getters.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/compat.php';",
       "'github_oauth'      => array(",
       "'show_admin_toolbar'   => '0'",
       "'client_id'     => ''",

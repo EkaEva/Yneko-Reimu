@@ -122,6 +122,8 @@ Admin settings JavaScript is maintained in `theme/Yneko-Reimu/assets/src/admin-s
 
 Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/settings/panels.php` and focused modules under `theme/Yneko-Reimu/inc/settings/panels/`. The entry file keeps shared group/field helpers and smaller panels; high-density panels such as Users, Security, and Music live in their own modules. When changing tabs, panel names, field names, repeatable rows, or review sections, update `tools/check-settings-admin-contract.mjs` in the same change.
 
+Settings schema PHP keeps `theme/Yneko-Reimu/inc/settings/schema.php` as the entrypoint loaded by `inc/settings.php`. Focused modules under `theme/Yneko-Reimu/inc/settings/schema/` own defaults, URL/theme-mod normalizers, sanitizers, getters/group readers, and legacy compatibility fallbacks. Keep the stored `yneko_reimu_settings` option, the `yneko_reimu_sanitize_settings()` callback, every setting key, and legacy fallback behavior unchanged unless a migration is documented. Contract checks that inspect schema behavior should aggregate the entrypoint and all schema modules.
+
 ## Development Constraints
 
 - Keep the installable theme rooted at `theme/Yneko-Reimu`.

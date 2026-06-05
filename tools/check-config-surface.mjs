@@ -11,9 +11,18 @@ const settingsPanelPaths = [
   resolve(themeRoot, 'inc/settings/panels/music.php')
 ];
 const settingsPanels = (await Promise.all(settingsPanelPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const settingsSchemaPaths = [
+  resolve(themeRoot, 'inc/settings/schema.php'),
+  resolve(themeRoot, 'inc/settings/schema/defaults.php'),
+  resolve(themeRoot, 'inc/settings/schema/normalizers.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers.php'),
+  resolve(themeRoot, 'inc/settings/schema/getters.php'),
+  resolve(themeRoot, 'inc/settings/schema/compat.php')
+];
+const settingsSchema = (await Promise.all(settingsSchemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
-  schema: await readFile(resolve(themeRoot, 'inc/settings/schema.php'), 'utf8'),
+  schema: settingsSchema,
   panels: settingsPanels,
   page: await readFile(resolve(themeRoot, 'inc/settings/page.php'), 'utf8'),
   svg: await readFile(resolve(themeRoot, 'inc/svg.php'), 'utf8'),

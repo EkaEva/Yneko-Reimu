@@ -14,7 +14,14 @@ const renderersPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers.ph
 const adminPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/admin.php');
 const adminJsPath = resolve(root, 'theme/Yneko-Reimu/assets/src/admin-settings.js');
 const login2faPath = resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa.php');
-const schemaPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php');
+const schemaPaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/normalizers.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/getters.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
+];
 const securityPath = resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail.php');
 
 const page = await readFile(pagePath, 'utf8');
@@ -25,7 +32,7 @@ const renderers = await readFile(renderersPath, 'utf8');
 const admin = await readFile(adminPath, 'utf8');
 const adminJs = await readFile(adminJsPath, 'utf8');
 const login2fa = await readFile(login2faPath, 'utf8');
-const schema = await readFile(schemaPath, 'utf8');
+const schema = (await Promise.all(schemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 const security = await readFile(securityPath, 'utf8');
 
 const tabs = [
@@ -182,6 +189,11 @@ const requiredAdminPhpSnippets = [
 ];
 
 const requiredSchemaSnippets = [
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/normalizers.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/getters.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/compat.php';",
   "'auth_security'",
   "'security'          => array(",
   "'allow_svg_uploads'        => '1'",
