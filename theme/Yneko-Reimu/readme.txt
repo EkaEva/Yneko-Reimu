@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.6
+Stable tag: 0.2.7
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,15 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.7 =
+
+* Adds contributor onboarding, GitHub PR/issue templates, CODEOWNERS, SECURITY.md, and Dependabot configuration.
+* Adds a PR/main quality workflow and aligns release CI with the full local quality gate, audit, package, and package-boundary checks.
+* Moves public maintenance history into docs/maintenance-notes while keeping root agent planning files out of Git and release ZIPs.
+* Adds cross-platform npm packaging through a Node wrapper around the existing PowerShell package script.
+* Adds npm run test:runtime for fast smoke checks against built classic scripts and key PJAX/lazy-runtime/comments-profile anchors.
+* Records a non-failing PHP complexity baseline for future maintainability work.
 
 = 0.2.6 =
 
