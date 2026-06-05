@@ -1,6 +1,6 @@
 # Yneko-Reimu v0.2.12 Staged Notes
 
-These are staged development checkpoints, not a tagged public release.
+These were staged development checkpoints before the formal `v0.2.12` release. The final release notes live in `docs/release-notes-v0.2.12.md`.
 
 ## Phase 1 Highlights
 
@@ -26,4 +26,4 @@ These are staged development checkpoints, not a tagged public release.
 - The old `yneko_reimu_preloader_text` value remains a fallback for the new Chinese loader text setting.
 - Typography/layout controls are additive `theme_mod` values; no existing setting, hook, script handle, template path, or front-end runtime contract is renamed.
 - Restore-default controls do not touch `Yneko-Reimu 设置` security, login, upload, third-party service, or feature-toggle options.
-- No v0.2.12 tag or GitHub Release is created for these staged checkpoints.
+- Formal v0.2.12 release notes are maintained separately in `docs/release-notes-v0.2.12.md`.

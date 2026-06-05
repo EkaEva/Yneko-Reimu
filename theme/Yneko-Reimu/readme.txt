@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.11
+Stable tag: 0.2.12
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,15 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.12 =
+
+* Adds root favicon compatibility responses while preserving the existing SVG Site Icon and PNG/JPG fallback behavior.
+* Adds Customizer visual asset controls for cursor slots, loader image/text/size/rotation, the back-to-top icon, and the sponsor button icon.
+* Adds Customizer typography and layout-density controls for font stacks, font sizes, article line height, content widths, density, radius, and shadow strength.
+* Adds grouped Customizer restore-default controls for visual assets, typography/layout density, preview images, and card/article display settings.
+* Keeps restore actions preview-first: users still need to publish changes, and saved resets remove affected `theme_mod` values so future defaults can apply.
+* Updates Customizer, config-surface, enqueue, packaging, and documentation contract gates for the new visual customization surface.
 
 = 0.2.11 =
 
