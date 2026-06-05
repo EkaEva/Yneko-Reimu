@@ -82,8 +82,7 @@ try {
         input: qrcodeEntry,
         output: {
           format: 'iife',
-          entryFileNames: 'qrcode.js',
-          inlineDynamicImports: true
+          entryFileNames: 'qrcode.js'
         }
       }
     }
@@ -105,8 +104,7 @@ async function buildClassicScript(input, outputName) {
         input,
         output: {
           format: 'iife',
-          entryFileNames: outputName,
-          inlineDynamicImports: true
+          entryFileNames: outputName
         }
       }
     }
