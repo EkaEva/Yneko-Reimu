@@ -7,6 +7,7 @@ const enqueuePaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/enqueue.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/enqueue/assets.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/enqueue/head.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/favicon.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/enqueue/styles.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/enqueue/config.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/enqueue/vendors.php'),
@@ -25,6 +26,7 @@ function requireSnippet(label, snippet) {
 for (const snippet of [
   "require_once YNEKO_REIMU_DIR . '/inc/enqueue/assets.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/enqueue/head.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/favicon.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/enqueue/styles.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/enqueue/config.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/enqueue/vendors.php';",
@@ -40,6 +42,23 @@ for (const snippet of [
   "wp_enqueue_script( 'comment-reply' )"
 ]) {
   requireSnippet('entry/runtime contract', snippet);
+}
+
+for (const snippet of [
+  'function yneko_reimu_favicon',
+  'function yneko_reimu_favicon_serve_root_icon',
+  "add_action( 'wp_head', 'yneko_reimu_favicon', 5 )",
+  "add_action( 'template_redirect', 'yneko_reimu_favicon_serve_root_icon', 0 )",
+  "add_action( 'do_favicon', 'yneko_reimu_favicon_serve_root_icon', 0 )",
+  "'/favicon.ico'",
+  "'/favicon-32x32.png'",
+  "'/favicon-192x192.png'",
+  "'/apple-touch-icon.png'",
+  "yneko_reimu_favicon_link( 'shortcut icon', yneko_reimu_favicon_root_url( 'favicon.ico' ), 'image/x-icon' )",
+  "yneko_reimu_favicon_link( 'apple-touch-icon', yneko_reimu_favicon_root_url( 'apple-touch-icon.png' ), 'image/png', '180x180' )",
+  'function yneko_reimu_favicon_build_ico'
+]) {
+  requireSnippet('favicon compatibility contract', snippet);
 }
 
 for (const handle of [

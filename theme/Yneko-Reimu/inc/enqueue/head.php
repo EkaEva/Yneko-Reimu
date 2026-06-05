@@ -79,57 +79,6 @@ function yneko_reimu_critical_cursor() {
 }
 add_action( 'wp_head', 'yneko_reimu_critical_cursor', 0 );
 
-function yneko_reimu_favicon() {
-	$settings         = function_exists( 'yneko_reimu_settings' ) ? yneko_reimu_settings() : array();
-	$fallback         = yneko_reimu_normalize_png_jpeg_url( $settings['favicon_fallback_url'] ?? '' );
-	$fallback_type    = '';
-	$fallback_version = '';
-
-	if ( $fallback ) {
-		$path = (string) wp_parse_url( $fallback, PHP_URL_PATH );
-		$fallback_type = preg_match( '/\.png$/i', $path ) ? 'image/png' : 'image/jpeg';
-		$fallback_version = $fallback . ( false === strpos( $fallback, '?' ) ? '?' : '&' ) . 'yneko-reimu-fallback=1';
-	}
-
-	if ( has_site_icon() && $fallback ) {
-		remove_action( 'wp_head', 'wp_site_icon', 99 );
-
-		$site_icon_id = absint( get_option( 'site_icon', 0 ) );
-		$site_icon    = $site_icon_id ? wp_get_attachment_url( $site_icon_id ) : get_site_icon_url( 192 );
-		$site_icon_mime = $site_icon_id ? get_post_mime_type( $site_icon_id ) : '';
-
-		if ( $site_icon ) {
-			$type_attr = $site_icon_mime ? ' type="' . esc_attr( $site_icon_mime ) . '"' : '';
-			echo '<link rel="icon"' . $type_attr . ' href="' . esc_url( $site_icon ) . '" sizes="32x32">' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo '<link rel="icon"' . $type_attr . ' href="' . esc_url( $site_icon ) . '" sizes="192x192">' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-
-		echo '<link rel="icon" type="' . esc_attr( $fallback_type ) . '" href="' . esc_url( $fallback_version ) . '" sizes="32x32">' . "\n";
-		echo '<link rel="icon" type="' . esc_attr( $fallback_type ) . '" href="' . esc_url( $fallback_version ) . '" sizes="192x192">' . "\n";
-		echo '<link rel="apple-touch-icon" href="' . esc_url( $fallback_version ) . '">' . "\n";
-		return;
-	}
-
-	if ( has_site_icon() ) {
-		return;
-	}
-
-	if ( ! has_site_icon() ) {
-		$site_logo = function_exists( 'yneko_reimu_get_site_logo_url' ) ? yneko_reimu_get_site_logo_url() : '';
-		$favicon   = $site_logo ? $site_logo : YNEKO_REIMU_URI . '/assets/images/avatar.svg';
-
-		echo '<link rel="icon" href="' . esc_url( $favicon ) . '">' . "\n";
-		echo '<link rel="shortcut icon" href="' . esc_url( $favicon ) . '">' . "\n";
-	}
-
-	if ( $fallback ) {
-		echo '<link rel="icon" type="' . esc_attr( $fallback_type ) . '" href="' . esc_url( $fallback_version ) . '" sizes="32x32">' . "\n";
-		echo '<link rel="icon" type="' . esc_attr( $fallback_type ) . '" href="' . esc_url( $fallback_version ) . '" sizes="192x192">' . "\n";
-		echo '<link rel="apple-touch-icon" href="' . esc_url( $fallback_version ) . '">' . "\n";
-	}
-}
-add_action( 'wp_head', 'yneko_reimu_favicon', 5 );
-
 function yneko_reimu_front_matter_meta() {
 	if ( function_exists( 'yneko_reimu_should_output_theme_meta' ) && ! yneko_reimu_should_output_theme_meta() ) {
 		return;
