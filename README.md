@@ -122,7 +122,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - SEO 与隐私提示：检测 Rank Math、Yoast、AIOSEO、SEOPress、The SEO Framework 后，主题会停用重复 meta / OG / Twitter / JSON-LD，仅保留 hreflang、sitemap 和 canonical 兼容补充。
 - GitHub OAuth：Client ID、Client Secret、Callback URL、自动创建用户和管理员 GitHub 绑定。
 - 多语言：启用状态、默认语言、英文路径前缀、语言菜单显示名、文章/页面翻译关系。
-- 常规设置：内置项目、归档、关于、友链页面开关，默认全部开启。
+- 常规设置：视觉预览入口、管理员体验、内置项目/归档/关于/友链页面开关、favicon/apple-touch 兜底图、GitHub 展示链接和赞助二维码。
 - 评论设置：评论图片/GIF 上传、人工审核、大小上限、临时文件清理、驳回后清理时间、评论上传管理、公共 GIF 表情库。
 - 用户设置：用户标签、自定义标签审核、屏蔽词、七种基础特殊标签、角色头像框、用户头像上传、头像审核、头像大小上限、用户标签和头像审核管理；有待审核项目时会显示数量角标。
 - 搜索设置：Algolia、本地 JSON 搜索、本地全文索引开关。
@@ -140,6 +140,10 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - 赞助二维码：留空则不显示赞助二维码；配置后可在页面底部或短代码中显示。
 
 站点 Logo 和站点图标建议继续在 `外观 -> 自定义 -> 站点身份` 中设置，因为那里有 WordPress 原生预览。主题允许管理员上传 SVG 作为 Logo 或站点图标，但 SVG 可能携带脚本或外链，请只上传可信来源文件。如果想保留 SVG 站点图标，可在 `外观 -> Yneko-Reimu 设置 -> 常规设置` 额外配置 `Favicon / Apple Touch 兜底图`，推荐使用 `512x512` PNG/JPG；主题会保留 SVG favicon，并为不稳定支持 SVG 的浏览器、移动端和聊天软件输出 PNG/JPG fallback。`og:image` 仍建议使用 JPG 或 PNG，不建议使用 WebP，并继续由 Rank Math 等 SEO 插件管理。
+
+#### 管理员体验
+
+`常规设置 -> 管理员体验` 中的“显示前台管理员工具条”默认关闭。关闭时，管理员登录浏览器访问前台也不会显示 WordPress 顶部工具条，并会隐藏 Rank Math 等插件的前台工具条提示；需要临时使用 Rank Math、Query Monitor 或编辑入口调试时再开启。
 
 #### 多语言设置
 
@@ -406,7 +410,7 @@ npm run package
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.2.4
+pwsh tools/package-theme.ps1 -Version v0.2.5
 ```
 
 生成结果：
@@ -441,8 +445,8 @@ theme/Yneko-Reimu/template-parts/
 仓库内置了 `.github/workflows/release-package.yml`。当你向 GitHub 推送版本 tag 时会自动触发构建，例如：
 
 ```bash
-git tag v0.2.4
-git push origin v0.2.4
+git tag v0.2.5
+git push origin v0.2.5
 ```
 
 Action 会执行：
@@ -452,24 +456,25 @@ npm run check:js
 npm run build
 composer install --no-interaction --prefer-dist
 composer run lint:php
-pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.4.zip
+pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.5.zip
 ```
 
 随后生成并上传：
 
 ```text
-Yneko-Reimu-v0.2.4.zip
+Yneko-Reimu-v0.2.5.zip
 ```
 
 如果同名 GitHub Release 不存在，Action 会根据 tag 创建 Release；如果 Release 已存在，则会把 ZIP 上传到该 Release。也可以在 GitHub Actions 页面手动运行该 workflow，输入版本号后生成同名 artifact。
 
-推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.4`。如果手动输入 `0.2.4`，打包脚本会自动补成 `v0.2.4`。
+推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.5`。如果手动输入 `0.2.5`，打包脚本会自动补成 `v0.2.5`。
 
 ## 开发文档
 
 - [开发与构建](docs/development.md)
 - [Hooks / Filters](docs/hooks.md)
 - [发布流程](docs/release.md)
+- [v0.2.5 发布说明](docs/release-notes-v0.2.5.md)
 - [v0.2.4 发布说明](docs/release-notes-v0.2.4.md)
 - [Theme Check 说明](docs/theme-check.md)
 
@@ -779,7 +784,9 @@ The Friend Links settings tab includes a dedicated Site friend-link info section
 
 Theme extensions, third-party services, and privacy:
 
-The Theme Extensions tab contains feature switches that do not need live preview. Defaults are light: loader, back-to-top, and GitHub ribbon are on; PJAX, click effects, stats, math, PhotoSwipe, Mermaid, custom cursor, APlayer, Meting, and Live2D are off or opt-in.
+The General tab includes an Administrator experience group. Its "Show front-end admin toolbar" switch is off by default, keeping the front end clean for administrator browser sessions and hiding plugin toolbar prompts such as Rank Math. Enable it temporarily when you need Rank Math, Query Monitor, or edit-link debugging tools.
+
+The Theme Extensions tab contains front-end enhancement switches that do not need live preview. Defaults are light: loader, back-to-top, and GitHub ribbon are on; PJAX, click effects, stats, math, PhotoSwipe, Mermaid, custom cursor, APlayer, Meting, and Live2D are off or opt-in.
 
 The Third-party Services tab explains features that may connect to external domains, including Google Analytics, Cloudflare RUM, Giscus, Live2D, Meting, jsDelivr/vendor CDN, and mouse-firework. You can disable the related features or replace the vendor CDN base. For privacy-sensitive sites, prefer local resources and self-hosted scripts.
 
@@ -863,7 +870,7 @@ Scripts:
 To build a versioned package:
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.2.4
+pwsh tools/package-theme.ps1 -Version v0.2.5
 ```
 
 Output:
@@ -881,19 +888,19 @@ Images and standalone SVG icons should be maintained as files: theme images in `
 The workflow `.github/workflows/release-package.yml` runs when a version tag is pushed:
 
 ```bash
-git tag v0.2.4
-git push origin v0.2.4
+git tag v0.2.5
+git push origin v0.2.5
 ```
 
 It checks JavaScript, builds assets, runs PHPCS/WPCS, packages the theme, and uploads:
 
 ```text
-Yneko-Reimu-v0.2.4.zip
+Yneko-Reimu-v0.2.5.zip
 ```
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
 
-Current release notes: [v0.2.4](docs/release-notes-v0.2.4.md).
+Current release notes: [v0.2.5](docs/release-notes-v0.2.5.md).
 
 ### Repository Layout
 

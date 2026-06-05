@@ -120,6 +120,7 @@ function yneko_reimu_settings_defaults() {
 			'photoswipe_enable'    => '0',
 			'mermaid_enable'       => '0',
 			'custom_cursor'        => '0',
+			'show_admin_toolbar'   => '0',
 		),
 		'player'            => array(
 			'aplayer_enable'       => '0',
@@ -566,7 +567,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 		'features'          => yneko_reimu_sanitize_settings_bool_group(
 			$features,
 			$defaults['features'],
-			array( 'preloader_enable', 'top_enable', 'triangle_badge', 'firework_enable', 'pjax_enable', 'busuanzi_enable', 'katex_enable', 'photoswipe_enable', 'mermaid_enable', 'custom_cursor' )
+			array( 'preloader_enable', 'top_enable', 'triangle_badge', 'firework_enable', 'pjax_enable', 'busuanzi_enable', 'katex_enable', 'photoswipe_enable', 'mermaid_enable', 'custom_cursor', 'show_admin_toolbar' )
 		),
 		'player'            => array(
 			'aplayer_enable'  => ! empty( $player['aplayer_enable'] ) ? '1' : '0',
@@ -869,6 +870,7 @@ function yneko_reimu_settings_features() {
 				'photoswipe_enable'=> array( 'yneko_reimu_photoswipe_enable', false ),
 				'mermaid_enable'   => array( 'yneko_reimu_mermaid_enable', false ),
 				'custom_cursor'    => array( 'yneko_reimu_custom_cursor', false ),
+				'show_admin_toolbar' => array( 'yneko_reimu_show_admin_toolbar', false ),
 			) as $key => $legacy
 		) {
 			$settings[ $key ] = yneko_reimu_settings_theme_mod_bool( $legacy[0], $legacy[1] );

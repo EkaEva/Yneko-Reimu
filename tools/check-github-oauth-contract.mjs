@@ -81,11 +81,13 @@ const checks = [
     source: settingsSchema,
     snippets: [
       "'github_oauth'      => array(",
+      "'show_admin_toolbar'   => '0'",
       "'client_id'     => ''",
       "'client_secret' => ''",
       "'callback_url'  => ''",
       "'auto_create'   => '0'",
       "function yneko_reimu_settings_github_oauth()",
+      "function yneko_reimu_settings_features()",
       "get_option( 'yneko_reimu_github_login_options', array() )",
       "get_option( 'yneko_github_login_options', array() )",
       "function yneko_reimu_merge_github_oauth_fallback( $oauth, $fallback )",
@@ -94,13 +96,15 @@ const checks = [
   },
   {
     label: 'Settings panel field names',
-    source: settingsPanels,
+    source: `${settingsPage}\n${settingsPanels}`,
     snippets: [
       'data-yneko-settings-panel="github"',
       'name="yneko_reimu_settings[github_oauth][callback_url]"',
       'name="yneko_reimu_settings[github_oauth][client_id]"',
       'name="yneko_reimu_settings[github_oauth][client_secret]"',
       'name="yneko_reimu_settings[github_oauth][auto_create]"',
+      'name="yneko_reimu_settings[features][show_admin_toolbar]"',
+      "yneko_reimu_settings_group_open( '管理员体验', 'Administrator experience'",
       'yneko_reimu_github_login_bind_url',
       "get_user_meta( get_current_user_id(), '_yneko_reimu_github_login', true )"
     ]
@@ -220,6 +224,25 @@ const checks = [
       'password-hidden.svg',
       'password-visible.svg',
       'body.login .wp-pwd .wp-hide-pw:has(.dashicons-hidden)::before'
+    ]
+  },
+  {
+    label: 'Front-end admin toolbar compatibility',
+    source: `${githubAccess}\n${settingsPage}\n${settingsPanels}\n${settingsSchema}`,
+    snippets: [
+      'function yneko_reimu_show_frontend_admin_toolbar()',
+      "return '1' === ( $features['show_admin_toolbar'] ?? '0' );",
+      "add_filter( 'show_admin_bar', 'yneko_reimu_hide_admin_bar_for_comment_users' );",
+      'function yneko_reimu_hide_frontend_plugin_toolbar_notices()',
+      'add_action( \'wp_head\', \'yneko_reimu_hide_frontend_plugin_toolbar_notices\', 1 );',
+      '#rank-math-analytics-stats-wrapper',
+      '.rank-math-analytics-stats-wrapper',
+      '.rank-math-pro-cta',
+      '#wpadminbar',
+      'html {',
+      'margin-top: 0 !important;',
+      "'show_admin_toolbar'   => '0'",
+      'name="yneko_reimu_settings[features][show_admin_toolbar]"'
     ]
   },
   {

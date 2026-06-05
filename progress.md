@@ -987,3 +987,23 @@
 - Kept the existing `postMessage` success path, and added a same-origin `localStorage` success signal plus a callback-body completion marker so the opener can recover when `window.opener` is unavailable after the GitHub authorization round-trip.
 - Updated the front-end GitHub popup handler to keep the popup window handle, close it once it returns to the same origin with a completed login marker, and run the same comment login-state refresh path used by the normal message handler.
 - Extended the GitHub OAuth contract gate and QA docs to protect the fallback popup recovery behavior.
+
+## 2026-06-05 v0.2.5 Front-End Toolbar Compatibility
+
+- Started v0.2.5 after confirming the front-end Rank Math "Advanced Stats are available in the PRO version" strip is a plugin toolbar prompt, not a theme modal.
+- Added a disabled-by-default `features.show_admin_toolbar` setting so administrators can temporarily restore the front-end WordPress admin bar for debugging.
+- Kept the existing clean-front-end default: logged-in users, including administrators, do not see the front-end WordPress admin bar while the setting is off.
+- Added a front-end compatibility style layer that hides Rank Math Analytics/PRO toolbar prompts for administrator sessions when the theme admin toolbar setting remains off.
+- Preserved non-admin/comment-user dashboard restrictions and did not change Rank Math backend Analytics, Action Scheduler, or WP-Cron behavior.
+- Extended `tools/check-github-oauth-contract.mjs` to protect the admin toolbar setting, default-off value, and Rank Math toolbar compatibility selectors.
+
+## 2026-06-05 v0.2.5 Settings Page Cleanup
+
+- Started the next v0.2.5 phase to make `Yneko-Reimu 设置` less cluttered without changing stored option keys or public interfaces.
+- Added shared settings group markup helpers and applied them to the General and Extensions panels.
+- Moved the `features.show_admin_toolbar` UI from Extensions to General -> Administrator experience while keeping the stored key unchanged.
+- Split General into clearer groups: visual preview workspace, administrator experience, built-in pages, site resource fallbacks, and site display links.
+- Reduced the Extensions panel to front-end enhancements and third-party resources; admin-only toolbar behavior no longer appears in the front-end feature loop.
+- Updated the settings admin and GitHub OAuth contract gates to protect grouped settings markup and the toolbar setting placement.
+- Followed up on settings-page screenshot feedback by keeping checkbox inputs and labels on the same line in Comments/Users-style subgrids, merging user avatar upload controls into the Users basic settings group, and tightening the special badge/avatar-frame grid so media fields do not overflow the panel.
+- Extended the settings admin contract gate to protect inline checkbox text and special badge/avatar-frame overflow guards.

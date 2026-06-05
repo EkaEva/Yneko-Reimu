@@ -3,6 +3,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+function yneko_reimu_settings_group_open( $title_zh, $title_en, $desc_zh = '', $desc_en = '' ) {
+	?>
+	<div class="yneko-reimu-settings-group">
+		<div class="yneko-reimu-settings-group__header">
+			<h3><?php yneko_reimu_admin_bilingual_heading( $title_zh, $title_en ); ?></h3>
+			<?php if ( '' !== $desc_zh || '' !== $desc_en ) : ?>
+				<?php yneko_reimu_admin_bilingual_description( $desc_zh, $desc_en ); ?>
+			<?php endif; ?>
+		</div>
+		<div class="yneko-reimu-settings-group__body">
+	<?php
+}
+
+function yneko_reimu_settings_group_close() {
+	?>
+		</div>
+	</div>
+	<?php
+}
+
+function yneko_reimu_settings_field_open( $label_zh, $label_en, $for = '' ) {
+	?>
+	<div class="yneko-reimu-field">
+		<?php if ( $for ) : ?>
+			<label class="yneko-reimu-field__label" for="<?php echo esc_attr( $for ); ?>"><?php yneko_reimu_admin_bilingual_label( $label_zh, $label_en ); ?></label>
+		<?php else : ?>
+			<div class="yneko-reimu-field__label"><?php yneko_reimu_admin_bilingual_label( $label_zh, $label_en ); ?></div>
+		<?php endif; ?>
+	<?php
+}
+
+function yneko_reimu_settings_field_close() {
+	?>
+	</div>
+	<?php
+}
+
 function yneko_reimu_render_settings_i18n_panel( $i18n ) {
 	?>
 	<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="i18n" hidden>
@@ -109,6 +146,7 @@ function yneko_reimu_render_settings_github_panel( $oauth, $callback ) {
 }
 
 function yneko_reimu_render_settings_comments_panel( $settings ) {
+	$comment_upload = yneko_reimu_settings_comment_upload();
 	?>
 	<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="comments" hidden>
 		<h2><?php yneko_reimu_admin_bilingual_heading( '评论设置', 'Comment settings' ); ?></h2>
@@ -123,26 +161,22 @@ function yneko_reimu_render_settings_comments_panel( $settings ) {
 			<tr>
 				<th scope="row"><?php yneko_reimu_admin_bilingual_label( '评论图片上传', 'Comment image uploads' ); ?></th>
 				<td>
-					<?php $comment_upload = yneko_reimu_settings_comment_upload(); ?>
-					<p>
-						<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][image_enabled]" value="1" <?php checked( '1', $comment_upload['image_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许登录用户上传图片', 'Allow logged-in users to upload images' ); ?></label>
-						&nbsp;
-						<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][image_review]" value="1" <?php checked( '1', $comment_upload['image_review'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '图片人工审核', 'Review uploaded images' ); ?></label>
-						&nbsp;
-						<label><?php yneko_reimu_admin_bilingual_label( '图片上限 MB', 'Image max MB' ); ?> <input class="small-text" type="number" min="1" max="20" name="yneko_reimu_settings[comment_upload][image_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['image_max_mb'] ) ); ?>"></label>
-					</p>
-					<p>
-						<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][gif_enabled]" value="1" <?php checked( '1', $comment_upload['gif_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许登录用户上传 GIF', 'Allow logged-in users to upload GIFs' ); ?></label>
-						&nbsp;
-						<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][gif_review]" value="1" <?php checked( '1', $comment_upload['gif_review'] ); ?>> <?php yneko_reimu_admin_bilingual_label( 'GIF 人工审核', 'Review uploaded GIFs' ); ?></label>
-						&nbsp;
-						<label><?php yneko_reimu_admin_bilingual_label( 'GIF 上限 MB', 'GIF max MB' ); ?> <input class="small-text" type="number" min="1" max="30" name="yneko_reimu_settings[comment_upload][gif_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['gif_max_mb'] ) ); ?>"></label>
-					</p>
-					<p>
-						<label><?php yneko_reimu_admin_bilingual_label( '临时文件清理天数', 'Temporary file cleanup days' ); ?> <input class="small-text" type="number" min="1" max="30" name="yneko_reimu_settings[comment_upload][temp_cleanup_days]" value="<?php echo esc_attr( absint( $comment_upload['temp_cleanup_days'] ) ); ?>"></label>
-						&nbsp;
-						<label><?php yneko_reimu_admin_bilingual_label( '驳回后文件清理时间（小时）', 'Rejected file cleanup hours' ); ?> <input class="small-text" type="number" min="1" max="168" name="yneko_reimu_settings[comment_upload][rejected_cleanup_hours]" value="<?php echo esc_attr( absint( $comment_upload['rejected_cleanup_hours'] ?? 24 ) ); ?>"></label>
-					</p>
+					<div class="yneko-reimu-settings-subgrid yneko-reimu-settings-subgrid-3">
+						<?php yneko_reimu_settings_field_open( '图片上传', 'Image uploads' ); ?>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[comment_upload][image_enabled]" value="1" <?php checked( '1', $comment_upload['image_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许登录用户上传图片', 'Allow logged-in users to upload images' ); ?></label>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[comment_upload][image_review]" value="1" <?php checked( '1', $comment_upload['image_review'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '图片人工审核', 'Review uploaded images' ); ?></label>
+							<label><?php yneko_reimu_admin_bilingual_label( '图片上限 MB', 'Image max MB' ); ?> <input class="small-text" type="number" min="1" max="20" name="yneko_reimu_settings[comment_upload][image_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['image_max_mb'] ) ); ?>"></label>
+						<?php yneko_reimu_settings_field_close(); ?>
+						<?php yneko_reimu_settings_field_open( 'GIF 上传', 'GIF uploads' ); ?>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[comment_upload][gif_enabled]" value="1" <?php checked( '1', $comment_upload['gif_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许登录用户上传 GIF', 'Allow logged-in users to upload GIFs' ); ?></label>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[comment_upload][gif_review]" value="1" <?php checked( '1', $comment_upload['gif_review'] ); ?>> <?php yneko_reimu_admin_bilingual_label( 'GIF 人工审核', 'Review uploaded GIFs' ); ?></label>
+							<label><?php yneko_reimu_admin_bilingual_label( 'GIF 上限 MB', 'GIF max MB' ); ?> <input class="small-text" type="number" min="1" max="30" name="yneko_reimu_settings[comment_upload][gif_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['gif_max_mb'] ) ); ?>"></label>
+						<?php yneko_reimu_settings_field_close(); ?>
+						<?php yneko_reimu_settings_field_open( '清理规则', 'Cleanup rules' ); ?>
+							<label><?php yneko_reimu_admin_bilingual_label( '临时文件清理天数', 'Temporary cleanup days' ); ?> <input class="small-text" type="number" min="1" max="30" name="yneko_reimu_settings[comment_upload][temp_cleanup_days]" value="<?php echo esc_attr( absint( $comment_upload['temp_cleanup_days'] ) ); ?>"></label>
+							<label><?php yneko_reimu_admin_bilingual_label( '驳回后清理小时', 'Rejected cleanup hours' ); ?> <input class="small-text" type="number" min="1" max="168" name="yneko_reimu_settings[comment_upload][rejected_cleanup_hours]" value="<?php echo esc_attr( absint( $comment_upload['rejected_cleanup_hours'] ?? 24 ) ); ?>"></label>
+						<?php yneko_reimu_settings_field_close(); ?>
+					</div>
 					<?php yneko_reimu_admin_bilingual_description( '未启用某类上传时，评论区对应上传按钮会隐藏。启用人工审核后，文件先留在临时目录并出现在下方待审核列表；批准后评论中的图片/GIF 才会生效。', 'When a type is disabled, its upload button is hidden in comments. With review enabled, uploads stay in the temporary folder and appear in the pending list below; approved files are then applied to comments.' ); ?>
 				</td>
 			</tr>
@@ -157,19 +191,29 @@ function yneko_reimu_render_settings_comments_panel( $settings ) {
 }
 
 function yneko_reimu_render_settings_users_panel( $review_badges ) {
+	$comment_upload = yneko_reimu_settings_comment_upload();
+	$user_badges    = yneko_reimu_settings_user_badges();
+	$avatar_frames  = isset( $user_badges['avatar_frames'] ) && is_array( $user_badges['avatar_frames'] ) ? $user_badges['avatar_frames'] : array();
 	?>
 	<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="users" hidden>
 		<h2><?php yneko_reimu_admin_bilingual_heading( '用户设置', 'User settings' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>
-				<th scope="row"><?php yneko_reimu_admin_bilingual_label( '用户标签及头像框', 'User badges and avatar frames' ); ?></th>
+				<th scope="row"><?php yneko_reimu_admin_bilingual_label( '基本设置', 'Basic settings' ); ?></th>
 				<td>
-					<?php $user_badges = yneko_reimu_settings_user_badges(); ?>
-					<?php $avatar_frames = isset( $user_badges['avatar_frames'] ) && is_array( $user_badges['avatar_frames'] ) ? $user_badges['avatar_frames'] : array(); ?>
-					<p><label><input type="checkbox" name="yneko_reimu_settings[user_badges][enabled]" value="1" <?php checked( '1', $user_badges['enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '开启评论区用户标签', 'Enable comment user badges' ); ?></label></p>
-					<p><label><input type="checkbox" name="yneko_reimu_settings[user_badges][review_enabled]" value="1" <?php checked( '1', $user_badges['review_enabled'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '用户标签审核', 'Review user custom badges' ); ?></label></p>
-					<p><label><input type="checkbox" name="yneko_reimu_settings[user_badges][avatar_frames][enabled]" value="1" <?php checked( '1', $avatar_frames['enabled'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '开启评论区头像框', 'Enable comment avatar frames' ); ?></label></p>
-					<?php yneko_reimu_admin_bilingual_description( '关闭总开关后，除站长/管理员等特殊身份外，普通用户自定义标签不会显示，个人资料中也不显示标签设置区。开启审核后，非管理员的新自定义标签需要在下方批准后才会显示。', 'When the main switch is off, ordinary custom badges are hidden except special identity badges, and profile badge settings are hidden. With review enabled, new custom badges from non-admin users require approval below before they display.' ); ?>
+					<div class="yneko-reimu-settings-subgrid yneko-reimu-settings-subgrid-2">
+						<?php yneko_reimu_settings_field_open( '用户标签与头像框', 'User badges and avatar frames' ); ?>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[user_badges][enabled]" value="1" <?php checked( '1', $user_badges['enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '开启评论区用户标签', 'Enable comment user badges' ); ?></label>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[user_badges][review_enabled]" value="1" <?php checked( '1', $user_badges['review_enabled'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '用户标签审核', 'Review user custom badges' ); ?></label>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[user_badges][avatar_frames][enabled]" value="1" <?php checked( '1', $avatar_frames['enabled'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '开启评论区头像框', 'Enable comment avatar frames' ); ?></label>
+						<?php yneko_reimu_settings_field_close(); ?>
+						<?php yneko_reimu_settings_field_open( '用户头像上传', 'User avatar uploads' ); ?>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[comment_upload][avatar_enabled]" value="1" <?php checked( '1', $comment_upload['avatar_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许用户上传个人头像', 'Allow users to upload profile avatars' ); ?></label>
+							<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[comment_upload][avatar_review]" value="1" <?php checked( '1', $comment_upload['avatar_review'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '用户头像审核', 'Review user avatars' ); ?></label>
+							<label><?php yneko_reimu_admin_bilingual_label( '头像上限 MB', 'Avatar max MB' ); ?> <input class="small-text" type="number" min="1" max="10" name="yneko_reimu_settings[comment_upload][avatar_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['avatar_max_mb'] ) ); ?>"></label>
+						<?php yneko_reimu_settings_field_close(); ?>
+					</div>
+					<?php yneko_reimu_admin_bilingual_description( '用户标签、头像框和头像上传共同控制评论区用户身份展示。开启审核后，非管理员的新自定义标签或头像需要在下方批准后才会显示。', 'User badges, avatar frames, and avatar uploads together control comment-user identity display. With review enabled, new custom badges or avatars from non-admin users require approval below before they display.' ); ?>
 				</td>
 			</tr>
 			<tr>
@@ -198,21 +242,6 @@ function yneko_reimu_render_settings_users_panel( $review_badges ) {
 				<td>
 					<input class="regular-text" type="text" name="yneko_reimu_settings[user_badges][blocklist]" value="<?php echo esc_attr( $user_badges['blocklist'] ?? '' ); ?>" placeholder="<?php esc_attr_e( '广告/官方/测试', 'yneko-reimu' ); ?>">
 					<?php yneko_reimu_admin_bilingual_description( '用 / 分隔。保存后，匹配屏蔽词或保留词的旧自定义标签会自动停止显示，用户也不能再次设置。', 'Separate words with /. After saving, old custom badges matching blocked or reserved words stop displaying automatically, and users cannot set them again.' ); ?>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php yneko_reimu_admin_bilingual_label( '用户头像上传', 'User avatar uploads' ); ?></th>
-				<td>
-					<?php $comment_upload = yneko_reimu_settings_comment_upload(); ?>
-					<p>
-						<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][avatar_enabled]" value="1" <?php checked( '1', $comment_upload['avatar_enabled'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许用户上传个人头像', 'Allow users to upload profile avatars' ); ?></label>
-					</p>
-					<p>
-						<label><input type="checkbox" name="yneko_reimu_settings[comment_upload][avatar_review]" value="1" <?php checked( '1', $comment_upload['avatar_review'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '用户头像审核', 'Review user avatars' ); ?></label>
-						&nbsp;
-						<label><?php yneko_reimu_admin_bilingual_label( '头像上限 MB', 'Avatar max MB' ); ?> <input class="small-text" type="number" min="1" max="10" name="yneko_reimu_settings[comment_upload][avatar_max_mb]" value="<?php echo esc_attr( absint( $comment_upload['avatar_max_mb'] ) ); ?>"></label>
-					</p>
-					<?php yneko_reimu_admin_bilingual_description( '未开启上传时，用户仍可填写头像图片链接。开启审核后，新上传头像先进入临时目录，批准后才会应用。', 'When upload is disabled, users can still use an avatar image URL. When review is enabled, new uploads go to a temporary directory and apply only after approval.' ); ?>
 				</td>
 			</tr>
 		</table>
@@ -336,52 +365,46 @@ function yneko_reimu_render_settings_music_panel( $settings, $player ) {
 				<label><input type="checkbox" name="yneko_reimu_settings[player][list_folded]" value="1" <?php checked( '1', $player['list_folded'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '默认折叠播放列表', 'Fold playlist by default' ); ?></label>
 			</td>
 		</tr>
-		<tr>
-			<th scope="row"><?php yneko_reimu_admin_bilingual_label( '播放参数', 'Playback options' ); ?></th>
-			<td>
-				<label><?php yneko_reimu_admin_bilingual_label( '循环模式', 'Loop' ); ?>
-					<select name="yneko_reimu_settings[player][loop]">
-						<option value="all" <?php selected( $player['loop'], 'all' ); ?>>all</option>
-						<option value="one" <?php selected( $player['loop'], 'one' ); ?>>one</option>
-						<option value="none" <?php selected( $player['loop'], 'none' ); ?>>none</option>
-					</select>
-				</label>
-				&nbsp;
-				<label><?php yneko_reimu_admin_bilingual_label( '播放顺序', 'Order' ); ?>
-					<select name="yneko_reimu_settings[player][order]">
-						<option value="list" <?php selected( $player['order'], 'list' ); ?>>list</option>
-						<option value="random" <?php selected( $player['order'], 'random' ); ?>>random</option>
-					</select>
-				</label>
-				&nbsp;
-				<label><?php yneko_reimu_admin_bilingual_label( '预加载', 'Preload' ); ?>
-					<select name="yneko_reimu_settings[player][preload]">
-						<option value="metadata" <?php selected( $player['preload'], 'metadata' ); ?>>metadata</option>
-						<option value="none" <?php selected( $player['preload'], 'none' ); ?>>none</option>
-						<option value="auto" <?php selected( $player['preload'], 'auto' ); ?>>auto</option>
-					</select>
-				</label>
-				<p>
+			<tr>
+				<th scope="row"><?php yneko_reimu_admin_bilingual_label( '播放参数', 'Playback options' ); ?></th>
+				<td>
+				<div class="yneko-reimu-settings-subgrid yneko-reimu-settings-subgrid-3">
+					<label><?php yneko_reimu_admin_bilingual_label( '循环模式', 'Loop' ); ?>
+						<select name="yneko_reimu_settings[player][loop]">
+							<option value="all" <?php selected( $player['loop'], 'all' ); ?>>all</option>
+							<option value="one" <?php selected( $player['loop'], 'one' ); ?>>one</option>
+							<option value="none" <?php selected( $player['loop'], 'none' ); ?>>none</option>
+						</select>
+					</label>
+					<label><?php yneko_reimu_admin_bilingual_label( '播放顺序', 'Order' ); ?>
+						<select name="yneko_reimu_settings[player][order]">
+							<option value="list" <?php selected( $player['order'], 'list' ); ?>>list</option>
+							<option value="random" <?php selected( $player['order'], 'random' ); ?>>random</option>
+						</select>
+					</label>
+					<label><?php yneko_reimu_admin_bilingual_label( '预加载', 'Preload' ); ?>
+						<select name="yneko_reimu_settings[player][preload]">
+							<option value="metadata" <?php selected( $player['preload'], 'metadata' ); ?>>metadata</option>
+							<option value="none" <?php selected( $player['preload'], 'none' ); ?>>none</option>
+							<option value="auto" <?php selected( $player['preload'], 'auto' ); ?>>auto</option>
+						</select>
+					</label>
 					<label><?php yneko_reimu_admin_bilingual_label( '默认音量 0-1', 'Volume 0-1' ); ?> <input class="small-text" type="number" min="0" max="1" step="0.1" name="yneko_reimu_settings[player][volume]" value="<?php echo esc_attr( $player['volume'] ); ?>"></label>
-					&nbsp;
 					<label><?php yneko_reimu_admin_bilingual_label( '歌词模式', 'LRC type' ); ?> <input class="small-text" type="number" min="0" max="3" step="1" name="yneko_reimu_settings[player][lrc_type]" value="<?php echo esc_attr( absint( $player['lrc_type'] ) ); ?>"></label>
-					&nbsp;
 					<label><?php yneko_reimu_admin_bilingual_label( '列表最大高度', 'List max height' ); ?> <input type="text" name="yneko_reimu_settings[player][list_max_height]" value="<?php echo esc_attr( $player['list_max_height'] ); ?>" placeholder="320px"></label>
-				</p>
+				</div>
 				<?php yneko_reimu_admin_bilingual_description( '预加载默认 metadata，避免首屏过早下载完整音频。隐私/性能优先时可选 none。', 'Preload defaults to metadata to avoid downloading full audio during first paint. Use none for a privacy/performance-first setup.' ); ?>
 			</td>
 		</tr>
 		<tr>
 			<th scope="row"><?php yneko_reimu_admin_bilingual_label( 'Meting 配置', 'Meting configuration' ); ?></th>
 			<td>
-				<p><label>Meting auto URL<br><input class="regular-text" type="url" name="yneko_reimu_settings[player][meting_auto]" value="<?php echo esc_attr( $player['meting_auto'] ); ?>"></label></p>
-				<p>
+				<div class="yneko-reimu-settings-subgrid yneko-reimu-settings-subgrid-3">
+					<label class="yneko-reimu-field-wide">Meting auto URL <input class="regular-text" type="url" name="yneko_reimu_settings[player][meting_auto]" value="<?php echo esc_attr( $player['meting_auto'] ); ?>"></label>
 					<label>Meting ID <input type="text" name="yneko_reimu_settings[player][meting_id]" value="<?php echo esc_attr( $player['meting_id'] ); ?>"></label>
-					&nbsp;
 					<label>server <input type="text" name="yneko_reimu_settings[player][meting_server]" value="<?php echo esc_attr( $player['meting_server'] ); ?>" placeholder="netease"></label>
-					&nbsp;
 					<label>type <input type="text" name="yneko_reimu_settings[player][meting_type]" value="<?php echo esc_attr( $player['meting_type'] ); ?>" placeholder="playlist"></label>
-				</p>
+				</div>
 				<?php yneko_reimu_admin_bilingual_description( '填写 auto URL 后可不填 ID/server/type。', 'When auto URL is filled, ID/server/type can stay empty.' ); ?>
 			</td>
 		</tr>
@@ -405,49 +428,44 @@ function yneko_reimu_render_settings_extensions_panel( $features, $third_party )
 	<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="extensions" hidden>
 		<h2><?php yneko_reimu_admin_bilingual_heading( '扩展与第三方', 'Extensions and third-party resources' ); ?></h2>
 		<?php yneko_reimu_admin_bilingual_description( '这些功能通常会加载额外脚本或连接第三方域名，因此从自定义器移到主设置页集中管理。视觉与布局仍在自定义器中实时预览。', 'These features usually load extra scripts or contact third-party domains, so they are managed here. Visual and layout options remain in the Customizer for live preview.' ); ?>
-		<table class="form-table" role="presentation">
-		<tr>
-			<th scope="row"><?php yneko_reimu_admin_bilingual_label( '主题扩展', 'Theme extensions' ); ?></th>
-			<td>
-				<?php
-				$feature_labels = array(
-					'preloader_enable' => array( '加载动画', 'Loading animation' ),
-					'top_enable'       => array( '回到顶部太极按钮', 'Back-to-top Taichi button' ),
-					'triangle_badge'   => array( '右上角 GitHub 三角标', 'GitHub corner ribbon' ),
-					'firework_enable'  => array( '鼠标烟花', 'Mouse firework' ),
-					'pjax_enable'      => array( 'PJAX 软导航', 'PJAX navigation' ),
-					'busuanzi_enable'  => array( '不蒜子统计', 'Busuanzi statistics' ),
-					'katex_enable'     => array( 'KaTeX 数学公式', 'KaTeX math' ),
-					'photoswipe_enable' => array( 'PhotoSwipe 图片灯箱', 'PhotoSwipe lightbox' ),
-					'mermaid_enable'    => array( 'Mermaid 图表', 'Mermaid diagrams' ),
-					'custom_cursor'     => array( '自定义鼠标指针', 'Custom cursor' ),
-				);
-				?>
+		<?php yneko_reimu_settings_group_open( '前台增强', 'Front-end enhancements', '这些开关会改变前台加载、交互或内容增强行为。默认保持轻量。', 'These switches affect front-end loading, interactions, or content enhancements. Defaults stay lightweight.' ); ?>
+			<?php
+			$feature_labels = array(
+				'preloader_enable' => array( '加载动画', 'Loading animation' ),
+				'top_enable'       => array( '回到顶部太极按钮', 'Back-to-top Taichi button' ),
+				'triangle_badge'   => array( '右上角 GitHub 三角标', 'GitHub corner ribbon' ),
+				'firework_enable'  => array( '鼠标烟花', 'Mouse firework' ),
+				'pjax_enable'      => array( 'PJAX 软导航', 'PJAX navigation' ),
+				'busuanzi_enable'  => array( '不蒜子统计', 'Busuanzi statistics' ),
+				'katex_enable'     => array( 'KaTeX 数学公式', 'KaTeX math' ),
+				'photoswipe_enable' => array( 'PhotoSwipe 图片灯箱', 'PhotoSwipe lightbox' ),
+				'mermaid_enable'    => array( 'Mermaid 图表', 'Mermaid diagrams' ),
+				'custom_cursor'     => array( '自定义鼠标指针', 'Custom cursor' ),
+			);
+			?>
+			<div class="yneko-reimu-checkbox-grid">
 				<?php foreach ( $feature_labels as $key => $label ) : ?>
-					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[features][<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( '1', $features[ $key ] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( $label[0], $label[1] ); ?></label><br>
+					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[features][<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( '1', $features[ $key ] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( $label[0], $label[1] ); ?></label>
 				<?php endforeach; ?>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row"><?php yneko_reimu_admin_bilingual_label( 'Live2D Widgets', 'Live2D Widgets' ); ?></th>
-			<td><label><input type="checkbox" name="yneko_reimu_settings[third_party][live2d_enable]" value="1" <?php checked( '1', $third_party['live2d_enable'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '启用 Live2D Widgets', 'Enable Live2D Widgets' ); ?></label></td>
-		</tr>
-		<tr>
-			<th scope="row"><label for="yneko-reimu-live2d-base"><?php yneko_reimu_admin_bilingual_label( 'Live2D Widgets 资源地址', 'Live2D Widgets resource URL' ); ?></label></th>
-			<td><input id="yneko-reimu-live2d-base" class="regular-text" type="url" name="yneko_reimu_settings[third_party][live2d_base_url]" value="<?php echo esc_attr( $third_party['live2d_base_url'] ); ?>"></td>
-		</tr>
-		<tr>
-			<th scope="row"><label for="yneko-reimu-live2d-api"><?php yneko_reimu_admin_bilingual_label( 'Live2D 模型 CDN 地址', 'Live2D model CDN URL' ); ?></label></th>
-			<td><input id="yneko-reimu-live2d-api" class="regular-text" type="url" name="yneko_reimu_settings[third_party][live2d_api_base_url]" value="<?php echo esc_attr( $third_party['live2d_api_base_url'] ); ?>"></td>
-		</tr>
-		<tr>
-			<th scope="row"><label for="yneko-reimu-vendor-cdn"><?php yneko_reimu_admin_bilingual_label( 'Vendor CDN 前缀', 'Vendor CDN base' ); ?></label></th>
-			<td>
+			</div>
+		<?php yneko_reimu_settings_group_close(); ?>
+
+		<?php yneko_reimu_settings_group_open( '第三方资源', 'Third-party resources', '启用后可能连接第三方域名；需要隐私优先时可关闭功能或替换为自托管地址。', 'These options may contact third-party domains when enabled. For privacy-first sites, disable them or replace URLs with self-hosted resources.' ); ?>
+			<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[third_party][live2d_enable]" value="1" <?php checked( '1', $third_party['live2d_enable'] ); ?>> <?php yneko_reimu_admin_bilingual_label( '启用 Live2D Widgets', 'Enable Live2D Widgets' ); ?></label>
+			<div class="yneko-reimu-field">
+				<label class="yneko-reimu-field__label" for="yneko-reimu-live2d-base"><?php yneko_reimu_admin_bilingual_label( 'Live2D Widgets 资源地址', 'Live2D Widgets resource URL' ); ?></label>
+				<input id="yneko-reimu-live2d-base" class="regular-text" type="url" name="yneko_reimu_settings[third_party][live2d_base_url]" value="<?php echo esc_attr( $third_party['live2d_base_url'] ); ?>">
+			</div>
+			<div class="yneko-reimu-field">
+				<label class="yneko-reimu-field__label" for="yneko-reimu-live2d-api"><?php yneko_reimu_admin_bilingual_label( 'Live2D 模型 CDN 地址', 'Live2D model CDN URL' ); ?></label>
+				<input id="yneko-reimu-live2d-api" class="regular-text" type="url" name="yneko_reimu_settings[third_party][live2d_api_base_url]" value="<?php echo esc_attr( $third_party['live2d_api_base_url'] ); ?>">
+			</div>
+			<div class="yneko-reimu-field">
+				<label class="yneko-reimu-field__label" for="yneko-reimu-vendor-cdn"><?php yneko_reimu_admin_bilingual_label( 'Vendor CDN 前缀', 'Vendor CDN base' ); ?></label>
 				<input id="yneko-reimu-vendor-cdn" class="regular-text" type="url" name="yneko_reimu_settings[third_party][vendor_cdn_base]" value="<?php echo esc_attr( $third_party['vendor_cdn_base'] ); ?>">
 				<?php yneko_reimu_admin_bilingual_description( '用于 Reimu 扩展包的 CDN 前缀。默认使用 jsDelivr，需要隐私优先时可替换为自托管资源。', 'CDN prefix for Reimu extension packages. The default uses jsDelivr; replace it with self-hosted resources for a privacy-first setup.' ); ?>
-			</td>
-		</tr>
-		</table>
+			</div>
+		<?php yneko_reimu_settings_group_close(); ?>
 	</section>
 	<?php
 }

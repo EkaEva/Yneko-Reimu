@@ -659,3 +659,13 @@
 - Front-end comment deletion also used `window.confirm()` in the main runtime; the user chose to include this in the same theme-dialog replacement scope.
 - The admin settings upload deletion prompt still uses `window.confirm()` in `assets/src/admin-settings.js`; this remains intentionally out of scope for the first v0.2.4 phase.
 - The WordPress login password visibility button is styled by the GitHub login/rendering inline login stylesheet. The generic `body.login .button` rule was giving `.wp-hide-pw` a visible button frame, while the old top/right offset did not reliably center the icon.
+
+## 2026-06-05 v0.2.5 Front-End Toolbar Findings
+
+- The Rank Math front-end "Advanced Stats are available in the PRO version" strip is a plugin toolbar/Analytics prompt, not a Yneko-Reimu modal.
+- Yneko-Reimu has intentionally hidden the WordPress front-end admin bar for every logged-in user since v0.1.7, including administrators.
+- Hiding the WordPress admin bar removes the normal front-end toolbar context that Rank Math expects, so its Analytics/PRO prompt can appear at the top of the page during administrator sessions.
+- Theme Rank Math compatibility code only touches canonical, OpenGraph URL, sitemap entries/content, and sitemap cache invalidation. It does not schedule Rank Math Analytics recurring actions or interact with Action Scheduler/WP-Cron.
+- The safest theme-level fix is a disabled-by-default administrator toolbar setting plus a front-end compatibility layer that hides Rank Math toolbar prompts while the theme keeps the front end clean.
+- The settings page cleanup should keep the tabbed page and existing option keys, but dense sections benefit from a shared grouped-block pattern instead of long naked `form-table` rows.
+- The `show_admin_toolbar` switch belongs in General -> Administrator experience because it controls administrator front-end tooling, not front-end feature loading or third-party resources.

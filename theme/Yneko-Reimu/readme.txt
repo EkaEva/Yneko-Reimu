@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.4
+Stable tag: 0.2.5
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,11 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.5 =
+
+* Adds a disabled-by-default setting to restore the front-end WordPress admin toolbar for administrators when debugging is needed.
+* Keeps the clean front-end default by hiding the WordPress admin toolbar and Rank Math front-end analytics/pro toolbar prompts while the setting is off.
 
 = 0.2.4 =
 

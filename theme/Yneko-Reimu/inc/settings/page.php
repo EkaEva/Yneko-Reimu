@@ -40,53 +40,45 @@ function yneko_reimu_render_settings_page() {
 
 			<section class="yneko-reimu-settings-panel is-active" data-yneko-settings-panel="general">
 				<h2><?php yneko_reimu_admin_bilingual_heading( '常规设置', 'General settings' ); ?></h2>
-				<table class="form-table" role="presentation">
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( '视觉预览工作台', 'Visual preview workspace' ); ?></th>
-					<td>
-						<a class="button" href="<?php echo esc_url( admin_url( 'customize.php' ) ); ?>"><?php yneko_reimu_admin_bilingual_label( '打开 WordPress 自定义', 'Open WordPress Customizer' ); ?></a>
-						<?php yneko_reimu_admin_bilingual_description( '站点图标、Logo、作者头像、横幅、封面、搜索背景、强调色、侧栏、导航、首页胶囊和页脚文字保留在自定义器中，方便使用右侧实时预览。', 'Site icon, logo, author avatar, banners, covers, search background, accent color, sidebar, navigation, home capsules, and footer text remain in the Customizer for live preview.' ); ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( '第三方资源提示', 'Third-party resources' ); ?></th>
-					<td>
-						<?php yneko_reimu_admin_bilingual_description( '启用 Google Fonts、GA、Cloudflare RUM、jsDelivr、APlayer、mouse-firework、Live2D、Algolia、Busuanzi 等功能后，前台可能连接对应第三方域名。需要隐私优先时，请关闭相关扩展，或在“扩展与第三方”中把 Vendor CDN / Live2D 地址替换为自托管资源。', 'When Google Fonts, GA, Cloudflare RUM, jsDelivr, APlayer, mouse-firework, Live2D, Algolia, Busuanzi, or similar features are enabled, the front end may contact those third-party domains. For a privacy-first setup, disable those extensions or replace Vendor CDN / Live2D URLs with self-hosted resources in Extensions.' ); ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( '内置页面开关', 'Built-in pages' ); ?></th>
-					<td>
-						<input type="hidden" name="yneko_reimu_settings[builtin_pages][_present]" value="1">
-						<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][projects]" value="1" <?php checked( '1', $builtin_pages['projects'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '项目页', 'Projects page' ); ?></label><br>
-						<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][archives]" value="1" <?php checked( '1', $builtin_pages['archives'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '归档页', 'Archives page' ); ?></label><br>
-						<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][about]" value="1" <?php checked( '1', $builtin_pages['about'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '关于页', 'About page' ); ?></label><br>
-						<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][friend]" value="1" <?php checked( '1', $builtin_pages['friend'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '友链页', 'Friends page' ); ?></label>
-						<?php yneko_reimu_admin_bilingual_description( '关闭后会从主题默认导航和菜单中的对应内置链接移除，并让对应内置路径返回 404；不会影响 WordPress 原生分类、标签、日期等归档页。', 'Disabled pages are removed from the theme default navigation and matching built-in menu links, and their built-in paths return 404. Native WordPress category, tag, date, and other archives are not affected.' ); ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( 'Favicon / Apple Touch 兜底图', 'Favicon / Apple Touch fallback' ); ?></th>
-					<td>
+				<?php yneko_reimu_settings_group_open( '视觉预览工作台', 'Visual preview workspace', '这些项目适合边看边调，因此继续留在 WordPress 自定义器。', 'These options stay in the WordPress Customizer because they benefit from live preview.' ); ?>
+					<a class="button" href="<?php echo esc_url( admin_url( 'customize.php' ) ); ?>"><?php yneko_reimu_admin_bilingual_label( '打开 WordPress 自定义', 'Open WordPress Customizer' ); ?></a>
+					<?php yneko_reimu_admin_bilingual_description( '站点图标、Logo、作者头像、横幅、封面、搜索背景、强调色、侧栏、导航、首页胶囊和页脚文字保留在自定义器中。', 'Site icon, logo, author avatar, banners, covers, search background, accent color, sidebar, navigation, home capsules, and footer text remain in the Customizer.' ); ?>
+				<?php yneko_reimu_settings_group_close(); ?>
+
+				<?php yneko_reimu_settings_group_open( '管理员体验', 'Administrator experience', '这里控制管理员登录浏览器访问前台时的后台辅助显示，不影响普通评论用户。', 'This controls administrator-only front-end helpers and does not affect regular comment users.' ); ?>
+					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[features][show_admin_toolbar]" value="1" <?php checked( '1', $features['show_admin_toolbar'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '显示前台管理员工具条', 'Show front-end admin toolbar' ); ?></label>
+					<?php yneko_reimu_admin_bilingual_description( '默认关闭，前台保持干净并隐藏 Rank Math 等插件工具条提示。需要临时调试 Rank Math、Query Monitor 或编辑入口时再开启。', 'Disabled by default to keep the front end clean and hide plugin toolbar prompts such as Rank Math. Enable it temporarily for Rank Math, Query Monitor, or edit-link debugging.' ); ?>
+				<?php yneko_reimu_settings_group_close(); ?>
+
+				<?php yneko_reimu_settings_group_open( '内置页面', 'Built-in pages', '控制主题内置虚拟页面是否可访问，并同步影响主题默认导航。', 'Control whether built-in virtual pages are available and whether default theme navigation includes them.' ); ?>
+					<input type="hidden" name="yneko_reimu_settings[builtin_pages][_present]" value="1">
+					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][projects]" value="1" <?php checked( '1', $builtin_pages['projects'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '项目页', 'Projects page' ); ?></label>
+					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][archives]" value="1" <?php checked( '1', $builtin_pages['archives'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '归档页', 'Archives page' ); ?></label>
+					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][about]" value="1" <?php checked( '1', $builtin_pages['about'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '关于页', 'About page' ); ?></label>
+					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][friend]" value="1" <?php checked( '1', $builtin_pages['friend'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '友链页', 'Friends page' ); ?></label>
+					<?php yneko_reimu_admin_bilingual_description( '关闭后会从主题默认导航和菜单中的对应内置链接移除，并让对应内置路径返回 404；不会影响 WordPress 原生分类、标签、日期等归档页。', 'Disabled pages are removed from the theme default navigation and matching built-in menu links, and their built-in paths return 404. Native WordPress category, tag, date, and other archives are not affected.' ); ?>
+				<?php yneko_reimu_settings_group_close(); ?>
+
+				<?php yneko_reimu_settings_group_open( '站点资源兜底', 'Site resource fallbacks', '用于补齐浏览器、移动端或聊天软件不稳定支持 SVG 的场景。', 'Use these fallbacks for browsers, mobile devices, or chat previews that do not reliably support SVG assets.' ); ?>
+					<div class="yneko-reimu-field">
+						<label class="yneko-reimu-field__label"><?php yneko_reimu_admin_bilingual_label( 'Favicon / Apple Touch 兜底图', 'Favicon / Apple Touch fallback' ); ?></label>
 						<?php yneko_reimu_admin_media_field( 'yneko_reimu_settings[favicon_fallback_url]', $settings['favicon_fallback_url'], yneko_reimu_admin_bilingual_text( '选择 PNG/JPG', 'Choose PNG/JPG' ), 'image/png,image/jpeg' ); ?>
-						<?php yneko_reimu_admin_bilingual_description( '站点图标和 Logo 仍可使用 SVG；这里建议额外设置一张 512×512 的 PNG/JPG，用于不稳定支持 SVG favicon 或 apple-touch-icon 的浏览器、移动端和聊天软件预览。此项不会影响 Rank Math 的 og:image。', 'The site icon and logo can still use SVG. Add a square 512x512 PNG/JPG here as a fallback for browsers, mobile devices, and chat previews that do not reliably support SVG favicon or apple-touch-icon. This does not affect Rank Math og:image.' ); ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="yneko-reimu-github-url"><?php yneko_reimu_admin_bilingual_label( 'GitHub 主页链接', 'GitHub profile URL' ); ?></label></th>
-					<td>
+						<?php yneko_reimu_admin_bilingual_description( '建议设置一张 512×512 PNG/JPG；此项不会影响 Rank Math 的 og:image。', 'A square 512x512 PNG/JPG is recommended. This does not affect Rank Math og:image.' ); ?>
+					</div>
+				<?php yneko_reimu_settings_group_close(); ?>
+
+				<?php yneko_reimu_settings_group_open( '站点展示链接', 'Site display links', '用于主题内置入口、项目页来源和底部赞助入口。', 'Used by bundled theme links, project-page source data, and the footer sponsor entry.' ); ?>
+					<div class="yneko-reimu-field">
+						<label class="yneko-reimu-field__label" for="yneko-reimu-github-url"><?php yneko_reimu_admin_bilingual_label( 'GitHub 主页链接', 'GitHub profile URL' ); ?></label>
 						<input id="yneko-reimu-github-url" class="regular-text" type="url" name="yneko_reimu_settings[github_url]" value="<?php echo esc_attr( $settings['github_url'] ); ?>">
 						<?php yneko_reimu_admin_bilingual_description( '统一用于顶部 GitHub 三角标、侧栏 GitHub 链接和项目页拉取来源。', 'Used by the GitHub corner ribbon, sidebar GitHub link, and project-page repository source.' ); ?>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php yneko_reimu_admin_bilingual_label( '赞助二维码', 'Sponsor QR code' ); ?></th>
-					<td>
+					</div>
+					<div class="yneko-reimu-field">
+						<label class="yneko-reimu-field__label"><?php yneko_reimu_admin_bilingual_label( '赞助二维码', 'Sponsor QR code' ); ?></label>
 						<?php yneko_reimu_admin_media_field( 'yneko_reimu_settings[sponsor_qr_url]', $settings['sponsor_qr_url'], yneko_reimu_admin_bilingual_text( '选择图片', 'Choose image' ) ); ?>
 						<?php yneko_reimu_admin_bilingual_description( '用于底部赞助入口。留空时不会显示赞助二维码。', 'Used by the footer sponsor entry. If empty, the sponsor QR code is hidden.' ); ?>
-					</td>
-				</tr>
-				</table>
+					</div>
+				<?php yneko_reimu_settings_group_close(); ?>
 			</section>
 
 			<?php yneko_reimu_render_settings_i18n_panel( $i18n ); ?>

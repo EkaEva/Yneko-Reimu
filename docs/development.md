@@ -104,6 +104,8 @@ Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/setti
 - New settings need a default value, sanitizer, UI location, migration decision, and a note about whether they affect front-end loading.
 - Front-end-visible article/card/sidebar modules that are stored as `theme_mod` values should have a Customizer control and be covered by `npm run check:customizer`.
 - Heavy or third-party features should stay disabled by default and gated by a setting, page context, or user interaction.
+- The front-end WordPress admin toolbar stays hidden by default, including for administrators, to keep the public front end clean. The `show_admin_toolbar` feature setting is rendered under General -> Administrator experience and should be enabled only when an administrator needs temporary front-end debugging/plugin toolbar access; when it is off, Rank Math front-end Analytics/PRO toolbar prompts are hidden as a compatibility layer.
+- Settings page UI should use grouped blocks for new dense sections. Keep the tab structure, setting keys, and form submission model stable; prefer moving markup into existing settings renderers before adding new admin frameworks.
 - Do not add hand-written base64 image payloads or `data:image` URLs to runtime PHP, CSS, or JavaScript. Add image files to `assets/images` or use a small inline SVG component when it is truly UI markup.
 - Before moving comments/profile AJAX handlers, login-state DOM replacement, or runtime boundaries, follow `docs/comments-profile-contract.md`.
 
