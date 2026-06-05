@@ -127,6 +127,8 @@ for (const configKey of [
   "'toc'",
   "'homeUrl'",
   "'loaderTexts'",
+  'yneko_reimu_preloader_texts',
+  'yneko_reimu_preloader_image_size',
   "'firework'",
   "'customCursor'",
   "'pjax'",
@@ -173,9 +175,27 @@ if (!stylesSource.includes("wp_add_inline_style( 'yneko-reimu-main', yneko_reimu
   console.error('[enqueue] Missing final cursor variable override after the main stylesheet.');
   failed = true;
 }
+if (!stylesSource.includes("wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_visual_asset_variables_css() );")) {
+  console.error('[enqueue] Missing visual asset CSS variable override after the main stylesheet.');
+  failed = true;
+}
 if (/if\s*\(\s*!\s*yneko_reimu_feature_enabled\(\s*'yneko_reimu_custom_cursor'/.test(stylesSource)) {
   console.error('[enqueue] Cursor variables must not be emitted only for the disabled custom-cursor state.');
   failed = true;
+}
+
+for (const snippet of [
+  'yneko_reimu_cursor_default_url',
+  'yneko_reimu_cursor_pointer_url',
+  'yneko_reimu_cursor_text_url',
+  'yneko_reimu_cursor_progress_url',
+  'yneko_reimu_top_icon_url',
+  'yneko_reimu_sponsor_icon_url',
+  '--reimu-loader-asset-size',
+  '--top-icon',
+  '--sponsor-icon'
+]) {
+  requireSnippet('visual asset output contract', snippet);
 }
 
 if (failed) {

@@ -9,12 +9,17 @@ function yneko_reimu_cursor_variables_css() {
 	}
 
 	$base = YNEKO_REIMU_URI . '/assets/images/cursor/';
+	$default_cursor  = yneko_reimu_visual_asset_url( 'yneko_reimu_cursor_default_url', $base . 'lily-normal.png' );
+	$pointer_cursor  = yneko_reimu_visual_asset_url( 'yneko_reimu_cursor_pointer_url', $base . 'lily-link.png' );
+	$text_cursor     = yneko_reimu_visual_asset_url( 'yneko_reimu_cursor_text_url', $base . 'lily-text.png' );
+	$progress_cursor = yneko_reimu_visual_asset_url( 'yneko_reimu_cursor_progress_url', $base . 'lily-work.png' );
+
 	return ':root{' .
-		'--cursor-default:url(' . esc_url( $base . 'lily-normal.png' ) . '), auto;' .
-		'--cursor-pointer:url(' . esc_url( $base . 'lily-link.png' ) . '), pointer;' .
-		'--cursor-text:url(' . esc_url( $base . 'lily-text.png' ) . '), text;' .
-		'--cursor-busy:url(' . esc_url( $base . 'lily-busy.png' ) . '), wait;' .
-		'--cursor-progress:url(' . esc_url( $base . 'lily-work.png' ) . '), progress;' .
+		'--cursor-default:' . yneko_reimu_cursor_css_value( $default_cursor, 'auto' ) . ';' .
+		'--cursor-pointer:' . yneko_reimu_cursor_css_value( $pointer_cursor, 'pointer' ) . ';' .
+		'--cursor-text:' . yneko_reimu_cursor_css_value( $text_cursor, 'text' ) . ';' .
+		'--cursor-busy:' . yneko_reimu_cursor_css_value( $progress_cursor, 'wait' ) . ';' .
+		'--cursor-progress:' . yneko_reimu_cursor_css_value( $progress_cursor, 'progress' ) . ';' .
 		'--cursor-not-allowed:url(' . esc_url( $base . 'lily-unavailable.png' ) . '), not-allowed;' .
 		'--cursor-help:url(' . esc_url( $base . 'lily-help.png' ) . '), help;' .
 		'--cursor-move:url(' . esc_url( $base . 'lily-move.png' ) . '), move;' .
@@ -28,6 +33,62 @@ function yneko_reimu_cursor_variables_css() {
 		'--cursor-nesw-resize:url(' . esc_url( $base . 'lily-resize-nesw.png' ) . '), nesw-resize;' .
 		'--cursor-alias:url(' . esc_url( $base . 'lily-alternate.png' ) . '), alias;' .
 	'}';
+}
+
+function yneko_reimu_visual_asset_url( $theme_mod_key, $fallback = '' ) {
+	$url = yneko_reimu_get_theme_mod( $theme_mod_key, '' );
+	$url = is_string( $url ) ? trim( $url ) : '';
+
+	return '' !== $url ? esc_url_raw( $url ) : $fallback;
+}
+
+function yneko_reimu_cursor_css_value( $url, $fallback_cursor ) {
+	$url = esc_url( $url );
+	if ( '' === $url ) {
+		return $fallback_cursor;
+	}
+
+	return 'url("' . str_replace( '"', '%22', $url ) . '"), ' . $fallback_cursor;
+}
+
+function yneko_reimu_preloader_image_size() {
+	$size = yneko_reimu_get_theme_mod( 'yneko_reimu_preloader_image_size', 150 );
+	return function_exists( 'yneko_reimu_sanitize_preloader_image_size' ) ? yneko_reimu_sanitize_preloader_image_size( $size ) : max( 48, min( 320, absint( $size ) ) );
+}
+
+function yneko_reimu_preloader_texts() {
+	$legacy_zh = yneko_reimu_get_theme_mod( 'yneko_reimu_preloader_text', __( '未来有你...', 'yneko-reimu' ) );
+	if ( __( '少女祈祷中...', 'yneko-reimu' ) === $legacy_zh || '少女祈祷中...' === $legacy_zh ) {
+		$legacy_zh = __( '未来有你...', 'yneko-reimu' );
+	}
+
+	$zh = yneko_reimu_get_theme_mod( 'yneko_reimu_preloader_text_zh', $legacy_zh );
+	$en = yneko_reimu_get_theme_mod( 'yneko_reimu_preloader_text_en', 'Loading...' );
+
+	return array(
+		'zh_CN' => '' !== trim( (string) $zh ) ? (string) $zh : __( '未来有你...', 'yneko-reimu' ),
+		'en_US' => '' !== trim( (string) $en ) ? (string) $en : 'Loading...',
+	);
+}
+
+function yneko_reimu_visual_asset_variables_css() {
+	$declarations = array(
+		'--reimu-loader-asset-size:' . yneko_reimu_preloader_image_size() . 'px',
+	);
+
+	foreach (
+		array(
+			'yneko_reimu_top_icon_url'     => '--top-icon',
+			'yneko_reimu_sponsor_icon_url' => '--sponsor-icon',
+		) as $theme_mod_key => $css_var
+	) {
+		$url = yneko_reimu_visual_asset_url( $theme_mod_key, '' );
+		if ( '' !== $url ) {
+			$declarations[] = $css_var . ':url("' . str_replace( '"', '%22', esc_url( $url ) ) . '")';
+		}
+	}
+
+	return ':root{' . implode( ';', $declarations ) . ';}';
 }
 
 function yneko_reimu_critical_cursor() {

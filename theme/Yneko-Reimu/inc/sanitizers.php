@@ -17,6 +17,10 @@ function yneko_reimu_sanitize_positive_int( $value ) {
 	return max( 0, absint( $value ) );
 }
 
+function yneko_reimu_sanitize_preloader_image_size( $value ) {
+	return max( 48, min( 320, absint( $value ) ) );
+}
+
 function yneko_reimu_sanitize_url_or_empty( $value ) {
 	$value = trim( (string) $value );
 	return '' === $value ? '' : esc_url_raw( $value );

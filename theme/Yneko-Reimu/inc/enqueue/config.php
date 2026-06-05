@@ -138,7 +138,7 @@ function yneko_reimu_build_frontend_config( $current_language, $search, $aplayer
 		'copiedText'      => $i18n['copied'],
 		'failedText'      => $i18n['copyFailed'],
 		'homeUrl'         => home_url( '/' ),
-		'loaderTexts'     => array(
+		'loaderTexts'     => function_exists( 'yneko_reimu_preloader_texts' ) ? yneko_reimu_preloader_texts() : array(
 			'zh_CN' => '未来有你...',
 			'en_US' => 'Loading...',
 		),

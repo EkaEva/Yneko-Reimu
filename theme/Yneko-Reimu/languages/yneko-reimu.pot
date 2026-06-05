@@ -580,6 +580,10 @@ msgstr ""
 msgid "恢复码模块尚未加载。"
 msgstr ""
 
+#: inc/customizer/visual-assets.php
+msgid "回到顶部装饰图"
+msgstr ""
+
 #: inc/comments/rendering/list.php
 msgid "回复"
 msgstr ""
@@ -598,6 +602,30 @@ msgstr ""
 
 #: inc/comments/modals.php
 msgid "记住我"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "加载/忙碌鼠标指针"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画图片尺寸 px"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画图片旋转"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画英文文案"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画中间图片"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画中文文案"
 msgstr ""
 
 #: comments.php inc/enqueue/config.php template-parts/virtual/projects.php
@@ -660,6 +688,10 @@ msgstr ""
 msgid "莉莉概念光标作者"
 msgstr ""
 
+#: inc/customizer/visual-assets.php
+msgid "链接/按钮鼠标指针"
+msgstr ""
+
 #: inc/comments/modals.php
 msgid "两步验证码"
 msgstr ""
@@ -670,6 +702,14 @@ msgstr ""
 
 #: inc/comments/profile-save.php inc/enqueue/config.php
 msgid "两次输入的密码不一致。"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "留空时使用主题内置 Lily 指针。建议使用 PNG/WebP，尺寸不超过 64×64。"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "留空时使用主题内置太极图。"
 msgstr ""
 
 #: inc/enqueue/config.php
@@ -698,6 +738,10 @@ msgstr ""
 
 #: inc/customizer/social.php
 msgid "默认启用 QQ 和微信，其它分享按钮默认关闭。"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "默认鼠标指针"
 msgstr ""
 
 #: inc/customizer/images.php
@@ -1076,7 +1120,7 @@ msgstr ""
 msgid "少女检索中..."
 msgstr ""
 
-#: template-parts/layout/loader.php
+#: inc/enqueue/head.php
 msgid "少女祈祷中..."
 msgstr ""
 
@@ -1106,6 +1150,10 @@ msgstr ""
 
 #: inc/customizer/visual.php
 msgid "视觉主题"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "视觉资产"
 msgstr ""
 
 #: inc/schema.php inc/template-tags/navigation-virtual.php
@@ -1174,6 +1222,10 @@ msgstr ""
 
 #: inc/enqueue/config.php
 msgid "提交中..."
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "替换光标、加载动画和小装饰图片。功能启用开关仍在“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
 #: template-parts/virtual/friend.php
@@ -1280,7 +1332,7 @@ msgstr ""
 msgid "未发现与「{query}」相关内容"
 msgstr ""
 
-#: template-parts/layout/loader.php
+#: inc/enqueue/head.php template-parts/layout/loader.php
 msgid "未来有你..."
 msgstr ""
 
@@ -1290,6 +1342,10 @@ msgstr ""
 
 #: inc/settings/renderers.php
 msgid "未知用户"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "文本输入鼠标指针"
 msgstr ""
 
 #: inc/comments/uploads/helpers.php
@@ -1434,6 +1490,10 @@ msgstr ""
 
 #: inc/customizer/cards.php
 msgid "显示阅读时间"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "限制在 48 到 320 像素之间，避免遮挡移动端内容。"
 msgstr ""
 
 #: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
@@ -1722,6 +1782,10 @@ msgstr ""
 
 #: inc/template-tags/content-tools.php
 msgid "赞助"
+msgstr ""
+
+#: inc/customizer/visual-assets.php
+msgid "赞助按钮装饰图"
 msgstr ""
 
 #: inc/template-tags/content-tools.php

@@ -585,6 +585,10 @@ msgstr "欢迎评论"
 msgid "恢复码模块尚未加载。"
 msgstr "恢复码模块尚未加载。"
 
+#: inc/customizer/visual-assets.php
+msgid "回到顶部装饰图"
+msgstr "回到顶部装饰图"
+
 #: inc/comments/rendering/list.php
 msgid "回复"
 msgstr "回复"
@@ -604,6 +608,30 @@ msgstr "基于 %1$s，Theme 基于 %2$s 改编"
 #: inc/comments/modals.php
 msgid "记住我"
 msgstr "记住我"
+
+#: inc/customizer/visual-assets.php
+msgid "加载/忙碌鼠标指针"
+msgstr "加载/忙碌鼠标指针"
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画图片尺寸 px"
+msgstr "加载动画图片尺寸 px"
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画图片旋转"
+msgstr "加载动画图片旋转"
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画英文文案"
+msgstr "加载动画英文文案"
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画中间图片"
+msgstr "加载动画中间图片"
+
+#: inc/customizer/visual-assets.php
+msgid "加载动画中文文案"
+msgstr "加载动画中文文案"
 
 #: comments.php inc/enqueue/config.php template-parts/virtual/projects.php
 msgid "加载更多..."
@@ -665,6 +693,10 @@ msgstr "控制文章页可见模块。评论上传、外部评论和登录服务
 msgid "莉莉概念光标作者"
 msgstr "莉莉概念光标作者"
 
+#: inc/customizer/visual-assets.php
+msgid "链接/按钮鼠标指针"
+msgstr "链接/按钮鼠标指针"
+
 #: inc/comments/modals.php
 msgid "两步验证码"
 msgstr "两步验证码"
@@ -676,6 +708,14 @@ msgstr "两步验证码不正确。"
 #: inc/comments/profile-save.php inc/enqueue/config.php
 msgid "两次输入的密码不一致。"
 msgstr "两次输入的密码不一致。"
+
+#: inc/customizer/visual-assets.php
+msgid "留空时使用主题内置 Lily 指针。建议使用 PNG/WebP，尺寸不超过 64×64。"
+msgstr "留空时使用主题内置 Lily 指针。建议使用 PNG/WebP，尺寸不超过 64×64。"
+
+#: inc/customizer/visual-assets.php
+msgid "留空时使用主题内置太极图。"
+msgstr "留空时使用主题内置太极图。"
 
 #: inc/enqueue/config.php
 msgid "没有结果"
@@ -704,6 +744,10 @@ msgstr "默认卡片封面"
 #: inc/customizer/social.php
 msgid "默认启用 QQ 和微信，其它分享按钮默认关闭。"
 msgstr "默认启用 QQ 和微信，其它分享按钮默认关闭。"
+
+#: inc/customizer/visual-assets.php
+msgid "默认鼠标指针"
+msgstr "默认鼠标指针"
 
 #: inc/customizer/images.php
 msgid "默认头像/角色图"
@@ -1081,7 +1125,7 @@ msgstr "少年，你迷路了吗？"
 msgid "少女检索中..."
 msgstr "少女检索中..."
 
-#: template-parts/layout/loader.php
+#: inc/enqueue/head.php
 msgid "少女祈祷中..."
 msgstr "少女祈祷中..."
 
@@ -1112,6 +1156,10 @@ msgstr "使用主题内置侧栏"
 #: inc/customizer/visual.php
 msgid "视觉主题"
 msgstr "视觉主题"
+
+#: inc/customizer/visual-assets.php
+msgid "视觉资产"
+msgstr "视觉资产"
 
 #: inc/schema.php inc/template-tags/navigation-virtual.php
 msgid "首页"
@@ -1180,6 +1228,10 @@ msgstr "提交搜索"
 #: inc/enqueue/config.php
 msgid "提交中..."
 msgstr "提交中..."
+
+#: inc/customizer/visual-assets.php
+msgid "替换光标、加载动画和小装饰图片。功能启用开关仍在“外观 -> Yneko-Reimu 设置”。"
+msgstr "替换光标、加载动画和小装饰图片。功能启用开关仍在“外观 -> Yneko-Reimu 设置”。"
 
 #: template-parts/virtual/friend.php
 msgid "添加本站后，在本页留言，格式如下"
@@ -1285,7 +1337,7 @@ msgstr "微信分享二维码"
 msgid "未发现与「{query}」相关内容"
 msgstr "未发现与「{query}」相关内容"
 
-#: template-parts/layout/loader.php
+#: inc/enqueue/head.php template-parts/layout/loader.php
 msgid "未来有你..."
 msgstr "未来有你..."
 
@@ -1296,6 +1348,10 @@ msgstr "未启用"
 #: inc/settings/renderers.php
 msgid "未知用户"
 msgstr "未知用户"
+
+#: inc/customizer/visual-assets.php
+msgid "文本输入鼠标指针"
+msgstr "文本输入鼠标指针"
 
 #: inc/comments/uploads/helpers.php
 msgid "文件大小超出限制。"
@@ -1440,6 +1496,10 @@ msgstr "显示右上角 GitHub 三角标"
 #: inc/customizer/cards.php
 msgid "显示阅读时间"
 msgstr "显示阅读时间"
+
+#: inc/customizer/visual-assets.php
+msgid "限制在 48 到 320 像素之间，避免遮挡移动端内容。"
+msgstr "限制在 48 到 320 像素之间，避免遮挡移动端内容。"
 
 #: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
 msgid "项目"
@@ -1728,6 +1788,10 @@ msgstr "暂无用户自定义标签。"
 #: inc/template-tags/content-tools.php
 msgid "赞助"
 msgstr "赞助"
+
+#: inc/customizer/visual-assets.php
+msgid "赞助按钮装饰图"
+msgstr "赞助按钮装饰图"
 
 #: inc/template-tags/content-tools.php
 msgid "赞助二维码"
