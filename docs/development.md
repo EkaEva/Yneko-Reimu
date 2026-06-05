@@ -106,7 +106,7 @@ Images and standalone SVG icons should be committed as files instead of encoded 
 
 Admin settings JavaScript is maintained in `theme/Yneko-Reimu/assets/src/admin-settings.js` and built to `assets/dist/admin-settings.js`. PHP should only enqueue the built admin script and inject the small `YNEKO_REIMU_ADMIN_I18N` configuration object before it.
 
-Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/settings/panels.php`. When changing tabs, panel names, field names, repeatable rows, or review sections, update `tools/check-settings-admin-contract.mjs` in the same change.
+Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/settings/panels.php` and focused modules under `theme/Yneko-Reimu/inc/settings/panels/`. The entry file keeps shared group/field helpers and smaller panels; high-density panels such as Users, Security, and Music live in their own modules. When changing tabs, panel names, field names, repeatable rows, or review sections, update `tools/check-settings-admin-contract.mjs` in the same change.
 
 ## Development Constraints
 

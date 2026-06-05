@@ -15,6 +15,11 @@ const githubModulePaths = {
 };
 const settingsPagePath = resolve(root, 'theme/Yneko-Reimu/inc/settings/page.php');
 const settingsPanelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
+const settingsPanelModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/users.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/security.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/music.php')
+];
 const settingsSchemaPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php');
 const reimuSourcePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu.js');
 
@@ -28,9 +33,10 @@ const [
   githubAccess,
   githubLogin2fa,
   settingsPage,
-  settingsPanels,
+  settingsPanelsEntry,
   settingsSchema,
-  reimuSource
+  reimuSource,
+  ...settingsPanelModules
 ] = await Promise.all([
   readFile(githubPath, 'utf8'),
   readFile(githubModulePaths.settings, 'utf8'),
@@ -43,8 +49,11 @@ const [
   readFile(settingsPagePath, 'utf8'),
   readFile(settingsPanelsPath, 'utf8'),
   readFile(settingsSchemaPath, 'utf8'),
-  readFile(reimuSourcePath, 'utf8')
+  readFile(reimuSourcePath, 'utf8'),
+  ...settingsPanelModulePaths.map((path) => readFile(path, 'utf8'))
 ]);
+
+const settingsPanels = [settingsPanelsEntry, ...settingsPanelModules].join('\n');
 
 const github = [
   githubEntry,

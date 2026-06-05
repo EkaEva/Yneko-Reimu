@@ -4,13 +4,20 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
+const settingsPanelPaths = [
+  resolve(themeRoot, 'inc/settings/panels.php'),
+  resolve(themeRoot, 'inc/settings/panels/users.php'),
+  resolve(themeRoot, 'inc/settings/panels/security.php'),
+  resolve(themeRoot, 'inc/settings/panels/music.php')
+];
+const settingsPanels = (await Promise.all(settingsPanelPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   functions: await readFile(resolve(themeRoot, 'functions.php'), 'utf8'),
   security: await readFile(resolve(themeRoot, 'inc/security-auth-mail.php'), 'utf8'),
   schema: await readFile(resolve(themeRoot, 'inc/settings/schema.php'), 'utf8'),
   page: await readFile(resolve(themeRoot, 'inc/settings/page.php'), 'utf8'),
-  panels: await readFile(resolve(themeRoot, 'inc/settings/panels.php'), 'utf8'),
+  panels: settingsPanels,
   admin: await readFile(resolve(themeRoot, 'inc/settings/admin.php'), 'utf8'),
   auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),
   profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8')

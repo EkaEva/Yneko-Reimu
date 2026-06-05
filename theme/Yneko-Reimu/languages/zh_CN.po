@@ -533,7 +533,7 @@ msgstr "管理员"
 msgid "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 msgstr "管理主题内置的导航、侧栏作者卡、首页胶囊和播放器位置。侧栏下方的小组件可在“侧栏小组件”中单独控制。"
 
-#: inc/settings/panels.php
+#: inc/settings/panels/users.php
 msgid "广告/官方/测试"
 msgstr "广告/官方/测试"
 

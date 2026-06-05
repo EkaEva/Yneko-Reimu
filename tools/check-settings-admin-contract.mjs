@@ -5,6 +5,11 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pagePath = resolve(root, 'theme/Yneko-Reimu/inc/settings/page.php');
 const panelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
+const panelModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/users.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/security.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/music.php')
+];
 const renderersPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers.php');
 const adminPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/admin.php');
 const adminJsPath = resolve(root, 'theme/Yneko-Reimu/assets/src/admin-settings.js');
@@ -13,7 +18,9 @@ const schemaPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php');
 const securityPath = resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail.php');
 
 const page = await readFile(pagePath, 'utf8');
-const panels = await readFile(panelsPath, 'utf8');
+const panelsEntry = await readFile(panelsPath, 'utf8');
+const panelModules = await Promise.all(panelModulePaths.map((path) => readFile(path, 'utf8')));
+const panels = [panelsEntry, ...panelModules].join('\n');
 const renderers = await readFile(renderersPath, 'utf8');
 const admin = await readFile(adminPath, 'utf8');
 const adminJs = await readFile(adminJsPath, 'utf8');
@@ -69,6 +76,9 @@ const requiredPageSnippets = [
 ];
 
 const requiredPanelSnippets = [
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/users.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/security.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/music.php';",
   'function yneko_reimu_settings_group_open',
   'function yneko_reimu_settings_field_open',
   'class="yneko-reimu-settings-group"',
