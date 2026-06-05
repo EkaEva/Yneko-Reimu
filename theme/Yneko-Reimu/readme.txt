@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.7
+Stable tag: 0.2.8
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,13 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.8 =
+
+* Completes the high-risk comments/profile/upload PHP module split while preserving AJAX actions, nonces, request fields, meta keys, JSON shapes, and classic front-end behavior.
+* Splits settings schema, enqueue/resource helpers, and Customizer section registration into focused internal modules while preserving stored options, theme_mod keys, handles, and Customizer IDs.
+* Updates contract gates so settings schema, enqueue, Customizer, config surface, comments/profile, and PJAX/runtime checks aggregate the new module boundaries.
+* Documents the comments/profile front-end runtime split as deferred until a dedicated WordPress manual QA pass is available.
 
 = 0.2.7 =
 
