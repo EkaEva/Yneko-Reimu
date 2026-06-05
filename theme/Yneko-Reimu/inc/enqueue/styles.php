@@ -35,6 +35,7 @@ function yneko_reimu_enqueue_theme_styles( $asset_strategy, $enable_aplayer ) {
 	$accent = sanitize_hex_color( yneko_reimu_get_theme_mod( 'yneko_reimu_accent_color', '#ff5252' ) );
 	$accent = $accent ? $accent : '#ff5252';
 	wp_add_inline_style( 'yneko-reimu-main', ':root{--red-1:' . esc_html( $accent ) . ';--color-link:' . esc_html( $accent ) . ';}' );
+	wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_typography_layout_css() );
 	wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_visual_asset_variables_css() );
 	wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_cursor_variables_css() );
 	if ( ! yneko_reimu_get_theme_mod( 'yneko_reimu_sticky_nav', true ) ) {

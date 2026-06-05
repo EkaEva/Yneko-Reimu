@@ -179,6 +179,10 @@ if (!stylesSource.includes("wp_add_inline_style( 'yneko-reimu-main', yneko_reimu
   console.error('[enqueue] Missing visual asset CSS variable override after the main stylesheet.');
   failed = true;
 }
+if (!stylesSource.includes("wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_typography_layout_css() );")) {
+  console.error('[enqueue] Missing typography/layout CSS variable override after the main stylesheet.');
+  failed = true;
+}
 if (/if\s*\(\s*!\s*yneko_reimu_feature_enabled\(\s*'yneko_reimu_custom_cursor'/.test(stylesSource)) {
   console.error('[enqueue] Cursor variables must not be emitted only for the disabled custom-cursor state.');
   failed = true;
@@ -196,6 +200,35 @@ for (const snippet of [
   '--sponsor-icon'
 ]) {
   requireSnippet('visual asset output contract', snippet);
+}
+
+for (const snippet of [
+  'function yneko_reimu_typography_layout_css',
+  'yneko_reimu_font_body',
+  'yneko_reimu_font_heading',
+  'yneko_reimu_font_code',
+  'yneko_reimu_base_font_size',
+  'yneko_reimu_article_font_size',
+  'yneko_reimu_article_line_height',
+  'yneko_reimu_content_max_width',
+  'yneko_reimu_article_content_width',
+  'yneko_reimu_layout_density',
+  'yneko_reimu_card_radius',
+  'yneko_reimu_image_radius',
+  'yneko_reimu_shadow_strength',
+  '--reimu-font-body',
+  '--reimu-font-heading',
+  '--reimu-font-code',
+  '--reimu-base-font-size',
+  '--reimu-article-font-size',
+  '--reimu-article-line-height',
+  '--reimu-content-max-width',
+  '--reimu-article-content-width',
+  '--reimu-main-padding',
+  '--reimu-card-radius',
+  '--reimu-image-radius'
+]) {
+  requireSnippet('typography layout output contract', snippet);
 }
 
 if (failed) {

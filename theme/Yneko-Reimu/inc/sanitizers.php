@@ -21,6 +21,34 @@ function yneko_reimu_sanitize_preloader_image_size( $value ) {
 	return max( 48, min( 320, absint( $value ) ) );
 }
 
+function yneko_reimu_sanitize_base_font_size( $value ) {
+	return max( 14, min( 20, absint( $value ) ) );
+}
+
+function yneko_reimu_sanitize_article_font_size( $value ) {
+	return max( 14, min( 22, absint( $value ) ) );
+}
+
+function yneko_reimu_sanitize_article_line_height( $value ) {
+	return max( 140, min( 220, absint( $value ) ) );
+}
+
+function yneko_reimu_sanitize_content_max_width( $value ) {
+	return max( 960, min( 1800, absint( $value ) ) );
+}
+
+function yneko_reimu_sanitize_article_content_width( $value ) {
+	if ( 0 === absint( $value ) ) {
+		return 0;
+	}
+
+	return max( 640, min( 1100, absint( $value ) ) );
+}
+
+function yneko_reimu_sanitize_radius_px( $value ) {
+	return max( 0, min( 32, absint( $value ) ) );
+}
+
 function yneko_reimu_sanitize_url_or_empty( $value ) {
 	$value = trim( (string) $value );
 	return '' === $value ? '' : esc_url_raw( $value );

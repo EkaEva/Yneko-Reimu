@@ -184,6 +184,10 @@ msgstr ""
 msgid "标签云"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "标题字体"
+msgstr ""
+
 #: inc/comments/rendering/toolbar.php
 msgid "表情"
 msgstr ""
@@ -210,6 +214,10 @@ msgstr ""
 
 #: inc/setup.php
 msgid "补充"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "布局密度"
 msgstr ""
 
 #: inc/settings/renderers.php
@@ -262,6 +270,10 @@ msgstr ""
 
 #: inc/customizer/articles.php
 msgid "代码块折叠高度"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "代码字体"
 msgstr ""
 
 #: inc/settings/renderers.php
@@ -332,8 +344,16 @@ msgstr ""
 msgid "登录中..."
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "等宽字体"
+msgstr ""
+
 #: inc/comments/rendering/list.php
 msgid "点赞"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "调整字体、阅读宽度、间距密度、圆角和阴影。默认值保持主题现有外观。"
 msgstr ""
 
 #: inc/comments/badges/special.php
@@ -464,6 +484,10 @@ msgstr ""
 msgid "跟随系统"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "跟随主题默认"
+msgstr ""
+
 #: inc/comments/badges/special.php
 msgid "贡献者"
 msgstr ""
@@ -472,7 +496,7 @@ msgstr ""
 msgid "固定导航"
 msgstr ""
 
-#: inc/customizer/visual.php inc/post-meta.php
+#: inc/customizer/typography-layout.php inc/customizer/visual.php inc/post-meta.php
 msgid "关闭"
 msgstr ""
 
@@ -596,6 +620,10 @@ msgstr ""
 msgid "或使用 GitHub 登录"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "基础字号 px"
+msgstr ""
+
 #: template-parts/layout/site-footer.php
 msgid "基于 %1$s，Theme 基于 %2$s 改编"
 msgstr ""
@@ -640,6 +668,10 @@ msgstr ""
 msgid "仅支持未超出大小限制的 GIF 文件。"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "紧凑"
+msgstr ""
+
 #: inc/customizer/sidebar-widgets.php template-parts/widgets/default-widgets.php
 msgid "近期评论"
 msgstr ""
@@ -654,6 +686,10 @@ msgstr ""
 
 #: inc/customizer/sidebar-widgets.php
 msgid "近期文章数量"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "卡片圆角 px"
 msgstr ""
 
 #: inc/customizer/preset.php
@@ -728,6 +764,14 @@ msgstr ""
 msgid "密码至少需要 8 个字符。"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "明显"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "默认"
+msgstr ""
+
 #: inc/customizer/images.php
 msgid "默认横幅图片"
 msgstr ""
@@ -778,6 +822,10 @@ msgstr ""
 
 #: inc/comments/auth.php
 msgid "您的注册验证码是：%1$s"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "排版与布局密度"
 msgstr ""
 
 #: template-parts/virtual/projects.php
@@ -1056,6 +1104,10 @@ msgstr ""
 msgid "认证器验证码或恢复码"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "柔和"
+msgstr ""
+
 #: inc/github-login/login-2fa.php
 msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码；如果没有开启二次认证，留空即可。"
 msgstr ""
@@ -1124,6 +1176,10 @@ msgstr ""
 msgid "少女祈祷中..."
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "设为 0 时跟随主题默认文章宽度。"
+msgstr ""
+
 #: template-parts/virtual/friend.php
 msgid "申请方法"
 msgstr ""
@@ -1170,6 +1226,10 @@ msgstr ""
 
 #: inc/customizer/preset.php
 msgid "首页胶囊链接"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "舒展"
 msgstr ""
 
 #: inc/enqueue/config.php template-parts/layout/search-popup.php
@@ -1300,6 +1360,10 @@ msgstr ""
 msgid "图片预览"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "图片圆角 px"
+msgstr ""
+
 #: template-parts/virtual/projects.php
 msgid "推荐项目待同步"
 msgstr ""
@@ -1376,6 +1440,10 @@ msgstr ""
 msgid "文章目录"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "文章行高 %"
+msgstr ""
+
 #: inc/customizer/articles.php
 msgid "文章页"
 msgstr ""
@@ -1384,8 +1452,16 @@ msgstr ""
 msgid "文章引言卡片"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "文章阅读最大宽度 px"
+msgstr ""
+
 #: inc/post-meta.php
 msgid "文章摘要/副标题"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "文章字号 px"
 msgstr ""
 
 #: inc/template-tags/content-tools.php
@@ -1414,6 +1490,18 @@ msgstr ""
 
 #: inc/comments/uploads/admin.php inc/comments/uploads/ajax.php
 msgid "无效的评论上传附件。"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "系统衬线"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "系统无衬线"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "霞鹜文楷优先"
 msgstr ""
 
 #: template-parts/content/content-single.php
@@ -1628,6 +1716,10 @@ msgstr ""
 msgid "页面内容"
 msgstr ""
 
+#: inc/customizer/typography-layout.php
+msgid "页面内容最大宽度 px"
+msgstr ""
+
 #: inc/comments/rendering/toolbar.php
 msgid "一条评论"
 msgstr ""
@@ -1670,6 +1762,10 @@ msgstr ""
 
 #: inc/template-tags/layout-content.php
 msgid "以下是与你输入关键词相关的文章。"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "阴影强度"
 msgstr ""
 
 #: inc/post-meta.php
@@ -1750,6 +1846,10 @@ msgstr ""
 
 #: inc/settings/renderers.php
 msgid "原标签：%s"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "圆润中文"
 msgstr ""
 
 #: template-parts/content/content-single.php template-parts/meta/virtual-page-footer.php
@@ -1834,6 +1934,10 @@ msgstr ""
 
 #: template-parts/meta/post-outdated.php
 msgid "这篇文章最后更新于 %s，部分内容可能已经变化，请结合最新资料判断。"
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "正文字体"
 msgstr ""
 
 #: template-parts/content/content-card.php
@@ -2054,6 +2158,10 @@ msgstr ""
 
 #: inc/github-login/users.php
 msgid "No WordPress account is linked to this GitHub account."
+msgstr ""
+
+#: inc/customizer/typography-layout.php
+msgid "Noto Serif SC 优先"
 msgstr ""
 
 #: template-parts/meta/post-share.php
