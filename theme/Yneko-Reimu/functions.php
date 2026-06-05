@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'YNEKO_REIMU_VERSION', '0.2.8' );
+define( 'YNEKO_REIMU_VERSION', '0.2.9' );
 define( 'YNEKO_REIMU_DIR', get_template_directory() );
 define( 'YNEKO_REIMU_URI', get_template_directory_uri() );
 

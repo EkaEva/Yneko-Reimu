@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.8
+Stable tag: 0.2.9
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -50,12 +50,12 @@ Theme images ship as files under `assets/images` or generated runtime files unde
 
 == Changelog ==
 
-= 0.2.8 =
+= 0.2.9 =
 
-* Completes the high-risk comments/profile/upload PHP module split while preserving AJAX actions, nonces, request fields, meta keys, JSON shapes, and classic front-end behavior.
-* Splits settings schema, enqueue/resource helpers, and Customizer section registration into focused internal modules while preserving stored options, theme_mod keys, handles, and Customizer IDs.
-* Updates contract gates so settings schema, enqueue, Customizer, config surface, comments/profile, and PJAX/runtime checks aggregate the new module boundaries.
-* Documents the comments/profile front-end runtime split as deferred until a dedicated WordPress manual QA pass is available.
+* Splits comments/login/profile front-end orchestration into `assets/src/reimu/comments-profile.js` while keeping the public classic runtime in `assets/dist/reimu.js`.
+* Preserves `window.ReimuWP.init()`, PJAX config replay, modal-state restoration, login-state DOM refresh, GitHub popup recovery, upload cleanup, reply-form movement, and review-status polling behavior.
+* Updates comments/profile, PJAX runtime, GitHub OAuth, and runtime smoke contract gates so they aggregate the new source module boundary.
+* Documents the standalone `assets/dist/reimu-comments.js` lazy runtime as deferred until the full local WordPress manual QA checklist can be completed.
 
 = 0.2.7 =
 
