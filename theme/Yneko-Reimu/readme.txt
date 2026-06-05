@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.9
+Stable tag: 0.2.10
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,13 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.10 =
+
+* Fixes the custom cursor cascade so the enabled Lily cursor variables win after the main stylesheet loads.
+* Moves comments/login/profile orchestration into the lazy classic `assets/dist/reimu-comments.js` runtime.
+* Keeps `window.ReimuWP.init()` repeatable and preserves PJAX config replay, modal restoration, login-state DOM refresh, GitHub popup recovery, upload cleanup, reply-form movement, and review-status polling behavior.
+* Updates runtime, enqueue, comments/profile, PJAX, and size gates for the new lazy comments runtime.
 
 = 0.2.9 =
 

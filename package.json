@@ -1,6 +1,6 @@
 {
   "name": "yneko-reimu",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "private": true,
   "description": "WordPress Classic Hybrid port inspired by hexo-theme-reimu.",
   "scripts": {

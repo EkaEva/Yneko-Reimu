@@ -141,7 +141,13 @@ The first safe JavaScript step is now complete at the source level: `assets/src/
 
 The main `assets/src/reimu.js` entrypoint keeps `window.ReimuWP.init()`, PJAX config replay, modal-state restoration, and the classic script output. The comments/profile module reads the current mutable config through `getConfig()` so PJAX `window.REIMU_CONFIG` replacement continues to reach login, profile, upload, and comment handlers.
 
-The optional lazy `assets/dist/reimu-comments.js` runtime remains deferred from v0.2.9 because no local WordPress manual QA pass is available in this release turn for the full auth, registration, lost-password, GitHub popup, profile save, email/TOTP, avatar/tag review, comment submit/reply/edit/delete/like, media upload/discard, PJAX navigation, and review-status polling matrix. Do not promote the source module into a separate loaded script until that checklist can be completed.
+## v0.2.10 Lazy Runtime Boundary
+
+The lazy `assets/dist/reimu-comments.js` runtime is now active. The main classic `assets/dist/reimu.js` bundle keeps a small loader that triggers when `#comments`, `#respond`, `#reimu-login-modal`, `#reimu-profile-modal`, or `[data-reimu-profile-open]` exists. The comments runtime registers `window.ReimuCommentsRuntime` and owns login, profile, comment, upload, GitHub popup, login-state DOM replacement, reply-form movement, and review-status polling orchestration.
+
+PHP registers the internal `yneko-reimu-comments-runtime` handle, but the public main handle stays `yneko-reimu-main`; the main runtime still injects the lazy script so public enqueue behavior remains compatible. `assets/dist/reimu-comments.css` remains globally enqueued.
+
+Any future change to this boundary must repeat the full manual QA matrix for auth, registration, lost-password, GitHub popup, profile save, email/TOTP, avatar/tag review, comment submit/reply/edit/delete/like, media upload/discard, PJAX navigation, review-status polling, and repeated `window.ReimuWP.init()` calls.
 
 ## Manual QA Checklist
 
