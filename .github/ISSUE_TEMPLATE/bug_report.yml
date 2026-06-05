@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a reproducible Yneko-Reimu problem.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Please include enough environment detail for maintainers to reproduce it.
+  - type: input
+    id: theme-version
+    attributes:
+      label: Theme version
+      description: Use the release version or commit hash.
+      placeholder: "0.2.6"
+    validations:
+      required: true
+  - type: input
+    id: wordpress-version
+    attributes:
+      label: WordPress version
+      placeholder: "6.5.5"
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: "8.2"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: "Chrome 126 on Windows 11, Safari on iOS, etc."
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the visible behavior and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Enable ...
+        3. Click ...
+        4. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: plugins
+    attributes:
+      label: Relevant plugins or settings
+      description: Mention SEO, cache, comments, OAuth, security, CDN, or optimization plugins if relevant.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, screenshots, or console output
+      render: text

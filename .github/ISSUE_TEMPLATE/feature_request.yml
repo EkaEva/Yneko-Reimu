@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest a scoped improvement for Yneko-Reimu.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to accomplish?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest useful version of the feature.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Front-end display
+        - Comments/profile/auth
+        - Settings or Customizer
+        - Search/PJAX/assets
+        - GitHub OAuth/projects
+        - Packaging/release/tooling
+        - Documentation
+        - Other
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility notes
+      description: Would this change settings, templates, hooks, URLs, scripts, or release package contents?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

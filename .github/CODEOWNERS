@@ -1,0 +1,23 @@
+# Broad maintainer ownership.
+* @EkaEva
+
+# High-risk theme surfaces.
+/theme/Yneko-Reimu/inc/comments/ @EkaEva
+/theme/Yneko-Reimu/inc/comments.php @EkaEva
+/theme/Yneko-Reimu/inc/github-login/ @EkaEva
+/theme/Yneko-Reimu/inc/github-login.php @EkaEva
+/theme/Yneko-Reimu/inc/security-auth-mail.php @EkaEva
+/theme/Yneko-Reimu/inc/settings/ @EkaEva
+/theme/Yneko-Reimu/inc/settings.php @EkaEva
+/theme/Yneko-Reimu/inc/enqueue.php @EkaEva
+/theme/Yneko-Reimu/assets/src/ @EkaEva
+/theme/Yneko-Reimu/assets/dist/ @EkaEva
+
+# Release, CI, package, and contract tooling.
+/.github/ @EkaEva
+/tools/ @EkaEva
+/package.json @EkaEva
+/package-lock.json @EkaEva
+/composer.json @EkaEva
+/composer.lock @EkaEva
+/phpcs.xml.dist @EkaEva
