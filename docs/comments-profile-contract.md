@@ -135,6 +135,12 @@ The comments/profile front-end runtime stays in the main classic `assets/dist/re
 
 A future lazy `assets/dist/reimu-comments.js` or `assets/dist/reimu-profile.js` should start only after a local WordPress QA pass is available for the checklist below. The first safe step should be source-only extraction of pure helpers and request-free binders while keeping the public built runtime behavior unchanged; moving AJAX flows into a separate classic runtime should be treated as a separate high-risk release task.
 
+## v0.2.9 Source Runtime Boundary
+
+The first safe JavaScript step is now complete at the source level: `assets/src/reimu/comments-profile.js` owns the comments/profile orchestration while still building into the public classic `assets/dist/reimu.js` bundle. This is not a public runtime split and does not add a new script handle, AJAX action, nonce, config key, request field, DOM anchor, or response shape.
+
+The main `assets/src/reimu.js` entrypoint keeps `window.ReimuWP.init()`, PJAX config replay, modal-state restoration, and the classic script output. The comments/profile module reads the current mutable config through `getConfig()` so PJAX `window.REIMU_CONFIG` replacement continues to reach login, profile, upload, and comment handlers.
+
 ## Manual QA Checklist
 
 Run this checklist on a local WordPress site when changing comments/profile request handlers, runtime boundaries, DOM replacement, or PJAX rebind behavior.

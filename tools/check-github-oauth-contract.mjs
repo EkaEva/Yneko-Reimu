@@ -29,6 +29,7 @@ const settingsSchemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
 ];
 const reimuSourcePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu.js');
+const commentsRuntimePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu/comments-profile.js');
 
 const [
   githubEntry,
@@ -41,7 +42,8 @@ const [
   githubLogin2fa,
   settingsPage,
   settingsPanelsEntry,
-  reimuSource,
+  reimuEntrySource,
+  commentsRuntimeSource,
   ...settingsModules
 ] = await Promise.all([
   readFile(githubPath, 'utf8'),
@@ -55,6 +57,7 @@ const [
   readFile(settingsPagePath, 'utf8'),
   readFile(settingsPanelsPath, 'utf8'),
   readFile(reimuSourcePath, 'utf8'),
+  readFile(commentsRuntimePath, 'utf8'),
   ...settingsPanelModulePaths.map((path) => readFile(path, 'utf8')),
   ...settingsSchemaPaths.map((path) => readFile(path, 'utf8'))
 ]);
@@ -63,6 +66,7 @@ const settingsPanelModules = settingsModules.slice(0, settingsPanelModulePaths.l
 const settingsSchemaModules = settingsModules.slice(settingsPanelModulePaths.length);
 const settingsPanels = [settingsPanelsEntry, ...settingsPanelModules].join('\n');
 const settingsSchema = settingsSchemaModules.join('\n');
+const reimuSource = `${reimuEntrySource}\n${commentsRuntimeSource}`;
 
 const github = [
   githubEntry,

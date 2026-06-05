@@ -15,6 +15,9 @@ const enqueuePaths = [
 ];
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
+const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
+const commentsRuntime = await readFile(resolve(themeRoot, 'assets/src/reimu/comments-profile.js'), 'utf8');
+
 const files = {
   enqueue: enqueueSource,
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
@@ -36,7 +39,9 @@ const files = {
   profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
   mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
   rendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
-  frontend: await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8'),
+  frontend: `${frontendEntry}\n${commentsRuntime}`,
+  frontendEntry,
+  commentsRuntime,
   commentMedia: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-media.js'), 'utf8'),
   commentTools: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-tools.js'), 'utf8'),
   commentList: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-list.js'), 'utf8'),
@@ -66,11 +71,12 @@ function requirePair(label, left, right, haystack = source) {
 }
 
 for (const moduleImport of [
-  "import { createCommentList } from './reimu/comment-list.js';",
-  "import { createCommentMedia } from './reimu/comment-media.js';",
-  "import { createCommentTools } from './reimu/comment-tools.js';",
-  "import { createProfileFormUi } from './reimu/profile-form.js';",
-  "import { createProfileStatusUi } from './reimu/profile-status.js';"
+  "import { createCommentsProfileRuntime } from './reimu/comments-profile.js';",
+  "import { createCommentList } from './comment-list.js';",
+  "import { createCommentMedia } from './comment-media.js';",
+  "import { createCommentTools } from './comment-tools.js';",
+  "import { createProfileFormUi } from './profile-form.js';",
+  "import { createProfileStatusUi } from './profile-status.js';"
 ]) {
   requireSnippet('source module boundary', moduleImport, files.frontend);
 }

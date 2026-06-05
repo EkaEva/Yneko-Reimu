@@ -15,8 +15,13 @@ const enqueuePaths = [
 ];
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
+const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
+const commentsRuntime = await readFile(resolve(themeRoot, 'assets/src/reimu/comments-profile.js'), 'utf8');
+
 const files = {
-  frontend: await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8'),
+  frontend: `${frontendEntry}\n${commentsRuntime}`,
+  frontendEntry,
+  commentsRuntime,
   searchEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-search.js'), 'utf8'),
   searchModule: await readFile(resolve(themeRoot, 'assets/src/reimu/search.js'), 'utf8'),
   shareEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-share.js'), 'utf8'),
