@@ -80,5 +80,7 @@ If a check cannot run locally, explain why in the PR.
 
 - Security updates have priority.
 - Major npm, Composer, or GitHub Actions upgrades should be separate PRs.
-- Do not run forced audit fixes or broad dependency updates without explaining the risk and compatibility impact.
+- Do not run `npm audit fix --force` or broad dependency updates without explaining the risk and compatibility impact.
+- Keep Dependabot PRs focused on dependency changes plus any lockfile or compatibility adjustments required by CI.
+- Do not mix dependency upgrades with feature work, refactors, release prep, or generated package archives.
 - Keep `npm audit --audit-level=moderate` passing.
