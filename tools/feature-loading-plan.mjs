@@ -22,12 +22,12 @@ export const featureLoadingPlan = [
   {
     feature: 'comments-profile',
     owner: 'assets/src/reimu.js',
-    status: 'candidate',
+    status: 'deferred',
     currentLoading: 'main-bundle',
     targetLoading: 'page-context',
     trigger: '#comments, #respond, #reimu-profile-modal, or [data-reimu-profile-open]',
     gate: 'window.REIMU_CONFIG.login and window.REIMU_CONFIG.comments',
-    notes: 'Preserve existing AJAX actions, nonces, payloads, and window.ReimuWP rebind behavior.'
+    notes: 'Deferred for v0.2.8 because login/profile/comment runtime code shares mutable config, PJAX modal-state restoration, login-state DOM replacement, GitHub popup recovery, comment reply movement, and review polling. Attempt only with dedicated WordPress manual QA.'
   },
   {
     feature: 'aplayer',

@@ -129,6 +129,12 @@ These require a dedicated manual QA pass before and after the change:
 - Changing how login-state DOM is replaced or rebound.
 - Changing profile payload structure, comment item markup, upload review state, or polling behavior.
 
+## v0.2.8 Runtime Split Decision
+
+The comments/profile front-end runtime stays in the main classic `assets/dist/reimu.js` bundle for v0.2.8. The PHP high-risk modules are split, the CSS is already separated into `assets/dist/reimu-comments.css`, and the static contract gates are in place; the remaining JavaScript split is deferred because the current runtime shares mutable `window.REIMU_CONFIG` state with PJAX config replay, login/profile modal state restoration, login-state DOM replacement, GitHub popup recovery, reply-form movement, comment upload/discard cleanup, and profile review-status polling.
+
+A future lazy `assets/dist/reimu-comments.js` or `assets/dist/reimu-profile.js` should start only after a local WordPress QA pass is available for the checklist below. The first safe step should be source-only extraction of pure helpers and request-free binders while keeping the public built runtime behavior unchanged; moving AJAX flows into a separate classic runtime should be treated as a separate high-risk release task.
+
 ## Manual QA Checklist
 
 Run this checklist on a local WordPress site when changing comments/profile request handlers, runtime boundaries, DOM replacement, or PJAX rebind behavior.
