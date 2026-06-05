@@ -413,7 +413,7 @@ msgstr "Copied (*^▽^*)"
 msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr "Copy failed (ﾟ⊿ﾟ)ﾂ"
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "该评论标签为系统保留或屏蔽标签，请换一个。"
 msgstr ""
 
@@ -429,7 +429,7 @@ msgstr "This code expires in %2$d minutes. If this was not you, please ignore th
 msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请立即检查账号安全。"
 msgstr "This code expires in %2$d minutes. If this was not you, please check your account security immediately."
 
-#: inc/comments/auth.php inc/comments/profile.php
+#: inc/comments/auth.php inc/comments/profile-save.php inc/comments/profile.php
 msgid "该邮箱已被注册。"
 msgstr "This email is already registered."
 
@@ -441,15 +441,15 @@ msgstr "Website"
 msgid "个人资料"
 msgstr "Profile"
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "个人资料已保存，评论标签审核中。"
 msgstr "Profile saved. Comment badges are pending review."
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "个人资料已保存，头像审核中。"
 msgstr "Profile saved. Avatar is pending review."
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "个人资料已保存。"
 msgstr "Profile saved."
 
@@ -609,7 +609,7 @@ msgstr "Remember me"
 msgid "加载更多..."
 msgstr "Load more..."
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/helpers.php
 msgid "仅支持 JPG、PNG、WebP 和 GIF。"
 msgstr "Only JPG, PNG, WebP, and GIF are supported."
 
@@ -673,7 +673,7 @@ msgstr "Two-factor code"
 msgid "两步验证码不正确。"
 msgstr "The two-factor code is incorrect."
 
-#: inc/comments/profile.php inc/enqueue.php
+#: inc/comments/profile-save.php inc/enqueue.php
 msgid "两次输入的密码不一致。"
 msgstr "The two passwords do not match."
 
@@ -689,7 +689,7 @@ msgstr "Password"
 msgid "密码已重置，请返回登录。"
 msgstr "Password reset. Please return to login."
 
-#: inc/comments/auth.php inc/comments/profile.php
+#: inc/comments/auth.php inc/comments/profile-save.php
 msgid "密码至少需要 8 个字符。"
 msgstr "Password must be at least 8 characters."
 
@@ -769,7 +769,7 @@ msgstr "Comments"
 msgid "评论 GIF 上传已关闭。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/admin.php
 msgid "评论 GIF：%s"
 msgstr ""
 
@@ -777,7 +777,7 @@ msgstr ""
 msgid "评论标签"
 msgstr ""
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "评论标签最多 8 个字符。"
 msgstr ""
 
@@ -909,7 +909,7 @@ msgstr ""
 msgid "请稍后再来或联系管理员处理。"
 msgstr "Please come back later or contact the administrator."
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "请输入 1 到 50 个字符的昵称。"
 msgstr "Please enter a nickname between 1 and 50 characters."
 
@@ -933,7 +933,7 @@ msgstr "Please enter your email and password."
 msgid "请输入有效的昵称。"
 msgstr "Please enter a valid nickname."
 
-#: inc/comments/auth.php inc/comments/profile.php
+#: inc/comments/auth.php inc/comments/profile-save.php inc/comments/profile.php
 msgid "请输入有效的邮箱地址。"
 msgstr "Please enter a valid email address."
 
@@ -949,7 +949,7 @@ msgstr "Please log in first."
 msgid "请先开启二次认证。"
 msgstr ""
 
-#: inc/comments/profile.php inc/settings/admin.php
+#: inc/comments/profile-save.php inc/settings/admin.php
 msgid "请先生成认证器密钥。"
 msgstr "Please generate an authenticator key first."
 
@@ -957,7 +957,7 @@ msgstr "Please generate an authenticator key first."
 msgid "请先选择文件。"
 msgstr "Please choose a file first."
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/admin.php inc/comments/uploads/helpers.php
 msgid "请选择 GIF 文件。"
 msgstr "Please choose a GIF file."
 
@@ -993,7 +993,7 @@ msgstr "Cancel"
 msgid "取消回复"
 msgstr "Cancel reply"
 
-#: inc/comments/uploads.php inc/comments.php inc/security-auth-mail.php inc/settings/admin.php
+#: inc/comments/uploads/admin.php inc/comments/uploads.php inc/comments.php inc/security-auth-mail.php inc/settings/admin.php
 msgid "权限不足。"
 msgstr "Insufficient permissions."
 
@@ -1009,7 +1009,7 @@ msgstr "Confirm new password"
 msgid "认证器验证码"
 msgstr "Authenticator code"
 
-#: inc/comments/profile.php inc/settings/admin.php
+#: inc/comments/profile-save.php inc/settings/admin.php
 msgid "认证器验证码不正确。"
 msgstr "The authenticator code is incorrect."
 
@@ -1041,7 +1041,7 @@ msgstr ""
 msgid "上传"
 msgstr "Upload"
 
-#: inc/comments/uploads.php inc/enqueue.php
+#: inc/comments/uploads/helpers.php inc/comments/uploads.php inc/enqueue.php
 msgid "上传失败。"
 msgstr "Upload failed."
 
@@ -1165,7 +1165,7 @@ msgstr "Search posts..."
 msgid "特殊标签"
 msgstr ""
 
-#: inc/comments/profile.php inc/enqueue.php
+#: inc/comments/profile-save.php inc/enqueue.php
 msgid "特殊标签和已勾选的自定义标签合计最多 2 个。"
 msgstr ""
 
@@ -1241,7 +1241,7 @@ msgstr ""
 msgid "图片待审核"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/helpers.php
 msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
 msgstr "Image upload does not support GIFs. Please use the GIF button."
 
@@ -1297,7 +1297,7 @@ msgstr ""
 msgid "未知用户"
 msgstr "Unknown user"
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/helpers.php
 msgid "文件大小超出限制。"
 msgstr "File size exceeds the limit."
 
@@ -1361,7 +1361,7 @@ msgstr "Keep improving"
 msgid "无效的 SVG 文件。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/admin.php inc/comments/uploads.php
 msgid "无效的评论上传附件。"
 msgstr "Invalid comment upload attachment."
 
@@ -1653,7 +1653,7 @@ msgstr "Email"
 msgid "邮箱验证码"
 msgstr "Email verification code"
 
-#: inc/comments/profile.php
+#: inc/comments/profile-save.php
 msgid "邮箱验证码不正确或已失效。"
 msgstr "The email code is incorrect or has expired."
 
@@ -1917,7 +1917,7 @@ msgstr ""
 msgid "GIF 上传失败。"
 msgstr ""
 
-#: inc/comments/uploads.php
+#: inc/comments/uploads/admin.php
 msgid "GIF 已加入表情库。"
 msgstr ""
 

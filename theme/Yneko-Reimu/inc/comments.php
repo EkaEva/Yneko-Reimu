@@ -4,8 +4,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once YNEKO_REIMU_DIR . '/inc/comments/uploads.php';
+require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/helpers.php';
+require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/modals.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/auth.php';
+require_once YNEKO_REIMU_DIR . '/inc/comments/profile-save.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/profile.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/mutations.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/rendering.php';

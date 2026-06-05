@@ -303,174 +303,50 @@ function yneko_reimu_ajax_profile_save() {
 
 	$user_id      = get_current_user_id();
 	$user         = wp_get_current_user();
-	$display_name = isset( $_POST['display_name'] ) ? sanitize_text_field( wp_unslash( $_POST['display_name'] ) ) : '';
-	$profile_url  = isset( $_POST['profile_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['profile_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$avatar_url   = isset( $_POST['avatar_url'] ) ? yneko_reimu_normalize_user_url( wp_unslash( $_POST['avatar_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$avatar_changed = ! empty( $_POST['avatar_changed'] );
-	$new_email_input = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
-	$new_email    = $new_email_input ? $new_email_input : $user->user_email;
-	$email_code   = isset( $_POST['email_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['email_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$new_password = isset( $_POST['new_password'] ) ? (string) wp_unslash( $_POST['new_password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be set raw.
-	$new_password_confirm = isset( $_POST['new_password_confirm'] ) ? (string) wp_unslash( $_POST['new_password_confirm'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must be compared raw.
-	$avatar_frame_enabled = ! empty( $_POST['avatar_frame_enabled'] );
-	$totp_enabled = ! empty( $_POST['totp_enabled'] );
-	$totp_code    = isset( $_POST['totp_code'] ) ? preg_replace( '/\D+/', '', (string) wp_unslash( $_POST['totp_code'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$tag_labels   = isset( $_POST['comment_tag_label'] ) && is_array( $_POST['comment_tag_label'] ) ? wp_unslash( $_POST['comment_tag_label'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$tag_colors   = isset( $_POST['comment_tag_color'] ) && is_array( $_POST['comment_tag_color'] ) ? wp_unslash( $_POST['comment_tag_color'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$tag_ids      = isset( $_POST['comment_tag_id'] ) && is_array( $_POST['comment_tag_id'] ) ? wp_unslash( $_POST['comment_tag_id'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$tag_enabled_input = isset( $_POST['comment_tag_enabled'] ) && is_array( $_POST['comment_tag_enabled'] ) ? wp_unslash( $_POST['comment_tag_enabled'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$special_enabled_input = isset( $_POST['comment_special_enabled'] ) && is_array( $_POST['comment_special_enabled'] ) ? wp_unslash( $_POST['comment_special_enabled'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-
-	if ( '' === $display_name || mb_strlen( $display_name ) > 50 ) {
-		wp_send_json_error( array( 'message' => esc_html__( '请输入 1 到 50 个字符的昵称。', 'yneko-reimu' ) ), 400 );
+	$request      = yneko_reimu_profile_save_request( $user );
+	$basic_check  = yneko_reimu_profile_save_validate_basics( $request );
+	if ( is_wp_error( $basic_check ) ) {
+		wp_send_json_error( array( 'message' => $basic_check->get_error_message() ), 400 );
 	}
-	if ( '' === $new_email || ! is_email( $new_email ) ) {
-		wp_send_json_error( array( 'message' => esc_html__( '请输入有效的邮箱地址。', 'yneko-reimu' ) ), 400 );
-	}
-
-	$comment_tags = array();
-	$hidden_special_badges = array();
-	$avatar_pending = false;
-	$tags_pending = false;
-	$special_badges = yneko_reimu_comment_user_special_badges( $user_id );
-	foreach ( $special_badges as $index => $special_badge ) {
-		$type = sanitize_key( $special_badge['type'] ?? '' );
-		if ( ! $type ) {
-			continue;
-		}
-		$enabled = ! empty( $special_enabled_input[ $type ] );
-		if ( ! $enabled ) {
-			$hidden_special_badges[] = $type;
-		}
-	}
-	$special_counts = max( 0, count( $special_badges ) - count( $hidden_special_badges ) );
-	$display_limit   = yneko_reimu_comment_badge_display_limit();
-	if ( $special_counts > $display_limit ) {
+	$prepared_tags = yneko_reimu_profile_save_prepare_tags( $user_id, $request );
+	if ( is_wp_error( $prepared_tags ) ) {
 		wp_send_json_error(
-			array(
-				'message' => esc_html__( '特殊标签和已勾选的自定义标签合计最多 2 个。', 'yneko-reimu' ),
-				'field'   => 'comment_tag_label',
+			array_merge(
+				array( 'message' => $prepared_tags->get_error_message() ),
+				(array) $prepared_tags->get_error_data()
 			),
 			400
 		);
 	}
-	$custom_capacity = yneko_reimu_comment_badges_enabled() ? max( 0, $display_limit - $special_counts ) : 0;
-	$enabled_custom_count = 0;
-	if ( yneko_reimu_comment_badges_enabled() ) {
-		foreach ( $tag_labels as $index => $raw_label ) {
-			if ( count( $comment_tags ) >= yneko_reimu_comment_custom_tag_storage_limit() ) {
-				break;
-			}
-			$raw_label = isset( $tag_labels[ $index ] ) ? (string) $tag_labels[ $index ] : '';
-			$label     = yneko_reimu_sanitize_comment_tag_label( $raw_label );
-			if ( '' === $label ) {
-				continue;
-			}
-			if ( mb_strlen( trim( wp_strip_all_tags( $raw_label ) ) ) > 8 ) {
-				wp_send_json_error( array( 'message' => esc_html__( '评论标签最多 8 个字符。', 'yneko-reimu' ) ), 400 );
-			}
-			if ( yneko_reimu_comment_tag_label_is_reserved( $label ) ) {
-				wp_send_json_error(
-					array(
-						'message' => esc_html__( '该评论标签为系统保留或屏蔽标签，请换一个。', 'yneko-reimu' ),
-						'field'   => 'comment_tag_label',
-						'value'   => $label,
-						'index'   => absint( $index ),
-					),
-					400
-				);
-			}
-			$color = sanitize_hex_color( $tag_colors[ $index ] ?? '' );
-			$enabled = ! empty( $tag_enabled_input[ $index ] ) && $enabled_custom_count < $custom_capacity;
-			if ( ! empty( $tag_enabled_input[ $index ] ) && ! $enabled ) {
-				wp_send_json_error(
-					array(
-						'message' => esc_html__( '特殊标签和已勾选的自定义标签合计最多 2 个。', 'yneko-reimu' ),
-						'field'   => 'comment_tag_label',
-						'index'   => absint( $index ),
-					),
-					400
-				);
-			}
-			if ( $enabled ) {
-				$enabled_custom_count++;
-			}
-			$comment_tags[] = array(
-				'id'      => yneko_reimu_comment_tag_id( $tag_ids[ $index ] ?? '' ),
-				'label'   => $label,
-				'color'   => $color ? $color : '#ff5252',
-				'enabled' => $enabled ? '1' : '0',
-			);
-		}
-	}
+	$comment_tags          = $prepared_tags['comment_tags'];
+	$hidden_special_badges = $prepared_tags['hidden_special_badges'];
 
 	$update = array(
 		'ID'           => $user_id,
-		'display_name' => $display_name,
-		'nickname'     => $display_name,
-		'user_url'     => $profile_url,
+		'display_name' => $request['display_name'],
+		'nickname'     => $request['display_name'],
+		'user_url'     => $request['profile_url'],
 	);
 
-	if ( strtolower( $new_email ) !== strtolower( $user->user_email ) ) {
-		if ( email_exists( $new_email ) ) {
-			wp_send_json_error( array( 'message' => esc_html__( '该邮箱已被注册。', 'yneko-reimu' ) ), 400 );
-		}
-		$code_key = yneko_reimu_auth_code_transient_key( 'profile_email', (string) $user_id, $new_email );
-		$code_data = get_transient( $code_key );
-		if ( ! is_array( $code_data ) || empty( $code_data['code_hash'] ) || ! wp_check_password( $email_code, $code_data['code_hash'] ) ) {
-			wp_send_json_error( array( 'message' => esc_html__( '邮箱验证码不正确或已失效。', 'yneko-reimu' ) ), 400 );
-		}
-		$update['user_email'] = $new_email;
-		delete_transient( $code_key );
+	$update = yneko_reimu_profile_save_apply_email( $update, $user_id, $user->user_email, $request['new_email'], $request['email_code'] );
+	if ( is_wp_error( $update ) ) {
+		wp_send_json_error( array( 'message' => $update->get_error_message() ), 400 );
 	}
 
-	if ( '' !== $new_password || '' !== $new_password_confirm ) {
-		if ( $new_password !== $new_password_confirm ) {
-			wp_send_json_error( array( 'message' => esc_html__( '两次输入的密码不一致。', 'yneko-reimu' ) ), 400 );
-		}
-		if ( strlen( $new_password ) < 8 ) {
-			wp_send_json_error( array( 'message' => esc_html__( '密码至少需要 8 个字符。', 'yneko-reimu' ) ), 400 );
-		}
+	$password_check = yneko_reimu_profile_save_validate_password( $request['new_password'], $request['new_password_confirm'] );
+	if ( is_wp_error( $password_check ) ) {
+		wp_send_json_error( array( 'message' => $password_check->get_error_message() ), 400 );
 	}
 
-	if ( isset( $_FILES['avatar_file'] ) && ! empty( $_FILES['avatar_file']['name'] ) ) {
-		$avatar_changed = true;
-		$avatar_result = yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		if ( is_wp_error( $avatar_result ) ) {
-			wp_send_json_error( array( 'message' => $avatar_result->get_error_message() ), 400 );
-		}
-		$avatar_url     = $avatar_result['url'];
-		$avatar_pending = ! empty( $avatar_result['pending'] );
+	$avatar_state = yneko_reimu_profile_save_handle_avatar_file( $user_id, $request );
+	if ( is_wp_error( $avatar_state ) ) {
+		wp_send_json_error( array( 'message' => $avatar_state->get_error_message() ), 400 );
 	}
+	yneko_reimu_profile_save_apply_avatar( $user_id, $avatar_state );
 
-	if ( $avatar_changed ) {
-		if ( $avatar_url && ! $avatar_pending ) {
-			update_user_meta( $user_id, '_yneko_reimu_avatar_url', $avatar_url );
-			delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
-			yneko_reimu_set_user_review_status( $user_id, 'avatar', 'updated' );
-		} elseif ( ! $avatar_url && ! $avatar_pending ) {
-			delete_user_meta( $user_id, '_yneko_reimu_avatar_url' );
-			delete_user_meta( $user_id, '_yneko_reimu_avatar_pending_url' );
-			yneko_reimu_clear_user_review_status( $user_id, 'avatar' );
-		}
-	}
-
-	if ( $totp_enabled ) {
-		$current_secret = yneko_reimu_user_2fa_secret( $user_id );
-		$pending_secret = (string) get_user_meta( $user_id, '_yneko_reimu_totp_pending_secret', true );
-		$secret = $current_secret ? $current_secret : $pending_secret;
-		if ( '' === $secret ) {
-			wp_send_json_error( array( 'message' => esc_html__( '请先生成认证器密钥。', 'yneko-reimu' ) ), 400 );
-		}
-		if ( ! yneko_reimu_totp_verify( $secret, $totp_code ) ) {
-			wp_send_json_error( array( 'message' => esc_html__( '认证器验证码不正确。', 'yneko-reimu' ) ), 400 );
-		}
-		update_user_meta( $user_id, '_yneko_reimu_totp_secret', $secret );
-		update_user_meta( $user_id, '_yneko_reimu_totp_enabled', '1' );
-		delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
-	} else {
-		delete_user_meta( $user_id, '_yneko_reimu_totp_enabled' );
-		delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
+	$totp_result = yneko_reimu_profile_save_apply_totp( $user_id, $request['totp_enabled'], $request['totp_code'] );
+	if ( is_wp_error( $totp_result ) ) {
+		wp_send_json_error( array( 'message' => $totp_result->get_error_message() ), 400 );
 	}
 
 	$result = wp_update_user( $update );
@@ -478,45 +354,20 @@ function yneko_reimu_ajax_profile_save() {
 		wp_send_json_error( array( 'message' => $result->get_error_message() ), 400 );
 	}
 	update_user_meta( $user_id, '_yneko_reimu_profile_url_touched', '1' );
-	if ( $avatar_frame_enabled ) {
+	if ( $request['avatar_frame_enabled'] ) {
 		delete_user_meta( $user_id, '_yneko_reimu_avatar_frame_enabled' );
 	} else {
 		update_user_meta( $user_id, '_yneko_reimu_avatar_frame_enabled', '0' );
 	}
-	if ( $comment_tags ) {
-		if ( yneko_reimu_comment_tag_review_enabled() && ! yneko_reimu_comment_user_can_bypass_tag_review( $user_id ) ) {
-			$reviewed = yneko_reimu_comment_prepare_reviewed_tags( yneko_reimu_comment_user_custom_tags( $user_id ), $comment_tags );
-			if ( $reviewed['active'] ) {
-				update_user_meta( $user_id, '_yneko_reimu_comment_tags', $reviewed['active'] );
-			} else {
-				delete_user_meta( $user_id, '_yneko_reimu_comment_tags' );
-			}
-			if ( $reviewed['pending'] ) {
-				update_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', $reviewed['pending'] );
-				yneko_reimu_set_user_review_status( $user_id, 'tags', 'pending' );
-				$tags_pending = true;
-			} else {
-				delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
-				yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
-			}
-		} else {
-			update_user_meta( $user_id, '_yneko_reimu_comment_tags', $comment_tags );
-			delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
-			yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
-		}
-	} else {
-		delete_user_meta( $user_id, '_yneko_reimu_comment_tags' );
-		delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
-		yneko_reimu_clear_user_review_status( $user_id, 'tags' );
-	}
+	$tags_pending = yneko_reimu_profile_save_apply_comment_tags( $user_id, $comment_tags );
 	if ( $hidden_special_badges ) {
 		update_user_meta( $user_id, '_yneko_reimu_comment_hidden_special_badges', $hidden_special_badges );
 	} else {
 		delete_user_meta( $user_id, '_yneko_reimu_comment_hidden_special_badges' );
 	}
 	update_user_meta( $user_id, '_yneko_reimu_comment_special_badges_touched', '1' );
-	if ( '' !== $new_password ) {
-		wp_set_password( $new_password, $user_id );
+	if ( '' !== $request['new_password'] ) {
+		wp_set_password( $request['new_password'], $user_id );
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true, is_ssl() );
 	}
@@ -525,7 +376,7 @@ function yneko_reimu_ajax_profile_save() {
 		array_merge(
 			yneko_reimu_user_profile_payload( $user_id ),
 			array(
-				'message' => $avatar_pending ? esc_html__( '个人资料已保存，头像审核中。', 'yneko-reimu' ) : ( yneko_reimu_comment_tag_review_enabled() && ! yneko_reimu_comment_user_can_bypass_tag_review( $user_id ) && $comment_tags ? esc_html__( '个人资料已保存，评论标签审核中。', 'yneko-reimu' ) : esc_html__( '个人资料已保存。', 'yneko-reimu' ) ),
+				'message' => yneko_reimu_profile_save_message( ! empty( $avatar_state['avatar_pending'] ), $comment_tags ),
 				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
 				'logoutNonce' => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
 				'identity' => yneko_reimu_comment_current_user_identity_html( $redirect ),

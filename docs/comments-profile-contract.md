@@ -13,9 +13,12 @@ The comments/profile runtime covers:
 
 The PHP entrypoint remains `inc/comments.php`. Internal comments/profile modules live under `inc/comments/`:
 
-- `uploads.php` owns comment media upload/review helpers.
+- `uploads.php` owns front-end comment media upload, discard, promotion, cleanup, duplicate/media-count checks, and upload-library query helpers.
+- `uploads/helpers.php` owns shared upload validation, cleanup-token, request-file, and attachment-registration helpers.
+- `uploads/admin.php` owns administrator GIF-library uploads, Media Library upload filtering, and comment upload review actions.
 - `modals.php` owns request-free login/profile modal rendering.
 - `auth.php` owns login-state, login, logout, registration, and lost-password AJAX handlers plus adjacent auth helpers.
+- `profile-save.php` owns internal profile-save input parsing, validation, avatar, tag, email, password, and TOTP helper steps.
 - `profile.php` owns profile payload, profile fetch/save/status/email/TOTP/avatar AJAX handlers, and adjacent TOTP/profile helpers.
 - `mutations.php` owns comment like, submit, edit, delete, visible-comment helpers, and comment review-status sync hooks.
 - `rendering.php` owns comment form helpers, current-user identity HTML, comment avatar/author/Markdown rendering, UA/IP badges, the `wp_list_comments()` callback, and external comment panel output.

@@ -438,25 +438,11 @@ function yneko_reimu_ajax_comment_upload() {
 	}
 
 	$file = $_FILES['file']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$size = absint( $file['size'] ?? 0 );
-	$limits = yneko_reimu_comment_upload_limits();
-	if ( $size <= 0 || $size > $limits[ $type ] ) {
-		wp_send_json_error( array( 'message' => __( '文件大小超出限制。', 'yneko-reimu' ) ), 400 );
+	$validation = yneko_reimu_comment_upload_validate_file( $file, $type );
+	if ( is_wp_error( $validation ) ) {
+		wp_send_json_error( array( 'message' => $validation->get_error_message() ), 400 );
 	}
-
-	$check = wp_check_filetype_and_ext( $file['tmp_name'] ?? '', $file['name'] ?? '', yneko_reimu_comment_upload_allowed_mimes() );
-	$mime  = $check['type'] ?? '';
-	if ( ! $mime || ! in_array( $mime, yneko_reimu_comment_upload_allowed_mimes(), true ) ) {
-		wp_send_json_error( array( 'message' => __( '仅支持 JPG、PNG、WebP 和 GIF。', 'yneko-reimu' ) ), 400 );
-	}
-
-	if ( 'gif' === $type && 'image/gif' !== $mime ) {
-		wp_send_json_error( array( 'message' => __( '请选择 GIF 文件。', 'yneko-reimu' ) ), 400 );
-	}
-
-	if ( 'image' === $type && 'image/gif' === $mime ) {
-		wp_send_json_error( array( 'message' => __( '图片上传不支持 GIF，请使用 GIF 按钮。', 'yneko-reimu' ) ), 400 );
-	}
+	$mime = $validation['mime'];
 
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 
@@ -481,33 +467,11 @@ function yneko_reimu_ajax_comment_upload() {
 	$cleanup_key   = wp_generate_password( 24, false, false );
 	$attachment_id = 0;
 	if ( ! $needs_review ) {
-		require_once ABSPATH . 'wp-admin/includes/media.php';
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		$attachment = array(
-			'post_mime_type' => $mime,
-			'post_title'     => sanitize_file_name( wp_basename( $upload['file'] ) ),
-			'post_status'    => 'inherit',
-		);
-		$attachment_id = wp_insert_attachment( $attachment, $upload['file'] );
-		if ( $attachment_id ) {
-			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
-			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
-			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', $is_gif ? 'gif' : 'image' );
-			yneko_reimu_comment_set_upload_status( $attachment_id, 'approved' );
-			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', get_current_user_id() );
-			update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_cleanup_key', $cleanup_key );
-		}
+		$attachment_id = yneko_reimu_comment_upload_register_attachment( $upload['file'], $mime, $is_gif ? 'gif' : 'image', $cleanup_key, get_current_user_id() );
 	}
 
 	if ( $needs_review ) {
-		set_transient(
-			'yneko_reimu_comment_upload_cleanup_' . md5( esc_url_raw( $upload['url'] ) ),
-			array(
-				'key'  => $cleanup_key,
-				'user' => get_current_user_id(),
-			),
-			DAY_IN_SECONDS
-		);
+		yneko_reimu_comment_upload_store_cleanup_token( $upload['url'], $cleanup_key, get_current_user_id() );
 	}
 
 	wp_send_json_success(
@@ -560,7 +524,7 @@ function yneko_reimu_ajax_comment_upload_discard() {
 		wp_send_json_error( array( 'message' => __( '无效的评论上传附件。', 'yneko-reimu' ) ), 400 );
 	}
 
-	$cleanup = get_transient( 'yneko_reimu_comment_upload_cleanup_' . md5( $url ) );
+	$cleanup = get_transient( yneko_reimu_comment_upload_cleanup_transient_key( $url ) );
 	if ( ! is_array( $cleanup ) || $cleanup_key !== (string) ( $cleanup['key'] ?? '' ) || absint( $cleanup['user'] ?? 0 ) !== get_current_user_id() ) {
 		wp_send_json_error( array( 'message' => __( '无效的评论上传附件。', 'yneko-reimu' ) ), 400 );
 	}
@@ -569,7 +533,7 @@ function yneko_reimu_ajax_comment_upload_discard() {
 	if ( $path && file_exists( $path ) ) {
 		wp_delete_file( $path );
 	}
-	delete_transient( 'yneko_reimu_comment_upload_cleanup_' . md5( $url ) );
+	delete_transient( yneko_reimu_comment_upload_cleanup_transient_key( $url ) );
 	wp_send_json_success();
 }
 add_action( 'wp_ajax_yneko_reimu_comment_upload_discard', 'yneko_reimu_ajax_comment_upload_discard' );
@@ -625,9 +589,9 @@ function yneko_reimu_comment_promote_upload_url( $url, $comment_id, $status = 'p
 		return '';
 	}
 
-	$is_gif = 'image/gif' === get_post_mime_type( $attachment_id );
 	$comment = get_comment( $comment_id );
 	$user_id = $comment ? absint( $comment->user_id ) : 0;
+	$is_gif  = 'image/gif' === get_post_mime_type( $attachment_id );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
 	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', $is_gif ? 'gif' : 'image' );
 	yneko_reimu_comment_set_upload_status( $attachment_id, in_array( $status, array( 'pending', 'approved' ), true ) ? $status : 'pending' );
@@ -891,303 +855,3 @@ function yneko_reimu_approve_public_gif_only_comment( $approved, $commentdata ) 
 	return $approved;
 }
 add_filter( 'pre_comment_approved', 'yneko_reimu_approve_public_gif_only_comment', 10, 2 );
-
-function yneko_reimu_admin_comment_gif_upload_action() {
-	if ( empty( $_POST['yneko_reimu_admin_comment_gif_upload'] ) ) {
-		return;
-	}
-
-	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( '权限不足。', 'yneko-reimu' ), 403 );
-	}
-
-	check_admin_referer( 'yneko_reimu_admin_comment_gif_upload' );
-
-	if ( empty( $_FILES['yneko_reimu_comment_gif'] ) || ! is_array( $_FILES['yneko_reimu_comment_gif'] ) ) {
-		wp_safe_redirect( add_query_arg( 'yneko_comment_gif_upload', 'empty', wp_get_referer() ? wp_get_referer() : admin_url( 'themes.php?page=yneko-reimu-settings#comments' ) ) );
-		exit;
-	}
-
-	require_once ABSPATH . 'wp-admin/includes/file.php';
-	require_once ABSPATH . 'wp-admin/includes/media.php';
-	require_once ABSPATH . 'wp-admin/includes/image.php';
-
-	$source = $_FILES['yneko_reimu_comment_gif']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$names  = is_array( $source['name'] ?? null ) ? $source['name'] : array( $source['name'] ?? '' );
-	$limits = yneko_reimu_comment_upload_limits();
-	$total  = 0;
-	$done   = 0;
-	$failed = 0;
-
-	add_filter( 'upload_dir', 'yneko_reimu_comment_upload_dir' );
-	foreach ( array_keys( $names ) as $index ) {
-		$file = array(
-			'name'     => is_array( $source['name'] ?? null ) ? ( $source['name'][ $index ] ?? '' ) : ( $source['name'] ?? '' ),
-			'type'     => is_array( $source['type'] ?? null ) ? ( $source['type'][ $index ] ?? '' ) : ( $source['type'] ?? '' ),
-			'tmp_name' => is_array( $source['tmp_name'] ?? null ) ? ( $source['tmp_name'][ $index ] ?? '' ) : ( $source['tmp_name'] ?? '' ),
-			'error'    => is_array( $source['error'] ?? null ) ? ( $source['error'][ $index ] ?? UPLOAD_ERR_NO_FILE ) : ( $source['error'] ?? UPLOAD_ERR_NO_FILE ),
-			'size'     => is_array( $source['size'] ?? null ) ? ( $source['size'][ $index ] ?? 0 ) : ( $source['size'] ?? 0 ),
-		);
-
-		if ( UPLOAD_ERR_NO_FILE === absint( $file['error'] ) ) {
-			continue;
-		}
-
-		++$total;
-		$size  = absint( $file['size'] ?? 0 );
-		$check = wp_check_filetype_and_ext( $file['tmp_name'] ?? '', $file['name'] ?? '', array( 'gif' => 'image/gif' ) );
-		if ( UPLOAD_ERR_OK !== absint( $file['error'] ) || $size <= 0 || $size > $limits['gif'] || 'image/gif' !== ( $check['type'] ?? '' ) ) {
-			++$failed;
-			continue;
-		}
-
-		$_FILES['yneko_reimu_comment_gif_single'] = $file;
-		$attachment_id                           = media_handle_upload(
-			'yneko_reimu_comment_gif_single',
-			0,
-			array(
-				'post_title' => sprintf(
-					/* translators: %s: original file name. */
-					__( '评论 GIF：%s', 'yneko-reimu' ),
-					sanitize_file_name( $file['name'] ?? 'gif' )
-				),
-			),
-			array(
-				'test_form' => false,
-				'mimes'     => array( 'gif' => 'image/gif' ),
-			)
-		);
-
-		if ( is_wp_error( $attachment_id ) ) {
-			++$failed;
-			continue;
-		}
-
-		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
-		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', 'gif' );
-		yneko_reimu_comment_set_upload_status( $attachment_id, 'approved' );
-		update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', get_current_user_id() );
-		++$done;
-	}
-	unset( $_FILES['yneko_reimu_comment_gif_single'] );
-	remove_filter( 'upload_dir', 'yneko_reimu_comment_upload_dir' );
-
-	if ( 0 === $total ) {
-		wp_safe_redirect( add_query_arg( 'yneko_comment_gif_upload', 'empty', wp_get_referer() ? wp_get_referer() : admin_url( 'themes.php?page=yneko-reimu-settings#comments' ) ) );
-		exit;
-	}
-
-	if ( 0 === $done ) {
-		wp_safe_redirect( add_query_arg( 'yneko_comment_gif_upload', $failed ? 'invalid' : 'failed', wp_get_referer() ? wp_get_referer() : admin_url( 'themes.php?page=yneko-reimu-settings#comments' ) ) );
-		exit;
-	}
-
-	$status = $failed ? 'partial' : 'success';
-	wp_safe_redirect(
-		add_query_arg(
-			array(
-				'yneko_comment_gif_upload' => $status,
-				'yneko_comment_gif_count'  => $done,
-			),
-			wp_get_referer() ? wp_get_referer() : admin_url( 'themes.php?page=yneko-reimu-settings#comments' )
-		)
-	);
-	exit;
-}
-add_action( 'admin_init', 'yneko_reimu_admin_comment_gif_upload_action' );
-
-function yneko_reimu_admin_add_gif_from_media() {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_send_json_error( array( 'message' => __( '权限不足。', 'yneko-reimu' ) ), 403 );
-	}
-
-	check_ajax_referer( 'yneko_reimu_admin_add_gif_media', 'nonce' );
-	$attachment_id = isset( $_POST['attachment_id'] ) ? absint( wp_unslash( $_POST['attachment_id'] ) ) : 0;
-	if ( ! $attachment_id || 'image/gif' !== get_post_mime_type( $attachment_id ) ) {
-		wp_send_json_error( array( 'message' => __( '请选择 GIF 文件。', 'yneko-reimu' ) ), 400 );
-	}
-
-	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload', '1' );
-	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_type', 'gif' );
-	yneko_reimu_comment_set_upload_status( $attachment_id, 'approved' );
-	update_post_meta( $attachment_id, '_yneko_reimu_comment_upload_user_id', get_current_user_id() );
-
-	wp_send_json_success( array( 'message' => __( 'GIF 已加入表情库。', 'yneko-reimu' ) ) );
-}
-add_action( 'wp_ajax_yneko_reimu_admin_add_gif_media', 'yneko_reimu_admin_add_gif_from_media' );
-
-function yneko_reimu_hide_comment_uploads_from_media_library( $query ) {
-	if ( ! is_admin() || ! $query instanceof WP_Query || ! $query->is_main_query() ) {
-		return;
-	}
-
-	if ( ! function_exists( 'get_current_screen' ) ) {
-		return;
-	}
-
-	$screen = get_current_screen();
-	if ( ! $screen || 'upload' !== $screen->base ) {
-		return;
-	}
-
-	if ( ! empty( $_GET['yneko_comment_uploads'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$query->set(
-			'meta_query',
-			array(
-				array(
-					'key'   => '_yneko_reimu_comment_upload',
-					'value' => '1',
-				),
-			)
-		);
-		return;
-	}
-
-	$meta_query = (array) $query->get( 'meta_query' );
-	$meta_query[] = array(
-		'key'     => '_yneko_reimu_comment_upload',
-		'compare' => 'NOT EXISTS',
-	);
-	$query->set( 'meta_query', $meta_query );
-}
-add_action( 'pre_get_posts', 'yneko_reimu_hide_comment_uploads_from_media_library' );
-
-function yneko_reimu_comment_upload_admin_action() {
-	$action = isset( $_GET['yneko_comment_upload_action'] ) ? sanitize_key( wp_unslash( $_GET['yneko_comment_upload_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	$raw_action = $action;
-	$id     = isset( $_GET['attachment_id'] ) ? absint( $_GET['attachment_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	$temp   = isset( $_GET['temp_upload'] ) ? rawurldecode( sanitize_text_field( wp_unslash( $_GET['temp_upload'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( ! $action || ( ! $id && ! $temp ) ) {
-		return;
-	}
-
-	if ( 'approve_temp' === $action ) {
-		$action = 'approve';
-	} elseif ( 'delete_temp' === $action ) {
-		$action = 'delete';
-	} elseif ( 'remove' === $action ) {
-		$action = 'revoke';
-	}
-
-	if ( ! in_array( $action, array( 'approve', 'reject', 'revoke', 'delete' ), true ) ) {
-		return;
-	}
-
-	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( '权限不足。', 'yneko-reimu' ), 403 );
-	}
-
-	if ( $temp ) {
-		$nonce_action = yneko_reimu_comment_temp_upload_nonce_action( $action, $temp );
-		if ( in_array( $raw_action, array( 'approve_temp', 'delete_temp' ), true ) ) {
-			$nonce_action = yneko_reimu_comment_temp_upload_nonce_action( $raw_action, $temp );
-		}
-		check_admin_referer( $nonce_action );
-		$relative = $temp;
-		$relative = str_replace( array( '../', '..\\' ), '', $relative );
-		$base     = yneko_reimu_comment_temp_upload_base();
-		$path     = wp_normalize_path( trailingslashit( $base['path'] ) . $relative );
-		$root     = wp_normalize_path( $base['path'] );
-		if ( 0 !== strpos( $path, $root ) || ! is_file( $path ) ) {
-			wp_die( esc_html__( '无效的评论上传附件。', 'yneko-reimu' ), 400 );
-		}
-		$url     = trailingslashit( $base['url'] ) . str_replace( DIRECTORY_SEPARATOR, '/', $relative );
-		$comment = yneko_reimu_comment_find_comment_by_temp_url( $url );
-		if ( 'approve' === $action ) {
-			$promoted = yneko_reimu_comment_promote_upload_url( $url, $comment ? $comment->comment_ID : 0, 'approved' );
-			if ( $promoted && $comment ) {
-				wp_update_comment(
-					array(
-						'comment_ID'      => absint( $comment->comment_ID ),
-						'comment_content' => str_replace( $url, $promoted, $comment->comment_content ),
-					)
-				);
-				delete_comment_meta( $comment->comment_ID, '_yneko_reimu_comment_temp_upload_reviews' );
-				if ( '0' === (string) $comment->comment_approved ) {
-					$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
-					wp_set_comment_status( $comment->comment_ID, 'approve' );
-					unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
-					if ( ! empty( $comment->user_id ) ) {
-						yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'updated', $comment->comment_ID );
-					}
-				} elseif ( ! empty( $comment->user_id ) ) {
-					yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'updated', $comment->comment_ID );
-				}
-			}
-		} elseif ( 'reject' === $action ) {
-			if ( $comment ) {
-				yneko_reimu_comment_set_temp_review_status( $comment->comment_ID, $url, 'rejected' );
-				if ( '1' === (string) $comment->comment_approved ) {
-					$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
-					wp_set_comment_status( $comment->comment_ID, 'hold' );
-					unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
-				}
-				if ( ! empty( $comment->user_id ) ) {
-					yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'rejected', $comment->comment_ID );
-				}
-			}
-		} elseif ( 'delete' === $action ) {
-			wp_delete_file( $path );
-			if ( $comment ) {
-				yneko_reimu_comment_remove_upload_from_comment( $comment->comment_ID, $url );
-				if ( ! empty( $comment->user_id ) ) {
-					yneko_reimu_set_user_review_status( $comment->user_id, 'comments', 'rejected', $comment->comment_ID );
-				}
-			}
-		}
-		wp_safe_redirect( remove_query_arg( array( 'yneko_comment_upload_action', 'attachment_id', 'temp_upload', '_wpnonce' ) ) );
-		exit;
-	}
-
-	check_admin_referer( 'yneko_reimu_comment_upload_' . $action . '_' . $id );
-
-	if ( '1' !== get_post_meta( $id, '_yneko_reimu_comment_upload', true ) ) {
-		wp_die( esc_html__( '无效的评论上传附件。', 'yneko-reimu' ), 400 );
-	}
-
-	$upload_user_id = absint( get_post_meta( $id, '_yneko_reimu_comment_upload_user_id', true ) );
-	$comment_id     = absint( get_post_meta( $id, '_yneko_reimu_comment_upload_comment_id', true ) );
-	if ( 'approve' === $action ) {
-		yneko_reimu_comment_set_upload_status( $id, 'approved' );
-		if ( $comment_id ) {
-			$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
-			wp_set_comment_status( $comment_id, 'approve' );
-			unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
-		}
-	} elseif ( 'revoke' === $action ) {
-		yneko_reimu_comment_set_upload_status( $id, 'revoked' );
-		if ( $comment_id ) {
-			$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
-			wp_set_comment_status( $comment_id, 'hold' );
-			unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
-		}
-		if ( $upload_user_id ) {
-			yneko_reimu_set_user_review_status( $upload_user_id, 'comments', 'pending', $comment_id );
-		}
-	} elseif ( 'reject' === $action ) {
-		yneko_reimu_comment_set_upload_status( $id, 'rejected' );
-		if ( $comment_id ) {
-			$GLOBALS['yneko_reimu_suppress_comment_review_status'] = true;
-			wp_set_comment_status( $comment_id, 'hold' );
-			unset( $GLOBALS['yneko_reimu_suppress_comment_review_status'] );
-		}
-	} elseif ( 'delete' === $action ) {
-		$attachment_url = wp_get_attachment_url( $id );
-		if ( $comment_id && $attachment_url ) {
-			yneko_reimu_comment_remove_upload_from_comment( $comment_id, $attachment_url );
-		} elseif ( $attachment_url ) {
-			$comment = yneko_reimu_comment_find_comment_by_temp_url( $attachment_url );
-			if ( $comment ) {
-				yneko_reimu_comment_remove_upload_from_comment( $comment->comment_ID, $attachment_url );
-			}
-		}
-		wp_delete_attachment( $id, true );
-	}
-	if ( $upload_user_id && in_array( $action, array( 'approve', 'reject', 'delete' ), true ) ) {
-		yneko_reimu_set_user_review_status( $upload_user_id, 'comments', 'approve' === $action ? 'updated' : 'rejected', $comment_id );
-	}
-
-	wp_safe_redirect( remove_query_arg( array( 'yneko_comment_upload_action', 'attachment_id', 'temp_upload', '_wpnonce' ) ) );
-	exit;
-}
-add_action( 'admin_init', 'yneko_reimu_comment_upload_admin_action' );

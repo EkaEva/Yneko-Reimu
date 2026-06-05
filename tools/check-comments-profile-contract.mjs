@@ -9,8 +9,11 @@ const files = {
   enqueue: await readFile(resolve(themeRoot, 'inc/enqueue.php'), 'utf8'),
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   uploads: await readFile(resolve(themeRoot, 'inc/comments/uploads.php'), 'utf8'),
+  uploadHelpers: await readFile(resolve(themeRoot, 'inc/comments/uploads/helpers.php'), 'utf8'),
+  uploadAdmin: await readFile(resolve(themeRoot, 'inc/comments/uploads/admin.php'), 'utf8'),
   modals: await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8'),
   auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),
+  profileSave: await readFile(resolve(themeRoot, 'inc/comments/profile-save.php'), 'utf8'),
   profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
   mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
   rendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
@@ -55,8 +58,11 @@ for (const moduleImport of [
 
 for (const phpModule of [
   "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/helpers.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/modals.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/auth.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile-save.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/profile.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering.php';"
@@ -155,7 +161,7 @@ for (const [action, callback, exposure] of ajaxContracts) {
   const phpSource = phpSourceForAction(action, exposure);
   requireSnippet(`${action} PHP function`, `function ${callback}`, phpSource);
   if (action === 'yneko_reimu_profile_avatar_upload') {
-    requireSnippet(`${action} profile-save file fallback`, "yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file']", files.profile);
+    requireSnippet(`${action} profile-save file fallback`, "yneko_reimu_handle_profile_avatar_upload( $user_id, $_FILES['avatar_file']", files.profileSave);
   } else {
     requireSnippet(`${action} front-end action`, `'${action}'`, source);
   }
@@ -249,6 +255,38 @@ for (const profileSecuritySnippet of [
   "yneko_reimu_auth_security_record_mail_failure( 'profile_email', $new_email, 'ajax' )"
 ]) {
   requireSnippet('auth email security guard in profile handler', profileSecuritySnippet, files.profile);
+}
+
+for (const uploadHelperSnippet of [
+  'function yneko_reimu_comment_upload_cleanup_transient_key',
+  'function yneko_reimu_comment_upload_store_cleanup_token',
+  'function yneko_reimu_comment_upload_validate_file',
+  'function yneko_reimu_comment_upload_register_attachment'
+]) {
+  requireSnippet('comment upload helper contract', uploadHelperSnippet, files.uploadHelpers);
+}
+
+for (const uploadAdminSnippet of [
+  'function yneko_reimu_admin_comment_gif_upload_action',
+  'function yneko_reimu_admin_add_gif_from_media',
+  'function yneko_reimu_hide_comment_uploads_from_media_library',
+  'function yneko_reimu_comment_upload_admin_action',
+  'function yneko_reimu_comment_upload_admin_temp_action',
+  'function yneko_reimu_comment_upload_admin_attachment_action',
+  "add_action( 'admin_init', 'yneko_reimu_comment_upload_admin_action' )"
+]) {
+  requireSnippet('comment upload admin contract', uploadAdminSnippet, files.uploadAdmin);
+}
+
+for (const profileSaveSnippet of [
+  'function yneko_reimu_profile_save_request',
+  'function yneko_reimu_profile_save_prepare_tags',
+  'function yneko_reimu_profile_save_apply_email',
+  'function yneko_reimu_profile_save_apply_totp',
+  'function yneko_reimu_profile_save_apply_comment_tags',
+  "postProfileAction('yneko_reimu_profile_save'"
+]) {
+  requireSnippet('profile save helper contract', profileSaveSnippet);
 }
 
 for (const selector of [
