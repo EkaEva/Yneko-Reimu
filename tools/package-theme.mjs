@@ -8,17 +8,21 @@ const candidates = process.platform === 'win32'
 let lastError = null;
 
 for (const shell of candidates) {
+  const args = [
+    '-NoProfile',
+    '-File',
+    './tools/package-theme.ps1',
+    '-Version',
+    version
+  ];
+
+  if (process.platform === 'win32') {
+    args.splice(1, 0, '-ExecutionPolicy', 'Bypass');
+  }
+
   const result = spawnSync(
     shell,
-    [
-      '-NoProfile',
-      '-ExecutionPolicy',
-      'Bypass',
-      '-File',
-      './tools/package-theme.ps1',
-      '-Version',
-      version
-    ],
+    args,
     {
       stdio: 'inherit',
       shell: false

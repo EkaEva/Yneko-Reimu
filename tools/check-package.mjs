@@ -1,6 +1,5 @@
-import { readdir, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { basename, dirname, resolve } from 'node:path';
-import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -34,34 +33,52 @@ async function latestZip() {
   return zips[0]?.path;
 }
 
-async function listZipEntriesWithPowerShell(zipPath) {
-  const { spawn } = await import('node:child_process');
-  const command = [
-    '$ErrorActionPreference = "Stop";',
-    'Add-Type -AssemblyName System.IO.Compression.FileSystem;',
-    `$zip = [System.IO.Compression.ZipFile]::OpenRead(${JSON.stringify(zipPath)});`,
-    'try { $zip.Entries | ForEach-Object { $_.FullName } } finally { $zip.Dispose() }'
-  ].join(' ');
+async function listZipEntries(zipPath) {
+  const zip = await readFile(zipPath);
+  const eocdSignature = 0x06054b50;
+  const centralDirectorySignature = 0x02014b50;
+  const minEocdSize = 22;
+  const maxCommentSize = 0xffff;
+  const searchStart = Math.max(0, zip.length - minEocdSize - maxCommentSize);
 
-  const child = spawn('powershell', ['-NoProfile', '-Command', command], { stdio: ['ignore', 'pipe', 'inherit'] });
-  const lines = [];
-  const rl = createInterface({ input: child.stdout });
-
-  rl.on('line', (line) => {
-    if (line.trim()) {
-      lines.push(line.trim());
+  let eocdOffset = -1;
+  for (let offset = zip.length - minEocdSize; offset >= searchStart; offset -= 1) {
+    if (zip.readUInt32LE(offset) === eocdSignature) {
+      eocdOffset = offset;
+      break;
     }
-  });
-
-  const code = await new Promise((resolveCode) => {
-    child.on('close', resolveCode);
-  });
-
-  if (code !== 0) {
-    throw new Error(`Unable to inspect ${zipPath}`);
   }
 
-  return lines;
+  if (eocdOffset === -1) {
+    throw new Error(`Unable to find ZIP central directory in ${zipPath}`);
+  }
+
+  const totalEntries = zip.readUInt16LE(eocdOffset + 10);
+  const centralDirectoryOffset = zip.readUInt32LE(eocdOffset + 16);
+
+  if (totalEntries === 0xffff || centralDirectoryOffset === 0xffffffff) {
+    throw new Error(`ZIP64 package inspection is not supported for ${zipPath}`);
+  }
+
+  const entries = [];
+  let offset = centralDirectoryOffset;
+
+  for (let index = 0; index < totalEntries; index += 1) {
+    if (zip.readUInt32LE(offset) !== centralDirectorySignature) {
+      throw new Error(`Invalid ZIP central directory entry ${index + 1} in ${zipPath}`);
+    }
+
+    const fileNameLength = zip.readUInt16LE(offset + 28);
+    const extraLength = zip.readUInt16LE(offset + 30);
+    const commentLength = zip.readUInt16LE(offset + 32);
+    const fileNameStart = offset + 46;
+    const fileNameEnd = fileNameStart + fileNameLength;
+
+    entries.push(zip.subarray(fileNameStart, fileNameEnd).toString('utf8'));
+    offset = fileNameEnd + extraLength + commentLength;
+  }
+
+  return entries;
 }
 
 const zipPath = await latestZip();
@@ -71,7 +88,7 @@ if (!zipPath) {
   process.exit(1);
 }
 
-const entries = await listZipEntriesWithPowerShell(zipPath);
+const entries = await listZipEntries(zipPath);
 
 const normalized = entries.map((entry) => entry.replace(/\\/g, '/'));
 const forbidden = normalized.filter((entry) => forbiddenPatterns.some((pattern) => pattern.test(entry)));
