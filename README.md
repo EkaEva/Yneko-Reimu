@@ -122,7 +122,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - SEO 与隐私提示：检测 Rank Math、Yoast、AIOSEO、SEOPress、The SEO Framework 后，主题会停用重复 meta / OG / Twitter / JSON-LD，仅保留 hreflang、sitemap 和 canonical 兼容补充。
 - GitHub OAuth：Client ID、Client Secret、Callback URL、自动创建用户和管理员 GitHub 绑定。
 - 多语言：启用状态、默认语言、英文路径前缀、语言菜单显示名、文章/页面翻译关系。
-- 常规设置：视觉预览入口、管理员体验、内置项目/归档/关于/友链页面开关、favicon/apple-touch 兜底图、GitHub 展示链接和赞助二维码。
+- 常规设置：视觉预览入口、管理员体验、当前管理员账号安全、内置项目/归档/关于/友链页面开关、favicon/apple-touch 兜底图、GitHub 展示链接和赞助二维码。
 - 评论设置：评论图片/GIF 上传、人工审核、大小上限、临时文件清理、驳回后清理时间、评论上传管理、公共 GIF 表情库。
 - 用户设置：用户标签、自定义标签审核、屏蔽词、七种基础特殊标签、角色头像框、用户头像上传、头像审核、头像大小上限、用户标签和头像审核管理；有待审核项目时会显示数量角标。
 - 搜索设置：Algolia、本地 JSON 搜索、本地全文索引开关。
@@ -144,6 +144,10 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 #### 管理员体验
 
 `常规设置 -> 管理员体验` 中的“显示前台管理员工具条”默认关闭。关闭时，管理员登录浏览器访问前台也不会显示 WordPress 顶部工具条，并会隐藏 Rank Math 等插件的前台工具条提示；需要临时使用 Rank Math、Query Monitor 或编辑入口调试时再开启。
+
+#### 账号安全
+
+`常规设置 -> 账号安全` 可以为当前管理员账号生成认证器密钥、扫码绑定 TOTP 二次认证，或关闭当前账号的二次认证。这里复用前台个人资料弹窗的同一套用户 meta，不是全站强制 2FA 开关，也不会改变普通评论用户的自助设置流程。
 
 #### 多语言设置
 
@@ -785,6 +789,10 @@ The Friend Links settings tab includes a dedicated Site friend-link info section
 Theme extensions, third-party services, and privacy:
 
 The General tab includes an Administrator experience group. Its "Show front-end admin toolbar" switch is off by default, keeping the front end clean for administrator browser sessions and hiding plugin toolbar prompts such as Rank Math. Enable it temporarily when you need Rank Math, Query Monitor, or edit-link debugging tools.
+
+#### Account Security
+
+`General -> Account security` lets the current administrator generate an authenticator secret, bind TOTP two-factor authentication by scanning a QR code, or disable two-factor authentication for the current account. It reuses the same user meta as the front-end profile modal; it is not a site-wide forced-2FA switch and does not change the self-service flow for regular comment users.
 
 The Theme Extensions tab contains front-end enhancement switches that do not need live preview. Defaults are light: loader, back-to-top, and GitHub ribbon are on; PJAX, click effects, stats, math, PhotoSwipe, Mermaid, custom cursor, APlayer, Meting, and Live2D are off or opt-in.
 

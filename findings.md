@@ -669,3 +669,4 @@
 - The safest theme-level fix is a disabled-by-default administrator toolbar setting plus a front-end compatibility layer that hides Rank Math toolbar prompts while the theme keeps the front end clean.
 - The settings page cleanup should keep the tabbed page and existing option keys, but dense sections benefit from a shared grouped-block pattern instead of long naked `form-table` rows.
 - The `show_admin_toolbar` switch belongs in General -> Administrator experience because it controls administrator front-end tooling, not front-end feature loading or third-party resources.
+- A backend 2FA entry should manage only the current administrator account, not a site-wide option. Reusing the existing TOTP user meta and helpers keeps the front-end profile modal, login 2FA requirement, and stored secrets compatible.

@@ -337,6 +337,18 @@ msgstr "Like"
 msgid "订阅者"
 msgstr ""
 
+#: inc/settings/admin.php
+msgid "二次认证模块尚未加载。"
+msgstr ""
+
+#: inc/settings/admin.php
+msgid "二次认证已关闭。"
+msgstr ""
+
+#: inc/settings/admin.php
+msgid "二次认证已开启。"
+msgstr ""
+
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr "After publishing posts, archives will be generated here by year."
@@ -917,7 +929,7 @@ msgstr "Please enter the registered email address."
 msgid "请先登录。"
 msgstr "Please log in first."
 
-#: inc/comments/profile.php
+#: inc/comments/profile.php inc/settings/admin.php
 msgid "请先生成认证器密钥。"
 msgstr "Please generate an authenticator key first."
 
@@ -945,6 +957,10 @@ msgstr "Please choose a file to upload."
 msgid "请用认证器扫码，并输入 6 位验证码后保存。"
 msgstr "Scan with your authenticator app, then enter the 6-digit code and save."
 
+#: inc/settings/admin.php
+msgid "请用认证器扫码，并输入 6 位验证码后启用。"
+msgstr ""
+
 #: template-parts/virtual/projects.php
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr "Please configure your GitHub profile URL in Appearance -> Yneko-Reimu Settings."
@@ -957,7 +973,7 @@ msgstr "Cancel"
 msgid "取消回复"
 msgstr "Cancel reply"
 
-#: inc/comments/uploads.php inc/comments.php
+#: inc/comments/uploads.php inc/comments.php inc/settings/admin.php
 msgid "权限不足。"
 msgstr "Insufficient permissions."
 
@@ -973,7 +989,7 @@ msgstr "Confirm new password"
 msgid "认证器验证码"
 msgstr "Authenticator code"
 
-#: inc/comments/profile.php
+#: inc/comments/profile.php inc/settings/admin.php
 msgid "认证器验证码不正确。"
 msgstr "The authenticator code is incorrect."
 

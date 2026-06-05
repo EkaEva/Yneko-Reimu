@@ -332,6 +332,18 @@ msgstr ""
 msgid "订阅者"
 msgstr ""
 
+#: inc/settings/admin.php
+msgid "二次认证模块尚未加载。"
+msgstr ""
+
+#: inc/settings/admin.php
+msgid "二次认证已关闭。"
+msgstr ""
+
+#: inc/settings/admin.php
+msgid "二次认证已开启。"
+msgstr ""
+
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
 msgstr ""
@@ -912,7 +924,7 @@ msgstr ""
 msgid "请先登录。"
 msgstr ""
 
-#: inc/comments/profile.php
+#: inc/comments/profile.php inc/settings/admin.php
 msgid "请先生成认证器密钥。"
 msgstr ""
 
@@ -940,6 +952,10 @@ msgstr ""
 msgid "请用认证器扫码，并输入 6 位验证码后保存。"
 msgstr ""
 
+#: inc/settings/admin.php
+msgid "请用认证器扫码，并输入 6 位验证码后启用。"
+msgstr ""
+
 #: template-parts/virtual/projects.php
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr ""
@@ -952,7 +968,7 @@ msgstr ""
 msgid "取消回复"
 msgstr ""
 
-#: inc/comments/uploads.php inc/comments.php
+#: inc/comments/uploads.php inc/comments.php inc/settings/admin.php
 msgid "权限不足。"
 msgstr ""
 
@@ -968,7 +984,7 @@ msgstr ""
 msgid "认证器验证码"
 msgstr ""
 
-#: inc/comments/profile.php
+#: inc/comments/profile.php inc/settings/admin.php
 msgid "认证器验证码不正确。"
 msgstr ""
 

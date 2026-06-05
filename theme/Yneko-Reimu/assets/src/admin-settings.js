@@ -308,6 +308,192 @@
     }
   }
 
+  function postAdminTotp(root, action, extra) {
+    var data = new FormData();
+    data.append('action', action);
+    data.append('nonce', root.getAttribute('data-nonce') || '');
+    Object.keys(extra || {}).forEach(function (key) {
+      data.append(key, extra[key]);
+    });
+
+    return fetch(window.ajaxurl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: data
+    }).then(function (response) {
+      return response.json().catch(function () {
+        return { success: false, data: {} };
+      });
+    });
+  }
+
+  function loadQrCode(src) {
+    if (window.QRCode && typeof window.QRCode.toDataURL === 'function') {
+      return Promise.resolve(window.QRCode);
+    }
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[data-yneko-admin-qrcode]');
+      var script;
+
+      if (existing) {
+        existing.addEventListener('load', function () {
+          resolve(window.QRCode);
+        }, { once: true });
+        existing.addEventListener('error', reject, { once: true });
+        return;
+      }
+
+      script = document.createElement('script');
+      script.src = src || '';
+      script.async = true;
+      script.defer = true;
+      script.setAttribute('data-yneko-admin-qrcode', '1');
+      script.addEventListener('load', function () {
+        resolve(window.QRCode);
+      });
+      script.addEventListener('error', reject);
+      document.head.appendChild(script);
+    });
+  }
+
+  function setTotpMessage(root, message, error) {
+    var node = root.querySelector('[data-yneko-admin-totp-message]');
+    if (!node) {
+      return;
+    }
+    node.textContent = message || '';
+    node.classList.toggle('is-error', !!error);
+  }
+
+  function setTotpState(root, enabled, nonce) {
+    var status = root.querySelector('[data-yneko-admin-totp-status]');
+    var disable = root.querySelector('[data-yneko-admin-totp-disable]');
+    var setup = root.querySelector('[data-yneko-admin-totp-setup]');
+    var code = root.querySelector('[data-yneko-admin-totp-code]');
+
+    root.setAttribute('data-enabled', enabled ? '1' : '0');
+    if (nonce) {
+      root.setAttribute('data-nonce', nonce);
+    }
+    if (status) {
+      status.classList.toggle('is-enabled', !!enabled);
+      status.innerHTML = labelText(enabled ? 'totpEnabled' : 'totpDisabled', enabled ? '已开启' : '未开启', enabled ? 'Enabled' : 'Disabled');
+    }
+    if (disable) {
+      disable.hidden = !enabled;
+    }
+    if (setup && enabled) {
+      setup.hidden = true;
+    }
+    if (code && enabled) {
+      code.value = '';
+    }
+  }
+
+  function renderTotpSecret(root, payload) {
+    var setup = root.querySelector('[data-yneko-admin-totp-setup]');
+    var secret = root.querySelector('[data-yneko-admin-totp-secret]');
+    var qr = root.querySelector('[data-yneko-admin-totp-qr]');
+
+    if (setup) {
+      setup.hidden = false;
+    }
+    if (secret) {
+      secret.textContent = payload.secret || '';
+    }
+    if (!qr || !payload.uri) {
+      return Promise.resolve();
+    }
+
+    return loadQrCode(root.getAttribute('data-qrcode-src') || '').then(function (QRCode) {
+      if (!QRCode || typeof QRCode.toDataURL !== 'function') {
+        throw new Error('QRCode.toDataURL is unavailable');
+      }
+      return QRCode.toDataURL(payload.uri, {
+        errorCorrectionLevel: 'M',
+        margin: 1,
+        width: 160
+      });
+    }).then(function (dataUrl) {
+      qr.src = dataUrl;
+      qr.hidden = false;
+    });
+  }
+
+  function initAdminTotp() {
+    document.querySelectorAll('[data-yneko-admin-totp]').forEach(function (root) {
+      var generate = root.querySelector('[data-yneko-admin-totp-generate]');
+      var enable = root.querySelector('[data-yneko-admin-totp-enable]');
+      var disable = root.querySelector('[data-yneko-admin-totp-disable]');
+      var code = root.querySelector('[data-yneko-admin-totp-code]');
+
+      setTotpState(root, root.getAttribute('data-enabled') === '1', root.getAttribute('data-nonce'));
+
+      if (generate) {
+        generate.addEventListener('click', function () {
+          setLoading(generate, true);
+          setTotpMessage(root, '', false);
+          postAdminTotp(root, 'yneko_reimu_admin_totp_generate').then(function (payload) {
+            if (!payload || !payload.success) {
+              throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpGenerateFailed', '二次认证密钥生成失败。', 'Failed to generate the two-factor secret.'));
+            }
+            if (payload.data && payload.data.nonce) {
+              root.setAttribute('data-nonce', payload.data.nonce);
+            }
+            return renderTotpSecret(root, payload.data || {}).then(function () {
+              setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
+            });
+          }).catch(function (error) {
+            setTotpMessage(root, error.message || plain('totpGenerateFailed', '二次认证密钥生成失败。', 'Failed to generate the two-factor secret.'), true);
+          }).finally(function () {
+            setLoading(generate, false);
+          });
+        });
+      }
+
+      if (enable) {
+        enable.addEventListener('click', function () {
+          setLoading(enable, true);
+          setTotpMessage(root, '', false);
+          postAdminTotp(root, 'yneko_reimu_admin_totp_enable', {
+            totp_code: code ? code.value : ''
+          }).then(function (payload) {
+            if (!payload || !payload.success) {
+              throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpEnableFailed', '二次认证启用失败。', 'Failed to enable two-factor authentication.'));
+            }
+            setTotpState(root, true, payload.data && payload.data.nonce);
+            setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
+          }).catch(function (error) {
+            setTotpMessage(root, error.message || plain('totpEnableFailed', '二次认证启用失败。', 'Failed to enable two-factor authentication.'), true);
+          }).finally(function () {
+            setLoading(enable, false);
+          });
+        });
+      }
+
+      if (disable) {
+        disable.addEventListener('click', function () {
+          if (!window.confirm(plain('totpDisableConfirm', '确定关闭当前账号的二次认证吗？', 'Disable two-factor authentication for the current account?'))) {
+            return;
+          }
+          setLoading(disable, true);
+          setTotpMessage(root, '', false);
+          postAdminTotp(root, 'yneko_reimu_admin_totp_disable').then(function (payload) {
+            if (!payload || !payload.success) {
+              throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'));
+            }
+            setTotpState(root, false, payload.data && payload.data.nonce);
+            setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
+          }).catch(function (error) {
+            setTotpMessage(root, error.message || plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'), true);
+          }).finally(function () {
+            setLoading(disable, false);
+          });
+        });
+      }
+    });
+  }
+
   document.addEventListener('change', function (event) {
     var input = event.target && event.target.matches && event.target.matches('.yneko-reimu-media-url[data-accept]') ? event.target : null;
     if (input && input.value && !isAccepted(input, input.value)) {
@@ -354,4 +540,5 @@
   initTabs();
   refreshNumbers();
   initGifAdmin();
+  initAdminTotp();
 }());

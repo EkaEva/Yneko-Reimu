@@ -1007,3 +1007,6 @@
 - Updated the settings admin and GitHub OAuth contract gates to protect grouped settings markup and the toolbar setting placement.
 - Followed up on settings-page screenshot feedback by keeping checkbox inputs and labels on the same line in Comments/Users-style subgrids, merging user avatar upload controls into the Users basic settings group, and tightening the special badge/avatar-frame grid so media fields do not overflow the panel.
 - Extended the settings admin contract gate to protect inline checkbox text and special badge/avatar-frame overflow guards.
+- Added a `General -> Account security` admin TOTP panel for the current administrator account, reusing the existing front-end profile modal TOTP user meta instead of adding a global setting.
+- Added admin-only AJAX handlers for generating, enabling, and disabling current-user TOTP, plus settings-page JavaScript that loads the bundled local `qrcode.js` for QR setup.
+- Extended the settings admin contract gate to protect the current-user TOTP panel, admin AJAX actions, QR loading path, and preserved TOTP meta keys.

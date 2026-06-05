@@ -84,6 +84,8 @@ GitHub OAuth local/staging QA is documented in `docs/github-oauth-qa.md`.
 
 Email verification, password-reset, profile email, and TOTP QA is documented in `docs/email-totp-qa.md`.
 
+The admin settings page also exposes a current-user TOTP management entry under `General -> Account security`. It reuses the profile modal user meta (`_yneko_reimu_totp_secret`, `_yneko_reimu_totp_enabled`, and `_yneko_reimu_totp_pending_secret`) through admin-only AJAX actions, so it must not be treated as a global theme option or a forced site-wide 2FA switch.
+
 ## Source Layout
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.

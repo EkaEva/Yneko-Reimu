@@ -19,6 +19,8 @@ function yneko_reimu_render_settings_page() {
 	$external_comments = yneko_reimu_settings_external_comments();
 	$review_badges = yneko_reimu_admin_review_badge_counts();
 	$callback = function_exists( 'yneko_reimu_github_login_callback_url' ) ? yneko_reimu_github_login_callback_url() : add_query_arg( 'action', 'yneko_reimu_github_callback', wp_login_url() );
+	$admin_totp = yneko_reimu_admin_current_user_totp_payload();
+	$admin_totp_available = function_exists( 'yneko_reimu_user_2fa_enabled' ) && function_exists( 'yneko_reimu_totp_generate_secret' );
 	?>
 	<div class="wrap yneko-reimu-settings-page">
 		<h1><?php esc_html_e( 'Yneko-Reimu 设置', 'yneko-reimu' ); ?></h1>
@@ -48,6 +50,31 @@ function yneko_reimu_render_settings_page() {
 				<?php yneko_reimu_settings_group_open( '管理员体验', 'Administrator experience', '这里控制管理员登录浏览器访问前台时的后台辅助显示，不影响普通评论用户。', 'This controls administrator-only front-end helpers and does not affect regular comment users.' ); ?>
 					<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[features][show_admin_toolbar]" value="1" <?php checked( '1', $features['show_admin_toolbar'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '显示前台管理员工具条', 'Show front-end admin toolbar' ); ?></label>
 					<?php yneko_reimu_admin_bilingual_description( '默认关闭，前台保持干净并隐藏 Rank Math 等插件工具条提示。需要临时调试 Rank Math、Query Monitor 或编辑入口时再开启。', 'Disabled by default to keep the front end clean and hide plugin toolbar prompts such as Rank Math. Enable it temporarily for Rank Math, Query Monitor, or edit-link debugging.' ); ?>
+				<?php yneko_reimu_settings_group_close(); ?>
+
+				<?php yneko_reimu_settings_group_open( '账号安全', 'Account security', '这里管理当前管理员账号的认证器二次认证，和前台个人资料弹窗使用同一套 TOTP 数据。', 'Manage authenticator-app two-factor authentication for the current administrator account. It uses the same TOTP data as the front-end profile modal.' ); ?>
+					<div class="yneko-reimu-admin-totp" data-yneko-admin-totp data-nonce="<?php echo esc_attr( $admin_totp['nonce'] ); ?>" data-enabled="<?php echo $admin_totp['enabled'] ? '1' : '0'; ?>" data-qrcode-src="<?php echo esc_url( YNEKO_REIMU_URI . '/assets/dist/qrcode.js' ); ?>">
+						<span class="yneko-reimu-admin-totp-status<?php echo $admin_totp['enabled'] ? ' is-enabled' : ''; ?>" data-yneko-admin-totp-status><?php echo wp_kses_post( $admin_totp['enabled'] ? yneko_reimu_admin_bilingual_text( '已开启', 'Enabled' ) : yneko_reimu_admin_bilingual_text( '未开启', 'Disabled' ) ); ?></span>
+						<?php if ( $admin_totp_available ) : ?>
+							<div class="yneko-reimu-admin-totp-setup" data-yneko-admin-totp-setup hidden>
+								<img class="yneko-reimu-admin-totp-qr" data-yneko-admin-totp-qr alt="">
+								<div>
+									<div class="yneko-reimu-admin-totp-secret" data-yneko-admin-totp-secret></div>
+									<p class="description"><?php yneko_reimu_admin_bilingual_label( '用认证器 App 扫码，或手动输入密钥。', 'Scan with an authenticator app, or enter the secret manually.' ); ?></p>
+								</div>
+							</div>
+							<div class="yneko-reimu-admin-totp-actions">
+								<button type="button" class="button" data-yneko-admin-totp-generate><?php yneko_reimu_admin_bilingual_label( '生成认证器密钥', 'Generate authenticator secret' ); ?></button>
+								<input class="small-text" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" data-yneko-admin-totp-code>
+								<button type="button" class="button button-primary" data-yneko-admin-totp-enable><?php yneko_reimu_admin_bilingual_label( '启用二次认证', 'Enable two-factor authentication' ); ?></button>
+								<button type="button" class="button" data-yneko-admin-totp-disable<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>><?php yneko_reimu_admin_bilingual_label( '关闭二次认证', 'Disable two-factor authentication' ); ?></button>
+							</div>
+							<p class="yneko-reimu-admin-totp-message" data-yneko-admin-totp-message></p>
+							<?php yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口登录时需要输入认证器 6 位验证码。后台原生 wp-login.php 仍由 WordPress 自身登录流程处理。', 'After enabling it, this account must enter the 6-digit authenticator code when logging in through the front-end comment login. Native wp-login.php remains handled by WordPress itself.' ); ?>
+						<?php else : ?>
+							<?php yneko_reimu_admin_bilingual_description( '二次认证模块尚未加载，无法在后台管理。', 'The two-factor module is not loaded yet, so it cannot be managed in the admin page.' ); ?>
+						<?php endif; ?>
+					</div>
 				<?php yneko_reimu_settings_group_close(); ?>
 
 				<?php yneko_reimu_settings_group_open( '内置页面', 'Built-in pages', '控制主题内置虚拟页面是否可访问，并同步影响主题默认导航。', 'Control whether built-in virtual pages are available and whether default theme navigation includes them.' ); ?>
