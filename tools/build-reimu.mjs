@@ -55,13 +55,41 @@ const commentsStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-
 const commentsStyleOutput = resolve(themeRoot, 'assets/dist/reimu-comments.css');
 await writeFile(commentsStyleOutput, `${minifyCss(commentsStyleSource)}\n`);
 
-const qrcodeSource = resolve(root, 'node_modules/qrcode/build/qrcode.js');
 const qrcodeOutput = resolve(themeRoot, 'assets/dist/qrcode.js');
 
 try {
-  await copyFile(qrcodeSource, qrcodeOutput);
+  await copyFile(resolve(root, 'node_modules/qrcode/build/qrcode.js'), qrcodeOutput);
 } catch (error) {
-  throw new Error('Unable to copy qrcode.js. Run npm install before building.');
+  const qrcodeEntry = resolve(root, '.tmp/qrcode-browser-entry.mjs');
+  await mkdir(dirname(qrcodeEntry), { recursive: true });
+  await writeFile(
+    qrcodeEntry,
+    [
+      "import QRCode from 'qrcode/lib/browser.js';",
+      'window.QRCode = QRCode;',
+      'export default QRCode;'
+    ].join('\n')
+  );
+
+  await build({
+    configFile: false,
+    logLevel: 'silent',
+    build: {
+      emptyOutDir: false,
+      minify: 'esbuild',
+      outDir: distRoot,
+      rollupOptions: {
+        input: qrcodeEntry,
+        output: {
+          format: 'iife',
+          entryFileNames: 'qrcode.js',
+          inlineDynamicImports: true
+        }
+      }
+    }
+  });
+
+  await rm(resolve(root, '.tmp'), { recursive: true, force: true });
 }
 
 async function buildClassicScript(input, outputName) {
@@ -99,6 +127,7 @@ const viteCopiedCursorFiles = [
   'lily-help.png',
   'lily-link.png',
   'lily-move.png',
+  'lily-normal.png',
   'lily-resize-ew.png',
   'lily-resize-nesw.png',
   'lily-resize-ns.png',
