@@ -1,5 +1,39 @@
 # Yneko-Reimu Optimization Progress
 
+## 2026-06-05 v0.2.6 Stability and Maintainability
+
+- Started v0.2.6 implementation from the approved three-stage plan.
+- Confirmed `main` is clean and aligned with `origin/main` before edits.
+- Recorded the stage strategy: comments/profile/upload first, settings maintenance second, front-end PJAX/resource/visual QA third, final version/tag only after all stages.
+- Confirmed each major stage must generate a local validation package, run `npm run check:package`, commit, and push `main`.
+- Added internal comment upload helper/admin modules and an internal profile-save helper module while preserving public AJAX callbacks and request contracts.
+- Updated the comments/profile contract gate and development docs for the new internal module boundaries.
+- Targeted stage 1 checks passed: `npm run check:comments-profile`, PHP syntax checks for changed comments/profile files, and `npm run report:php-complexity`.
+- Full stage 1 verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over runtime PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated stage 1 local validation package `releases/Yneko-Reimu-v0.2.5-20260605-1416.zip`.
+- Committed and pushed stage 1 to GitHub as `a69c644 Split comments upload and profile save helpers`.
+- Started stage 2 settings maintenance after the stage 1 push.
+- Split the Users, Security, and Music settings panels into focused internal modules under `theme/Yneko-Reimu/inc/settings/panels/`.
+- Kept the existing `yneko_reimu_render_settings_*_panel()` function names and settings form fields intact.
+- Updated `check:settings-admin`, `check:auth-security`, `check:config-surface`, and `check:github-oauth` so they read the new settings panel modules.
+- Targeted checks passed for the stage 2 panel split: PHP syntax checks for changed settings panel files, Node syntax checks for changed contract scripts, `npm run check:settings-admin`, `npm run check:config-surface`, `npm run check:auth-security`, `npm run check:github-oauth`, and `npm run report:php-complexity`.
+- Full stage 2 verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over runtime PHP files, and `npm run package`.
+- Generated stage 2 local validation package `releases/Yneko-Reimu-v0.2.5-20260605-1429.zip`.
+- Direct `composer --version` is still unavailable in this environment, so `composer run lint:php` cannot be run directly; the repository `npm run lint:php` wrapper completed through `npm run check`.
+- Committed and pushed stage 2 to GitHub as `2f6eb3e Split settings panel modules`.
+- Started stage 3 front-end PJAX/resource/visual stability QA.
+- Audited the front-end PJAX flow, lazy search/share/PhotoSwipe runtimes, APlayer preservation, Mermaid/KaTeX/code enhancers, login/profile modal restoration, and comment interaction rebind guards.
+- Added `tools/check-pjax-runtime-contract.mjs`, exposed it as `npm run check:pjax-runtime`, and wired it into `npm run check`.
+- Full stage 3 verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated stage 3 local validation package `releases/Yneko-Reimu-v0.2.5-20260605-1435.zip`.
+- Committed and pushed stage 3 to GitHub as `0c547a5 Add PJAX runtime contract check`.
+- Started final v0.2.6 release prep after all three major stages completed.
+- Updated release version references to `0.2.6` in `package.json`, `package-lock.json`, `theme/Yneko-Reimu/functions.php`, `theme/Yneko-Reimu/style.css`, `theme/Yneko-Reimu/readme.txt`, README, and release docs.
+- Added `docs/release-notes-v0.2.6.md`.
+- Final validation passed: `npm run check:js`, `npm run build`, `npm run check:size`, `npm audit --audit-level=moderate`, `npm run check`, full PHP syntax lint over 96 runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Generated final release candidate package `releases/Yneko-Reimu-v0.2.6-20260605-1442.zip`.
+- Direct `composer --version` failed because Composer is not installed locally; direct `composer run lint:php` cannot be run in this environment. The repository `npm run lint:php` wrapper completed during `npm run check`.
+
 ## 2026-05-30
 
 - Started implementation from approved plan.

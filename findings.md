@@ -7,6 +7,22 @@
 - Frontend has no jQuery dependency on the public theme script; admin settings registers a small inline script with WordPress `jquery` dependency.
 - Theme is currently Classic Hybrid: PHP templates plus `theme.json`, editor styles, and block support.
 
+## 2026-06-05 v0.2.6 Planning Findings
+
+- `main` is clean and aligned with `origin/main` before v0.2.6 work starts.
+- v0.2.6 will use three major stages and push `main` after each stage, without per-stage tags.
+- Each major stage must generate a local validation ZIP and pass `npm run check:package` before its stage commit/push.
+- The largest remaining PHP hotspots before stage 1 are `inc/comments/uploads.php`, `inc/comments.php`, and `inc/comments/profile.php`; profile save and upload admin action are the highest-risk individual functions in this area.
+- `task_plan.md`, `findings.md`, and `progress.md` are currently tracked by Git, but the v0.2.6 operating assumption is to treat planning files as local working memory and avoid staging them in release commits.
+- Stage 1 split points: `inc/comments/uploads/helpers.php` can own shared upload validation/cleanup-token helpers, `inc/comments/uploads/admin.php` can own admin GIF/upload-review actions, and `inc/comments/profile-save.php` can own profile-save parsing/validation/apply helpers while `profile.php` keeps the public AJAX callback.
+- After the split, `inc/comments/uploads.php` dropped from 1032 to 732 nonblank lines and `yneko_reimu_ajax_profile_save()` no longer appears in the largest-function report.
+- Stage 2 highest-risk settings panel hotspots were Security, Users, and Music. Moving them into `inc/settings/panels/security.php`, `users.php`, and `music.php` removes `inc/settings/panels.php` from the largest-file report while preserving renderer function names and field markup contracts.
+- Contract checks that previously read only `inc/settings/panels.php` need to aggregate the focused panel modules; otherwise valid renderer moves look like missing settings fields.
+- Stage 3 static QA found no obvious need for a visual redesign. The current front-end already keeps search/share styles globally available for PJAX-entered markup, lazy-loads search/share/PhotoSwipe as classic runtime scripts, preserves APlayer state across PJAX, and re-runs `initReimu()` after page replacement.
+- The most useful Stage 3 change is a dedicated PJAX/runtime contract gate that protects the fragile pieces: link exclusions, inline config replay, modal state restoration, lazy runtime IDs, APlayer preservation markers, content enhancer rebind markers, and comment interaction `dataset` guards.
+- Final v0.2.6 release prep produced `releases/Yneko-Reimu-v0.2.6-20260605-1442.zip` with 175 entries. The package contains the v0.2.6 release notes and new runtime PHP modules while excluding development tools, source assets, the build manifest, and local planning/guidance files.
+- Composer is still unavailable as a direct local command, so direct `composer run lint:php` cannot be executed in this Windows environment. The repository `npm run lint:php` wrapper completed as part of `npm run check`, and full `php -l` passed over 96 runtime theme PHP files.
+
 ## 2026-06-02 Online Theme Audit Findings
 
 - Live homepage `https://yneko.com/` loads successfully with title `Yneko - Yneko的博客`; no browser console warnings/errors were observed in the initial desktop check.

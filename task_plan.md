@@ -2,6 +2,61 @@
 
 Goal: implement the approved aggressive optimization plan for the Yneko-Reimu WordPress theme while keeping the Classic Hybrid architecture and GitHub Release distribution target.
 
+## 2026-06-05 v0.2.6 Stability and Maintainability Plan
+
+Goal: implement v0.2.6 as a three-stage stability and maintainability release: comments/profile/upload hardening, settings maintenance, and front-end PJAX/resource/visual stability QA.
+
+### Phases
+
+1. Comments/profile/upload hardening - complete
+2. Settings page and settings schema maintenance - complete
+3. Front-end PJAX/resource/visual stability QA - complete
+4. Final v0.2.6 release prep, final validation package, and tag - in progress
+
+### Decisions
+
+- After each major stage, run verification, generate a local validation package with `npm run package`, run `npm run check:package`, commit the stage, and push `main`.
+- Do not create stage tags; create `v0.2.6` only after all three stages and final release prep pass.
+- Preserve all public settings keys, AJAX actions, nonce names, request fields, template paths, public hooks, URLs, and classic script compatibility.
+- Treat `PROJECT.md`, `AGENTS.md`, `task_plan.md`, `findings.md`, and `progress.md` as local working files for this release cycle; do not include local-only guidance in release packages.
+
+### Stage 1 Result
+
+- Split comment upload shared helpers into `inc/comments/uploads/helpers.php`.
+- Split upload/GIF administrator actions into `inc/comments/uploads/admin.php`.
+- Split profile-save parsing/apply helpers into `inc/comments/profile-save.php`.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over runtime theme PHP files, `npm run package`, `npm run check:package`, and `git diff --check`.
+- Stage 1 local validation package: `releases/Yneko-Reimu-v0.2.5-20260605-1416.zip`.
+- Stage 1 commit pushed to `main`: `a69c644 Split comments upload and profile save helpers`.
+
+### Stage 2 Result
+
+- Split high-density settings panels into focused internal modules under `inc/settings/panels/`: Users, Security, and Music.
+- Kept the existing panel renderer function names, settings tabs, option keys, form field names, nonce usage, and settings save model unchanged.
+- Updated settings/admin, auth-security, config-surface, and GitHub OAuth contract checks to aggregate `panels.php` with the new panel modules.
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Stage 2 local validation package: `releases/Yneko-Reimu-v0.2.5-20260605-1429.zip`.
+- Stage 2 commit pushed to `main`: `2f6eb3e Split settings panel modules`.
+
+### Stage 3 Progress
+
+- Audited PJAX replacement, search/share/PhotoSwipe lazy runtimes, APlayer preservation, Mermaid/KaTeX/code enhancement rebinds, login/profile modal restoration, and comment interaction rebind guards.
+- Added `npm run check:pjax-runtime` as a static QA gate for the front-end PJAX/runtime stability contract.
+
+### Stage 3 Result
+
+- Verification passed: `npm run check`, `npm audit --audit-level=moderate`, full PHP syntax lint over runtime theme PHP files, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Stage 3 local validation package: `releases/Yneko-Reimu-v0.2.5-20260605-1435.zip`.
+- Stage 3 commit pushed to `main`: `0c547a5 Add PJAX runtime contract check`.
+
+### Final Release Prep Progress
+
+- Version references have been updated to `0.2.6` in npm metadata, theme headers/constants, runtime `readme.txt`, README, and release docs.
+- Added `docs/release-notes-v0.2.6.md`.
+- Final validation passed locally: `npm run check:js`, `npm run build`, `npm run check:size`, `npm audit --audit-level=moderate`, full PHP syntax lint over 96 runtime theme PHP files, `npm run check`, `npm run package`, `npm run check:package`, ZIP spot check, and `git diff --check`.
+- Final release candidate package: `releases/Yneko-Reimu-v0.2.6-20260605-1442.zip`.
+- Direct `composer run lint:php` cannot run because Composer is not installed locally; the repository `npm run lint:php` wrapper completed through `npm run check`.
+
 ## Phases
 
 1. Baseline and notes - complete
