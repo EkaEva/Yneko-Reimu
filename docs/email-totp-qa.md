@@ -43,6 +43,10 @@ Verified paths:
 - WordPress `wp-login.php` password login with a 2FA-enabled account requires the `yneko_reimu_login_totp_code` authenticator code.
 - WordPress `wp-login.php` password login rejects missing or incorrect authenticator codes.
 - WordPress `wp-login.php` password login succeeds with the current generated authenticator code.
+- TOTP enablement returns one-time recovery codes and stores only hashed recovery codes in `_yneko_reimu_totp_recovery_codes`.
+- WordPress `wp-login.php` password login accepts an unused recovery code in the same `yneko_reimu_login_totp_code` field.
+- A used recovery code is removed after successful login and cannot be reused.
+- Regenerating recovery codes invalidates the previous set.
 
 ## Staging / Manual QA
 
@@ -59,6 +63,8 @@ Checklist:
 - Confirm an authenticator app can scan/use the `otpauth://totp/` URI.
 - Confirm the login modal transitions into the two-factor step and accepts a valid current TOTP code.
 - Confirm `wp-login.php` displays the authenticator-code field, rejects missing/wrong codes for a 2FA-enabled account, and accepts the current authenticator code.
+- Confirm the admin settings page shows recovery codes only after TOTP enablement or regeneration, and that the copy button copies the visible code list.
+- Confirm a recovery code can log in through `wp-login.php`, is consumed after use, and fails if reused.
 - Confirm a non-2FA account can still log in through `wp-login.php` without a code.
 - Confirm cleanup removes test users, pending TOTP secrets, and captured mail data.
 

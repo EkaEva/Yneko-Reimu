@@ -120,6 +120,7 @@ function yneko_reimu_admin_current_user_totp_payload() {
 	return array(
 		'enabled' => $user_id && function_exists( 'yneko_reimu_user_2fa_enabled' ) ? yneko_reimu_user_2fa_enabled( $user_id ) : false,
 		'nonce'   => wp_create_nonce( 'yneko_reimu_admin_totp' ),
+		'recoveryCount' => $user_id && function_exists( 'yneko_reimu_login_2fa_recovery_code_count' ) ? yneko_reimu_login_2fa_recovery_code_count( $user_id ) : 0,
 	);
 }
 
@@ -170,14 +171,49 @@ function yneko_reimu_ajax_admin_totp_enable() {
 	update_user_meta( $user_id, '_yneko_reimu_totp_enabled', '1' );
 	delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
 
+	$recovery_codes = array();
+	if ( function_exists( 'yneko_reimu_login_2fa_generate_recovery_codes' ) && function_exists( 'yneko_reimu_login_2fa_store_recovery_codes' ) ) {
+		$recovery_codes = yneko_reimu_login_2fa_generate_recovery_codes();
+		yneko_reimu_login_2fa_store_recovery_codes( $user_id, $recovery_codes );
+	}
+
 	wp_send_json_success(
 		array_merge(
 			yneko_reimu_admin_current_user_totp_payload(),
-			array( 'message' => esc_html__( '二次认证已开启。', 'yneko-reimu' ) )
+			array(
+				'message'       => esc_html__( '二次认证已开启。请立即保存这些一次性恢复码，它们只会显示这一次。', 'yneko-reimu' ),
+				'recoveryCodes' => $recovery_codes,
+			)
 		)
 	);
 }
 add_action( 'wp_ajax_yneko_reimu_admin_totp_enable', 'yneko_reimu_ajax_admin_totp_enable' );
+
+function yneko_reimu_ajax_admin_totp_recovery_generate() {
+	yneko_reimu_admin_totp_verify_request();
+
+	$user_id = get_current_user_id();
+	if ( ! function_exists( 'yneko_reimu_user_2fa_enabled' ) || ! yneko_reimu_user_2fa_enabled( $user_id ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '请先开启二次认证。', 'yneko-reimu' ) ), 400 );
+	}
+	if ( ! function_exists( 'yneko_reimu_login_2fa_generate_recovery_codes' ) || ! function_exists( 'yneko_reimu_login_2fa_store_recovery_codes' ) ) {
+		wp_send_json_error( array( 'message' => esc_html__( '恢复码模块尚未加载。', 'yneko-reimu' ) ), 500 );
+	}
+
+	$recovery_codes = yneko_reimu_login_2fa_generate_recovery_codes();
+	yneko_reimu_login_2fa_store_recovery_codes( $user_id, $recovery_codes );
+
+	wp_send_json_success(
+		array_merge(
+			yneko_reimu_admin_current_user_totp_payload(),
+			array(
+				'message'       => esc_html__( '新的恢复码已生成，旧恢复码已失效。请立即保存这些恢复码。', 'yneko-reimu' ),
+				'recoveryCodes' => $recovery_codes,
+			)
+		)
+	);
+}
+add_action( 'wp_ajax_yneko_reimu_admin_totp_recovery_generate', 'yneko_reimu_ajax_admin_totp_recovery_generate' );
 
 function yneko_reimu_ajax_admin_totp_disable() {
 	yneko_reimu_admin_totp_verify_request();
@@ -185,6 +221,9 @@ function yneko_reimu_ajax_admin_totp_disable() {
 	$user_id = get_current_user_id();
 	delete_user_meta( $user_id, '_yneko_reimu_totp_enabled' );
 	delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
+	if ( function_exists( 'yneko_reimu_login_2fa_clear_recovery_codes' ) ) {
+		yneko_reimu_login_2fa_clear_recovery_codes( $user_id );
+	}
 
 	wp_send_json_success(
 		array_merge(
@@ -284,7 +323,7 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 	);
 	wp_add_inline_style(
 		'yneko-reimu-admin-settings',
-		'.yneko-reimu-admin-gif-upload{align-items:center;padding:16px;background:linear-gradient(180deg,#fff,#fbfbfc)}.yneko-reimu-admin-gif-upload .button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;border-radius:6px;font-weight:600}.yneko-reimu-admin-gif-pick:before{content:"+";margin-right:6px;font-weight:700}.yneko-reimu-admin-gif-media:before{content:"";width:14px;height:14px;margin-right:6px;border:2px solid currentColor;border-radius:3px;box-sizing:border-box}.yneko-reimu-admin-gif-upload .button.is-loading,.yneko-reimu-admin-totp-actions .button.is-loading{pointer-events:none;opacity:.72}.yneko-reimu-upload-admin-actions .button{border-radius:5px}.yneko-reimu-upload-admin-actions .button-link-delete{color:#b32d2e}.yneko-reimu-admin-totp{display:flex;flex-direction:column;gap:12px;max-width:760px}.yneko-reimu-admin-totp-status{display:inline-flex;align-items:center;width:max-content;max-width:100%;padding:4px 10px;border-radius:999px;background:#f6f7f7;color:#1d2327;font-weight:600}.yneko-reimu-admin-totp-status.is-enabled{background:#edfaef;color:#0a7f20}.yneko-reimu-admin-totp-setup{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#fbfbfc}.yneko-reimu-admin-totp-setup[hidden]{display:none!important}.yneko-reimu-admin-totp-qr{width:132px;height:132px;border:1px solid #dcdcde;border-radius:6px;background:#fff}.yneko-reimu-admin-totp-secret{font-family:Consolas,Monaco,monospace;word-break:break-all}.yneko-reimu-admin-totp-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.yneko-reimu-admin-totp-message{margin:0;color:#646970}.yneko-reimu-admin-totp-message.is-error{color:#b32d2e}@media(max-width:782px){.yneko-reimu-admin-totp-setup{grid-template-columns:1fr}.yneko-reimu-admin-totp-qr{width:128px;height:128px}}'
+		'.yneko-reimu-admin-gif-upload{align-items:center;padding:16px;background:linear-gradient(180deg,#fff,#fbfbfc)}.yneko-reimu-admin-gif-upload .button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;border-radius:6px;font-weight:600}.yneko-reimu-admin-gif-pick:before{content:"+";margin-right:6px;font-weight:700}.yneko-reimu-admin-gif-media:before{content:"";width:14px;height:14px;margin-right:6px;border:2px solid currentColor;border-radius:3px;box-sizing:border-box}.yneko-reimu-admin-gif-upload .button.is-loading,.yneko-reimu-admin-totp-actions .button.is-loading{pointer-events:none;opacity:.72}.yneko-reimu-upload-admin-actions .button{border-radius:5px}.yneko-reimu-upload-admin-actions .button-link-delete{color:#b32d2e}.yneko-reimu-admin-totp{display:flex;flex-direction:column;gap:12px;max-width:760px}.yneko-reimu-admin-totp-status{display:inline-flex;align-items:center;width:max-content;max-width:100%;padding:4px 10px;border-radius:999px;background:#f6f7f7;color:#1d2327;font-weight:600}.yneko-reimu-admin-totp-status.is-enabled{background:#edfaef;color:#0a7f20}.yneko-reimu-admin-totp-setup{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#fbfbfc}.yneko-reimu-admin-totp-setup[hidden],.yneko-reimu-admin-totp-recovery[hidden]{display:none!important}.yneko-reimu-admin-totp-qr{width:132px;height:132px;border:1px solid #dcdcde;border-radius:6px;background:#fff}.yneko-reimu-admin-totp-secret{font-family:Consolas,Monaco,monospace;word-break:break-all}.yneko-reimu-admin-totp-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.yneko-reimu-admin-totp-recovery{display:flex;flex-direction:column;gap:10px;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#fbfbfc}.yneko-reimu-admin-totp-recovery__header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}.yneko-reimu-admin-totp-recovery__codes{max-width:100%;margin:0;padding:12px;overflow:auto;border:1px solid #dcdcde;border-radius:6px;background:#fff;font-family:Consolas,Monaco,monospace;line-height:1.65;white-space:pre-wrap}.yneko-reimu-admin-totp-message{margin:0;color:#646970}.yneko-reimu-admin-totp-message.is-error{color:#b32d2e}@media(max-width:782px){.yneko-reimu-admin-totp-setup{grid-template-columns:1fr}.yneko-reimu-admin-totp-qr{width:128px;height:128px}}'
 	);
 	wp_add_inline_style(
 		'yneko-reimu-admin-settings',
@@ -310,6 +349,11 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 		'totpEnableFailed' => array( 'zh' => '二次认证启用失败。', 'en' => 'Failed to enable two-factor authentication.' ),
 		'totpDisableFailed' => array( 'zh' => '二次认证关闭失败。', 'en' => 'Failed to disable two-factor authentication.' ),
 		'totpDisableConfirm' => array( 'zh' => '确定关闭当前账号的二次认证吗？', 'en' => 'Disable two-factor authentication for the current account?' ),
+		'totpRecoveryGenerateFailed' => array( 'zh' => '恢复码生成失败。', 'en' => 'Failed to generate recovery codes.' ),
+		'totpRecoveryGenerateConfirm' => array( 'zh' => '重新生成恢复码会让旧恢复码全部失效，确定继续吗？', 'en' => 'Regenerating recovery codes will invalidate all old codes. Continue?' ),
+		'totpRecoveryCopy' => array( 'zh' => '复制恢复码', 'en' => 'Copy recovery codes' ),
+		'totpRecoveryCopied' => array( 'zh' => '恢复码已复制。', 'en' => 'Recovery codes copied.' ),
+		'totpRecoveryCount' => array( 'zh' => '剩余 %d 个', 'en' => '%d remaining' ),
 		'totpEnabled'     => array( 'zh' => '已开启', 'en' => 'Enabled' ),
 		'totpDisabled'    => array( 'zh' => '未开启', 'en' => 'Disabled' ),
 		'name'            => array( 'zh' => '名称', 'en' => 'Name' ),

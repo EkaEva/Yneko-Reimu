@@ -149,7 +149,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 `常规设置 -> 账号安全` 可以为当前管理员账号生成认证器密钥、扫码绑定 TOTP 二次认证，或关闭当前账号的二次认证。这里复用前台个人资料弹窗的同一套用户 meta，不是全站强制 2FA 开关，也不会改变普通评论用户的自助设置流程。账号启用后，前台评论登录和 WordPress 后台 `wp-login.php` 密码登录都会要求输入认证器中的 6 位验证码。
 
-本阶段暂未加入一次性恢复码。若管理员账号误锁，可通过数据库或 WP-CLI 删除该用户的 `_yneko_reimu_totp_enabled` meta 作为紧急恢复手段；正式恢复码会在后续版本单独补齐。
+启用 TOTP 时会同时生成一次性恢复码，后台只显示明文一次，数据库只保存哈希。每个恢复码只能使用一次；重新生成恢复码会让旧码全部失效，关闭 TOTP 会清空恢复码。
 
 #### 多语言设置
 
@@ -796,7 +796,7 @@ The General tab includes an Administrator experience group. Its "Show front-end 
 
 `General -> Account security` lets the current administrator generate an authenticator secret, bind TOTP two-factor authentication by scanning a QR code, or disable two-factor authentication for the current account. It reuses the same user meta as the front-end profile modal; it is not a site-wide forced-2FA switch and does not change the self-service flow for regular comment users. Once enabled for an account, both the front-end comment login flow and the WordPress `wp-login.php` password login require the current six-digit authenticator code.
 
-One-time recovery codes are not included in this stage. If an administrator account is locked out, remove that user's `_yneko_reimu_totp_enabled` meta through the database or WP-CLI as an emergency recovery path; proper recovery codes are planned as a separate follow-up.
+Enabling TOTP also generates one-time recovery codes. Plain-text codes are shown only once, while the database stores only hashes. Each recovery code can be used once; regenerating recovery codes invalidates the old set, and disabling TOTP clears them.
 
 The Theme Extensions tab contains front-end enhancement switches that do not need live preview. Defaults are light: loader, back-to-top, and GitHub ribbon are on; PJAX, click effects, stats, math, PhotoSwipe, Mermaid, custom cursor, APlayer, Meting, and Live2D are off or opt-in.
 

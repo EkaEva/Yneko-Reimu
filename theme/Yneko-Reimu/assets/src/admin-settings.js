@@ -368,6 +368,7 @@
   function setTotpState(root, enabled, nonce) {
     var status = root.querySelector('[data-yneko-admin-totp-status]');
     var disable = root.querySelector('[data-yneko-admin-totp-disable]');
+    var recovery = root.querySelector('[data-yneko-admin-totp-recovery]');
     var setup = root.querySelector('[data-yneko-admin-totp-setup]');
     var code = root.querySelector('[data-yneko-admin-totp-code]');
 
@@ -382,11 +383,40 @@
     if (disable) {
       disable.hidden = !enabled;
     }
+    if (recovery) {
+      recovery.hidden = !enabled;
+    }
     if (setup && enabled) {
       setup.hidden = true;
     }
     if (code && enabled) {
       code.value = '';
+    }
+  }
+
+  function setRecoveryCount(root, count) {
+    var node = root.querySelector('[data-yneko-admin-totp-recovery-count]');
+    if (!node) {
+      return;
+    }
+    node.textContent = plain('totpRecoveryCount', '剩余 %d 个', '%d remaining').replace('%d', count);
+  }
+
+  function renderRecoveryCodes(root, codes) {
+    var list = root.querySelector('[data-yneko-admin-totp-recovery-codes]');
+    var copy = root.querySelector('[data-yneko-admin-totp-recovery-copy]');
+    var text = Array.isArray(codes) ? codes.join('\n') : '';
+
+    if (list) {
+      list.textContent = text;
+      list.hidden = !text;
+    }
+    if (copy) {
+      copy.hidden = !text;
+      copy.setAttribute('data-recovery-codes', text);
+    }
+    if (Array.isArray(codes)) {
+      setRecoveryCount(root, codes.length);
     }
   }
 
@@ -425,6 +455,8 @@
       var generate = root.querySelector('[data-yneko-admin-totp-generate]');
       var enable = root.querySelector('[data-yneko-admin-totp-enable]');
       var disable = root.querySelector('[data-yneko-admin-totp-disable]');
+      var recoveryGenerate = root.querySelector('[data-yneko-admin-totp-recovery-generate]');
+      var recoveryCopy = root.querySelector('[data-yneko-admin-totp-recovery-copy]');
       var code = root.querySelector('[data-yneko-admin-totp-code]');
 
       setTotpState(root, root.getAttribute('data-enabled') === '1', root.getAttribute('data-nonce'));
@@ -462,6 +494,7 @@
               throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpEnableFailed', '二次认证启用失败。', 'Failed to enable two-factor authentication.'));
             }
             setTotpState(root, true, payload.data && payload.data.nonce);
+            renderRecoveryCodes(root, payload.data && payload.data.recoveryCodes);
             setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
           }).catch(function (error) {
             setTotpMessage(root, error.message || plain('totpEnableFailed', '二次认证启用失败。', 'Failed to enable two-factor authentication.'), true);
@@ -483,11 +516,48 @@
               throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'));
             }
             setTotpState(root, false, payload.data && payload.data.nonce);
+            renderRecoveryCodes(root, []);
             setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
           }).catch(function (error) {
             setTotpMessage(root, error.message || plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'), true);
           }).finally(function () {
             setLoading(disable, false);
+          });
+        });
+      }
+
+      if (recoveryGenerate) {
+        recoveryGenerate.addEventListener('click', function () {
+          if (!window.confirm(plain('totpRecoveryGenerateConfirm', '重新生成恢复码会让旧恢复码全部失效，确定继续吗？', 'Regenerating recovery codes will invalidate all old codes. Continue?'))) {
+            return;
+          }
+          setLoading(recoveryGenerate, true);
+          setTotpMessage(root, '', false);
+          postAdminTotp(root, 'yneko_reimu_admin_totp_recovery_generate').then(function (payload) {
+            if (!payload || !payload.success) {
+              throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpRecoveryGenerateFailed', '恢复码生成失败。', 'Failed to generate recovery codes.'));
+            }
+            if (payload.data && payload.data.nonce) {
+              root.setAttribute('data-nonce', payload.data.nonce);
+            }
+            renderRecoveryCodes(root, payload.data && payload.data.recoveryCodes);
+            setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
+          }).catch(function (error) {
+            setTotpMessage(root, error.message || plain('totpRecoveryGenerateFailed', '恢复码生成失败。', 'Failed to generate recovery codes.'), true);
+          }).finally(function () {
+            setLoading(recoveryGenerate, false);
+          });
+        });
+      }
+
+      if (recoveryCopy) {
+        recoveryCopy.addEventListener('click', function () {
+          var text = recoveryCopy.getAttribute('data-recovery-codes') || '';
+          if (!text || !navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+            return;
+          }
+          navigator.clipboard.writeText(text).then(function () {
+            setTotpMessage(root, plain('totpRecoveryCopied', '恢复码已复制。', 'Recovery codes copied.'), false);
           });
         });
       }

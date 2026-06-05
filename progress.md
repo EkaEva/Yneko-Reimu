@@ -1014,4 +1014,6 @@
 - Added internal `inc/github-login/login-2fa.php`, loaded by the GitHub login entrypoint, to render a `wp-login.php` authenticator-code field and verify the same TOTP user meta through the `authenticate` filter after password auth succeeds.
 - Kept GitHub OAuth callback behavior and front-end comment login behavior unchanged; this round only extends password login through `wp-login.php` for accounts that already enabled TOTP.
 - Extended `npm run check:github-oauth` to protect the backend login TOTP module, login field name, authenticate hook, existing TOTP helper usage, generic error, and login-page field styling.
-- Documented that one-time recovery codes are intentionally deferred to the next round; emergency recovery before then is removing the locked user's `_yneko_reimu_totp_enabled` meta outside the theme.
+- Added one-time recovery codes for TOTP-enabled accounts: enablement and regeneration return plain-text codes once, stored codes are hashed under `_yneko_reimu_totp_recovery_codes`, each successful recovery-code login consumes one hash, regeneration invalidates the old set, and disabling TOTP clears recovery codes.
+- Updated the admin account-security UI with recovery-code count, one-time display, copy button, and regenerate button.
+- Extended settings-admin and GitHub OAuth contract gates to protect recovery-code AJAX actions, meta storage, admin UI anchors, hash storage, and single-use consumption.

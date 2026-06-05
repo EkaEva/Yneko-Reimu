@@ -350,8 +350,8 @@ msgid "二次认证已关闭。"
 msgstr "二次认证已关闭。"
 
 #: inc/settings/admin.php
-msgid "二次认证已开启。"
-msgstr "二次认证已开启。"
+msgid "二次认证已开启。请立即保存这些一次性恢复码，它们只会显示这一次。"
+msgstr "二次认证已开启。请立即保存这些一次性恢复码，它们只会显示这一次。"
 
 #: template-parts/virtual/archives.php
 msgid "发布文章后，这里会按年份生成归档列表。"
@@ -576,6 +576,10 @@ msgstr "后台上传的 GIF"
 #: comments.php
 msgid "欢迎评论"
 msgstr "欢迎评论"
+
+#: inc/settings/admin.php
+msgid "恢复码模块尚未加载。"
+msgstr "恢复码模块尚未加载。"
 
 #: inc/comments/rendering.php
 msgid "回复"
@@ -933,6 +937,10 @@ msgstr "请输入注册邮箱。"
 msgid "请先登录。"
 msgstr "请先登录。"
 
+#: inc/settings/admin.php
+msgid "请先开启二次认证。"
+msgstr "请先开启二次认证。"
+
 #: inc/comments/profile.php inc/settings/admin.php
 msgid "请先生成认证器密钥。"
 msgstr "请先生成认证器密钥。"
@@ -989,7 +997,7 @@ msgstr "确定删除这条评论吗？"
 msgid "确认新密码"
 msgstr "确认新密码"
 
-#: inc/comments/modals.php inc/github-login/login-2fa.php
+#: inc/comments/modals.php
 msgid "认证器验证码"
 msgstr "认证器验证码"
 
@@ -998,8 +1006,12 @@ msgid "认证器验证码不正确。"
 msgstr "认证器验证码不正确。"
 
 #: inc/github-login/login-2fa.php
-msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码。"
-msgstr "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码。"
+msgid "认证器验证码或恢复码"
+msgstr "认证器验证码或恢复码"
+
+#: inc/github-login/login-2fa.php
+msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码。"
+msgstr "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码。"
 
 #: inc/comments/auth.php
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"
@@ -1456,6 +1468,10 @@ msgstr "小伙伴们"
 #: inc/customizer.php
 msgid "小组件排序"
 msgstr "小组件排序"
+
+#: inc/settings/admin.php
+msgid "新的恢复码已生成，旧恢复码已失效。请立即保存这些恢复码。"
+msgstr "新的恢复码已生成，旧恢复码已失效。请立即保存这些恢复码。"
 
 #: inc/comments/modals.php
 msgid "新密码"

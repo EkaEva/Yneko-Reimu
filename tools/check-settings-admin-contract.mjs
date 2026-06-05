@@ -8,12 +8,14 @@ const panelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
 const renderersPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers.php');
 const adminPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/admin.php');
 const adminJsPath = resolve(root, 'theme/Yneko-Reimu/assets/src/admin-settings.js');
+const login2faPath = resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa.php');
 
 const page = await readFile(pagePath, 'utf8');
 const panels = await readFile(panelsPath, 'utf8');
 const renderers = await readFile(renderersPath, 'utf8');
 const admin = await readFile(adminPath, 'utf8');
 const adminJs = await readFile(adminJsPath, 'utf8');
+const login2fa = await readFile(login2faPath, 'utf8');
 
 const tabs = [
   'general',
@@ -50,6 +52,9 @@ const requiredPageSnippets = [
   'data-yneko-admin-totp-generate',
   'data-yneko-admin-totp-enable',
   'data-yneko-admin-totp-disable',
+  'data-yneko-admin-totp-recovery',
+  'data-yneko-admin-totp-recovery-generate',
+  'data-yneko-admin-totp-recovery-copy',
   'id="yneko-reimu-admin-gif-upload-form"',
   'wp_nonce_field( \'yneko_reimu_admin_comment_gif_upload\' )',
   'yneko_reimu_admin_review_badge_counts()'
@@ -115,6 +120,8 @@ const requiredAdminStyleSnippets = [
   '.yneko-reimu-media-field input,.yneko-reimu-inline-media input{flex:1 1 auto;min-width:0;max-width:100%}',
   '.yneko-reimu-admin-totp{display:flex;flex-direction:column;gap:12px',
   '.yneko-reimu-admin-totp-setup{display:grid;grid-template-columns:150px minmax(0,1fr)',
+  '.yneko-reimu-admin-totp-recovery{display:flex;flex-direction:column;gap:10px',
+  '.yneko-reimu-admin-totp-recovery__codes',
   '.yneko-reimu-admin-totp-status.is-enabled'
 ];
 
@@ -122,15 +129,18 @@ const requiredAdminPhpSnippets = [
   'function yneko_reimu_admin_current_user_totp_payload',
   'function yneko_reimu_ajax_admin_totp_generate',
   'function yneko_reimu_ajax_admin_totp_enable',
+  'function yneko_reimu_ajax_admin_totp_recovery_generate',
   'function yneko_reimu_ajax_admin_totp_disable',
   'wp_ajax_yneko_reimu_admin_totp_generate',
   'wp_ajax_yneko_reimu_admin_totp_enable',
+  'wp_ajax_yneko_reimu_admin_totp_recovery_generate',
   'wp_ajax_yneko_reimu_admin_totp_disable',
   'check_ajax_referer( \'yneko_reimu_admin_totp\', \'nonce\' )',
   'current_user_can( \'manage_options\' )',
   '_yneko_reimu_totp_pending_secret',
   '_yneko_reimu_totp_secret',
-  '_yneko_reimu_totp_enabled'
+  '_yneko_reimu_totp_enabled',
+  '_yneko_reimu_totp_recovery_codes'
 ];
 
 const requiredAdminJsSnippets = [
@@ -140,6 +150,7 @@ const requiredAdminJsSnippets = [
   'data-yneko-admin-totp',
   'yneko_reimu_admin_totp_generate',
   'yneko_reimu_admin_totp_enable',
+  'yneko_reimu_admin_totp_recovery_generate',
   'yneko_reimu_admin_totp_disable',
   'data-yneko-admin-qrcode',
   'QRCode.toDataURL',
@@ -207,7 +218,7 @@ for (const snippet of requiredAdminStyleSnippets) {
 }
 
 for (const snippet of requiredAdminPhpSnippets) {
-  if (!admin.includes(snippet)) {
+  if (!`${admin}\n${login2fa}`.includes(snippet)) {
     failures.push(`Missing required settings admin PHP snippet: ${snippet}`);
   }
 }

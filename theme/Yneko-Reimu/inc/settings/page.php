@@ -69,8 +69,20 @@ function yneko_reimu_render_settings_page() {
 								<button type="button" class="button button-primary" data-yneko-admin-totp-enable><?php yneko_reimu_admin_bilingual_label( '启用二次认证', 'Enable two-factor authentication' ); ?></button>
 								<button type="button" class="button" data-yneko-admin-totp-disable<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>><?php yneko_reimu_admin_bilingual_label( '关闭二次认证', 'Disable two-factor authentication' ); ?></button>
 							</div>
+							<div class="yneko-reimu-admin-totp-recovery" data-yneko-admin-totp-recovery<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>>
+								<div class="yneko-reimu-admin-totp-recovery__header">
+									<strong><?php yneko_reimu_admin_bilingual_label( '一次性恢复码', 'One-time recovery codes' ); ?></strong>
+									<span class="description" data-yneko-admin-totp-recovery-count><?php echo esc_html( sprintf( yneko_reimu_admin_prefers_zh() ? '剩余 %d 个' : '%d remaining', absint( $admin_totp['recoveryCount'] ?? 0 ) ) ); ?></span>
+								</div>
+								<p class="description"><?php yneko_reimu_admin_bilingual_label( '恢复码只在生成时显示明文，每个码只能使用一次。请离线保存，不要截图公开分享。', 'Recovery codes are shown in plain text only when generated. Each code can be used once. Save them offline and do not share screenshots publicly.' ); ?></p>
+								<pre class="yneko-reimu-admin-totp-recovery__codes" data-yneko-admin-totp-recovery-codes hidden></pre>
+								<div class="yneko-reimu-admin-totp-actions">
+									<button type="button" class="button" data-yneko-admin-totp-recovery-generate><?php yneko_reimu_admin_bilingual_label( '重新生成恢复码', 'Regenerate recovery codes' ); ?></button>
+									<button type="button" class="button" data-yneko-admin-totp-recovery-copy hidden><?php yneko_reimu_admin_bilingual_label( '复制恢复码', 'Copy recovery codes' ); ?></button>
+								</div>
+							</div>
 							<p class="yneko-reimu-admin-totp-message" data-yneko-admin-totp-message></p>
-							<?php yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口登录时需要输入认证器 6 位验证码。后台原生 wp-login.php 仍由 WordPress 自身登录流程处理。', 'After enabling it, this account must enter the 6-digit authenticator code when logging in through the front-end comment login. Native wp-login.php remains handled by WordPress itself.' ); ?>
+							<?php yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口和后台 wp-login.php 登录时都需要输入认证器验证码；如果认证器不可用，可使用一个未用过的一次性恢复码登录。', 'After enabling it, this account must enter an authenticator code when logging in through the front-end comment login and backend wp-login.php. If the authenticator is unavailable, use an unused one-time recovery code.' ); ?>
 						<?php else : ?>
 							<?php yneko_reimu_admin_bilingual_description( '二次认证模块尚未加载，无法在后台管理。', 'The two-factor module is not loaded yet, so it cannot be managed in the admin page.' ); ?>
 						<?php endif; ?>
