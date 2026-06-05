@@ -141,6 +141,8 @@ The first safe JavaScript step is now complete at the source level: `assets/src/
 
 The main `assets/src/reimu.js` entrypoint keeps `window.ReimuWP.init()`, PJAX config replay, modal-state restoration, and the classic script output. The comments/profile module reads the current mutable config through `getConfig()` so PJAX `window.REIMU_CONFIG` replacement continues to reach login, profile, upload, and comment handlers.
 
+The optional lazy `assets/dist/reimu-comments.js` runtime remains deferred from v0.2.9 because no local WordPress manual QA pass is available in this release turn for the full auth, registration, lost-password, GitHub popup, profile save, email/TOTP, avatar/tag review, comment submit/reply/edit/delete/like, media upload/discard, PJAX navigation, and review-status polling matrix. Do not promote the source module into a separate loaded script until that checklist can be completed.
+
 ## Manual QA Checklist
 
 Run this checklist on a local WordPress site when changing comments/profile request handlers, runtime boundaries, DOM replacement, or PJAX rebind behavior.
