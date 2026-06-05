@@ -4,6 +4,16 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
+const enqueuePaths = [
+  resolve(themeRoot, 'inc/enqueue.php'),
+  resolve(themeRoot, 'inc/enqueue/assets.php'),
+  resolve(themeRoot, 'inc/enqueue/head.php'),
+  resolve(themeRoot, 'inc/enqueue/styles.php'),
+  resolve(themeRoot, 'inc/enqueue/config.php'),
+  resolve(themeRoot, 'inc/enqueue/vendors.php'),
+  resolve(themeRoot, 'inc/enqueue/runtime.php')
+];
+const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   frontend: await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8'),
@@ -13,7 +23,7 @@ const files = {
   shareModule: await readFile(resolve(themeRoot, 'assets/src/reimu/share.js'), 'utf8'),
   photoswipeEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'utf8'),
   photoswipeModule: await readFile(resolve(themeRoot, 'assets/src/reimu/photoswipe.js'), 'utf8'),
-  enqueue: await readFile(resolve(themeRoot, 'inc/enqueue.php'), 'utf8'),
+  enqueue: enqueueSource,
   featurePlan: await readFile(resolve(root, 'tools/feature-loading-plan.mjs'), 'utf8'),
   cssPlan: await readFile(resolve(root, 'tools/css-split-plan.mjs'), 'utf8')
 };

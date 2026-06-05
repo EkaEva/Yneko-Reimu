@@ -4,9 +4,19 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
+const enqueuePaths = [
+  resolve(themeRoot, 'inc/enqueue.php'),
+  resolve(themeRoot, 'inc/enqueue/assets.php'),
+  resolve(themeRoot, 'inc/enqueue/head.php'),
+  resolve(themeRoot, 'inc/enqueue/styles.php'),
+  resolve(themeRoot, 'inc/enqueue/config.php'),
+  resolve(themeRoot, 'inc/enqueue/vendors.php'),
+  resolve(themeRoot, 'inc/enqueue/runtime.php')
+];
+const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
-  enqueue: await readFile(resolve(themeRoot, 'inc/enqueue.php'), 'utf8'),
+  enqueue: enqueueSource,
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   context: await readFile(resolve(themeRoot, 'inc/comments/context.php'), 'utf8'),
   badges: await readFile(resolve(themeRoot, 'inc/comments/badges.php'), 'utf8'),

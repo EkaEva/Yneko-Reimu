@@ -56,7 +56,7 @@ msgstr ""
 msgid "%s 留言"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "%s 秒后重发"
 msgstr ""
 
@@ -124,7 +124,7 @@ msgstr ""
 msgid "版权文本"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "保存"
 msgstr ""
 
@@ -132,7 +132,7 @@ msgstr ""
 msgid "本博客所有文章除特别声明外，均采用 %s 许可协议。转载请注明出处！"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "本地搜索索引加载失败。"
 msgstr ""
 
@@ -168,15 +168,15 @@ msgstr ""
 msgid "标签"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "标签审核不通过"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "标签审核中"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "标签已更新"
 msgstr ""
 
@@ -296,27 +296,27 @@ msgstr ""
 msgid "导航文字：%s"
 msgstr ""
 
-#: inc/enqueue.php template-parts/virtual/projects.php
+#: inc/enqueue/config.php template-parts/virtual/projects.php
 msgid "到底了..."
 msgstr ""
 
-#: comments.php inc/comments/modals.php inc/comments/rendering.php inc/enqueue.php
+#: comments.php inc/comments/modals.php inc/comments/rendering.php inc/enqueue/config.php
 msgid "登录"
 msgstr ""
 
-#: inc/comments/auth.php inc/enqueue.php
+#: inc/comments/auth.php inc/enqueue/config.php
 msgid "登录成功。"
 msgstr ""
 
-#: inc/comments/rendering.php inc/enqueue.php
+#: inc/comments/rendering.php inc/enqueue/config.php
 msgid "登录后可上传 GIF。"
 msgstr ""
 
-#: inc/comments/rendering.php inc/comments/uploads/ajax.php inc/enqueue.php
+#: inc/comments/rendering.php inc/comments/uploads/ajax.php inc/enqueue/config.php
 msgid "登录后可上传图片。"
 msgstr ""
 
-#: inc/comments/auth.php inc/enqueue.php
+#: inc/comments/auth.php inc/enqueue/config.php
 msgid "登录失败，请检查账号和密码。"
 msgstr ""
 
@@ -328,7 +328,7 @@ msgstr ""
 msgid "登录信息已过期，请重试。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "登录中..."
 msgstr ""
 
@@ -360,7 +360,7 @@ msgstr ""
 msgid "发送验证码"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "发送中..."
 msgstr ""
 
@@ -396,15 +396,15 @@ msgstr ""
 msgid "辅助导航"
 msgstr ""
 
-#: inc/enqueue.php inc/template-tags/content-tools.php
+#: inc/enqueue/config.php inc/template-tags/content-tools.php
 msgid "复制"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "复制成功 (*^▽^*)"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "复制失败 (ﾟ⊿ﾟ)ﾂ"
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr ""
 msgid "关闭搜索"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "关闭预览"
 msgstr ""
 
@@ -548,11 +548,11 @@ msgstr ""
 msgid "过期天数阈值"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "还没有内容。"
 msgstr ""
 
-#: comments.php inc/enqueue.php
+#: comments.php inc/enqueue/config.php
 msgid "还没有评论，来抢一张小板凳吧。"
 msgstr ""
 
@@ -584,7 +584,7 @@ msgstr ""
 msgid "回复"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "回复评论"
 msgstr ""
 
@@ -600,7 +600,7 @@ msgstr ""
 msgid "记住我"
 msgstr ""
 
-#: comments.php inc/enqueue.php template-parts/virtual/projects.php
+#: comments.php inc/enqueue/config.php template-parts/virtual/projects.php
 msgid "加载更多..."
 msgstr ""
 
@@ -668,11 +668,11 @@ msgstr ""
 msgid "两步验证码不正确。"
 msgstr ""
 
-#: inc/comments/profile-save.php inc/enqueue.php
+#: inc/comments/profile-save.php inc/enqueue/config.php
 msgid "两次输入的密码不一致。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "没有结果"
 msgstr ""
 
@@ -760,7 +760,7 @@ msgstr ""
 msgid "评论"
 msgstr ""
 
-#: inc/comments/uploads/ajax.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/enqueue/config.php
 msgid "评论 GIF 上传已关闭。"
 msgstr ""
 
@@ -784,7 +784,7 @@ msgstr ""
 msgid "评论操作"
 msgstr ""
 
-#: inc/comments/mutations.php inc/enqueue.php
+#: inc/comments/mutations.php inc/enqueue/config.php
 msgid "评论更新失败。"
 msgstr ""
 
@@ -804,7 +804,7 @@ msgstr ""
 msgid "评论区"
 msgstr ""
 
-#: inc/comments/mutations.php inc/enqueue.php
+#: inc/comments/mutations.php inc/enqueue/config.php
 msgid "评论删除失败。"
 msgstr ""
 
@@ -812,27 +812,27 @@ msgstr ""
 msgid "评论上传：%s"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "评论审核不通过"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "评论审核中"
 msgstr ""
 
-#: inc/comments/mutations.php inc/enqueue.php
+#: inc/comments/mutations.php inc/enqueue/config.php
 msgid "评论提交失败。"
 msgstr ""
 
-#: inc/comments/uploads/ajax.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/enqueue/config.php
 msgid "评论图片上传已关闭。"
 msgstr ""
 
-#: inc/comments/mutations.php inc/enqueue.php
+#: inc/comments/mutations.php inc/enqueue/config.php
 msgid "评论已发布。"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "评论已更新"
 msgstr ""
 
@@ -848,7 +848,7 @@ msgstr ""
 msgid "评论已删除。"
 msgstr ""
 
-#: inc/comments/mutations.php inc/enqueue.php
+#: inc/comments/mutations.php inc/enqueue/config.php
 msgid "评论已提交，正在等待审核。"
 msgstr ""
 
@@ -856,7 +856,7 @@ msgstr ""
 msgid "评论正在等待审核。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "启用"
 msgstr ""
 
@@ -912,7 +912,7 @@ msgstr ""
 msgid "请输入 6 位邮箱验证码。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "请输入 http(s) 图片地址"
 msgstr ""
 
@@ -948,7 +948,7 @@ msgstr ""
 msgid "请先生成认证器密钥。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "请先选择文件。"
 msgstr ""
 
@@ -968,7 +968,7 @@ msgstr ""
 msgid "请选择要上传的文件。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "请用认证器扫码，并输入 6 位验证码后保存。"
 msgstr ""
 
@@ -980,11 +980,11 @@ msgstr ""
 msgid "请在“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "取消"
 msgstr ""
 
-#: comments.php inc/enqueue.php
+#: comments.php inc/enqueue/config.php
 msgid "取消回复"
 msgstr ""
 
@@ -992,7 +992,7 @@ msgstr ""
 msgid "权限不足。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "确定删除这条评论吗？"
 msgstr ""
 
@@ -1032,11 +1032,11 @@ msgstr ""
 msgid "删除头像"
 msgstr ""
 
-#: inc/comments/modals.php inc/comments/rendering.php inc/enqueue.php
+#: inc/comments/modals.php inc/comments/rendering.php inc/enqueue/config.php
 msgid "上传"
 msgstr ""
 
-#: inc/comments/uploads/ajax.php inc/comments/uploads/helpers.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/comments/uploads/helpers.php inc/enqueue/config.php
 msgid "上传失败。"
 msgstr ""
 
@@ -1044,7 +1044,7 @@ msgstr ""
 msgid "上传图片"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "上传中..."
 msgstr ""
 
@@ -1064,7 +1064,7 @@ msgstr ""
 msgid "上一页"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "上一张图片"
 msgstr ""
 
@@ -1072,7 +1072,7 @@ msgstr ""
 msgid "少年，你迷路了吗？"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "少女检索中..."
 msgstr ""
 
@@ -1124,7 +1124,7 @@ msgstr ""
 msgid "首页胶囊链接"
 msgstr ""
 
-#: inc/enqueue.php template-parts/layout/search-popup.php
+#: inc/enqueue/config.php template-parts/layout/search-popup.php
 msgid "输入关键词后按回车搜索。"
 msgstr ""
 
@@ -1160,7 +1160,7 @@ msgstr ""
 msgid "特殊标签"
 msgstr ""
 
-#: inc/comments/profile-save.php inc/enqueue.php
+#: inc/comments/profile-save.php inc/enqueue/config.php
 msgid "特殊标签和已勾选的自定义标签合计最多 2 个。"
 msgstr ""
 
@@ -1172,7 +1172,7 @@ msgstr ""
 msgid "提交搜索"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "提交中..."
 msgstr ""
 
@@ -1192,11 +1192,11 @@ msgstr ""
 msgid "同时用于顶部 GitHub 三角标、侧栏 GitHub 图标和项目页拉取来源。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "头像更新中"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "头像仅支持 JPG、PNG 或 WebP。"
 msgstr ""
 
@@ -1208,23 +1208,23 @@ msgstr ""
 msgid "头像上传失败。"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "头像审核不通过"
 msgstr ""
 
-#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile.php inc/enqueue.php inc/settings/renderers.php
+#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile.php inc/enqueue/config.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr ""
 
-#: inc/comments/avatars.php inc/enqueue.php
+#: inc/comments/avatars.php inc/enqueue/config.php
 msgid "头像文件超过大小限制。"
 msgstr ""
 
-#: inc/comments/avatars.php inc/comments/profile.php inc/enqueue.php
+#: inc/comments/avatars.php inc/comments/profile.php inc/enqueue/config.php
 msgid "头像已更新"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "头像已选择，保存后生效。"
 msgstr ""
 
@@ -1244,7 +1244,7 @@ msgstr ""
 msgid "图片已通过"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "图片预览"
 msgstr ""
 
@@ -1264,7 +1264,7 @@ msgstr ""
 msgid "网址（可选）"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "忘记密码？"
 msgstr ""
 
@@ -1276,7 +1276,7 @@ msgstr ""
 msgid "微信分享二维码"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "未发现与「{query}」相关内容"
 msgstr ""
 
@@ -1340,7 +1340,7 @@ msgstr ""
 msgid "我的项目"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "无标题"
 msgstr ""
 
@@ -1372,7 +1372,7 @@ msgstr ""
 msgid "下一页 »"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "下一张图片"
 msgstr ""
 
@@ -1408,7 +1408,7 @@ msgstr ""
 msgid "显示过期提示"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "显示密码"
 msgstr ""
 
@@ -1484,7 +1484,7 @@ msgstr ""
 msgid "新邮箱"
 msgstr ""
 
-#: inc/comments/profile.php inc/enqueue.php
+#: inc/comments/profile.php inc/enqueue/config.php
 msgid "新邮箱地址不要与原邮箱地址重复。"
 msgstr ""
 
@@ -1492,7 +1492,7 @@ msgstr ""
 msgid "新邮箱验证码"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "选择文件"
 msgstr ""
 
@@ -1524,7 +1524,7 @@ msgstr ""
 msgid "验证码会发送到账号邮箱，5 分钟内有效。"
 msgstr ""
 
-#: inc/comments/auth.php inc/comments/profile.php inc/enqueue.php
+#: inc/comments/auth.php inc/comments/profile.php inc/enqueue/config.php
 msgid "验证码已发送，请检查您的邮箱。"
 msgstr ""
 
@@ -1540,11 +1540,11 @@ msgstr ""
 msgid "验证码邮件发送失败，请稍后重试。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "验证邮箱后即可创建账号。"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "验证邮箱后即可重置密码。"
 msgstr ""
 
@@ -1580,7 +1580,7 @@ msgstr ""
 msgid "移动端导航"
 msgstr ""
 
-#: inc/comments/uploads/ajax.php inc/enqueue.php
+#: inc/comments/uploads/ajax.php inc/enqueue/config.php
 msgid "已插入评论。"
 msgstr ""
 
@@ -1616,7 +1616,7 @@ msgstr ""
 msgid "隐藏"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "隐藏密码"
 msgstr ""
 
@@ -1704,7 +1704,7 @@ msgstr ""
 msgid "暂时没有内容"
 msgstr ""
 
-#: inc/enqueue.php inc/settings/renderers.php
+#: inc/enqueue/config.php inc/settings/renderers.php
 msgid "暂无可选..."
 msgstr ""
 
@@ -1732,7 +1732,7 @@ msgstr ""
 msgid "摘要字数"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "展开代码"
 msgstr ""
 
@@ -1748,11 +1748,11 @@ msgstr ""
 msgid "站长"
 msgstr ""
 
-#: inc/enqueue.php
+#: inc/enqueue/config.php
 msgid "找到 {count} 条结果"
 msgstr ""
 
-#: inc/enqueue.php inc/template-tags/content-tools.php
+#: inc/enqueue/config.php inc/template-tags/content-tools.php
 msgid "折叠代码"
 msgstr ""
 
@@ -1788,7 +1788,7 @@ msgstr ""
 msgid "重置密码"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "重置中..."
 msgstr ""
 
@@ -1804,7 +1804,7 @@ msgstr ""
 msgid "主要内容"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "注册"
 msgstr ""
 
@@ -1812,7 +1812,7 @@ msgstr ""
 msgid "注册成功，请返回登录。"
 msgstr ""
 
-#: inc/comments/modals.php inc/enqueue.php
+#: inc/comments/modals.php inc/enqueue/config.php
 msgid "注册中..."
 msgstr ""
 

@@ -3,8 +3,16 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const enqueuePath = resolve(root, 'theme/Yneko-Reimu/inc/enqueue.php');
-const source = await readFile(enqueuePath, 'utf8');
+const enqueuePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/assets.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/head.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/styles.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/config.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/vendors.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/enqueue/runtime.php')
+];
+const source = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 let failed = false;
 
 function requireSnippet(label, snippet) {
@@ -15,6 +23,12 @@ function requireSnippet(label, snippet) {
 }
 
 for (const snippet of [
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/assets.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/head.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/styles.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/config.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/vendors.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/enqueue/runtime.php';",
   "add_action( 'wp_enqueue_scripts', 'yneko_reimu_enqueue_assets' )",
   'function yneko_reimu_enqueue_assets',
   'function yneko_reimu_enqueue_theme_styles',

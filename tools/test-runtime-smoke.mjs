@@ -4,6 +4,16 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
+const enqueuePaths = [
+  resolve(themeRoot, 'inc/enqueue.php'),
+  resolve(themeRoot, 'inc/enqueue/assets.php'),
+  resolve(themeRoot, 'inc/enqueue/head.php'),
+  resolve(themeRoot, 'inc/enqueue/styles.php'),
+  resolve(themeRoot, 'inc/enqueue/config.php'),
+  resolve(themeRoot, 'inc/enqueue/vendors.php'),
+  resolve(themeRoot, 'inc/enqueue/runtime.php')
+];
+const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const runtimeScripts = [
   'assets/dist/reimu.js',
@@ -20,7 +30,7 @@ const sourceFiles = {
   shareEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-share.js'), 'utf8'),
   photoswipeEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'utf8'),
   modals: await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8'),
-  enqueue: await readFile(resolve(themeRoot, 'inc/enqueue.php'), 'utf8')
+  enqueue: enqueueSource
 };
 
 const failures = [];
