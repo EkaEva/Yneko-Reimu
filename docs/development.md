@@ -25,6 +25,7 @@ npm run check:css-split
 npm run build
 npm run test:runtime
 npm run check:assets
+npm run check:i18n-contract
 npm run check:i18n-messages
 npm run check:size
 npm run report:php-complexity
@@ -45,6 +46,8 @@ Use the same toolchain as CI when possible: Node.js 24, npm dependencies from `p
 `npm run check:i18n-messages` verifies that high-impact English feedback strings in auth, profile, comment, upload, review, email verification, password reset, and GitHub OAuth flows are not empty after gettext files are regenerated. It is a focused user-facing message contract, not a requirement that every historical `en_US.po` entry is translated.
 
 `npm run check:assets` verifies that runtime PHP/CSS/JS files do not contain `data:image` URLs or base64 image payloads. Large, replaceable, or cacheable images should stay as files under `assets/images` or be emitted into `assets/dist` by the build. Small UI SVG components may remain inline when they are part of markup behavior rather than replaceable media.
+
+`npm run check:i18n-contract` verifies the bilingual routing contract after i18n helper splits. It checks the `inc/i18n.php` entrypoint, internal module loading, language settings, `/en/` URL helpers, post translation meta keys, rewrite/query hooks, 404 handling, language meta queries, and downstream SEO/search/navigation dependencies.
 
 `npm run test:runtime` runs a fast smoke test after the build. It parses built public scripts as classic scripts and checks high-risk PJAX, lazy runtime, comments/profile modal, enqueue, and front-end global anchors. It is not a replacement for WordPress browser QA; it catches obvious runtime packaging and anchor regressions before manual testing.
 
@@ -85,6 +88,8 @@ The Template Tags PHP entrypoint is `theme/Yneko-Reimu/inc/template-tags.php`. I
 `npm run check:enqueue` verifies the front-end enqueue contract after PHP helper splits. It checks the public enqueue hook, critical script/style handles, third-party asset paths, `window.REIMU_CONFIG` keys, and nonce names so future asset-configuration cleanup does not silently change the front-end runtime contract.
 
 The front-end enqueue PHP entrypoint is `theme/Yneko-Reimu/inc/enqueue.php`. Internal helpers may live under `theme/Yneko-Reimu/inc/enqueue/`; currently `assets.php` owns asset versioning and vendor URL helpers, `head.php` owns critical cursor, favicon, meta, and early theme script output, `styles.php` owns theme stylesheet enqueueing, `config.php` owns search/front-end configuration and translated runtime messages, `vendors.php` owns optional third-party asset enqueueing, and `runtime.php` owns the main classic script plus `window.REIMU_CONFIG`. Keep script/style handles, asset paths, enqueue conditions, nonce names, and `REIMU_CONFIG` keys unchanged unless a compatibility note is added.
+
+The i18n PHP entrypoint is `theme/Yneko-Reimu/inc/i18n.php`. Internal helpers may live under `theme/Yneko-Reimu/inc/i18n/`; currently `settings.php` owns language settings, locale filters, and textdomain loading, `urls.php` owns URL localization and language-switcher helpers, `posts.php` owns post language/translation/permalink helpers, `requests.php` owns `/en/` rewrite/request/query resolution and forced 404 behavior, and `queries.php` owns language meta queries, translated-original exclusion, REST query filtering, and sticky post translation. Keep language codes, `/en/` prefix behavior, `_yneko_reimu_language`, `_yneko_reimu_translation_id`, rewrite rules, query vars, and hook priorities unchanged unless a migration is documented.
 
 `npm run check:comments-profile` verifies the comments/profile runtime contract before any further split. It checks high-risk AJAX actions, nonce creation and verification, front-end config keys, request payload fields, DOM selectors, source module boundaries, PHP module boundaries, comment rendering anchors, external comment panel anchors, and CSS anchors used by login, profile, comment upload, comment mutation, rendering, and review-status flows.
 
