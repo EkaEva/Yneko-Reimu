@@ -64,6 +64,8 @@ Checklist:
 - Confirm the login modal transitions into the two-factor step and accepts a valid current TOTP code.
 - Confirm `wp-login.php` displays the authenticator-code field, rejects missing/wrong codes for a 2FA-enabled account, and accepts the current authenticator code.
 - Confirm the admin settings page shows recovery codes only after TOTP enablement or regeneration, and that the copy button copies the visible code list.
+- Confirm the admin settings page uses a single TOTP action button: it shows enable before setup succeeds and disable after setup succeeds.
+- Confirm disabling TOTP removes the current secret and recovery codes, and that a later enablement requires generating a fresh secret.
 - Confirm a recovery code can log in through `wp-login.php`, is consumed after use, and fails if reused.
 - Confirm a non-2FA account can still log in through `wp-login.php` without a code.
 - Confirm cleanup removes test users, pending TOTP secrets, and captured mail data.

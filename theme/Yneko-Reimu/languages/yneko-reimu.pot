@@ -1005,7 +1005,7 @@ msgid "认证器验证码或恢复码"
 msgstr ""
 
 #: inc/github-login/login-2fa.php
-msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码。"
+msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码；如果没有开启二次认证，留空即可。"
 msgstr ""
 
 #: inc/comments/auth.php

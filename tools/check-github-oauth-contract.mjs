@@ -259,6 +259,7 @@ const checks = [
       'name="yneko_reimu_login_totp_code"',
       'autocomplete="one-time-code"',
       '认证器验证码或恢复码',
+      '如果没有开启二次认证，留空即可',
       'function yneko_reimu_login_2fa_authenticate',
       "add_filter( 'authenticate', 'yneko_reimu_login_2fa_authenticate', 30 );",
       'yneko_reimu_login_2fa_is_wp_login_request',

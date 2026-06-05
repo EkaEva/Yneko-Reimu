@@ -25,7 +25,7 @@ function yneko_reimu_login_2fa_field() {
 	<p class="yneko-reimu-login-totp">
 		<label for="yneko-reimu-login-totp-code"><?php esc_html_e( '认证器验证码或恢复码', 'yneko-reimu' ); ?></label>
 		<input id="yneko-reimu-login-totp-code" class="input" name="yneko_reimu_login_totp_code" type="text" value="<?php echo esc_attr( $value ); ?>" inputmode="text" autocomplete="one-time-code" pattern="[0-9A-Za-z -]{6,23}" maxlength="23" size="20">
-		<span class="description"><?php esc_html_e( '如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码。', 'yneko-reimu' ); ?></span>
+		<span class="description"><?php esc_html_e( '如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码；如果没有开启二次认证，留空即可。', 'yneko-reimu' ); ?></span>
 	</p>
 	<?php
 }

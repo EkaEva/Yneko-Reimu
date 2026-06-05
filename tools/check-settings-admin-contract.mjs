@@ -50,8 +50,7 @@ const requiredPageSnippets = [
   'yneko_reimu_settings_group_open( \'账号安全\', \'Account security\'',
   'data-yneko-admin-totp',
   'data-yneko-admin-totp-generate',
-  'data-yneko-admin-totp-enable',
-  'data-yneko-admin-totp-disable',
+  'data-yneko-admin-totp-toggle',
   'data-yneko-admin-totp-recovery',
   'data-yneko-admin-totp-recovery-generate',
   'data-yneko-admin-totp-recovery-copy',
@@ -152,6 +151,7 @@ const requiredAdminJsSnippets = [
   'yneko_reimu_admin_totp_enable',
   'yneko_reimu_admin_totp_recovery_generate',
   'yneko_reimu_admin_totp_disable',
+  'data-yneko-admin-totp-toggle',
   'data-yneko-admin-qrcode',
   'QRCode.toDataURL',
   'initAdminTotp();'

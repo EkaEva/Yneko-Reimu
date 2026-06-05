@@ -1017,3 +1017,5 @@
 - Added one-time recovery codes for TOTP-enabled accounts: enablement and regeneration return plain-text codes once, stored codes are hashed under `_yneko_reimu_totp_recovery_codes`, each successful recovery-code login consumes one hash, regeneration invalidates the old set, and disabling TOTP clears recovery codes.
 - Updated the admin account-security UI with recovery-code count, one-time display, copy button, and regenerate button.
 - Extended settings-admin and GitHub OAuth contract gates to protect recovery-code AJAX actions, meta storage, admin UI anchors, hash storage, and single-use consumption.
+- Committed and pushed the recovery-code implementation to GitHub as `e8018b4` without creating a v0.2.5 tag.
+- Refined the follow-up UX: the `wp-login.php` field description now says non-2FA accounts can leave the field blank, the admin TOTP UI uses a single enable/disable toggle button, and disabling TOTP now deletes the old secret in addition to the enabled flag, pending secret, and recovery codes.

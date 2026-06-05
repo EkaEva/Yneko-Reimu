@@ -367,7 +367,7 @@
 
   function setTotpState(root, enabled, nonce) {
     var status = root.querySelector('[data-yneko-admin-totp-status]');
-    var disable = root.querySelector('[data-yneko-admin-totp-disable]');
+    var toggle = root.querySelector('[data-yneko-admin-totp-toggle]');
     var recovery = root.querySelector('[data-yneko-admin-totp-recovery]');
     var setup = root.querySelector('[data-yneko-admin-totp-setup]');
     var code = root.querySelector('[data-yneko-admin-totp-code]');
@@ -380,8 +380,9 @@
       status.classList.toggle('is-enabled', !!enabled);
       status.innerHTML = labelText(enabled ? 'totpEnabled' : 'totpDisabled', enabled ? '已开启' : '未开启', enabled ? 'Enabled' : 'Disabled');
     }
-    if (disable) {
-      disable.hidden = !enabled;
+    if (toggle) {
+      toggle.innerHTML = labelText(enabled ? 'totpDisableAction' : 'totpEnableAction', enabled ? '关闭二次认证' : '启用二次认证', enabled ? 'Disable two-factor authentication' : 'Enable two-factor authentication');
+      toggle.classList.toggle('button-primary', !enabled);
     }
     if (recovery) {
       recovery.hidden = !enabled;
@@ -453,8 +454,7 @@
   function initAdminTotp() {
     document.querySelectorAll('[data-yneko-admin-totp]').forEach(function (root) {
       var generate = root.querySelector('[data-yneko-admin-totp-generate]');
-      var enable = root.querySelector('[data-yneko-admin-totp-enable]');
-      var disable = root.querySelector('[data-yneko-admin-totp-disable]');
+      var toggle = root.querySelector('[data-yneko-admin-totp-toggle]');
       var recoveryGenerate = root.querySelector('[data-yneko-admin-totp-recovery-generate]');
       var recoveryCopy = root.querySelector('[data-yneko-admin-totp-recovery-copy]');
       var code = root.querySelector('[data-yneko-admin-totp-code]');
@@ -483,9 +483,30 @@
         });
       }
 
-      if (enable) {
-        enable.addEventListener('click', function () {
-          setLoading(enable, true);
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          if (root.getAttribute('data-enabled') === '1') {
+            if (!window.confirm(plain('totpDisableConfirm', '确定关闭当前账号的二次认证吗？', 'Disable two-factor authentication for the current account?'))) {
+              return;
+            }
+            setLoading(toggle, true);
+            setTotpMessage(root, '', false);
+            postAdminTotp(root, 'yneko_reimu_admin_totp_disable').then(function (payload) {
+              if (!payload || !payload.success) {
+                throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'));
+              }
+              setTotpState(root, false, payload.data && payload.data.nonce);
+              renderRecoveryCodes(root, []);
+              setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
+            }).catch(function (error) {
+              setTotpMessage(root, error.message || plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'), true);
+            }).finally(function () {
+              setLoading(toggle, false);
+            });
+            return;
+          }
+
+          setLoading(toggle, true);
           setTotpMessage(root, '', false);
           postAdminTotp(root, 'yneko_reimu_admin_totp_enable', {
             totp_code: code ? code.value : ''
@@ -499,29 +520,7 @@
           }).catch(function (error) {
             setTotpMessage(root, error.message || plain('totpEnableFailed', '二次认证启用失败。', 'Failed to enable two-factor authentication.'), true);
           }).finally(function () {
-            setLoading(enable, false);
-          });
-        });
-      }
-
-      if (disable) {
-        disable.addEventListener('click', function () {
-          if (!window.confirm(plain('totpDisableConfirm', '确定关闭当前账号的二次认证吗？', 'Disable two-factor authentication for the current account?'))) {
-            return;
-          }
-          setLoading(disable, true);
-          setTotpMessage(root, '', false);
-          postAdminTotp(root, 'yneko_reimu_admin_totp_disable').then(function (payload) {
-            if (!payload || !payload.success) {
-              throw new Error(payload && payload.data && payload.data.message ? payload.data.message : plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'));
-            }
-            setTotpState(root, false, payload.data && payload.data.nonce);
-            renderRecoveryCodes(root, []);
-            setTotpMessage(root, payload.data && payload.data.message ? payload.data.message : '', false);
-          }).catch(function (error) {
-            setTotpMessage(root, error.message || plain('totpDisableFailed', '二次认证关闭失败。', 'Failed to disable two-factor authentication.'), true);
-          }).finally(function () {
-            setLoading(disable, false);
+            setLoading(toggle, false);
           });
         });
       }

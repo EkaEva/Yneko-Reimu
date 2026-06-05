@@ -220,6 +220,7 @@ function yneko_reimu_ajax_admin_totp_disable() {
 
 	$user_id = get_current_user_id();
 	delete_user_meta( $user_id, '_yneko_reimu_totp_enabled' );
+	delete_user_meta( $user_id, '_yneko_reimu_totp_secret' );
 	delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
 	if ( function_exists( 'yneko_reimu_login_2fa_clear_recovery_codes' ) ) {
 		yneko_reimu_login_2fa_clear_recovery_codes( $user_id );
@@ -354,6 +355,8 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 		'totpRecoveryCopy' => array( 'zh' => '复制恢复码', 'en' => 'Copy recovery codes' ),
 		'totpRecoveryCopied' => array( 'zh' => '恢复码已复制。', 'en' => 'Recovery codes copied.' ),
 		'totpRecoveryCount' => array( 'zh' => '剩余 %d 个', 'en' => '%d remaining' ),
+		'totpEnableAction' => array( 'zh' => '启用二次认证', 'en' => 'Enable two-factor authentication' ),
+		'totpDisableAction' => array( 'zh' => '关闭二次认证', 'en' => 'Disable two-factor authentication' ),
 		'totpEnabled'     => array( 'zh' => '已开启', 'en' => 'Enabled' ),
 		'totpDisabled'    => array( 'zh' => '未开启', 'en' => 'Disabled' ),
 		'name'            => array( 'zh' => '名称', 'en' => 'Name' ),

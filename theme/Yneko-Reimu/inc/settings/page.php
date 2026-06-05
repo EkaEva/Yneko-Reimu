@@ -66,8 +66,7 @@ function yneko_reimu_render_settings_page() {
 							<div class="yneko-reimu-admin-totp-actions">
 								<button type="button" class="button" data-yneko-admin-totp-generate><?php yneko_reimu_admin_bilingual_label( '生成认证器密钥', 'Generate authenticator secret' ); ?></button>
 								<input class="small-text" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" data-yneko-admin-totp-code>
-								<button type="button" class="button button-primary" data-yneko-admin-totp-enable><?php yneko_reimu_admin_bilingual_label( '启用二次认证', 'Enable two-factor authentication' ); ?></button>
-								<button type="button" class="button" data-yneko-admin-totp-disable<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>><?php yneko_reimu_admin_bilingual_label( '关闭二次认证', 'Disable two-factor authentication' ); ?></button>
+								<button type="button" class="button<?php echo $admin_totp['enabled'] ? '' : ' button-primary'; ?>" data-yneko-admin-totp-toggle><?php echo wp_kses_post( $admin_totp['enabled'] ? yneko_reimu_admin_bilingual_text( '关闭二次认证', 'Disable two-factor authentication' ) : yneko_reimu_admin_bilingual_text( '启用二次认证', 'Enable two-factor authentication' ) ); ?></button>
 							</div>
 							<div class="yneko-reimu-admin-totp-recovery" data-yneko-admin-totp-recovery<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>>
 								<div class="yneko-reimu-admin-totp-recovery__header">
