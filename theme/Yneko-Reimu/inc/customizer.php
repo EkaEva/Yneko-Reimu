@@ -12,6 +12,7 @@ require_once get_template_directory() . '/inc/customizer/typography-layout.php';
 require_once get_template_directory() . '/inc/customizer/images.php';
 require_once get_template_directory() . '/inc/customizer/cards.php';
 require_once get_template_directory() . '/inc/customizer/articles.php';
+require_once get_template_directory() . '/inc/customizer/restore-defaults.php';
 require_once get_template_directory() . '/inc/customizer/social.php';
 require_once get_template_directory() . '/inc/customizer/footer-virtual.php';
 
@@ -32,6 +33,7 @@ function yneko_reimu_register_customizer_sections( $wp_customize ) {
 	yneko_reimu_register_customizer_images_section( $wp_customize );
 	yneko_reimu_register_customizer_cards_section( $wp_customize );
 	yneko_reimu_register_customizer_articles_section( $wp_customize );
+	yneko_reimu_register_customizer_restore_defaults_section( $wp_customize );
 	yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_settings_defaults );
 	yneko_reimu_register_customizer_footer_virtual_sections( $wp_customize );
 }

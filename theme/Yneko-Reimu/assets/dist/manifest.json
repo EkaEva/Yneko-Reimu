@@ -18,6 +18,7 @@
   ],
   "outputs": [
     "assets/dist/admin-settings.js",
+    "assets/dist/customizer-restore-defaults.js",
     "assets/dist/loader.css",
     "assets/dist/qrcode.js",
     "assets/dist/reimu-code.css",
@@ -37,6 +38,7 @@
   ],
   "outputStats": {
     "assets/dist/admin-settings.js": 14605,
+    "assets/dist/customizer-restore-defaults.js": 886,
     "assets/dist/loader.css": 1912,
     "assets/dist/qrcode.js": 24609,
     "assets/dist/reimu-code.css": 3601,

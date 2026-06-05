@@ -224,6 +224,10 @@ msgstr ""
 msgid "部分 GIF 上传失败。"
 msgstr ""
 
+#: inc/customizer/restore-defaults.php
+msgid "部分设置暂时不可用，请刷新 Customizer 后重试。"
+msgstr ""
+
 #: inc/post-meta.php sidebar.php
 msgid "侧边栏"
 msgstr ""
@@ -600,8 +604,32 @@ msgstr ""
 msgid "欢迎评论"
 msgstr ""
 
+#: inc/customizer/restore-defaults.php
+msgid "恢复博客卡片信息、文章页模块、摘要长度、过期天数和代码折叠高度。"
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "恢复此组默认值"
+msgstr ""
+
 #: inc/settings/admin.php
 msgid "恢复码模块尚未加载。"
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "恢复默认"
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "恢复默认横幅、卡片封面、头像/角色图和搜索背景。"
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "恢复鼠标指针、加载动画图片与文案、回到顶部和赞助装饰图。"
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "恢复字体、字号、行高、内容宽度、密度、圆角和阴影。"
 msgstr ""
 
 #: inc/customizer/visual-assets.php
@@ -658,6 +686,10 @@ msgstr ""
 
 #: comments.php inc/enqueue/config.php template-parts/virtual/projects.php
 msgid "加载更多..."
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "将“%s”恢复为默认值？预览会立即更新，但只有点击“发布”后才会保存。"
 msgstr ""
 
 #: inc/comments/uploads/helpers.php
@@ -796,6 +828,10 @@ msgstr ""
 msgid "默认只启用 GitHub。其它社交链接可先填写保存，启用后才会显示。"
 msgstr ""
 
+#: inc/customizer/restore-defaults.php
+msgid "内容显示"
+msgstr ""
+
 #: inc/comments/mutations.php
 msgid "你不能编辑这条评论。"
 msgstr ""
@@ -824,7 +860,7 @@ msgstr ""
 msgid "您的注册验证码是：%1$s"
 msgstr ""
 
-#: inc/customizer/typography-layout.php
+#: inc/customizer/restore-defaults.php inc/customizer/typography-layout.php
 msgid "排版与布局密度"
 msgstr ""
 
@@ -1208,7 +1244,7 @@ msgstr ""
 msgid "视觉主题"
 msgstr ""
 
-#: inc/customizer/visual-assets.php
+#: inc/customizer/restore-defaults.php inc/customizer/visual-assets.php
 msgid "视觉资产"
 msgstr ""
 
@@ -1840,6 +1876,10 @@ msgstr ""
 msgid "预览:"
 msgstr ""
 
+#: inc/customizer/restore-defaults.php
+msgid "预览图片"
+msgstr ""
+
 #: inc/customizer/preset.php
 msgid "预设"
 msgstr ""
@@ -1938,6 +1978,10 @@ msgstr ""
 
 #: inc/customizer/typography-layout.php
 msgid "正文字体"
+msgstr ""
+
+#: inc/customizer/restore-defaults.php
+msgid "只恢复视觉预览中的低风险外观项。点击后先更新预览，仍需点击“发布”才会保存。"
 msgstr ""
 
 #: template-parts/content/content-card.php

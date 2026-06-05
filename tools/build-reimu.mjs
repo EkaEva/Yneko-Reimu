@@ -117,6 +117,7 @@ await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-search.js'), 'reim
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'reimu-photoswipe.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-share.js'), 'reimu-share.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/admin-settings.js'), 'admin-settings.js');
+await buildClassicScript(resolve(themeRoot, 'assets/src/customizer-restore-defaults.js'), 'customizer-restore-defaults.js');
 
 const viteCopiedCursorFiles = [
   'lily-alternate.png',

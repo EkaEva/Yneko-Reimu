@@ -15,8 +15,10 @@ const files = {
   images: await readFile(resolve(themeRoot, 'inc/customizer/images.php'), 'utf8'),
   cards: await readFile(resolve(themeRoot, 'inc/customizer/cards.php'), 'utf8'),
   articles: await readFile(resolve(themeRoot, 'inc/customizer/articles.php'), 'utf8'),
+  restoreDefaults: await readFile(resolve(themeRoot, 'inc/customizer/restore-defaults.php'), 'utf8'),
   social: await readFile(resolve(themeRoot, 'inc/customizer/social.php'), 'utf8'),
-  footerVirtual: await readFile(resolve(themeRoot, 'inc/customizer/footer-virtual.php'), 'utf8')
+  footerVirtual: await readFile(resolve(themeRoot, 'inc/customizer/footer-virtual.php'), 'utf8'),
+  customizerRestoreJs: await readFile(resolve(themeRoot, 'assets/src/customizer-restore-defaults.js'), 'utf8')
 };
 const source = Object.values(files).join('\n');
 let failed = false;
@@ -38,6 +40,7 @@ for (const moduleImport of [
   "require_once get_template_directory() . '/inc/customizer/images.php';",
   "require_once get_template_directory() . '/inc/customizer/cards.php';",
   "require_once get_template_directory() . '/inc/customizer/articles.php';",
+  "require_once get_template_directory() . '/inc/customizer/restore-defaults.php';",
   "require_once get_template_directory() . '/inc/customizer/social.php';",
   "require_once get_template_directory() . '/inc/customizer/footer-virtual.php';"
 ]) {
@@ -63,6 +66,7 @@ for (const section of [
   'yneko_reimu_images',
   'yneko_reimu_cards',
   'yneko_reimu_articles',
+  'yneko_reimu_restore_defaults',
   'yneko_reimu_social',
   'yneko_reimu_footer',
   'yneko_reimu_virtual_pages'
@@ -110,6 +114,11 @@ for (const setting of [
   'yneko_reimu_show_toc',
   'yneko_reimu_show_update_time',
   'yneko_reimu_code_expand_threshold',
+  'yneko_reimu_customizer_reset_groups',
+  'visual_assets',
+  'typography_layout',
+  'preview_images',
+  'content_display',
   'yneko_reimu_social_share_heading',
   'yneko_reimu_social_sidebar_heading',
   'yneko_reimu_settings[github_url]',
@@ -134,6 +143,7 @@ for (const sanitizer of [
   'yneko_reimu_sanitize_content_max_width',
   'yneko_reimu_sanitize_article_content_width',
   'yneko_reimu_sanitize_radius_px',
+  'yneko_reimu_sanitize_customizer_restore_groups',
   'yneko_reimu_sanitize_sidebar_widget_order',
   'yneko_reimu_sanitize_social_url_or_empty',
   'sanitize_text_field',
@@ -141,6 +151,22 @@ for (const sanitizer of [
   'sanitize_hex_color'
 ]) {
   requireSnippet('sanitizer contract', sanitizer);
+}
+
+for (const snippet of [
+  'function yneko_reimu_customizer_restore_groups',
+  'class Yneko_Reimu_Customize_Reset_Control',
+  "add_action( 'customize_controls_enqueue_scripts', 'yneko_reimu_customizer_restore_defaults_assets' )",
+  "add_action( 'customize_save_after', 'yneko_reimu_customizer_restore_defaults_after_save' )",
+  'remove_theme_mod( $setting_id )',
+  "wp_enqueue_script(\n\t\t'yneko-reimu-customizer-restore-defaults'",
+  'YNEKO_REIMU_CUSTOMIZER_RESTORE',
+  'customizer-restore-defaults.js',
+  'window.confirm(formatConfirm(group.label || groupId))',
+  'control.set(group.settings[settingId])',
+  'markGroup(groupId)'
+]) {
+  requireSnippet('restore defaults contract', snippet);
 }
 
 if (failed) {

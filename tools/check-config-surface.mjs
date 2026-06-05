@@ -42,6 +42,7 @@ const customizerPaths = [
   resolve(themeRoot, 'inc/customizer/images.php'),
   resolve(themeRoot, 'inc/customizer/cards.php'),
   resolve(themeRoot, 'inc/customizer/articles.php'),
+  resolve(themeRoot, 'inc/customizer/restore-defaults.php'),
   resolve(themeRoot, 'inc/customizer/social.php'),
   resolve(themeRoot, 'inc/customizer/footer-virtual.php')
 ];
@@ -132,6 +133,8 @@ const coveredCustomizer = [
   'yneko_reimu_card_radius',
   'yneko_reimu_image_radius',
   'yneko_reimu_shadow_strength',
+  'yneko_reimu_customizer_reset_groups',
+  'yneko_reimu_restore_defaults',
   "yneko_reimu_share_' . $key . '_enabled",
   "yneko_reimu_social_' . $key . '_enabled",
   'yneko_reimu_settings[github_url]',
