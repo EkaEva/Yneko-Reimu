@@ -114,6 +114,7 @@ async function buildClassicScript(input, outputName) {
 }
 
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu.js'), 'reimu.js');
+await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'reimu-comments.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-search.js'), 'reimu-search.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'reimu-photoswipe.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-share.js'), 'reimu-share.js');
@@ -133,7 +134,8 @@ const viteCopiedCursorFiles = [
   'lily-resize-ns.png',
   'lily-resize-nwse.png',
   'lily-text.png',
-  'lily-unavailable.png'
+  'lily-unavailable.png',
+  'lily-work.png'
 ];
 
 for (const file of viteCopiedCursorFiles) {

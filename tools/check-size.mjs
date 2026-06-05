@@ -7,7 +7,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 const manifestPath = resolve(themeRoot, 'assets/dist/manifest.json');
 const budgets = new Map([
-  ['assets/dist/reimu.js', 120 * 1024],
+  ['assets/dist/reimu.js', 90 * 1024],
+  ['assets/dist/reimu-comments.js', 96 * 1024],
   ['assets/dist/reimu-search.js', 24 * 1024],
   ['assets/dist/reimu-photoswipe.js', 24 * 1024],
   ['assets/dist/reimu-share.js', 24 * 1024],
@@ -45,6 +46,7 @@ for (const [relativePath, maxBytes] of budgets) {
 
 const classicScripts = [
   'assets/dist/reimu.js',
+  'assets/dist/reimu-comments.js',
   'assets/dist/reimu-search.js',
   'assets/dist/reimu-photoswipe.js',
   'assets/dist/reimu-share.js'

@@ -16,6 +16,7 @@ const enqueuePaths = [
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
+const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'utf8');
 const commentsRuntime = await readFile(resolve(themeRoot, 'assets/src/reimu/comments-profile.js'), 'utf8');
 
 const files = {
@@ -39,8 +40,9 @@ const files = {
   profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
   mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
   rendering: await readFile(resolve(themeRoot, 'inc/comments/rendering.php'), 'utf8'),
-  frontend: `${frontendEntry}\n${commentsRuntime}`,
+  frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
+  commentsEntry,
   commentsRuntime,
   commentMedia: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-media.js'), 'utf8'),
   commentTools: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-tools.js'), 'utf8'),
@@ -79,6 +81,11 @@ for (const moduleImport of [
   "import { createProfileStatusUi } from './profile-status.js';"
 ]) {
   requireSnippet('source module boundary', moduleImport, files.frontend);
+}
+requireSnippet('comments runtime classic global', 'window.ReimuCommentsRuntime = {', files.commentsEntry);
+requireSnippet('comments runtime lazy output', "script.src = getAssetBaseUrl() + 'reimu-comments.js'", files.frontendEntry);
+if (files.frontendEntry.includes("import { createCommentsProfileRuntime } from './reimu/comments-profile.js';")) {
+  fail('Main reimu.js must lazy-load comments/profile runtime instead of importing it directly.');
 }
 
 for (const phpModule of [

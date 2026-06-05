@@ -36,6 +36,7 @@ for (const snippet of [
   'function yneko_reimu_enqueue_optional_vendor_assets',
   'function yneko_reimu_enqueue_main_runtime',
   'window.REIMU_CONFIG=',
+  "wp_register_script( 'yneko-reimu-comments-runtime'",
   "wp_enqueue_script( 'comment-reply' )"
 ]) {
   requireSnippet('entry/runtime contract', snippet);
@@ -46,6 +47,7 @@ for (const handle of [
   'yneko-reimu-fonts',
   'yneko-reimu-loader',
   'yneko-reimu-main',
+  'yneko-reimu-comments-runtime',
   'yneko-reimu-code',
   'yneko-reimu-search',
   'yneko-reimu-comments',
@@ -77,6 +79,7 @@ for (const asset of [
   'assets/dist/reimu-code.css',
   'assets/dist/reimu-search.css',
   'assets/dist/reimu-comments.css',
+  'assets/dist/reimu-comments.js',
   'assets/dist/reimu-player.css',
   'assets/dist/reimu-photoswipe.css',
   'assets/dist/reimu-share.css',

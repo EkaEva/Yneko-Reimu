@@ -21,13 +21,13 @@ export const featureLoadingPlan = [
   },
   {
     feature: 'comments-profile',
-    owner: 'assets/src/reimu.js and assets/src/reimu/comments-profile.js',
-    status: 'source-split',
-    currentLoading: 'main-bundle source module',
+    owner: 'assets/src/reimu-comments.js and assets/src/reimu/comments-profile.js',
+    status: 'lazy-runtime',
+    currentLoading: 'lazy classic runtime plus global reimu-comments.css',
     targetLoading: 'page-context',
-    trigger: '#comments, #respond, #reimu-profile-modal, or [data-reimu-profile-open]',
+    trigger: '#comments, #respond, #reimu-login-modal, #reimu-profile-modal, or [data-reimu-profile-open]',
     gate: 'window.REIMU_CONFIG.login and window.REIMU_CONFIG.comments',
-    notes: 'Source-only split completed for v0.2.9. A lazy assets/dist/reimu-comments.js runtime remains deferred until dedicated WordPress manual QA covers auth, profile, comments, uploads, PJAX modal restore, GitHub popup recovery, and review polling.'
+    notes: 'v0.2.10 moves comments/login/profile orchestration into assets/dist/reimu-comments.js. Main reimu.js keeps a small anchor-triggered loader and config/PJAX bridge.'
   },
   {
     feature: 'aplayer',

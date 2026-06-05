@@ -17,6 +17,7 @@ const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(pat
 
 const runtimeScripts = [
   'assets/dist/reimu.js',
+  'assets/dist/reimu-comments.js',
   'assets/dist/reimu-search.js',
   'assets/dist/reimu-share.js',
   'assets/dist/reimu-photoswipe.js',
@@ -25,11 +26,13 @@ const runtimeScripts = [
 ];
 
 const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
+const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'utf8');
 const commentsRuntime = await readFile(resolve(themeRoot, 'assets/src/reimu/comments-profile.js'), 'utf8');
 
 const sourceFiles = {
-  frontend: `${frontendEntry}\n${commentsRuntime}`,
+  frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
+  commentsEntry,
   commentsRuntime,
   searchEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-search.js'), 'utf8'),
   shareEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-share.js'), 'utf8'),
@@ -83,6 +86,8 @@ for (const snippet of [
   "script.src = getAssetBaseUrl() + 'reimu-share.js'",
   "script.id = 'yneko-reimu-photoswipe-runtime'",
   "script.src = getAssetBaseUrl() + 'reimu-photoswipe.js'",
+  "script.id = 'yneko-reimu-comments-runtime'",
+  "script.src = getAssetBaseUrl() + 'reimu-comments.js'",
   "replaceElement('#reimu-login-modal', nextDoc",
   "replaceElement('#reimu-profile-modal', nextDoc",
   "event.target.closest('[data-reimu-profile-open]')",
@@ -94,6 +99,7 @@ for (const snippet of [
 }
 
 for (const [label, haystack, snippets] of [
+  ['comments runtime global', sourceFiles.commentsEntry, ['window.ReimuCommentsRuntime = {', 'init: init', 'refreshCommentLoginState: function ()']],
   ['search runtime global', sourceFiles.searchEntry, ['window.ReimuSearchRuntime = {', 'init: function ()', 'open: function ()']],
   ['share runtime global', sourceFiles.shareEntry, ['window.ReimuShareRuntime = {', 'init: function ()']],
   ['photoswipe runtime global', sourceFiles.photoswipeEntry, ['window.ReimuPhotoSwipeRuntime = {', 'init: function ()', 'destroy: function ()']]

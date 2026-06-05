@@ -4,6 +4,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_enqueue_main_runtime( $asset_strategy, $main_script_deps, $config ) {
+	wp_register_script( 'yneko-reimu-comments-runtime', YNEKO_REIMU_URI . '/assets/dist/reimu-comments.js', array(), yneko_reimu_asset_version( 'assets/dist/reimu-comments.js' ), true );
+	if ( function_exists( 'wp_script_add_data' ) && ! empty( $asset_strategy['script_strategy'] ) ) {
+		wp_script_add_data( 'yneko-reimu-comments-runtime', 'strategy', sanitize_key( $asset_strategy['script_strategy'] ) );
+	}
 	wp_enqueue_script( 'yneko-reimu-main', YNEKO_REIMU_URI . '/assets/dist/reimu.js', array_values( array_unique( $main_script_deps ) ), yneko_reimu_asset_version( 'assets/dist/reimu.js' ), true );
 	if ( function_exists( 'wp_script_add_data' ) && ! empty( $asset_strategy['script_strategy'] ) ) {
 		wp_script_add_data( 'yneko-reimu-main', 'strategy', sanitize_key( $asset_strategy['script_strategy'] ) );

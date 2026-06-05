@@ -1,5 +1,4 @@
 import { createCore } from './reimu/core.js';
-import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
 
 (function () {
   'use strict';
@@ -19,14 +18,19 @@ import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
   var trimSlashes = core.trimSlashes;
   var relativePathFromUrl = core.relativePathFromUrl;
   var languageFromUrl = core.languageFromUrl;
-  var commentsProfile = null;
-  var initCommentSelector = function () {};
-  var initWordPressCommentForm = function () {};
-  var initLoadMore = function () {};
-  var initLoginModal = function () {};
-  var initProfileModal = function () {};
-  var setLoginModalOpen = function () {};
-  var refreshCommentLoginState = function () { return Promise.resolve(false); };
+  var initCommentSelector = function () { return runCommentsRuntime('initCommentSelector'); };
+  var initWordPressCommentForm = function () { return runCommentsRuntime('initWordPressCommentForm'); };
+  var initLoadMore = function () { return runCommentsRuntime('initLoadMore'); };
+  var initLoginModal = function () { return runCommentsRuntime('initLoginModal'); };
+  var initProfileModal = function () { return runCommentsRuntime('initProfileModal'); };
+  var setLoginModalOpen = function (open) {
+    return loadCommentsRuntime().then(function (runtime) {
+      if (runtime && typeof runtime.setLoginModalOpen === 'function') {
+        runtime.setLoginModalOpen(open);
+      }
+    }).catch(function () {});
+  };
+  var refreshCommentLoginState = function () { return runCommentsRuntime('refreshCommentLoginState'); };
   var root = document.documentElement;
   var body = null;
   var tooltipTimer = null;
@@ -152,6 +156,7 @@ import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
   var searchRuntimePromise = null;
   var photoSwipeRuntimePromise = null;
   var shareRuntimePromise = null;
+  var commentsRuntimePromise = null;
 
   function loadSearchRuntime() {
     if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
@@ -361,6 +366,64 @@ import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
       if (window.console && window.console.warn) {
         window.console.warn('[Yneko-Reimu] share runtime skipped:', error);
       }
+    });
+  }
+
+  function hasCommentsProfileAnchors() {
+    return !!qs('#comments, #respond, #reimu-login-modal, #reimu-profile-modal, [data-reimu-profile-open]');
+  }
+
+  function loadCommentsRuntime() {
+    if (window.ReimuCommentsRuntime && typeof window.ReimuCommentsRuntime.init === 'function') {
+      return Promise.resolve(window.ReimuCommentsRuntime);
+    }
+    if (commentsRuntimePromise) {
+      return commentsRuntimePromise;
+    }
+    commentsRuntimePromise = new Promise(function (resolve, reject) {
+      var existing = qs('#yneko-reimu-comments-runtime');
+      if (existing && window.ReimuCommentsRuntime) {
+        resolve(window.ReimuCommentsRuntime);
+        return;
+      }
+      var script = existing || document.createElement('script');
+      script.id = 'yneko-reimu-comments-runtime';
+      script.async = true;
+      script.onload = function () {
+        if (window.ReimuCommentsRuntime && typeof window.ReimuCommentsRuntime.init === 'function') {
+          resolve(window.ReimuCommentsRuntime);
+        } else {
+          reject(new Error('Comments runtime did not register.'));
+        }
+      };
+      script.onerror = function () {
+        reject(new Error('Unable to load comments runtime.'));
+      };
+      if (!existing) {
+        script.src = getAssetBaseUrl() + 'reimu-comments.js';
+        (document.head || document.body || document.documentElement).appendChild(script);
+      }
+    }).catch(function (error) {
+      commentsRuntimePromise = null;
+      throw error;
+    });
+    return commentsRuntimePromise;
+  }
+
+  function runCommentsRuntime(method) {
+    if (!hasCommentsProfileAnchors() && !window.ReimuCommentsRuntime) {
+      return Promise.resolve(false);
+    }
+    return loadCommentsRuntime().then(function (runtime) {
+      if (runtime && typeof runtime[method] === 'function') {
+        return runtime[method]();
+      }
+      return false;
+    }).catch(function (error) {
+      if (window.console && window.console.warn) {
+        window.console.warn('[Yneko-Reimu] comments runtime skipped:', error);
+      }
+      return false;
     });
   }
 
@@ -2581,40 +2644,11 @@ import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
   }
 
   function initCommentsProfileRuntime() {
-    if (!commentsProfile) {
-      commentsProfile = createCommentsProfileRuntime({
-        getConfig: function () {
-          return config;
-        },
-        qs: qs,
-        qsa: qsa,
-        t: t,
-        escapeHtml: escapeHtml,
-        dispatchInputEvent: dispatchInputEvent,
-        storageGet: storageGet,
-        storageSet: storageSet,
-        storageRemove: storageRemove,
-        showTooltip: showTooltip,
-        revealViewportAos: revealViewportAos,
-        requestThemeConfirm: requestThemeConfirm,
-        getBody: function () {
-          return body || document.body;
-        }
-      });
-      initCommentSelector = commentsProfile.initCommentSelector;
-      initWordPressCommentForm = commentsProfile.initWordPressCommentForm;
-      initLoadMore = commentsProfile.initLoadMore;
-      initLoginModal = commentsProfile.initLoginModal;
-      initProfileModal = commentsProfile.initProfileModal;
-      setLoginModalOpen = commentsProfile.setLoginModalOpen;
-      refreshCommentLoginState = commentsProfile.refreshCommentLoginState;
-    }
-    commentsProfile.syncConfig();
+    return runCommentsRuntime('init');
   }
 
   function initReimu() {
     body = document.body;
-    initCommentsProfileRuntime();
     [
       initTheme,
       initLoader,
@@ -2631,11 +2665,9 @@ import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
       initSearch,
       initFirework,
       initExternalIntegrations,
-      initCommentSelector,
-      initWordPressCommentForm,
+      initCommentsProfileRuntime,
       initSponsor,
       initShare,
-      initLoadMore,
       initExternalLinks,
       initPjax
     ].forEach(function (init) {
@@ -2663,7 +2695,10 @@ import { createCommentsProfileRuntime } from './reimu/comments-profile.js';
     destroy: destroyReimu,
     navigate: navigateTo,
     showLoader: showLoader,
-    hideLoader: hideLoader
+    hideLoader: hideLoader,
+    showTooltip: showTooltip,
+    revealViewportAos: revealViewportAos,
+    confirm: requestThemeConfirm
   };
 
   if (document.readyState === 'loading') {

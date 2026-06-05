@@ -22,6 +22,7 @@
     "assets/dist/qrcode.js",
     "assets/dist/reimu-code.css",
     "assets/dist/reimu-comments.css",
+    "assets/dist/reimu-comments.js",
     "assets/dist/reimu-photoswipe.css",
     "assets/dist/reimu-photoswipe.js",
     "assets/dist/reimu-player.css",
@@ -40,6 +41,7 @@
     "assets/dist/qrcode.js": 24609,
     "assets/dist/reimu-code.css": 3601,
     "assets/dist/reimu-comments.css": 48085,
+    "assets/dist/reimu-comments.js": 68931,
     "assets/dist/reimu-photoswipe.css": 1842,
     "assets/dist/reimu-photoswipe.js": 5709,
     "assets/dist/reimu-player.css": 9505,
@@ -48,7 +50,7 @@
     "assets/dist/reimu-share.css": 2940,
     "assets/dist/reimu-share.js": 4695,
     "assets/dist/reimu.css": 102402,
-    "assets/dist/reimu.js": 116044,
+    "assets/dist/reimu.js": 50993,
     "assets/dist/taichi.png": 2536,
     "assets/dist/xiaohongshu.svg": 8155
   }

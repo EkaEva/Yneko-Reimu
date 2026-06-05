@@ -16,11 +16,13 @@ const enqueuePaths = [
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
+const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'utf8');
 const commentsRuntime = await readFile(resolve(themeRoot, 'assets/src/reimu/comments-profile.js'), 'utf8');
 
 const files = {
-  frontend: `${frontendEntry}\n${commentsRuntime}`,
+  frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
+  commentsEntry,
   commentsRuntime,
   searchEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-search.js'), 'utf8'),
   searchModule: await readFile(resolve(themeRoot, 'assets/src/reimu/search.js'), 'utf8'),
@@ -120,11 +122,25 @@ for (const snippet of [
   "script.src = getAssetBaseUrl() + 'reimu-photoswipe.js'",
   "script.id = 'yneko-reimu-share-runtime'",
   "script.src = getAssetBaseUrl() + 'reimu-share.js'",
+  'var commentsRuntimePromise = null;',
+  "script.id = 'yneko-reimu-comments-runtime'",
+  "script.src = getAssetBaseUrl() + 'reimu-comments.js'",
   'searchRuntimePromise = null;',
   'photoSwipeRuntimePromise = null;',
   'shareRuntimePromise = null;'
 ]) {
   requireSnippet('lazy runtime loader contract', snippet, files.frontend);
+}
+
+for (const snippet of [
+  'window.ReimuCommentsRuntime = {',
+  'init: init',
+  'module.initWordPressCommentForm',
+  'module.initLoadMore',
+  'refreshCommentLoginState: function ()',
+  "return !!qs('#comments, #respond, #reimu-login-modal, #reimu-profile-modal, [data-reimu-profile-open]')"
+]) {
+  requireSnippet('PJAX comments/profile runtime contract', snippet, `${files.frontend}\n${files.commentsEntry}\n${files.commentsRuntime}`);
 }
 
 for (const snippet of [
@@ -228,9 +244,9 @@ for (const snippet of [
   "feature: 'share'",
   "feature: 'photoswipe'",
   "feature: 'comments-profile'",
-  "status: 'source-split'",
-  "currentLoading: 'main-bundle source module'",
-  'Source-only split completed for v0.2.9.',
+  "status: 'lazy-runtime'",
+  "currentLoading: 'lazy classic runtime plus global reimu-comments.css'",
+  'assets/dist/reimu-comments.js',
   "feature: 'aplayer'",
   "status: 'condition-loaded'",
   "feature: 'mermaid'",
