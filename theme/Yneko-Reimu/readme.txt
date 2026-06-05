@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.5
+Stable tag: 0.2.6
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,13 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.6 =
+
+* Splits comment upload review/cleanup helpers and profile-save helper steps into focused internal modules while preserving AJAX actions, nonces, request fields, meta keys, upload paths, and JSON response shapes.
+* Splits high-density settings panels into focused Users, Security, and Music panel modules while preserving settings tabs, option keys, form fields, nonces, and save behavior.
+* Adds a PJAX/runtime stability contract check covering PJAX link exclusions, config replay, lazy search/share/PhotoSwipe runtimes, APlayer preservation, modal restoration, content enhancers, and comment rebind guards.
+* Extends contract checks and development docs so future maintenance work keeps comments/profile, settings/admin, config-surface, auth-security, GitHub OAuth, and PJAX/runtime interfaces stable.
 
 = 0.2.5 =
 
