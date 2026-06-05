@@ -4,6 +4,8 @@ Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in 
 
 Start with `CONTRIBUTING.md` for pull request expectations, public-interface guardrails, required checks, and dependency-update policy. Use GitHub issue and PR templates for collaboration details, and follow `SECURITY.md` for private vulnerability reporting.
 
+Public maintenance summaries live in `docs/maintenance-notes/`. Root-level `task_plan.md`, `findings.md`, and `progress.md` are local agent working memory and should not be committed.
+
 ## Commands
 
 ```bash
