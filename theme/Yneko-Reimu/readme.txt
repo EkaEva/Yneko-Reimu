@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.10
+Stable tag: 0.2.11
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,15 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.11 =
+
+* Removes ignored Rollup `inlineDynamicImports` options from the classic build config, eliminating non-blocking build warning noise.
+* Splits i18n internals into focused settings, URL, post relation, request, and query modules while preserving `/en/` URLs, rewrite behavior, locale filters, and translation meta keys.
+* Splits comment rendering and badge helpers into focused internal modules while preserving comment DOM anchors, nonces, AJAX response shapes, user meta keys, and review flows.
+* Splits the settings page callback shell and settings sanitizer helpers while preserving the registered callback, `yneko_reimu_settings[...]` field names, defaults, legacy fallbacks, and save behavior.
+* Splits GitHub login inline styles into focused CSS helper functions while preserving the `yneko-reimu-github-login` style handle, enqueue hooks, login button markup, popup behavior, and OAuth contract.
+* Updates contract gates, runtime smoke aggregation, and the PHP complexity baseline for the new internal module boundaries.
 
 = 0.2.10 =
 
