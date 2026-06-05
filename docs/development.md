@@ -14,6 +14,7 @@ npm run check:customizer
 npm run check:template-tags
 npm run check:enqueue
 npm run check:comments-profile
+npm run check:pjax-runtime
 npm run check:github-oauth
 npm run check:release-readiness
 npm run check:css-split
@@ -71,6 +72,8 @@ The Template Tags PHP entrypoint is `theme/Yneko-Reimu/inc/template-tags.php`. I
 `npm run check:enqueue` verifies the front-end enqueue contract after PHP helper splits. It checks the public enqueue hook, critical script/style handles, third-party asset paths, `window.REIMU_CONFIG` keys, and nonce names so future asset-configuration cleanup does not silently change the front-end runtime contract.
 
 `npm run check:comments-profile` verifies the comments/profile runtime contract before any further split. It checks high-risk AJAX actions, nonce creation and verification, front-end config keys, request payload fields, DOM selectors, source module boundaries, PHP module boundaries, comment rendering anchors, external comment panel anchors, and CSS anchors used by login, profile, comment upload, comment mutation, rendering, and review-status flows.
+
+`npm run check:pjax-runtime` verifies the front-end PJAX/runtime stability contract. It protects PJAX link exclusions, inline config replay, search/share/PhotoSwipe lazy runtime loaders, global stylesheet availability for PJAX-entered search/share/comment UI, login/profile modal state restoration, APlayer preservation, Mermaid/KaTeX/code enhancement rebinds, and comment interaction rebind guards while keeping public runtime scripts classic-compatible.
 
 The comments/profile PHP entrypoint is `theme/Yneko-Reimu/inc/comments.php`. Internal helpers may live under `theme/Yneko-Reimu/inc/comments/`; currently `uploads.php` owns front-end comment media upload/discard/promotion/cleanup/library helpers, `uploads/helpers.php` owns shared upload validation and attachment helpers, `uploads/admin.php` owns administrator GIF-library and upload-review actions, `modals.php` owns request-free login/profile modal rendering, `auth.php` owns login/register/lost-password handlers, `profile-save.php` owns internal profile-save helper steps, `profile.php` owns profile/TOTP/avatar handlers, `mutations.php` owns comment like/submit/edit/delete handlers plus review-status sync hooks, and `rendering.php` owns comment form/identity/comment-item/external-comment output. Keep function names, action names, nonce names, payload fields, JSON shapes, and front-end markup contracts unchanged unless the migration is documented in `docs/comments-profile-contract.md`.
 
