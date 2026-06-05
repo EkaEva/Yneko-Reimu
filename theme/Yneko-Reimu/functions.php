@@ -9,6 +9,7 @@ define( 'YNEKO_REIMU_URI', get_template_directory_uri() );
 
 require_once YNEKO_REIMU_DIR . '/inc/sanitizers.php';
 require_once YNEKO_REIMU_DIR . '/inc/image-helpers.php';
+require_once YNEKO_REIMU_DIR . '/inc/security-auth-mail.php';
 require_once YNEKO_REIMU_DIR . '/inc/settings.php';
 require_once YNEKO_REIMU_DIR . '/inc/features.php';
 require_once YNEKO_REIMU_DIR . '/inc/svg.php';

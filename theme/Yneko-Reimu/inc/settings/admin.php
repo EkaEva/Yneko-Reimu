@@ -30,7 +30,7 @@ function yneko_reimu_add_admin_menu_review_badges() {
 
 	global $menu, $submenu;
 	$counts = yneko_reimu_admin_review_badge_counts();
-	$total  = absint( ( $counts['comments'] ?? 0 ) + ( $counts['users'] ?? 0 ) );
+	$total  = absint( ( $counts['comments'] ?? 0 ) + ( $counts['users'] ?? 0 ) + ( $counts['security'] ?? 0 ) );
 	if ( ! $total ) {
 		return;
 	}
@@ -307,6 +307,7 @@ function yneko_reimu_admin_review_badge_counts() {
 	);
 	$counts['comments'] = $counts['comment_images'] + $counts['comment_gifs'];
 	$counts['users']    = $counts['avatars'] + $counts['user_badges'];
+	$counts['security'] = function_exists( 'yneko_reimu_auth_security_unhandled_count' ) ? yneko_reimu_auth_security_unhandled_count() : 0;
 	return $counts;
 }
 
@@ -329,6 +330,10 @@ function yneko_reimu_enqueue_settings_admin_assets( $hook ) {
 	wp_add_inline_style(
 		'yneko-reimu-admin-settings',
 		'.yneko-reimu-special-badge-table{max-width:100%;box-sizing:border-box}.yneko-reimu-special-badge-row{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1fr) minmax(0,1.35fr);gap:8px;align-items:center;width:100%;box-sizing:border-box;padding:10px;border:1px solid #dcdcde;border-radius:8px;background:#fff;overflow:hidden}.yneko-reimu-special-badge-row label{min-width:0}.yneko-reimu-special-badge-row label .yneko-reimu-admin-text{display:inline;margin:0}.yneko-reimu-special-badge-row input[type=text]{min-width:0}.yneko-reimu-special-badge-row .description{grid-column:1/-1;margin:0;color:#646970}.yneko-reimu-special-badge-row .yneko-reimu-media-field,.yneko-reimu-special-badge-row .yneko-reimu-inline-media{min-width:0;width:100%;max-width:100%;box-sizing:border-box}.yneko-reimu-special-badge-row .yneko-reimu-media-field .button,.yneko-reimu-special-badge-row .yneko-reimu-inline-media .button{flex:0 0 auto}.yneko-reimu-user-badge-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:14px}.yneko-reimu-user-badge-card{padding:14px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-user-badge-card__user{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}.yneko-reimu-user-badge-card__user span{color:#646970}.yneko-reimu-user-badge-card__tags{display:flex;flex-direction:column;gap:8px}.yneko-reimu-user-badge-item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px;border:1px solid #f0f0f1;border-radius:8px;background:#fbfbfc}.yneko-reimu-user-badge-pill{display:inline-flex;align-items:center;width:max-content;max-width:120px;padding:3px 8px;border-radius:999px;color:var(--badge-color,#2271b1);background:color-mix(in srgb,var(--badge-color,#2271b1) 10%,#fff);border:1px solid color-mix(in srgb,var(--badge-color,#2271b1) 24%,#fff);font-size:12px;font-weight:700}.yneko-reimu-user-badge-actions{display:flex;gap:5px}.yneko-reimu-settings-tabs .nav-tab{position:relative;gap:7px}.yneko-reimu-settings-page h2,.yneko-reimu-settings-page th{position:relative}.yneko-reimu-admin-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;margin-left:7px;padding:0 6px;border-radius:999px;background:#d63638;color:#fff;font-size:11px;font-weight:700;line-height:18px;box-shadow:0 0 0 2px #fff}.nav-tab .yneko-reimu-admin-badge{position:absolute;top:-8px;right:-8px;margin-left:0}@media(max-width:1180px){.yneko-reimu-special-badge-row{grid-template-columns:120px minmax(0,1fr) minmax(0,1fr)}.yneko-reimu-special-badge-row .yneko-reimu-media-field{grid-column:2/4}}@media(max-width:960px){.yneko-reimu-special-badge-row,.yneko-reimu-user-badge-item{grid-template-columns:1fr}.yneko-reimu-special-badge-row .yneko-reimu-media-field{grid-column:auto}}'
+	);
+	wp_add_inline_style(
+		'yneko-reimu-admin-settings',
+		'.yneko-reimu-security-alert-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.yneko-reimu-security-alert-actions .yneko-reimu-admin-text{margin-right:auto;font-weight:600;color:#1d2327}.yneko-reimu-security-alert-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}.yneko-reimu-security-alert-card{display:flex;flex-direction:column;gap:9px;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#fff}.yneko-reimu-security-alert-card.is-unhandled{border-color:#d63638;box-shadow:inset 3px 0 0 #d63638}.yneko-reimu-security-alert-card__head{display:flex;justify-content:space-between;gap:10px;align-items:center}.yneko-reimu-security-alert-card__head span{color:#646970;font-size:12px}.yneko-reimu-security-alert-card__meta,.yneko-reimu-security-alert-card__hashes{display:flex;flex-wrap:wrap;gap:6px}.yneko-reimu-security-alert-card code{font-size:12px}.yneko-reimu-security-alert-card__hashes span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#646970}@media(max-width:782px){.yneko-reimu-security-alert-actions{align-items:flex-start}.yneko-reimu-security-alert-actions .yneko-reimu-admin-text{flex:1 0 100%}}'
 	);
 
 	wp_register_script( 'yneko-reimu-admin-settings', YNEKO_REIMU_URI . '/assets/dist/admin-settings.js', array( 'jquery' ), yneko_reimu_asset_version( 'assets/dist/admin-settings.js' ), true );

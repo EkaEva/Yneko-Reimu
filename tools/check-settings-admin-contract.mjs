@@ -9,6 +9,8 @@ const renderersPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers.ph
 const adminPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/admin.php');
 const adminJsPath = resolve(root, 'theme/Yneko-Reimu/assets/src/admin-settings.js');
 const login2faPath = resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa.php');
+const schemaPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php');
+const securityPath = resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail.php');
 
 const page = await readFile(pagePath, 'utf8');
 const panels = await readFile(panelsPath, 'utf8');
@@ -16,6 +18,8 @@ const renderers = await readFile(renderersPath, 'utf8');
 const admin = await readFile(adminPath, 'utf8');
 const adminJs = await readFile(adminJsPath, 'utf8');
 const login2fa = await readFile(login2faPath, 'utf8');
+const schema = await readFile(schemaPath, 'utf8');
+const security = await readFile(securityPath, 'utf8');
 
 const tabs = [
   'general',
@@ -23,6 +27,7 @@ const tabs = [
   'i18n',
   'comments',
   'users',
+  'security',
   'search',
   'extensions',
   'external-comments',
@@ -35,6 +40,7 @@ const panelFunctions = new Map([
   ['i18n', 'yneko_reimu_render_settings_i18n_panel'],
   ['comments', 'yneko_reimu_render_settings_comments_panel'],
   ['users', 'yneko_reimu_render_settings_users_panel'],
+  ['security', 'yneko_reimu_render_settings_security_panel'],
   ['search', 'yneko_reimu_render_settings_search_panel'],
   ['extensions', 'yneko_reimu_render_settings_extensions_panel'],
   ['external-comments', 'yneko_reimu_render_settings_external_comments_panel'],
@@ -45,6 +51,7 @@ const panelFunctions = new Map([
 const requiredPageSnippets = [
   'settings_fields( \'yneko_reimu_settings\' )',
   'data-yneko-settings-panel="general"',
+  'data-yneko-settings-tab="security"',
   'yneko_reimu_settings_group_open( \'管理员体验\', \'Administrator experience\'',
   'name="yneko_reimu_settings[features][show_admin_toolbar]"',
   'yneko_reimu_settings_group_open( \'账号安全\', \'Account security\'',
@@ -54,6 +61,7 @@ const requiredPageSnippets = [
   'data-yneko-admin-totp-recovery',
   'data-yneko-admin-totp-recovery-generate',
   'data-yneko-admin-totp-recovery-copy',
+  'yneko_reimu_render_settings_security_panel( $auth_security, $review_badges )',
   'id="yneko-reimu-admin-gif-upload-form"',
   'wp_nonce_field( \'yneko_reimu_admin_comment_gif_upload\' )',
   'yneko_reimu_admin_review_badge_counts()'
@@ -81,6 +89,20 @@ const requiredPanelSnippets = [
   'name="yneko_reimu_settings[user_badges][enabled]"',
   'name="yneko_reimu_settings[user_badges][review_enabled]"',
   'name="yneko_reimu_settings[user_badges][blocklist]"',
+  'name="yneko_reimu_settings[auth_security][enabled]"',
+  'name="yneko_reimu_settings[auth_security][protect_ajax]"',
+  'name="yneko_reimu_settings[auth_security][protect_wp_login]"',
+  'name="yneko_reimu_settings[auth_security][email_hour_limit]"',
+  'name="yneko_reimu_settings[auth_security][email_day_limit]"',
+  'name="yneko_reimu_settings[auth_security][ip_hour_limit]"',
+  'name="yneko_reimu_settings[auth_security][ip_day_limit]"',
+  'name="yneko_reimu_settings[auth_security][device_hour_limit]"',
+  'name="yneko_reimu_settings[auth_security][device_day_limit]"',
+  'name="yneko_reimu_settings[auth_security][global_day_limit]"',
+  'name="yneko_reimu_settings[auth_security][cooldown_seconds]"',
+  'name="yneko_reimu_settings[auth_security][global_warning_threshold]"',
+  'name="yneko_reimu_settings[auth_security][email_alert_enabled]"',
+  'yneko_reimu_auth_security_events()',
   'name="yneko_reimu_settings[features][',
   'name="yneko_reimu_settings[third_party][',
   'name="yneko_reimu_settings[external_comments][',
@@ -121,7 +143,10 @@ const requiredAdminStyleSnippets = [
   '.yneko-reimu-admin-totp-setup{display:grid;grid-template-columns:150px minmax(0,1fr)',
   '.yneko-reimu-admin-totp-recovery{display:flex;flex-direction:column;gap:10px',
   '.yneko-reimu-admin-totp-recovery__codes',
-  '.yneko-reimu-admin-totp-status.is-enabled'
+  '.yneko-reimu-admin-totp-status.is-enabled',
+  '.yneko-reimu-security-alert-card.is-unhandled',
+  '.yneko-reimu-security-alert-list',
+  '.yneko-reimu-security-alert-actions'
 ];
 
 const requiredAdminPhpSnippets = [
@@ -140,6 +165,29 @@ const requiredAdminPhpSnippets = [
   '_yneko_reimu_totp_secret',
   '_yneko_reimu_totp_enabled',
   '_yneko_reimu_totp_recovery_codes'
+];
+
+const requiredSchemaSnippets = [
+  "'auth_security'",
+  "'email_hour_limit'         => 3",
+  "'email_day_limit'          => 8",
+  "'ip_hour_limit'            => 10",
+  "'ip_day_limit'             => 30",
+  "'device_hour_limit'        => 5",
+  "'device_day_limit'         => 15",
+  "'global_day_limit'         => 100",
+  "'cooldown_seconds'         => 60",
+  "'global_warning_threshold' => 80",
+  'yneko_reimu_sanitize_auth_security_settings( $auth_security, $defaults[\'auth_security\'] )'
+];
+
+const requiredSecuritySnippets = [
+  'function yneko_reimu_auth_security_defaults',
+  'function yneko_reimu_auth_security_unhandled_count',
+  'function yneko_reimu_auth_security_admin_action',
+  'yneko_reimu_auth_security_events',
+  "'mark_handled' === $action",
+  "'clear' === $action"
 ];
 
 const requiredAdminJsSnippets = [
@@ -223,6 +271,18 @@ for (const snippet of requiredAdminPhpSnippets) {
   }
 }
 
+for (const snippet of requiredSchemaSnippets) {
+  if (!schema.includes(snippet)) {
+    failures.push(`Missing required auth-security schema snippet: ${snippet}`);
+  }
+}
+
+for (const snippet of requiredSecuritySnippets) {
+  if (!security.includes(snippet)) {
+    failures.push(`Missing required auth-security helper snippet: ${snippet}`);
+  }
+}
+
 for (const snippet of requiredAdminJsSnippets) {
   if (!adminJs.includes(snippet)) {
     failures.push(`Missing required settings admin JS snippet: ${snippet}`);
@@ -248,4 +308,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`[settings-admin] ${tabs.length} tabs, ${tabs.length} panels, and key settings/admin review contracts are present.`);
+console.log(`[settings-admin] ${tabs.length} tabs, ${tabs.length} panels, and key settings/admin review/security contracts are present.`);

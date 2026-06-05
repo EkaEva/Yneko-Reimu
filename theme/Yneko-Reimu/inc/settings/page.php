@@ -17,6 +17,7 @@ function yneko_reimu_render_settings_page() {
 	$player   = yneko_reimu_settings_player();
 	$third_party = yneko_reimu_settings_third_party();
 	$external_comments = yneko_reimu_settings_external_comments();
+	$auth_security = function_exists( 'yneko_reimu_settings_auth_security' ) ? yneko_reimu_settings_auth_security() : array();
 	$review_badges = yneko_reimu_admin_review_badge_counts();
 	$callback = function_exists( 'yneko_reimu_github_login_callback_url' ) ? yneko_reimu_github_login_callback_url() : add_query_arg( 'action', 'yneko_reimu_github_callback', wp_login_url() );
 	$admin_totp = yneko_reimu_admin_current_user_totp_payload();
@@ -33,6 +34,7 @@ function yneko_reimu_render_settings_page() {
 				<button type="button" class="nav-tab" data-yneko-settings-tab="i18n"><?php yneko_reimu_admin_bilingual_label( '多语言设置', 'Multilingual' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="comments"><?php yneko_reimu_admin_bilingual_label( '评论设置', 'Comments' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $review_badges['comments'] ?? 0 ) ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="users"><?php yneko_reimu_admin_bilingual_label( '用户设置', 'Users' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $review_badges['users'] ?? 0 ) ); ?></button>
+				<button type="button" class="nav-tab" data-yneko-settings-tab="security"><?php yneko_reimu_admin_bilingual_label( '安全设置', 'Security' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $review_badges['security'] ?? 0 ) ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="search"><?php yneko_reimu_admin_bilingual_label( '搜索设置', 'Search' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="extensions"><?php yneko_reimu_admin_bilingual_label( '扩展与第三方', 'Extensions' ); ?></button>
 				<button type="button" class="nav-tab" data-yneko-settings-tab="external-comments"><?php yneko_reimu_admin_bilingual_label( '外部评论', 'External comments' ); ?></button>
@@ -126,6 +128,8 @@ function yneko_reimu_render_settings_page() {
 			<?php yneko_reimu_render_settings_comments_panel( $settings ); ?>
 
 			<?php yneko_reimu_render_settings_users_panel( $review_badges ); ?>
+
+			<?php yneko_reimu_render_settings_security_panel( $auth_security, $review_badges ); ?>
 
 			<?php yneko_reimu_render_settings_search_panel( $search ); ?>
 

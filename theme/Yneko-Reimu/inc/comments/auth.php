@@ -260,9 +260,12 @@ function yneko_reimu_ajax_send_register_code() {
 		wp_send_json_error( array( 'message' => $errors->get_error_message() ), 400 );
 	}
 
-	$cooldown_key = yneko_reimu_auth_code_cooldown_transient_key( 'reg', $display_name, $user_email );
-	if ( get_transient( $cooldown_key ) ) {
-		wp_send_json_error( array( 'message' => esc_html__( '验证码已发送，请稍后再试。', 'yneko-reimu' ) ), 429 );
+	$auth_security_context = function_exists( 'yneko_reimu_auth_security_check' ) ? yneko_reimu_auth_security_check( 'register', $user_email, 'ajax' ) : true;
+	if ( is_wp_error( $auth_security_context ) ) {
+		wp_send_json_error( array( 'message' => $auth_security_context->get_error_message() ), 429 );
+	}
+	if ( function_exists( 'yneko_reimu_auth_security_commit' ) ) {
+		yneko_reimu_auth_security_commit( $auth_security_context );
 	}
 
 	$code  = (string) random_int( 100000, 999999 );
@@ -279,6 +282,9 @@ function yneko_reimu_ajax_send_register_code() {
 	);
 
 	if ( ! wp_mail( $user_email, wp_specialchars_decode( $title ), $message ) ) {
+		if ( function_exists( 'yneko_reimu_auth_security_record_mail_failure' ) ) {
+			yneko_reimu_auth_security_record_mail_failure( 'register', $user_email, 'ajax' );
+		}
 		wp_send_json_error( array( 'message' => esc_html__( '验证码邮件发送失败，请稍后重试。', 'yneko-reimu' ) ), 500 );
 	}
 
@@ -290,7 +296,6 @@ function yneko_reimu_ajax_send_register_code() {
 		),
 		5 * MINUTE_IN_SECONDS
 	);
-	set_transient( $cooldown_key, 1, MINUTE_IN_SECONDS );
 
 	wp_send_json_success( array( 'message' => esc_html__( '验证码已发送，请检查您的邮箱。', 'yneko-reimu' ) ) );
 }
@@ -350,7 +355,6 @@ function yneko_reimu_ajax_register() {
 	);
 
 	delete_transient( $code_key );
-	delete_transient( yneko_reimu_auth_code_cooldown_transient_key( 'reg', $display_name, $user_email ) );
 	wp_new_user_notification( $user_id, null, 'admin' );
 	wp_send_json_success( array( 'message' => esc_html__( '注册成功，请返回登录。', 'yneko-reimu' ) ) );
 }
@@ -367,14 +371,16 @@ function yneko_reimu_ajax_send_lostpassword_code() {
 	}
 
 	$success_message = esc_html__( '如果该邮箱已注册，验证码将发送到对应邮箱。', 'yneko-reimu' );
-	$cooldown_key    = yneko_reimu_auth_code_cooldown_transient_key( 'lost', $identifier, $identifier );
-	if ( get_transient( $cooldown_key ) ) {
+	$auth_security_context = function_exists( 'yneko_reimu_auth_security_check' ) ? yneko_reimu_auth_security_check( 'lostpassword', $identifier, 'ajax' ) : true;
+	if ( is_wp_error( $auth_security_context ) ) {
 		wp_send_json_success( array( 'message' => $success_message ) );
+	}
+	if ( function_exists( 'yneko_reimu_auth_security_commit' ) ) {
+		yneko_reimu_auth_security_commit( $auth_security_context );
 	}
 
 	$user = yneko_reimu_find_user_for_password_reset( $identifier );
 	if ( ! $user ) {
-		set_transient( $cooldown_key, 1, MINUTE_IN_SECONDS );
 		wp_send_json_success( array( 'message' => $success_message ) );
 	}
 
@@ -392,6 +398,9 @@ function yneko_reimu_ajax_send_lostpassword_code() {
 	);
 
 	if ( ! wp_mail( $user->user_email, wp_specialchars_decode( $title ), $message ) ) {
+		if ( function_exists( 'yneko_reimu_auth_security_record_mail_failure' ) ) {
+			yneko_reimu_auth_security_record_mail_failure( 'lostpassword', $identifier, 'ajax' );
+		}
 		wp_send_json_error( array( 'message' => esc_html__( '验证码邮件发送失败，请稍后重试。', 'yneko-reimu' ) ), 500 );
 	}
 
@@ -404,7 +413,6 @@ function yneko_reimu_ajax_send_lostpassword_code() {
 		),
 		5 * MINUTE_IN_SECONDS
 	);
-	set_transient( $cooldown_key, 1, MINUTE_IN_SECONDS );
 
 	wp_send_json_success( array( 'message' => $success_message ) );
 }
@@ -453,7 +461,6 @@ function yneko_reimu_ajax_lostpassword() {
 
 	wp_set_password( $user_password, $user->ID );
 	delete_transient( $code_key );
-	delete_transient( yneko_reimu_auth_code_cooldown_transient_key( 'lost', $identifier, $identifier ) );
 
 	wp_send_json_success( array( 'message' => esc_html__( '密码已重置，请返回登录。', 'yneko-reimu' ) ) );
 }

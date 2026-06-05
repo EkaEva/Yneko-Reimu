@@ -87,6 +87,21 @@ function yneko_reimu_settings_defaults() {
 			'callback_url'  => '',
 			'auto_create'   => '0',
 		),
+		'auth_security'     => function_exists( 'yneko_reimu_auth_security_defaults' ) ? yneko_reimu_auth_security_defaults() : array(
+			'enabled'                  => '1',
+			'protect_ajax'             => '1',
+			'protect_wp_login'         => '1',
+			'email_hour_limit'         => 3,
+			'email_day_limit'          => 8,
+			'ip_hour_limit'            => 10,
+			'ip_day_limit'             => 30,
+			'device_hour_limit'        => 5,
+			'device_day_limit'         => 15,
+			'global_day_limit'         => 100,
+			'cooldown_seconds'         => 60,
+			'global_warning_threshold' => 80,
+			'email_alert_enabled'      => '0',
+		),
 		'builtin_pages'     => array(
 			'projects' => '1',
 			'archives' => '1',
@@ -497,6 +512,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 	$features = isset( $input['features'] ) && is_array( $input['features'] ) ? $input['features'] : array();
 	$player   = isset( $input['player'] ) && is_array( $input['player'] ) ? $input['player'] : array();
 	$third_party = isset( $input['third_party'] ) && is_array( $input['third_party'] ) ? $input['third_party'] : array();
+	$auth_security = isset( $input['auth_security'] ) && is_array( $input['auth_security'] ) ? $input['auth_security'] : array();
 	$external_comments = isset( $input['external_comments'] ) && is_array( $input['external_comments'] ) ? $input['external_comments'] : array();
 	$i18n_default = function_exists( 'yneko_reimu_i18n_defaults' ) ? yneko_reimu_i18n_defaults() : $defaults['i18n'];
 	$i18n_default_language = isset( $i18n['default'] ) && 'en_US' === $i18n['default'] ? 'en_US' : 'zh_CN';
@@ -541,6 +557,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 			'callback_url'  => yneko_reimu_normalize_settings_url( $oauth['callback_url'] ?? '' ),
 			'auto_create'   => ! empty( $oauth['auto_create'] ) ? '1' : '0',
 		),
+		'auth_security'     => function_exists( 'yneko_reimu_sanitize_auth_security_settings' ) ? yneko_reimu_sanitize_auth_security_settings( $auth_security, $defaults['auth_security'] ) : $defaults['auth_security'],
 		'builtin_pages'     => yneko_reimu_sanitize_settings_bool_group(
 			isset( $input['builtin_pages'] ) && is_array( $input['builtin_pages'] ) && isset( $input['builtin_pages']['_present'] )
 				? $input['builtin_pages']

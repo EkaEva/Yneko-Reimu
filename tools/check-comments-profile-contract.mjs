@@ -229,6 +229,24 @@ for (const payloadKey of [
   requireSnippet('login-state refresh payload key', payloadKey, files.auth);
 }
 
+for (const authSecuritySnippet of [
+  "yneko_reimu_auth_security_check( 'register', $user_email, 'ajax' )",
+  "yneko_reimu_auth_security_commit( $auth_security_context )",
+  "yneko_reimu_auth_security_record_mail_failure( 'register', $user_email, 'ajax' )",
+  "yneko_reimu_auth_security_check( 'lostpassword', $identifier, 'ajax' )",
+  "yneko_reimu_auth_security_record_mail_failure( 'lostpassword', $identifier, 'ajax' )"
+]) {
+  requireSnippet('auth email security guard in auth handlers', authSecuritySnippet, files.auth);
+}
+
+for (const profileSecuritySnippet of [
+  "yneko_reimu_auth_security_check( 'profile_email', $new_email, 'ajax' )",
+  "yneko_reimu_auth_security_commit( $auth_security_context )",
+  "yneko_reimu_auth_security_record_mail_failure( 'profile_email', $new_email, 'ajax' )"
+]) {
+  requireSnippet('auth email security guard in profile handler', profileSecuritySnippet, files.profile);
+}
+
 for (const selector of [
   '.reimu-confirm-modal',
   '[data-reimu-confirm-ok]',

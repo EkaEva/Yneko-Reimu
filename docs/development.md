@@ -8,6 +8,7 @@ Yneko-Reimu is a Classic Hybrid WordPress theme. The installable theme lives in 
 npm install
 npm run check:js
 npm run check:settings-admin
+npm run check:auth-security
 npm run check:customizer
 npm run check:template-tags
 npm run check:enqueue
@@ -54,7 +55,9 @@ npm run lint:php
 
 `npm run report:php-complexity` scans the runtime theme PHP files and reports the largest files, largest named functions, and highest approximate branch scores. It is informational for now so the project can track legacy complexity before turning any threshold into a failing quality gate.
 
-`npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the 10 settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields and review helper calls remain present.
+`npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields, review helper calls, TOTP controls, and security alert anchors remain present.
+
+`npm run check:auth-security` verifies the authentication email guard contract. It protects the `auth_security` defaults and sanitizers, the random device cookie (`yneko_reimu_auth_device`), transient counter dimensions, global daily budget warning, bounded alert log, native `registration_errors` / `lostpassword_errors` coverage, and the three front-end verification-code send handlers. Keep registration, lost-password, and profile email code sends behind this helper unless a migration is documented.
 
 `npm run check:customizer` verifies the Customizer visual-preview contract before further decomposition. It checks the public customize hook, panel/section IDs, key setting/control IDs, and sanitizer callbacks so future helper extraction does not silently rename saved `theme_mod` or option-backed Customizer fields.
 
@@ -86,6 +89,8 @@ Email verification, password-reset, profile email, and TOTP QA is documented in 
 
 The admin settings page also exposes a current-user TOTP management entry under `General -> Account security`. It reuses the profile modal user meta (`_yneko_reimu_totp_secret`, `_yneko_reimu_totp_enabled`, and `_yneko_reimu_totp_pending_secret`) through admin-only AJAX actions, so it must not be treated as a global theme option or a forced site-wide 2FA switch. Once a user enables TOTP, both the front-end comment login AJAX flow and the WordPress `wp-login.php` password-login flow must verify the same current authenticator code or an unused recovery code. Recovery codes live in `_yneko_reimu_totp_recovery_codes` as password hashes only; plain text is returned only at generation time and each code is consumed after one successful login. Disabling TOTP must clear the enabled flag, current secret, pending secret, and recovery codes so a later enablement starts from a fresh secret.
 
+The authentication email guard lives in `theme/Yneko-Reimu/inc/security-auth-mail.php` and stores its settings under `yneko_reimu_settings['auth_security']`. It covers front-end `register_code`, `lostpassword_code`, and `profile_email_code` sends plus native `wp-login.php` registration/lost-password requests. The device dimension uses a random 180-day cookie and stores only hashes in transients and logs. The security alert log is bounded to 100 events and should stay non-enumerating: lost-password responses continue to use generic success copy.
+
 ## Source Layout
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.
@@ -104,6 +109,7 @@ Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/setti
 - Keep front-end scripts compatible with WordPress classic script enqueueing unless a release plan explicitly changes that public behavior.
 - Do not rename saved settings, post meta keys, AJAX action names, nonce names, documented filters/actions, template paths, virtual page slugs, or public URLs without a compatibility plan.
 - New settings need a default value, sanitizer, UI location, migration decision, and a note about whether they affect front-end loading.
+- Authentication email settings belong under Security settings and must keep privacy-friendly device IDs, generic lost-password responses, and bounded alert logging.
 - Front-end-visible article/card/sidebar modules that are stored as `theme_mod` values should have a Customizer control and be covered by `npm run check:customizer`.
 - Heavy or third-party features should stay disabled by default and gated by a setting, page context, or user interaction.
 - The front-end WordPress admin toolbar stays hidden by default, including for administrators, to keep the public front end clean. The `show_admin_toolbar` feature setting is rendered under General -> Administrator experience and should be enabled only when an administrator needs temporary front-end debugging/plugin toolbar access; when it is off, Rank Math front-end Analytics/PRO toolbar prompts are hidden as a compatibility layer.

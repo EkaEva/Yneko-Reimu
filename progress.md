@@ -1019,3 +1019,7 @@
 - Extended settings-admin and GitHub OAuth contract gates to protect recovery-code AJAX actions, meta storage, admin UI anchors, hash storage, and single-use consumption.
 - Committed and pushed the recovery-code implementation to GitHub as `e8018b4` without creating a v0.2.5 tag.
 - Refined the follow-up UX: the `wp-login.php` field description now says non-2FA accounts can leave the field blank, the admin TOTP UI uses a single enable/disable toggle button, and disabling TOTP now deletes the old secret in addition to the enabled flag, pending secret, and recovery codes.
+- Started the v0.2.5 security closure for authentication email sending, adding a dedicated Security settings tab with configurable same-email, same-IP, same-device, global daily budget, cooldown, and alert settings.
+- Added `inc/security-auth-mail.php` as the shared guard for front-end registration-code, lost-password-code, profile-email-code sends and native `wp-login.php` registration/lost-password requests.
+- The guard uses transient counters, a privacy-friendly random `yneko_reimu_auth_device` cookie, bounded 100-event alert logs, admin/menu badges for unhandled events, and optional throttled admin email alerts that remain disabled by default.
+- Extended settings-admin, comments/profile, and auth-security contract checks so future changes cannot bypass the new authentication email guard or remove the Security settings tab silently.

@@ -21,6 +21,10 @@ msgstr "(Untitled)"
 msgid "[%s] 密码重置验证码"
 msgstr "[%s] Password reset verification code"
 
+#: inc/security-auth-mail.php
+msgid "[%s] 认证邮件安全报警"
+msgstr ""
+
 #: inc/comments/profile.php
 msgid "[%s] 邮箱修改验证码"
 msgstr "[%s] Email change verification code"
@@ -897,6 +901,10 @@ msgstr ""
 msgid "请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr ""
 
+#: inc/security-auth-mail.php
+msgid "请求过于频繁，请稍后再试。"
+msgstr ""
+
 #: template-parts/content/content-none.php
 msgid "请稍后再来或联系管理员处理。"
 msgstr "Please come back later or contact the administrator."
@@ -985,7 +993,7 @@ msgstr "Cancel"
 msgid "取消回复"
 msgstr "Cancel reply"
 
-#: inc/comments/uploads.php inc/comments.php inc/settings/admin.php
+#: inc/comments/uploads.php inc/comments.php inc/security-auth-mail.php inc/settings/admin.php
 msgid "权限不足。"
 msgstr "Insufficient permissions."
 
@@ -1525,7 +1533,7 @@ msgstr "The code will be sent to the account email and is valid for 5 minutes."
 msgid "验证码已发送，请检查您的邮箱。"
 msgstr "The code has been sent. Please check your email."
 
-#: inc/comments/auth.php inc/comments/profile.php
+#: inc/security-auth-mail.php
 msgid "验证码已发送，请稍后再试。"
 msgstr "The code has been sent. Please try again later."
 
@@ -2047,6 +2055,10 @@ msgstr ""
 
 #: inc/setup.php template-parts/layout/banner.php
 msgid "Yneko-Reimu"
+msgstr ""
+
+#: inc/security-auth-mail.php
+msgid "Yneko-Reimu 捕获到认证邮件风控事件。\n\n类型：%1\\$s\n范围：%2\\$s\n维度：%3\\$s\n请进入 Yneko-Reimu 设置 -> 安全设置 查看详情。"
 msgstr ""
 
 #: inc/settings/admin.php inc/settings/page.php
