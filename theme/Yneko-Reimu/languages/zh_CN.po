@@ -321,6 +321,10 @@ msgstr "登录后可上传图片。"
 msgid "登录失败，请检查账号和密码。"
 msgstr "登录失败，请检查账号和密码。"
 
+#: inc/github-login/login-2fa.php
+msgid "登录信息或二次验证码不正确。"
+msgstr "登录信息或二次验证码不正确。"
+
 #: inc/comments/auth.php
 msgid "登录信息已过期，请重试。"
 msgstr "登录信息已过期，请重试。"
@@ -985,13 +989,17 @@ msgstr "确定删除这条评论吗？"
 msgid "确认新密码"
 msgstr "确认新密码"
 
-#: inc/comments/modals.php
+#: inc/comments/modals.php inc/github-login/login-2fa.php
 msgid "认证器验证码"
 msgstr "认证器验证码"
 
 #: inc/comments/profile.php inc/settings/admin.php
 msgid "认证器验证码不正确。"
 msgstr "认证器验证码不正确。"
+
+#: inc/github-login/login-2fa.php
+msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码。"
+msgstr "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码。"
 
 #: inc/comments/auth.php
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"

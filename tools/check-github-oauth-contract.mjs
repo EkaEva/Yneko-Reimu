@@ -10,7 +10,8 @@ const githubModulePaths = {
   oauth: resolve(root, 'theme/Yneko-Reimu/inc/github-login/oauth.php'),
   users: resolve(root, 'theme/Yneko-Reimu/inc/github-login/users.php'),
   avatars: resolve(root, 'theme/Yneko-Reimu/inc/github-login/avatars.php'),
-  access: resolve(root, 'theme/Yneko-Reimu/inc/github-login/access.php')
+  access: resolve(root, 'theme/Yneko-Reimu/inc/github-login/access.php'),
+  login2fa: resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa.php')
 };
 const settingsPagePath = resolve(root, 'theme/Yneko-Reimu/inc/settings/page.php');
 const settingsPanelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
@@ -25,6 +26,7 @@ const [
   githubUsers,
   githubAvatars,
   githubAccess,
+  githubLogin2fa,
   settingsPage,
   settingsPanels,
   settingsSchema,
@@ -37,6 +39,7 @@ const [
   readFile(githubModulePaths.users, 'utf8'),
   readFile(githubModulePaths.avatars, 'utf8'),
   readFile(githubModulePaths.access, 'utf8'),
+  readFile(githubModulePaths.login2fa, 'utf8'),
   readFile(settingsPagePath, 'utf8'),
   readFile(settingsPanelsPath, 'utf8'),
   readFile(settingsSchemaPath, 'utf8'),
@@ -50,7 +53,8 @@ const github = [
   githubOauth,
   githubUsers,
   githubAvatars,
-  githubAccess
+  githubAccess,
+  githubLogin2fa
 ].join('\n');
 
 const checks = [
@@ -63,7 +67,8 @@ const checks = [
       "require_once YNEKO_REIMU_DIR . '/inc/github-login/oauth.php';",
       "require_once YNEKO_REIMU_DIR . '/inc/github-login/users.php';",
       "require_once YNEKO_REIMU_DIR . '/inc/github-login/avatars.php';",
-      "require_once YNEKO_REIMU_DIR . '/inc/github-login/access.php';"
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/access.php';",
+      "require_once YNEKO_REIMU_DIR . '/inc/github-login/login-2fa.php';"
     ]
   },
   {
@@ -243,6 +248,25 @@ const checks = [
       'margin-top: 0 !important;',
       "'show_admin_toolbar'   => '0'",
       'name="yneko_reimu_settings[features][show_admin_toolbar]"'
+    ]
+  },
+  {
+    label: 'Backend login TOTP contract',
+    source: `${githubLogin2fa}\n${githubRendering}`,
+    snippets: [
+      'function yneko_reimu_login_2fa_field',
+      "add_action( 'login_form', 'yneko_reimu_login_2fa_field' );",
+      'name="yneko_reimu_login_totp_code"',
+      'autocomplete="one-time-code"',
+      'function yneko_reimu_login_2fa_authenticate',
+      "add_filter( 'authenticate', 'yneko_reimu_login_2fa_authenticate', 30 );",
+      'yneko_reimu_login_2fa_is_wp_login_request',
+      'yneko_reimu_user_2fa_enabled',
+      'yneko_reimu_user_2fa_secret',
+      'yneko_reimu_totp_verify',
+      "'/^\\d{6}$/'",
+      '登录信息或二次验证码不正确。',
+      'body.login .yneko-reimu-login-totp .description'
     ]
   },
   {

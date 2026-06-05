@@ -37,9 +37,12 @@ Verified paths:
 - TOTP secret generation returns a secret and `otpauth://totp/` URI.
 - TOTP save rejects an incorrect authenticator code.
 - TOTP save succeeds with the current generated authenticator code.
-- Login with a 2FA-enabled account requires a two-factor code.
-- Login rejects an incorrect two-factor code.
-- Login succeeds with the current generated two-factor code.
+- Front-end comment login with a 2FA-enabled account requires a two-factor code.
+- Front-end comment login rejects an incorrect two-factor code.
+- Front-end comment login succeeds with the current generated two-factor code.
+- WordPress `wp-login.php` password login with a 2FA-enabled account requires the `yneko_reimu_login_totp_code` authenticator code.
+- WordPress `wp-login.php` password login rejects missing or incorrect authenticator codes.
+- WordPress `wp-login.php` password login succeeds with the current generated authenticator code.
 
 ## Staging / Manual QA
 
@@ -55,6 +58,8 @@ Checklist:
 - Confirm the profile modal displays TOTP secret generation, QR setup, wrong-code feedback, and successful enablement.
 - Confirm an authenticator app can scan/use the `otpauth://totp/` URI.
 - Confirm the login modal transitions into the two-factor step and accepts a valid current TOTP code.
+- Confirm `wp-login.php` displays the authenticator-code field, rejects missing/wrong codes for a 2FA-enabled account, and accepts the current authenticator code.
+- Confirm a non-2FA account can still log in through `wp-login.php` without a code.
 - Confirm cleanup removes test users, pending TOTP secrets, and captured mail data.
 
 ## Local Real SMTP Evidence

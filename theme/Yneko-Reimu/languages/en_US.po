@@ -321,6 +321,10 @@ msgstr "Log in to upload images."
 msgid "登录失败，请检查账号和密码。"
 msgstr "Login failed. Please check your account and password."
 
+#: inc/github-login/login-2fa.php
+msgid "登录信息或二次验证码不正确。"
+msgstr ""
+
 #: inc/comments/auth.php
 msgid "登录信息已过期，请重试。"
 msgstr "Login information has expired. Please try again."
@@ -985,13 +989,17 @@ msgstr ""
 msgid "确认新密码"
 msgstr "Confirm new password"
 
-#: inc/comments/modals.php
+#: inc/comments/modals.php inc/github-login/login-2fa.php
 msgid "认证器验证码"
 msgstr "Authenticator code"
 
 #: inc/comments/profile.php inc/settings/admin.php
 msgid "认证器验证码不正确。"
 msgstr "The authenticator code is incorrect."
+
+#: inc/github-login/login-2fa.php
+msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码。"
+msgstr ""
 
 #: inc/comments/auth.php
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"

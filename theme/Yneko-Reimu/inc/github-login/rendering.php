@@ -142,6 +142,13 @@ function yneko_reimu_github_login_enqueue_styles() {
 		body.login .user-pass-wrap {
 			margin-bottom: 18px;
 		}
+		body.login .yneko-reimu-login-totp .description {
+			display: block;
+			margin-top: 8px;
+			color: #646970;
+			font-size: 13px;
+			line-height: 1.5;
+		}
 		body.login label {
 			color: #ff5252;
 			font-weight: 700;

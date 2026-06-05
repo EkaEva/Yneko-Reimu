@@ -10,9 +10,9 @@ Run:
 npm run check:github-oauth
 ```
 
-The check guards the internal module loading boundary plus public login actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta fallback, GitHub API scope/endpoints, avatar fallback, popup message type, and high-impact OAuth error strings.
+The check guards the internal module loading boundary plus public login actions, callback and bind URLs, bind nonce, settings keys, legacy option/meta fallback, GitHub API scope/endpoints, avatar fallback, popup message type, backend login TOTP hooks, and high-impact OAuth error strings.
 
-As of v0.2.3, `inc/github-login.php` is a thin entrypoint that loads internal `inc/github-login/` modules for settings, rendering, OAuth transport, user binding, avatar fallback, and admin-access restrictions. This is a maintenance-only split; the QA surface below remains the same because actions, settings, meta keys, state handling, popup behavior, and callback URLs are intentionally preserved.
+As of v0.2.5, `inc/github-login.php` is a thin entrypoint that loads internal `inc/github-login/` modules for settings, rendering, OAuth transport, user binding, avatar fallback, admin-access restrictions, and the `wp-login.php` TOTP field/authentication filter. The OAuth split is maintenance-only; GitHub OAuth actions, settings, meta keys, state handling, popup behavior, and callback URLs are intentionally preserved.
 
 ## Local Error-Path QA
 

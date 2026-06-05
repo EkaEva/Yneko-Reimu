@@ -1010,3 +1010,8 @@
 - Added a `General -> Account security` admin TOTP panel for the current administrator account, reusing the existing front-end profile modal TOTP user meta instead of adding a global setting.
 - Added admin-only AJAX handlers for generating, enabling, and disabling current-user TOTP, plus settings-page JavaScript that loads the bundled local `qrcode.js` for QR setup.
 - Extended the settings admin contract gate to protect the current-user TOTP panel, admin AJAX actions, QR loading path, and preserved TOTP meta keys.
+- Synced the existing v0.2.5 settings/TOTP/admin-toolbar work to GitHub before starting the backend login 2FA round.
+- Added internal `inc/github-login/login-2fa.php`, loaded by the GitHub login entrypoint, to render a `wp-login.php` authenticator-code field and verify the same TOTP user meta through the `authenticate` filter after password auth succeeds.
+- Kept GitHub OAuth callback behavior and front-end comment login behavior unchanged; this round only extends password login through `wp-login.php` for accounts that already enabled TOTP.
+- Extended `npm run check:github-oauth` to protect the backend login TOTP module, login field name, authenticate hook, existing TOTP helper usage, generic error, and login-page field styling.
+- Documented that one-time recovery codes are intentionally deferred to the next round; emergency recovery before then is removing the locked user's `_yneko_reimu_totp_enabled` meta outside the theme.
