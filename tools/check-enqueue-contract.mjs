@@ -146,6 +146,16 @@ for (const nonce of [
   requireSnippet('nonce contract', nonce);
 }
 
+const stylesSource = await readFile(resolve(root, 'theme/Yneko-Reimu/inc/enqueue/styles.php'), 'utf8');
+if (!stylesSource.includes("wp_add_inline_style( 'yneko-reimu-main', yneko_reimu_cursor_variables_css() );")) {
+  console.error('[enqueue] Missing final cursor variable override after the main stylesheet.');
+  failed = true;
+}
+if (/if\s*\(\s*!\s*yneko_reimu_feature_enabled\(\s*'yneko_reimu_custom_cursor'/.test(stylesSource)) {
+  console.error('[enqueue] Cursor variables must not be emitted only for the disabled custom-cursor state.');
+  failed = true;
+}
+
 if (failed) {
   process.exitCode = 1;
 } else {
