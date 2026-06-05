@@ -16,10 +16,21 @@ const settingsSchemaPaths = [
   resolve(themeRoot, 'inc/settings/schema/defaults.php'),
   resolve(themeRoot, 'inc/settings/schema/normalizers.php'),
   resolve(themeRoot, 'inc/settings/schema/sanitizers.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers/media.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers/users.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers/groups.php'),
   resolve(themeRoot, 'inc/settings/schema/getters.php'),
   resolve(themeRoot, 'inc/settings/schema/compat.php')
 ];
 const settingsSchema = (await Promise.all(settingsSchemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const settingsPagePaths = [
+  resolve(themeRoot, 'inc/settings/page.php'),
+  resolve(themeRoot, 'inc/settings/page/context.php'),
+  resolve(themeRoot, 'inc/settings/page/tabs.php'),
+  resolve(themeRoot, 'inc/settings/page/general.php'),
+  resolve(themeRoot, 'inc/settings/page/submit.php')
+];
+const settingsPage = (await Promise.all(settingsPagePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 const customizerPaths = [
   resolve(themeRoot, 'inc/customizer.php'),
   resolve(themeRoot, 'inc/customizer/panel.php'),
@@ -47,7 +58,7 @@ const commentsRendering = (await Promise.all(commentsRenderingPaths.map((path) =
 const files = {
   schema: settingsSchema,
   panels: settingsPanels,
-  page: await readFile(resolve(themeRoot, 'inc/settings/page.php'), 'utf8'),
+  page: settingsPage,
   svg: await readFile(resolve(themeRoot, 'inc/svg.php'), 'utf8'),
   comments: await readFile(resolve(themeRoot, 'inc/comments.php'), 'utf8'),
   commentsContext: await readFile(resolve(themeRoot, 'inc/comments/context.php'), 'utf8'),

@@ -4,6 +4,12 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pagePath = resolve(root, 'theme/Yneko-Reimu/inc/settings/page.php');
+const pageModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/context.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/tabs.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/general.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/submit.php')
+];
 const panelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
 const panelModulePaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/users.php'),
@@ -19,12 +25,17 @@ const schemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/normalizers.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/media.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/users.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/groups.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/getters.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
 ];
 const securityPath = resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail.php');
 
-const page = await readFile(pagePath, 'utf8');
+const pageEntry = await readFile(pagePath, 'utf8');
+const pageModules = await Promise.all(pageModulePaths.map((path) => readFile(path, 'utf8')));
+const page = [pageEntry, ...pageModules].join('\n');
 const panelsEntry = await readFile(panelsPath, 'utf8');
 const panelModules = await Promise.all(panelModulePaths.map((path) => readFile(path, 'utf8')));
 const panels = [panelsEntry, ...panelModules].join('\n');
@@ -63,6 +74,16 @@ const panelFunctions = new Map([
 ]);
 
 const requiredPageSnippets = [
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/page/context.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/page/tabs.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/page/general.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/page/submit.php';",
+  'function yneko_reimu_render_settings_page',
+  'function yneko_reimu_settings_page_context',
+  'function yneko_reimu_render_settings_nav_tabs',
+  'function yneko_reimu_render_settings_general_panel',
+  'function yneko_reimu_render_settings_floating_submit',
+  'function yneko_reimu_render_settings_hidden_upload_form',
   'settings_fields( \'yneko_reimu_settings\' )',
   'data-yneko-settings-panel="general"',
   'data-yneko-settings-tab="security"',
@@ -75,8 +96,8 @@ const requiredPageSnippets = [
   'data-yneko-admin-totp-recovery',
   'data-yneko-admin-totp-recovery-generate',
   'data-yneko-admin-totp-recovery-copy',
-  '$security = function_exists( \'yneko_reimu_settings_security\' ) ? yneko_reimu_settings_security() : array();',
-  'yneko_reimu_render_settings_security_panel( $auth_security, $security, $review_badges )',
+  "'security'             => function_exists( 'yneko_reimu_settings_security' ) ? yneko_reimu_settings_security() : array(),",
+  "yneko_reimu_render_settings_security_panel( $context['auth_security'], $context['security'], $context['review_badges'] )",
   'id="yneko-reimu-admin-gif-upload-form"',
   'wp_nonce_field( \'yneko_reimu_admin_comment_gif_upload\' )',
   'yneko_reimu_admin_review_badge_counts()'
@@ -192,6 +213,9 @@ const requiredSchemaSnippets = [
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/normalizers.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers/media.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers/users.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers/groups.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/getters.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/compat.php';",
   "'auth_security'",
@@ -207,7 +231,15 @@ const requiredSchemaSnippets = [
   "'global_day_limit'         => 100",
   "'cooldown_seconds'         => 60",
   "'global_warning_threshold' => 80",
-  'yneko_reimu_sanitize_auth_security_settings( $auth_security, $defaults[\'auth_security\'] )',
+  'function yneko_reimu_sanitize_settings',
+  'function yneko_reimu_sanitize_comment_upload_settings',
+  'function yneko_reimu_sanitize_github_oauth_settings',
+  'function yneko_reimu_sanitize_i18n_settings',
+  'function yneko_reimu_sanitize_search_settings',
+  'function yneko_reimu_sanitize_player_settings',
+  'function yneko_reimu_sanitize_third_party_settings',
+  'function yneko_reimu_sanitize_external_comments_settings',
+  "yneko_reimu_sanitize_auth_security_settings( yneko_reimu_settings_group_input( $input, 'auth_security' ), $defaults['auth_security'] )",
   'yneko_reimu_sanitize_settings_bool_group(',
   "array( 'allow_svg_uploads', 'comment_ip_region_lookup' )",
   'function yneko_reimu_settings_security',

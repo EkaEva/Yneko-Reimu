@@ -14,6 +14,12 @@ const githubModulePaths = {
   login2fa: resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa.php')
 };
 const settingsPagePath = resolve(root, 'theme/Yneko-Reimu/inc/settings/page.php');
+const settingsPageModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/context.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/tabs.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/general.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/page/submit.php')
+];
 const settingsPanelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
 const settingsPanelModulePaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/users.php'),
@@ -25,6 +31,9 @@ const settingsSchemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/normalizers.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/media.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/users.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/groups.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/getters.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
 ];
@@ -40,7 +49,7 @@ const [
   githubAvatars,
   githubAccess,
   githubLogin2fa,
-  settingsPage,
+  settingsPageEntry,
   settingsPanelsEntry,
   reimuEntrySource,
   commentsRuntimeSource,
@@ -58,12 +67,15 @@ const [
   readFile(settingsPanelsPath, 'utf8'),
   readFile(reimuSourcePath, 'utf8'),
   readFile(commentsRuntimePath, 'utf8'),
+  ...settingsPageModulePaths.map((path) => readFile(path, 'utf8')),
   ...settingsPanelModulePaths.map((path) => readFile(path, 'utf8')),
   ...settingsSchemaPaths.map((path) => readFile(path, 'utf8'))
 ]);
 
-const settingsPanelModules = settingsModules.slice(0, settingsPanelModulePaths.length);
-const settingsSchemaModules = settingsModules.slice(settingsPanelModulePaths.length);
+const settingsPageModules = settingsModules.slice(0, settingsPageModulePaths.length);
+const settingsPanelModules = settingsModules.slice(settingsPageModulePaths.length, settingsPageModulePaths.length + settingsPanelModulePaths.length);
+const settingsSchemaModules = settingsModules.slice(settingsPageModulePaths.length + settingsPanelModulePaths.length);
+const settingsPage = [settingsPageEntry, ...settingsPageModules].join('\n');
 const settingsPanels = [settingsPanelsEntry, ...settingsPanelModules].join('\n');
 const settingsSchema = settingsSchemaModules.join('\n');
 const reimuSource = `${reimuEntrySource}\n${commentsRuntimeSource}`;

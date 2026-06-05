@@ -16,16 +16,27 @@ const settingsSchemaPaths = [
   resolve(themeRoot, 'inc/settings/schema/defaults.php'),
   resolve(themeRoot, 'inc/settings/schema/normalizers.php'),
   resolve(themeRoot, 'inc/settings/schema/sanitizers.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers/media.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers/users.php'),
+  resolve(themeRoot, 'inc/settings/schema/sanitizers/groups.php'),
   resolve(themeRoot, 'inc/settings/schema/getters.php'),
   resolve(themeRoot, 'inc/settings/schema/compat.php')
 ];
 const settingsSchema = (await Promise.all(settingsSchemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const settingsPagePaths = [
+  resolve(themeRoot, 'inc/settings/page.php'),
+  resolve(themeRoot, 'inc/settings/page/context.php'),
+  resolve(themeRoot, 'inc/settings/page/tabs.php'),
+  resolve(themeRoot, 'inc/settings/page/general.php'),
+  resolve(themeRoot, 'inc/settings/page/submit.php')
+];
+const settingsPage = (await Promise.all(settingsPagePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   functions: await readFile(resolve(themeRoot, 'functions.php'), 'utf8'),
   security: await readFile(resolve(themeRoot, 'inc/security-auth-mail.php'), 'utf8'),
   schema: settingsSchema,
-  page: await readFile(resolve(themeRoot, 'inc/settings/page.php'), 'utf8'),
+  page: settingsPage,
   panels: settingsPanels,
   admin: await readFile(resolve(themeRoot, 'inc/settings/admin.php'), 'utf8'),
   auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),

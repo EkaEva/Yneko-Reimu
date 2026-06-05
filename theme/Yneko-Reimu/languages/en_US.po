@@ -2065,7 +2065,7 @@ msgstr ""
 msgid "Yneko-Reimu 设置"
 msgstr "Yneko-Reimu Settings"
 
-#: inc/settings/page.php
+#: inc/settings/page/tabs.php
 msgid "Yneko-Reimu 设置分类"
 msgstr ""
 
