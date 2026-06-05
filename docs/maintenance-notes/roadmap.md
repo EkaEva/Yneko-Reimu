@@ -6,6 +6,7 @@ This roadmap is non-binding guidance for future releases. It captures follow-up 
 
 - Expand runtime testing beyond static contract checks. Start with fast smoke coverage for classic script parsing, PJAX config replay, modal anchors, lazy runtime globals, and comment/profile DOM anchors.
 - Continue reducing PHP complexity without changing public contracts. Current recurring hotspots include settings page rendering, settings schema sanitization, Customizer social controls, comments modals, comment rendering, and upload helpers.
+- Use `complexity-baseline.md` as the current non-failing PHP complexity reference. New work should avoid increasing the largest hotspots unless a compatibility or security reason is documented.
 - Keep comments/profile/auth runtime movement conservative until automated and manual QA cover login, registration, lost password, profile save, TOTP, upload review, comment mutation, and review-status polling paths.
 - Improve cross-platform contributor tooling so packaging and validation commands behave consistently on Windows, Linux, and macOS.
 - Keep dependency updates isolated. Security updates should land first; major npm, Composer, or GitHub Actions upgrades should be reviewed separately from feature work.

@@ -66,6 +66,8 @@ Use the same toolchain as CI when possible: Node.js 24, npm dependencies from `p
 
 `npm run report:php-complexity` scans the runtime theme PHP files and reports the largest files, largest named functions, and highest approximate branch scores. It is informational for now so the project can track legacy complexity before turning any threshold into a failing quality gate.
 
+The current public baseline is recorded in `docs/maintenance-notes/complexity-baseline.md`. Treat it as a review aid: hotspot work should preserve public contracts and should not be mixed with unrelated feature changes.
+
 `npm run check:settings-admin` verifies the admin settings page contract after renderer splits. It checks that the settings tabs still have matching panels, that `inc/settings/page.php` calls each internal panel renderer, and that key option fields, review helper calls, TOTP controls, and security alert anchors remain present.
 
 `npm run check:auth-security` verifies the authentication email guard contract. It protects the `auth_security` defaults and sanitizers, the random device cookie (`yneko_reimu_auth_device`), transient counter dimensions, global daily budget warning, bounded alert log, native `registration_errors` / `lostpassword_errors` coverage, and the three front-end verification-code send handlers. Keep registration, lost-password, and profile email code sends behind this helper unless a migration is documented.
