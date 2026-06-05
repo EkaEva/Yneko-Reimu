@@ -18,6 +18,7 @@ function yneko_reimu_render_settings_page() {
 	$third_party = yneko_reimu_settings_third_party();
 	$external_comments = yneko_reimu_settings_external_comments();
 	$auth_security = function_exists( 'yneko_reimu_settings_auth_security' ) ? yneko_reimu_settings_auth_security() : array();
+	$security = function_exists( 'yneko_reimu_settings_security' ) ? yneko_reimu_settings_security() : array();
 	$review_badges = yneko_reimu_admin_review_badge_counts();
 	$callback = function_exists( 'yneko_reimu_github_login_callback_url' ) ? yneko_reimu_github_login_callback_url() : add_query_arg( 'action', 'yneko_reimu_github_callback', wp_login_url() );
 	$admin_totp = yneko_reimu_admin_current_user_totp_payload();
@@ -129,7 +130,7 @@ function yneko_reimu_render_settings_page() {
 
 			<?php yneko_reimu_render_settings_users_panel( $review_badges ); ?>
 
-			<?php yneko_reimu_render_settings_security_panel( $auth_security, $review_badges ); ?>
+			<?php yneko_reimu_render_settings_security_panel( $auth_security, $security, $review_badges ); ?>
 
 			<?php yneko_reimu_render_settings_search_panel( $search ); ?>
 

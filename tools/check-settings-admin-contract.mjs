@@ -61,7 +61,8 @@ const requiredPageSnippets = [
   'data-yneko-admin-totp-recovery',
   'data-yneko-admin-totp-recovery-generate',
   'data-yneko-admin-totp-recovery-copy',
-  'yneko_reimu_render_settings_security_panel( $auth_security, $review_badges )',
+  '$security = function_exists( \'yneko_reimu_settings_security\' ) ? yneko_reimu_settings_security() : array();',
+  'yneko_reimu_render_settings_security_panel( $auth_security, $security, $review_badges )',
   'id="yneko-reimu-admin-gif-upload-form"',
   'wp_nonce_field( \'yneko_reimu_admin_comment_gif_upload\' )',
   'yneko_reimu_admin_review_badge_counts()'
@@ -102,6 +103,9 @@ const requiredPanelSnippets = [
   'name="yneko_reimu_settings[auth_security][cooldown_seconds]"',
   'name="yneko_reimu_settings[auth_security][global_warning_threshold]"',
   'name="yneko_reimu_settings[auth_security][email_alert_enabled]"',
+  'yneko_reimu_settings_group_open( \'媒体与隐私\', \'Media and privacy\'',
+  'name="yneko_reimu_settings[security][allow_svg_uploads]"',
+  'name="yneko_reimu_settings[security][comment_ip_region_lookup]"',
   'yneko_reimu_auth_security_events()',
   'name="yneko_reimu_settings[features][',
   'name="yneko_reimu_settings[third_party][',
@@ -169,6 +173,9 @@ const requiredAdminPhpSnippets = [
 
 const requiredSchemaSnippets = [
   "'auth_security'",
+  "'security'          => array(",
+  "'allow_svg_uploads'        => '1'",
+  "'comment_ip_region_lookup' => '1'",
   "'email_hour_limit'         => 3",
   "'email_day_limit'          => 8",
   "'ip_hour_limit'            => 10",
@@ -178,7 +185,12 @@ const requiredSchemaSnippets = [
   "'global_day_limit'         => 100",
   "'cooldown_seconds'         => 60",
   "'global_warning_threshold' => 80",
-  'yneko_reimu_sanitize_auth_security_settings( $auth_security, $defaults[\'auth_security\'] )'
+  'yneko_reimu_sanitize_auth_security_settings( $auth_security, $defaults[\'auth_security\'] )',
+  'yneko_reimu_sanitize_settings_bool_group(',
+  "array( 'allow_svg_uploads', 'comment_ip_region_lookup' )",
+  'function yneko_reimu_settings_security',
+  'function yneko_reimu_security_allow_svg_uploads',
+  'function yneko_reimu_security_comment_ip_region_lookup'
 ];
 
 const requiredSecuritySnippets = [

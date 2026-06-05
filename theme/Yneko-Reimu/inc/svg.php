@@ -4,7 +4,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_svg_upload_enabled() {
-	return (bool) apply_filters( 'yneko_reimu_allow_svg_uploads', current_user_can( 'manage_options' ) );
+	$enabled = current_user_can( 'manage_options' );
+	if ( function_exists( 'yneko_reimu_security_allow_svg_uploads' ) ) {
+		$enabled = $enabled && yneko_reimu_security_allow_svg_uploads();
+	} elseif ( function_exists( 'yneko_reimu_settings_security' ) ) {
+		$security = yneko_reimu_settings_security();
+		$enabled  = $enabled && '1' === (string) ( $security['allow_svg_uploads'] ?? '1' );
+	}
+
+	return (bool) apply_filters( 'yneko_reimu_allow_svg_uploads', $enabled );
 }
 
 function yneko_reimu_svg_sanitize_markup( $svg ) {

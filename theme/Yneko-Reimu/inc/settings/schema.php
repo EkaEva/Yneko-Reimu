@@ -102,6 +102,10 @@ function yneko_reimu_settings_defaults() {
 			'global_warning_threshold' => 80,
 			'email_alert_enabled'      => '0',
 		),
+		'security'          => array(
+			'allow_svg_uploads'        => '1',
+			'comment_ip_region_lookup' => '1',
+		),
 		'builtin_pages'     => array(
 			'projects' => '1',
 			'archives' => '1',
@@ -513,6 +517,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 	$player   = isset( $input['player'] ) && is_array( $input['player'] ) ? $input['player'] : array();
 	$third_party = isset( $input['third_party'] ) && is_array( $input['third_party'] ) ? $input['third_party'] : array();
 	$auth_security = isset( $input['auth_security'] ) && is_array( $input['auth_security'] ) ? $input['auth_security'] : array();
+	$security = isset( $input['security'] ) && is_array( $input['security'] ) ? $input['security'] : array();
 	$external_comments = isset( $input['external_comments'] ) && is_array( $input['external_comments'] ) ? $input['external_comments'] : array();
 	$i18n_default = function_exists( 'yneko_reimu_i18n_defaults' ) ? yneko_reimu_i18n_defaults() : $defaults['i18n'];
 	$i18n_default_language = isset( $i18n['default'] ) && 'en_US' === $i18n['default'] ? 'en_US' : 'zh_CN';
@@ -558,6 +563,11 @@ function yneko_reimu_sanitize_settings( $input ) {
 			'auto_create'   => ! empty( $oauth['auto_create'] ) ? '1' : '0',
 		),
 		'auth_security'     => function_exists( 'yneko_reimu_sanitize_auth_security_settings' ) ? yneko_reimu_sanitize_auth_security_settings( $auth_security, $defaults['auth_security'] ) : $defaults['auth_security'],
+		'security'          => yneko_reimu_sanitize_settings_bool_group(
+			$security,
+			$defaults['security'],
+			array( 'allow_svg_uploads', 'comment_ip_region_lookup' )
+		),
 		'builtin_pages'     => yneko_reimu_sanitize_settings_bool_group(
 			isset( $input['builtin_pages'] ) && is_array( $input['builtin_pages'] ) && isset( $input['builtin_pages']['_present'] )
 				? $input['builtin_pages']
@@ -799,6 +809,20 @@ function yneko_reimu_settings_group( $group ) {
 	$value    = isset( $settings[ $group ] ) && is_array( $settings[ $group ] ) ? $settings[ $group ] : array();
 	$default  = isset( $defaults[ $group ] ) && is_array( $defaults[ $group ] ) ? $defaults[ $group ] : array();
 	return array_replace_recursive( $default, $value );
+}
+
+function yneko_reimu_settings_security() {
+	return yneko_reimu_settings_group( 'security' );
+}
+
+function yneko_reimu_security_allow_svg_uploads() {
+	$security = yneko_reimu_settings_security();
+	return '1' === (string) ( $security['allow_svg_uploads'] ?? '1' );
+}
+
+function yneko_reimu_security_comment_ip_region_lookup() {
+	$security = yneko_reimu_settings_security();
+	return '1' === (string) ( $security['comment_ip_region_lookup'] ?? '1' );
 }
 
 function yneko_reimu_builtin_page_slugs() {

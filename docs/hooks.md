@@ -52,6 +52,37 @@ add_filter( 'yneko_reimu_schema_graph', function ( $graph ) {
 } );
 ```
 
+## `yneko_reimu_security_headers`
+
+Filters the HTTP security headers emitted by the theme.
+
+```php
+add_filter( 'yneko_reimu_security_headers', function ( $headers ) {
+	unset( $headers['X-Frame-Options'] );
+	return $headers;
+} );
+```
+
+## `yneko_reimu_content_width`
+
+Filters the classic WordPress content width used by the theme.
+
+```php
+add_filter( 'yneko_reimu_content_width', function () {
+	return 960;
+} );
+```
+
+## `yneko_reimu_allow_svg_uploads`
+
+Provides a developer-level override for the SVG upload gate. The admin UI setting still controls the default behavior.
+
+```php
+add_filter( 'yneko_reimu_allow_svg_uploads', function ( $enabled ) {
+	return $enabled && current_user_can( 'manage_options' );
+} );
+```
+
 ## `yneko_reimu_virtual_pages`
 
 Filters built-in virtual page definitions.

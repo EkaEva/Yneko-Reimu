@@ -254,11 +254,21 @@ function yneko_reimu_render_settings_users_panel( $review_badges ) {
 	<?php
 }
 
-function yneko_reimu_render_settings_security_panel( $auth_security, $review_badges ) {
+function yneko_reimu_render_settings_security_panel( $auth_security, $security, $review_badges ) {
 	$events          = function_exists( 'yneko_reimu_auth_security_events' ) ? yneko_reimu_auth_security_events() : array();
 	$unhandled_count = absint( $review_badges['security'] ?? 0 );
 	$mark_url        = wp_nonce_url( add_query_arg( 'yneko_auth_security_action', 'mark_handled', admin_url( 'themes.php?page=yneko-reimu-settings' ) ), 'yneko_reimu_auth_security_mark_handled' );
 	$clear_url       = wp_nonce_url( add_query_arg( 'yneko_auth_security_action', 'clear', admin_url( 'themes.php?page=yneko-reimu-settings' ) ), 'yneko_reimu_auth_security_clear' );
+	$security        = is_array( $security ) ? wp_parse_args(
+		$security,
+		array(
+			'allow_svg_uploads'        => '1',
+			'comment_ip_region_lookup' => '1',
+		)
+	) : array(
+		'allow_svg_uploads'        => '1',
+		'comment_ip_region_lookup' => '1',
+	);
 	?>
 	<section class="yneko-reimu-settings-panel" data-yneko-settings-panel="security" hidden>
 		<h2><?php yneko_reimu_admin_bilingual_heading( '安全设置', 'Security settings' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $unhandled_count ) ); ?></h2>
@@ -286,6 +296,14 @@ function yneko_reimu_render_settings_security_panel( $auth_security, $review_bad
 				<label><?php yneko_reimu_admin_bilingual_label( '同一设备 / 天', 'Same device / day' ); ?> <input class="small-text" type="number" min="1" max="20000" name="yneko_reimu_settings[auth_security][device_day_limit]" value="<?php echo esc_attr( absint( $auth_security['device_day_limit'] ?? 15 ) ); ?>"></label>
 				<label><?php yneko_reimu_admin_bilingual_label( '全站每日发送预算', 'Global daily send budget' ); ?> <input class="small-text" type="number" min="1" max="100000" name="yneko_reimu_settings[auth_security][global_day_limit]" value="<?php echo esc_attr( absint( $auth_security['global_day_limit'] ?? 100 ) ); ?>"></label>
 			</div>
+		<?php yneko_reimu_settings_group_close(); ?>
+
+		<?php yneko_reimu_settings_group_open( '媒体与隐私', 'Media and privacy', '这里控制站点媒体上传能力和评论区可能产生的第三方地区查询。默认保持现有主题行为。', 'Control media upload capability and comment-area third-party region lookups here. Defaults preserve the current theme behavior.' ); ?>
+			<div class="yneko-reimu-checkbox-grid">
+				<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[security][allow_svg_uploads]" value="1" <?php checked( '1', $security['allow_svg_uploads'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '允许管理员上传 SVG', 'Allow administrators to upload SVG' ); ?></label>
+				<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[security][comment_ip_region_lookup]" value="1" <?php checked( '1', $security['comment_ip_region_lookup'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '显示评论 IP 地区信息', 'Show comment IP region info' ); ?></label>
+			</div>
+			<?php yneko_reimu_admin_bilingual_description( 'SVG 上传仍只开放给管理员，并会经过主题基础净化；关闭后主题不再为媒体库放行 SVG。关闭评论 IP 地区信息后，主题不会请求 ipwho.is，评论环境标签只保留浏览器和系统信息。', 'SVG uploads remain administrator-only and pass through the theme sanitizer; disabling this stops the theme from allowing SVG in the Media Library. Disabling comment IP region info prevents ipwho.is requests, leaving only browser and OS badges.' ); ?>
 		<?php yneko_reimu_settings_group_close(); ?>
 
 		<?php yneko_reimu_settings_group_open( '安全报警', 'Security alerts', '最近 100 条认证邮件风控事件会显示在这里。标记已处理只影响角标，不会清除限额计数。', 'The latest 100 authentication email guard events are shown here. Marking handled only affects badges and does not clear rate-limit counters.' ); ?>

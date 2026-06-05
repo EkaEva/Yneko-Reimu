@@ -55,6 +55,8 @@ Theme images ship as files under `assets/images` or generated runtime files unde
 * Adds a disabled-by-default setting to restore the front-end WordPress admin toolbar for administrators when debugging is needed.
 * Keeps the clean front-end default by hiding the WordPress admin toolbar and Rank Math front-end analytics/pro toolbar prompts while the setting is off.
 * Adds configurable authentication email rate limits and security alerts for registration, lost-password, profile email verification, and native wp-login.php register/lost-password requests.
+* Adds Security -> Media and privacy controls for administrator SVG uploads and comment IP region lookup, preserving existing defaults while allowing privacy-first sites to disable ipwho.is requests.
+* Adds a configurable-surface audit gate so admin UI, Customizer, developer hooks, and internal compatibility values stay clearly classified.
 
 = 0.2.4 =
 

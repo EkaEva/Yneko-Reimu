@@ -1023,3 +1023,11 @@
 - Added `inc/security-auth-mail.php` as the shared guard for front-end registration-code, lost-password-code, profile-email-code sends and native `wp-login.php` registration/lost-password requests.
 - The guard uses transient counters, a privacy-friendly random `yneko_reimu_auth_device` cookie, bounded 100-event alert logs, admin/menu badges for unhandled events, and optional throttled admin email alerts that remain disabled by default.
 - Extended settings-admin, comments/profile, and auth-security contract checks so future changes cannot bypass the new authentication email guard or remove the Security settings tab silently.
+- Started the final v0.2.5 configurable-surface audit and kept the scope to settings that are understandable administrator controls rather than developer-only hooks.
+- Added a new `security` settings group with defaults `allow_svg_uploads=1` and `comment_ip_region_lookup=1`, plus sanitizer coverage through `yneko_reimu_sanitize_settings_bool_group`.
+- Added `Security settings -> Media and privacy` controls for administrator SVG uploads and comment IP region lookup while preserving the existing defaults for upgraded sites.
+- Wired SVG uploads through `yneko_reimu_security_allow_svg_uploads()` before the existing `yneko_reimu_allow_svg_uploads` filter, keeping the filter as the final developer override.
+- Added `yneko_reimu_comment_ip_region_lookup_enabled()` and short-circuited `yneko_reimu_comment_region_from_ip()` before IP validation, transient access, or `ipwho.is` requests when the setting is off.
+- Added `tools/check-config-surface.mjs`, exposed it as `npm run check:config-surface`, and wired it into `npm run check` so admin UI, Customizer, developer extension, and internal/compatibility surfaces stay classified.
+- Extended settings-admin and comments/profile contract gates to protect the new security settings, SVG upload gate, and comment IP region lookup gate.
+- Updated README, runtime `readme.txt`, `docs/development.md`, `docs/hooks.md`, and `docs/release-notes-v0.2.5.md` to document the final media/privacy controls and the config-surface gate.

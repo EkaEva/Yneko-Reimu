@@ -9,6 +9,7 @@ npm install
 npm run check:js
 npm run check:settings-admin
 npm run check:auth-security
+npm run check:config-surface
 npm run check:customizer
 npm run check:template-tags
 npm run check:enqueue
@@ -59,6 +60,8 @@ npm run lint:php
 
 `npm run check:auth-security` verifies the authentication email guard contract. It protects the `auth_security` defaults and sanitizers, the random device cookie (`yneko_reimu_auth_device`), transient counter dimensions, global daily budget warning, bounded alert log, native `registration_errors` / `lostpassword_errors` coverage, and the three front-end verification-code send handlers. Keep registration, lost-password, and profile email code sends behind this helper unless a migration is documented.
 
+`npm run check:config-surface` audits the theme's configurable surface by category. It protects admin UI coverage for `security.allow_svg_uploads` and `security.comment_ip_region_lookup`, representative Customizer-owned visual settings, documented developer extension filters, and internal/legacy compatibility values that should not become admin controls. Update this gate whenever a new user-configurable behavior is added or when a developer hook is intentionally documented instead of productized.
+
 `npm run check:customizer` verifies the Customizer visual-preview contract before further decomposition. It checks the public customize hook, panel/section IDs, key setting/control IDs, and sanitizer callbacks so future helper extraction does not silently rename saved `theme_mod` or option-backed Customizer fields.
 
 `npm run check:template-tags` verifies the Template Tags contract after helper splits. It checks the `inc/template-tags.php` entrypoint, internal module loading, key template helper functions, virtual page slugs, navigation hooks, sponsor shortcode, share/social platform definitions, and GitHub project transient/filter contracts.
@@ -91,6 +94,8 @@ The admin settings page also exposes a current-user TOTP management entry under 
 
 The authentication email guard lives in `theme/Yneko-Reimu/inc/security-auth-mail.php` and stores its settings under `yneko_reimu_settings['auth_security']`. It covers front-end `register_code`, `lostpassword_code`, and `profile_email_code` sends plus native `wp-login.php` registration/lost-password requests. The device dimension uses a random 180-day cookie and stores only hashes in transients and logs. The security alert log is bounded to 100 events and should stay non-enumerating: lost-password responses continue to use generic success copy.
 
+Broader security/privacy toggles live under `yneko_reimu_settings['security']`. `security.allow_svg_uploads` controls the default administrator SVG upload gate while preserving the `yneko_reimu_allow_svg_uploads` developer filter as the final override. `security.comment_ip_region_lookup` controls whether comment environment badges may call `ipwho.is`; when disabled, comments keep browser/system badges but skip IP region lookup before validation, cache access, or remote requests.
+
 ## Source Layout
 
 - `theme/Yneko-Reimu/assets/src/` contains maintained frontend sources.
@@ -110,7 +115,9 @@ Admin settings PHP panels are internal renderers in `theme/Yneko-Reimu/inc/setti
 - Do not rename saved settings, post meta keys, AJAX action names, nonce names, documented filters/actions, template paths, virtual page slugs, or public URLs without a compatibility plan.
 - New settings need a default value, sanitizer, UI location, migration decision, and a note about whether they affect front-end loading.
 - Authentication email settings belong under Security settings and must keep privacy-friendly device IDs, generic lost-password responses, and bounded alert logging.
+- Security/privacy settings that affect uploads or remote lookups belong under Security settings. Preserve existing site behavior by default unless a security migration explicitly documents a changed default.
 - Front-end-visible article/card/sidebar modules that are stored as `theme_mod` values should have a Customizer control and be covered by `npm run check:customizer`.
+- Do not move every filter into the admin UI. Developer extension filters such as asset strategy, security headers, schema graph, content width, SVG final override, and virtual-page definitions should stay documented in `docs/hooks.md` unless there is a clear non-developer site-owner workflow.
 - Heavy or third-party features should stay disabled by default and gated by a setting, page context, or user interaction.
 - The front-end WordPress admin toolbar stays hidden by default, including for administrators, to keep the public front end clean. The `show_admin_toolbar` feature setting is rendered under General -> Administrator experience and should be enabled only when an administrator needs temporary front-end debugging/plugin toolbar access; when it is off, Rank Math front-end Analytics/PRO toolbar prompts are hidden as a compatibility layer.
 - Settings page UI should use grouped blocks for new dense sections. Keep the tab structure, setting keys, and form submission model stable; prefer moving markup into existing settings renderers before adding new admin frameworks.

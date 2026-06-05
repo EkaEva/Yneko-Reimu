@@ -187,7 +187,24 @@ function yneko_reimu_get_comment_avatar( $comment, $size = 56 ) {
 	return yneko_reimu_comment_avatar_with_frame( get_avatar( $comment, $size, $default ), absint( $comment->user_id ), 'reimu-avatar-frame--comment' );
 }
 
+function yneko_reimu_comment_ip_region_lookup_enabled() {
+	if ( function_exists( 'yneko_reimu_security_comment_ip_region_lookup' ) ) {
+		return yneko_reimu_security_comment_ip_region_lookup();
+	}
+
+	if ( function_exists( 'yneko_reimu_settings_security' ) ) {
+		$security = yneko_reimu_settings_security();
+		return '1' === (string) ( $security['comment_ip_region_lookup'] ?? '1' );
+	}
+
+	return true;
+}
+
 function yneko_reimu_comment_region_from_ip( $ip ) {
+	if ( ! yneko_reimu_comment_ip_region_lookup_enabled() ) {
+		return '';
+	}
+
 	$ip = trim( (string) $ip );
 
 	if ( '' === $ip ) {
