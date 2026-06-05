@@ -23,6 +23,7 @@ npm run check:github-oauth
 npm run check:release-readiness
 npm run check:css-split
 npm run build
+npm run test:runtime
 npm run check:assets
 npm run check:i18n-messages
 npm run check:size
@@ -44,6 +45,8 @@ Use the same toolchain as CI when possible: Node.js 24, npm dependencies from `p
 `npm run check:i18n-messages` verifies that high-impact English feedback strings in auth, profile, comment, upload, review, email verification, password reset, and GitHub OAuth flows are not empty after gettext files are regenerated. It is a focused user-facing message contract, not a requirement that every historical `en_US.po` entry is translated.
 
 `npm run check:assets` verifies that runtime PHP/CSS/JS files do not contain `data:image` URLs or base64 image payloads. Large, replaceable, or cacheable images should stay as files under `assets/images` or be emitted into `assets/dist` by the build. Small UI SVG components may remain inline when they are part of markup behavior rather than replaceable media.
+
+`npm run test:runtime` runs a fast smoke test after the build. It parses built public scripts as classic scripts and checks high-risk PJAX, lazy runtime, comments/profile modal, enqueue, and front-end global anchors. It is not a replacement for WordPress browser QA; it catches obvious runtime packaging and anchor regressions before manual testing.
 
 `npm run check:size` enforces the short-term public asset budgets:
 

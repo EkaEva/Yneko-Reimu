@@ -415,6 +415,7 @@ npm run package
 - `npm run check:release-readiness`：检查所有运行时 PHP 文件的 `ABSPATH` 防直访保护、主题头部兼容字段、运行时 `readme.txt` 和 `1200x900` 发布截图。
 - `npm run i18n`：提取 gettext 字符串，生成 `languages/yneko-reimu.pot`、`zh_CN.po/mo` 和 `en_US.po/mo`。
 - `npm run build`：生成语言文件、光标 PNG，并通过 Vite 压缩输出 `assets/dist/`。
+- `npm run test:runtime`：对构建后的 classic runtime 脚本做快速烟测，确认关键 PJAX、懒加载、评论/资料弹窗和前端全局锚点仍存在。
 - `npm run check:assets`：检查运行时 PHP/CSS/JS 中没有 `data:image` 或 base64 图片载荷。
 - `npm run lint:php`：通过 Composer 调用 PHPCS/WPCS 检查 PHP 代码。
 - `npm run check`：依次执行 JS 检查、公开契约检查、发布就绪检查、构建和 PHP 规范检查。
@@ -888,6 +889,7 @@ Scripts:
 - `npm run check:release-readiness`: checks `ABSPATH` direct-access guards, theme header compatibility fields, runtime `readme.txt`, and the `1200x900` release screenshot.
 - `npm run i18n`: extracts gettext strings and generates `languages/yneko-reimu.pot`, `zh_CN.po/mo`, and `en_US.po/mo`.
 - `npm run build`: generates language files, cursor PNGs, and minified Vite assets.
+- `npm run test:runtime`: runs fast smoke checks against built classic runtime scripts and key PJAX, lazy runtime, comments/profile modal, and front-end global anchors.
 - `npm run check:assets`: checks runtime PHP/CSS/JS for forbidden `data:image` and base64 image payloads.
 - `npm run lint:php`: runs PHPCS/WPCS through Composer.
 - `npm run check`: runs JS checks, public contract checks, release-readiness checks, build, and PHP coding standards.
