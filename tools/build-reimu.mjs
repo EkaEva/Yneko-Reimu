@@ -151,7 +151,20 @@ async function rewriteCursorAssetUrls() {
   }
 }
 
+async function rewriteDuplicatedImageUrls() {
+  const cssPath = resolve(distRoot, 'reimu.css');
+  const css = await readFile(cssPath, 'utf8');
+  const rewrittenCss = css
+    .replace(/url\(\.\/taichi\.png\)/g, 'url(../images/taichi.png)')
+    .replace(/url\(\.\/xiaohongshu\.svg\)/g, 'url(../images/icons/xiaohongshu.svg)');
+
+  if (rewrittenCss !== css) {
+    await writeFile(cssPath, rewrittenCss);
+  }
+}
+
 await rewriteCursorAssetUrls();
+await rewriteDuplicatedImageUrls();
 
 const viteCopiedCursorFiles = [
   'lily-alternate.png',
@@ -171,7 +184,13 @@ const viteCopiedCursorFiles = [
   'lily-work.png'
 ];
 
-for (const file of viteCopiedCursorFiles) {
+const viteCopiedDuplicateFiles = [
+  ...viteCopiedCursorFiles,
+  'taichi.png',
+  'xiaohongshu.svg'
+];
+
+for (const file of viteCopiedDuplicateFiles) {
   await rm(resolve(distRoot, file), { force: true });
 }
 

@@ -11,6 +11,9 @@ const forbiddenPatterns = [
   /^Yneko-Reimu\/vendor\//,
   /^Yneko-Reimu\/tools\//,
   /^Yneko-Reimu\/assets\/dist\/manifest\.json$/,
+  /^Yneko-Reimu\/assets\/dist\/.*\.map$/,
+  /^Yneko-Reimu\/assets\/dist\/taichi\.png$/,
+  /^Yneko-Reimu\/assets\/dist\/xiaohongshu\.svg$/,
   /^Yneko-Reimu\/PROJECT\.md$/,
   /^Yneko-Reimu\/AGENTS\.md$/,
   /^Yneko-Reimu\/README\.md$/,
@@ -26,7 +29,9 @@ const forbiddenPatterns = [
   /^Yneko-Reimu\/docs\/release\.md$/,
   /^Yneko-Reimu\/docs\/hooks\.md$/,
   /^Yneko-Reimu\/docs\/maintenance-notes\//,
-  /^Yneko-Reimu\/docs\/release-notes-v(?!0\.2\.15\.md$).+\.md$/
+  /^Yneko-Reimu\/docs\/release-notes-v(?!0\.2\.15\.md$).+\.md$/,
+  /^Yneko-Reimu\/languages\/.*\.po$/,
+  /^Yneko-Reimu\/languages\/.*\.pot$/
 ];
 
 async function latestZip() {
@@ -191,6 +196,11 @@ if (missingCursorAssets.length) {
 const mainCss = await readZipFile(zipPath, 'Yneko-Reimu/assets/dist/reimu.css');
 if (mainCss.includes('url(./lily-')) {
   console.error(`[package] ${basename(zipPath)} references transient dist cursor files from reimu.css.`);
+  process.exit(1);
+}
+
+if (mainCss.includes('url(./taichi.png)') || mainCss.includes('url(./xiaohongshu.svg)')) {
+  console.error(`[package] ${basename(zipPath)} references duplicate dist image assets from reimu.css.`);
   process.exit(1);
 }
 

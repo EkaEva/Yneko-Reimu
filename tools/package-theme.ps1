@@ -121,6 +121,9 @@ foreach ($docFile in $docFiles) {
 
 $removePatterns = @(
   'assets/dist/manifest.json',
+  'assets/dist/*.map',
+  'assets/dist/taichi.png',
+  'assets/dist/xiaohongshu.svg',
   'assets/images/covers/README.md',
   'assets/images/avatar.png',
   'assets/images/avatar.webp',
@@ -135,11 +138,35 @@ $removePatterns = @(
 
 foreach ($pattern in $removePatterns) {
   $target = Join-Path $stageTheme $pattern
-  if (Test-Path -LiteralPath $target) {
+  if ($pattern.Contains('*')) {
+    $parent = Split-Path -Parent $target
+    $leaf = Split-Path -Leaf $target
+    if (Test-Path -LiteralPath $parent) {
+      Get-ChildItem -LiteralPath $parent -Filter $leaf -File | ForEach-Object {
+        Remove-Item -LiteralPath $_.FullName -Force
+      }
+    }
+  } elseif (Test-Path -LiteralPath $target) {
     if ((Get-Item -LiteralPath $target).PSIsContainer) {
       Remove-Item -LiteralPath $target -Recurse -Force
     } else {
       Remove-Item -LiteralPath $target -Force
+    }
+  }
+}
+
+$translationSourcePatterns = @(
+  'languages/*.po',
+  'languages/*.pot'
+)
+
+foreach ($pattern in $translationSourcePatterns) {
+  $target = Join-Path $stageTheme $pattern
+  $parent = Split-Path -Parent $target
+  $leaf = Split-Path -Leaf $target
+  if (Test-Path -LiteralPath $parent) {
+    Get-ChildItem -LiteralPath $parent -Filter $leaf -File | ForEach-Object {
+      Remove-Item -LiteralPath $_.FullName -Force
     }
   }
 }

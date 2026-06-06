@@ -32,9 +32,7 @@
     "assets/dist/reimu-share.css",
     "assets/dist/reimu-share.js",
     "assets/dist/reimu.css",
-    "assets/dist/reimu.js",
-    "assets/dist/taichi.png",
-    "assets/dist/xiaohongshu.svg"
+    "assets/dist/reimu.js"
   ],
   "outputStats": {
     "assets/dist/admin-settings.js": 14605,
@@ -51,9 +49,7 @@
     "assets/dist/reimu-search.js": 9982,
     "assets/dist/reimu-share.css": 2940,
     "assets/dist/reimu-share.js": 4695,
-    "assets/dist/reimu.css": 102638,
-    "assets/dist/reimu.js": 50521,
-    "assets/dist/taichi.png": 2536,
-    "assets/dist/xiaohongshu.svg": 8155
+    "assets/dist/reimu.css": 102690,
+    "assets/dist/reimu.js": 50521
   }
 }
