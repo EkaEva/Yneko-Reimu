@@ -467,6 +467,7 @@ export function createCommentsProfileRuntime(deps) {
     var profileAvatarState = { changed: false };
     var profileTagState = { tagMessageTimer: null };
     var profileAvatarOriginalUrl = '';
+    var profileInitialState = {};
     var profileStatusUi = createProfileStatusUi({
       qs: qs,
       qsa: qsa,
@@ -507,6 +508,64 @@ export function createCommentsProfileRuntime(deps) {
     var setInlineProfileStatus = profileStatusUi.setInlineProfileStatus;
     var setInlineProfileStatuses = profileStatusUi.setInlineProfileStatuses;
     var applyInlineProfileStatus = profileStatusUi.applyInlineProfileStatus;
+
+    function profileFieldValue(name) {
+      var input = form ? qs('[name="' + name + '"]', form) : null;
+      if (!input) {
+        return '';
+      }
+      if (input.type === 'checkbox') {
+        return input.checked ? '1' : '0';
+      }
+      return String(input.value || '').trim();
+    }
+
+    function captureProfileInitialState(data) {
+      data = data || {};
+      profileInitialState = {
+        displayName: String(data.displayName || '').trim(),
+        profileUrl: String(data.profileUrl || '').trim(),
+        email: String(data.email || '').trim(),
+        avatarFrameEnabled: data.avatarFrameEnabled !== false ? '1' : '0',
+        twoFactor: data.twoFactor ? '1' : '0'
+      };
+    }
+
+    function hasGeneralProfileChanges() {
+      var newEmail = profileFieldValue('user_email');
+      return profileFieldValue('display_name') !== profileInitialState.displayName ||
+        profileFieldValue('profile_url') !== profileInitialState.profileUrl ||
+        (newEmail && newEmail !== profileInitialState.email) ||
+        !!profileFieldValue('new_password') ||
+        profileFieldValue('avatar_frame_enabled') !== profileInitialState.avatarFrameEnabled ||
+        profileFieldValue('totp_enabled') !== profileInitialState.twoFactor;
+    }
+
+    function syncTwoFactorSetup() {
+      var wrap = qs('.reimu-profile-2fa', form);
+      var toggle = qs('[data-profile-2fa-toggle]', form);
+      var setup = qs('[data-profile-2fa-setup]', form);
+      if (!wrap || !toggle || !setup) {
+        return;
+      }
+      var active = wrap.getAttribute('data-profile-2fa-active') === '1';
+      setup.hidden = active || !toggle.checked;
+      if (active) {
+        qsa('input, button', setup).forEach(function (control) {
+          control.disabled = true;
+        });
+      } else {
+        qsa('input, button', setup).forEach(function (control) {
+          control.disabled = false;
+        });
+      }
+    }
+
+    function addGeneralProfileStatus(data) {
+      var statuses = Object.assign({}, data && data.reviewStatuses ? data.reviewStatuses : {});
+      statuses.profile = { status: 'updated' };
+      return Object.assign({}, data || {}, { reviewStatuses: statuses });
+    }
 
     function setOpen(open) {
       modal.classList.toggle('show', !!open);
@@ -640,6 +699,10 @@ export function createCommentsProfileRuntime(deps) {
       if (twoFactor) {
         twoFactor.checked = !!data.twoFactor;
       }
+      var twoFactorWrap = qs('.reimu-profile-2fa', form);
+      if (twoFactorWrap) {
+        twoFactorWrap.setAttribute('data-profile-2fa-active', data.twoFactor ? '1' : '0');
+      }
       var avatarFrame = qs('[name="avatar_frame_enabled"]', form);
       if (avatarFrame) {
         avatarFrame.checked = data.avatarFrameEnabled !== false;
@@ -697,6 +760,8 @@ export function createCommentsProfileRuntime(deps) {
       markProfileAvatarChanged(false);
       setProfileAvatarHint('');
       validateProfilePasswords();
+      captureProfileInitialState(data);
+      syncTwoFactorSetup();
     }
 
     function updateCommentBadgesForProfile(data) {
@@ -997,9 +1062,9 @@ export function createCommentsProfileRuntime(deps) {
     var twoFactorToggle = qs('[data-profile-2fa-toggle]', form);
     var twoFactorSetup = qs('[data-profile-2fa-setup]', form);
     if (twoFactorToggle && twoFactorSetup) {
-      twoFactorSetup.hidden = !twoFactorToggle.checked;
+      syncTwoFactorSetup();
       twoFactorToggle.addEventListener('change', function () {
-        twoFactorSetup.hidden = !twoFactorToggle.checked;
+        syncTwoFactorSetup();
       });
     }
 
@@ -1040,15 +1105,17 @@ export function createCommentsProfileRuntime(deps) {
         }
         var data = new FormData(form);
         var avatarChanged = profileAvatarState.changed;
+        var generalChanged = hasGeneralProfileChanges();
         postProfileAction('yneko_reimu_profile_save', data).then(function (payload) {
           setMessage(payload && payload.data && payload.data.message ? payload.data.message : '', payload && payload.success);
           if (payload && payload.success) {
             clearProfileTagError();
-            var stillPending = applyProfilePayload(payload.data, { autohide: true, forceFill: true });
-            if (stillPending || hasPendingProfileStatus(payload.data && payload.data.reviewStatuses)) {
+            var profileData = generalChanged ? addGeneralProfileStatus(payload.data) : payload.data;
+            var stillPending = applyProfilePayload(profileData, { autohide: true, forceFill: true });
+            if (stillPending || hasPendingProfileStatus(profileData && profileData.reviewStatuses)) {
               startProfileStatusPolling();
             } else if (avatarChanged && payload.data && payload.data.avatarUrl) {
-              applyInlineProfileStatus(payload.data, { autohide: true });
+              applyInlineProfileStatus(profileData, { autohide: true });
             }
             setOpen(false);
             refreshCommentLoginState();

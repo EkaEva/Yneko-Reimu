@@ -197,6 +197,11 @@ function yneko_reimu_profile_save_apply_totp( $user_id, $enabled, $code ) {
 		$current_secret = yneko_reimu_user_2fa_secret( $user_id );
 		$pending_secret = (string) get_user_meta( $user_id, '_yneko_reimu_totp_pending_secret', true );
 		$secret         = $current_secret ? $current_secret : $pending_secret;
+		if ( $current_secret && '' === $code ) {
+			update_user_meta( $user_id, '_yneko_reimu_totp_enabled', '1' );
+			delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
+			return true;
+		}
 		if ( '' === $secret ) {
 			return new WP_Error( 'yneko_reimu_profile_totp_missing', esc_html__( '请先生成认证器密钥。', 'yneko-reimu' ) );
 		}
@@ -214,11 +219,37 @@ function yneko_reimu_profile_save_apply_totp( $user_id, $enabled, $code ) {
 	return true;
 }
 
+function yneko_reimu_profile_save_tags_equal( $left, $right ) {
+	$left  = yneko_reimu_comment_normalize_tag_list( $left, yneko_reimu_comment_custom_tag_storage_limit() );
+	$right = yneko_reimu_comment_normalize_tag_list( $right, yneko_reimu_comment_custom_tag_storage_limit() );
+
+	if ( count( $left ) !== count( $right ) ) {
+		return false;
+	}
+
+	$keys = array( 'id', 'label', 'color', 'enabled', 'old_id', 'old_label' );
+	foreach ( $left as $index => $left_tag ) {
+		$right_tag = $right[ $index ] ?? array();
+		foreach ( $keys as $key ) {
+			if ( (string) ( $left_tag[ $key ] ?? '' ) !== (string) ( $right_tag[ $key ] ?? '' ) ) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 function yneko_reimu_profile_save_apply_comment_tags( $user_id, $comment_tags ) {
 	$tags_pending = false;
+	$current_tags = yneko_reimu_comment_user_custom_tags( $user_id );
+	$current_pending_tags = yneko_reimu_comment_user_pending_tags( $user_id );
+
 	if ( $comment_tags ) {
 		if ( yneko_reimu_comment_tag_review_enabled() && ! yneko_reimu_comment_user_can_bypass_tag_review( $user_id ) ) {
 			$reviewed = yneko_reimu_comment_prepare_reviewed_tags( yneko_reimu_comment_user_custom_tags( $user_id ), $comment_tags );
+			$active_changed = ! yneko_reimu_profile_save_tags_equal( $current_tags, $reviewed['active'] );
+			$pending_changed = ! yneko_reimu_profile_save_tags_equal( $current_pending_tags, $reviewed['pending'] );
 			if ( $reviewed['active'] ) {
 				update_user_meta( $user_id, '_yneko_reimu_comment_tags', $reviewed['active'] );
 			} else {
@@ -226,23 +257,35 @@ function yneko_reimu_profile_save_apply_comment_tags( $user_id, $comment_tags ) 
 			}
 			if ( $reviewed['pending'] ) {
 				update_user_meta( $user_id, '_yneko_reimu_comment_tags_pending', $reviewed['pending'] );
-				yneko_reimu_set_user_review_status( $user_id, 'tags', 'pending' );
+				if ( $pending_changed ) {
+					yneko_reimu_set_user_review_status( $user_id, 'tags', 'pending' );
+				}
 				$tags_pending = true;
 			} else {
 				delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
-				yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
+				if ( $active_changed || $pending_changed ) {
+					yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
+				}
 			}
 		} else {
+			$active_changed = ! yneko_reimu_profile_save_tags_equal( $current_tags, $comment_tags );
+			$pending_changed = ! empty( $current_pending_tags );
 			update_user_meta( $user_id, '_yneko_reimu_comment_tags', $comment_tags );
 			delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
-			yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
+			if ( $active_changed || $pending_changed ) {
+				yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
+			}
 		}
 		return $tags_pending;
 	}
 
 	delete_user_meta( $user_id, '_yneko_reimu_comment_tags' );
 	delete_user_meta( $user_id, '_yneko_reimu_comment_tags_pending' );
-	yneko_reimu_clear_user_review_status( $user_id, 'tags' );
+	if ( $current_tags || $current_pending_tags ) {
+		yneko_reimu_set_user_review_status( $user_id, 'tags', 'updated' );
+	} else {
+		yneko_reimu_clear_user_review_status( $user_id, 'tags' );
+	}
 	return false;
 }
 

@@ -312,8 +312,9 @@ function yneko_reimu_profile_modal_password_fields() {
 }
 
 function yneko_reimu_profile_modal_totp_fields( $profile ) {
+	$two_factor_active = ! empty( $profile['twoFactor'] );
 	?>
-	<div class="reimu-profile-2fa">
+	<div class="reimu-profile-2fa" data-profile-2fa-active="<?php echo $two_factor_active ? '1' : '0'; ?>">
 		<label class="reimu-login-remember"><input name="totp_enabled" type="checkbox" value="1" <?php checked( ! empty( $profile['twoFactor'] ) ); ?> data-profile-2fa-toggle><span><?php esc_html_e( '开启认证器两步验证', 'yneko-reimu' ); ?></span></label>
 		<div class="reimu-profile-2fa-setup" data-profile-2fa-setup hidden>
 			<button class="reimu-login-code-button" type="button" data-profile-2fa-generate><?php esc_html_e( '生成密钥', 'yneko-reimu' ); ?></button>

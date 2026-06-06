@@ -21,6 +21,9 @@ export function createProfileStatusUi(deps) {
         pending: ['commentsPending', '评论审核中'],
         updated: ['commentsUpdated', '评论已更新'],
         rejected: ['commentsRejected', '评论审核不通过']
+      },
+      profile: {
+        updated: ['profileUpdatedShort', '已更新']
       }
     };
     var item = map[type] && map[type][status] ? map[type][status] : null;
@@ -36,7 +39,7 @@ export function createProfileStatusUi(deps) {
 
   function profileStatusRows(statuses) {
     statuses = statuses || {};
-    var order = ['avatar', 'tags', 'comments'];
+    var order = ['profile', 'avatar', 'tags', 'comments'];
     return order.map(function (type) {
       var item = statuses[type] || {};
       var status = item.status || '';
