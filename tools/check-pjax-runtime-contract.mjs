@@ -28,6 +28,8 @@ const commentsRuntime = (await Promise.all(commentsRuntimePaths.map((path) => re
 const files = {
   frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
+  runtimeLoader: await readFile(resolve(themeRoot, 'assets/src/reimu/runtime-loader.js'), 'utf8'),
+  pjaxUtils: await readFile(resolve(themeRoot, 'assets/src/reimu/pjax-utils.js'), 'utf8'),
   commentsEntry,
   commentsRuntime,
   searchEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-search.js'), 'utf8'),
@@ -68,7 +70,7 @@ for (const snippet of [
   '/[?&](?:feed|preview|customize_changeset_uuid|replytocom)=/i',
   'isSamePageHashUrl(url)'
 ]) {
-  requireSnippet('PJAX link exclusion contract', snippet, files.frontend);
+  requireSnippet('PJAX link exclusion contract', snippet, `${files.frontend}\n${files.pjaxUtils}`);
 }
 
 for (const snippet of [
@@ -82,7 +84,7 @@ for (const snippet of [
   "text.indexOf('window.REIMU_HEATMAP_CONFIG') !== -1",
   "qsa('script[src]').some(function (existing) { return existing.getAttribute('src') === src; })"
 ]) {
-  requireSnippet('PJAX config/script replay contract', snippet, files.frontend);
+  requireSnippet('PJAX config/script replay contract', snippet, `${files.frontend}\n${files.pjaxUtils}`);
 }
 
 for (const snippet of [
@@ -98,7 +100,7 @@ for (const snippet of [
   "replaceElement('#reimu-login-modal', nextDoc",
   "replaceElement('#reimu-profile-modal', nextDoc"
 ]) {
-  requireSnippet('PJAX login/profile modal state contract', snippet, files.frontend);
+  requireSnippet('PJAX login/profile modal state contract', snippet, `${files.frontend}\n${files.pjaxUtils}`);
 }
 
 for (const snippet of [
@@ -119,23 +121,21 @@ for (const snippet of [
 }
 
 for (const snippet of [
-  'var searchRuntimePromise = null;',
-  'var photoSwipeRuntimePromise = null;',
-  'var shareRuntimePromise = null;',
-  "script.id = 'yneko-reimu-search-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-search.js'",
-  "script.id = 'yneko-reimu-photoswipe-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-photoswipe.js'",
-  "script.id = 'yneko-reimu-share-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-share.js'",
-  'var commentsRuntimePromise = null;',
-  "script.id = 'yneko-reimu-comments-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-comments.js'",
-  'searchRuntimePromise = null;',
-  'photoSwipeRuntimePromise = null;',
-  'shareRuntimePromise = null;'
+  'var promises = {};',
+  'promises[key] = new Promise(function (resolve, reject)',
+  'promises[key] = null;',
+  "script.src = getAssetBaseUrl() + scriptName",
+  'createLazyRuntimeLoader',
+  "scriptId: 'yneko-reimu-search-runtime'",
+  "scriptName: 'reimu-search.js'",
+  "scriptId: 'yneko-reimu-photoswipe-runtime'",
+  "scriptName: 'reimu-photoswipe.js'",
+  "scriptId: 'yneko-reimu-share-runtime'",
+  "scriptName: 'reimu-share.js'",
+  "scriptId: 'yneko-reimu-comments-runtime'",
+  "scriptName: 'reimu-comments.js'"
 ]) {
-  requireSnippet('lazy runtime loader contract', snippet, files.frontend);
+  requireSnippet('lazy runtime loader contract', snippet, `${files.frontend}\n${files.runtimeLoader}`);
 }
 
 for (const snippet of [

@@ -65,6 +65,7 @@ const files = {
   rendering: commentRenderingSource,
   frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
+  runtimeLoader: await readFile(resolve(themeRoot, 'assets/src/reimu/runtime-loader.js'), 'utf8'),
   commentsEntry,
   commentsRuntime,
   commentMedia: await readFile(resolve(themeRoot, 'assets/src/reimu/comment-media.js'), 'utf8'),
@@ -109,7 +110,8 @@ for (const moduleImport of [
   requireSnippet('source module boundary', moduleImport, files.frontend);
 }
 requireSnippet('comments runtime classic global', 'window.ReimuCommentsRuntime = {', files.commentsEntry);
-requireSnippet('comments runtime lazy output', "script.src = getAssetBaseUrl() + 'reimu-comments.js'", files.frontendEntry);
+requireSnippet('comments runtime lazy loader helper', "script.src = getAssetBaseUrl() + scriptName", files.runtimeLoader);
+requireSnippet('comments runtime lazy output', "scriptName: 'reimu-comments.js'", files.frontendEntry);
 if (files.frontendEntry.includes("import { createCommentsProfileRuntime } from './reimu/comments-profile.js';")) {
   fail('Main reimu.js must lazy-load comments/profile runtime instead of importing it directly.');
 }

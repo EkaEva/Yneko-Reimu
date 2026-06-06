@@ -1,4 +1,6 @@
 import { createCore } from './reimu/core.js';
+import { createLazyRuntimeLoader } from './reimu/runtime-loader.js';
+import { createPjaxUtils } from './reimu/pjax-utils.js';
 
 (function () {
   'use strict';
@@ -153,49 +155,19 @@ import { createCore } from './reimu/core.js';
     });
   }
 
-  var searchRuntimePromise = null;
-  var photoSwipeRuntimePromise = null;
-  var shareRuntimePromise = null;
-  var commentsRuntimePromise = null;
+  var lazyRuntimeLoader = createLazyRuntimeLoader({
+    qs: qs,
+    getAssetBaseUrl: getAssetBaseUrl
+  });
 
   function loadSearchRuntime() {
-    if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
-      return Promise.resolve(window.ReimuSearchRuntime);
-    }
-    if (searchRuntimePromise) {
-      return searchRuntimePromise;
-    }
-    searchRuntimePromise = new Promise(function (resolve, reject) {
-      var existing = qs('#yneko-reimu-search-runtime');
-      if (existing && window.ReimuSearchRuntime) {
-        resolve(window.ReimuSearchRuntime);
-        return;
-      }
-      var script = existing || document.createElement('script');
-      var done = function () {
-        if (window.ReimuSearchRuntime && typeof window.ReimuSearchRuntime.init === 'function') {
-          resolve(window.ReimuSearchRuntime);
-        } else {
-          reject(new Error('Search runtime did not register.'));
-        }
-      };
-      script.id = 'yneko-reimu-search-runtime';
-      script.async = true;
-      script.onload = done;
-      script.onerror = function () {
-        reject(new Error('Unable to load search runtime.'));
-      };
-      if (!existing) {
-        script.src = getAssetBaseUrl() + 'reimu-search.js';
-        (document.head || document.body || document.documentElement).appendChild(script);
-      }
-    }).catch(function (error) {
-      searchRuntimePromise = null;
-      throw error;
+    return lazyRuntimeLoader.loadRuntime('search', {
+      globalName: 'ReimuSearchRuntime',
+      scriptId: 'yneko-reimu-search-runtime',
+      scriptName: 'reimu-search.js',
+      label: 'Search'
     });
-    return searchRuntimePromise;
   }
-
   function runSearchRuntime(method) {
     return loadSearchRuntime().then(function (runtime) {
       if (runtime && typeof runtime[method] === 'function') {
@@ -257,42 +229,13 @@ import { createCore } from './reimu/core.js';
   }
 
   function loadPhotoSwipeRuntime() {
-    if (window.ReimuPhotoSwipeRuntime && typeof window.ReimuPhotoSwipeRuntime.init === 'function') {
-      return Promise.resolve(window.ReimuPhotoSwipeRuntime);
-    }
-    if (photoSwipeRuntimePromise) {
-      return photoSwipeRuntimePromise;
-    }
-    photoSwipeRuntimePromise = new Promise(function (resolve, reject) {
-      var existing = qs('#yneko-reimu-photoswipe-runtime');
-      if (existing && window.ReimuPhotoSwipeRuntime) {
-        resolve(window.ReimuPhotoSwipeRuntime);
-        return;
-      }
-      var script = existing || document.createElement('script');
-      script.id = 'yneko-reimu-photoswipe-runtime';
-      script.async = true;
-      script.onload = function () {
-        if (window.ReimuPhotoSwipeRuntime && typeof window.ReimuPhotoSwipeRuntime.init === 'function') {
-          resolve(window.ReimuPhotoSwipeRuntime);
-        } else {
-          reject(new Error('PhotoSwipe runtime did not register.'));
-        }
-      };
-      script.onerror = function () {
-        reject(new Error('Unable to load PhotoSwipe runtime.'));
-      };
-      if (!existing) {
-        script.src = getAssetBaseUrl() + 'reimu-photoswipe.js';
-        (document.head || document.body || document.documentElement).appendChild(script);
-      }
-    }).catch(function (error) {
-      photoSwipeRuntimePromise = null;
-      throw error;
+    return lazyRuntimeLoader.loadRuntime('photoswipe', {
+      globalName: 'ReimuPhotoSwipeRuntime',
+      scriptId: 'yneko-reimu-photoswipe-runtime',
+      scriptName: 'reimu-photoswipe.js',
+      label: 'PhotoSwipe'
     });
-    return photoSwipeRuntimePromise;
   }
-
   function initPhotoSwipeRuntime() {
     if (!config.photoswipe) {
       return;
@@ -318,42 +261,13 @@ import { createCore } from './reimu/core.js';
   }
 
   function loadShareRuntime() {
-    if (window.ReimuShareRuntime && typeof window.ReimuShareRuntime.init === 'function') {
-      return Promise.resolve(window.ReimuShareRuntime);
-    }
-    if (shareRuntimePromise) {
-      return shareRuntimePromise;
-    }
-    shareRuntimePromise = new Promise(function (resolve, reject) {
-      var existing = qs('#yneko-reimu-share-runtime');
-      if (existing && window.ReimuShareRuntime) {
-        resolve(window.ReimuShareRuntime);
-        return;
-      }
-      var script = existing || document.createElement('script');
-      script.id = 'yneko-reimu-share-runtime';
-      script.async = true;
-      script.onload = function () {
-        if (window.ReimuShareRuntime && typeof window.ReimuShareRuntime.init === 'function') {
-          resolve(window.ReimuShareRuntime);
-        } else {
-          reject(new Error('Share runtime did not register.'));
-        }
-      };
-      script.onerror = function () {
-        reject(new Error('Unable to load share runtime.'));
-      };
-      if (!existing) {
-        script.src = getAssetBaseUrl() + 'reimu-share.js';
-        (document.head || document.body || document.documentElement).appendChild(script);
-      }
-    }).catch(function (error) {
-      shareRuntimePromise = null;
-      throw error;
+    return lazyRuntimeLoader.loadRuntime('share', {
+      globalName: 'ReimuShareRuntime',
+      scriptId: 'yneko-reimu-share-runtime',
+      scriptName: 'reimu-share.js',
+      label: 'Share'
     });
-    return shareRuntimePromise;
   }
-
   function initShare() {
     if (!qs('.share-wrapper')) {
       return;
@@ -374,42 +288,13 @@ import { createCore } from './reimu/core.js';
   }
 
   function loadCommentsRuntime() {
-    if (window.ReimuCommentsRuntime && typeof window.ReimuCommentsRuntime.init === 'function') {
-      return Promise.resolve(window.ReimuCommentsRuntime);
-    }
-    if (commentsRuntimePromise) {
-      return commentsRuntimePromise;
-    }
-    commentsRuntimePromise = new Promise(function (resolve, reject) {
-      var existing = qs('#yneko-reimu-comments-runtime');
-      if (existing && window.ReimuCommentsRuntime) {
-        resolve(window.ReimuCommentsRuntime);
-        return;
-      }
-      var script = existing || document.createElement('script');
-      script.id = 'yneko-reimu-comments-runtime';
-      script.async = true;
-      script.onload = function () {
-        if (window.ReimuCommentsRuntime && typeof window.ReimuCommentsRuntime.init === 'function') {
-          resolve(window.ReimuCommentsRuntime);
-        } else {
-          reject(new Error('Comments runtime did not register.'));
-        }
-      };
-      script.onerror = function () {
-        reject(new Error('Unable to load comments runtime.'));
-      };
-      if (!existing) {
-        script.src = getAssetBaseUrl() + 'reimu-comments.js';
-        (document.head || document.body || document.documentElement).appendChild(script);
-      }
-    }).catch(function (error) {
-      commentsRuntimePromise = null;
-      throw error;
+    return lazyRuntimeLoader.loadRuntime('comments', {
+      globalName: 'ReimuCommentsRuntime',
+      scriptId: 'yneko-reimu-comments-runtime',
+      scriptName: 'reimu-comments.js',
+      label: 'Comments'
     });
-    return commentsRuntimePromise;
   }
-
   function runCommentsRuntime(method) {
     if (!hasCommentsProfileAnchors() && !window.ReimuCommentsRuntime) {
       return Promise.resolve(false);
@@ -2248,124 +2133,34 @@ import { createCore } from './reimu/core.js';
     });
   }
 
-  function samePath(urlA, urlB) {
-    return urlA.origin === urlB.origin && urlA.pathname.replace(/\/+$/, '') === urlB.pathname.replace(/\/+$/, '') && urlA.search === urlB.search;
-  }
-
-  function isSamePageHashUrl(url) {
-    return !!(url && url.hash && samePath(url, new URL(window.location.href)));
-  }
-
+  var pjaxUtils = createPjaxUtils({
+    qs: qs,
+    qsa: qsa,
+    getConfig: function () {
+      return config;
+    },
+    setConfig: function (nextConfig) {
+      config = nextConfig || config;
+    },
+    initLoginModal: initLoginModal,
+    initProfileModal: initProfileModal,
+    setLoginModalOpen: setLoginModalOpen
+  });
+  var samePath = pjaxUtils.samePath;
+  var isSamePageHashUrl = pjaxUtils.isSamePageHashUrl;
+  var isAssetPath = pjaxUtils.isAssetPath;
+  var shouldPjaxLink = pjaxUtils.shouldPjaxLink;
+  var syncHeadMetadata = pjaxUtils.syncHeadMetadata;
+  var syncInlineConfig = pjaxUtils.syncInlineConfig;
+  var replayPjaxScripts = pjaxUtils.replayPjaxScripts;
+  var getAuthModalState = pjaxUtils.getAuthModalState;
+  var restoreAuthModalState = pjaxUtils.restoreAuthModalState;
   function scrollToHash(hash, options) {
     var target = getHeadingFromHash(hash);
     if (!target) {
       return false;
     }
     return scrollHeadingIntoView(target, options && options.instant ? 'auto' : 'smooth');
-  }
-
-  function isAssetPath(pathname) {
-    return /\.(?:7z|avi|avif|bmp|css|csv|docx?|eot|gif|gz|ico|jpeg|jpg|js|json|m4a|m4v|mov|mp3|mp4|ogg|ogv|pdf|png|rar|svg|tar|ttf|txt|wav|webm|webp|woff2?|xlsx?|xml|zip)$/i.test(pathname);
-  }
-
-  function shouldPjaxLink(anchor, event) {
-    if (!config.pjax || !anchor || !anchor.href) {
-      return false;
-    }
-    if (event && (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (typeof event.button === 'number' && event.button > 0))) {
-      return false;
-    }
-    if (anchor.dataset.noPjax !== undefined || anchor.closest('[data-no-pjax]')) {
-      return false;
-    }
-    if (anchor.target && anchor.target !== '_self') {
-      return false;
-    }
-    if (anchor.hasAttribute('download')) {
-      return false;
-    }
-    var href = anchor.getAttribute('href') || '';
-    if (/^(?:mailto|tel|sms|javascript|data|blob|vbscript):/i.test(href)) {
-      return false;
-    }
-    var url;
-    try {
-      url = new URL(anchor.href, window.location.href);
-    } catch (error) {
-      return false;
-    }
-    if (url.origin !== window.location.origin) {
-      return false;
-    }
-    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-      return false;
-    }
-    if (isAssetPath(url.pathname)) {
-      return false;
-    }
-    if (/\/(?:wp-admin|wp-login\.php|wp-json|xmlrpc\.php)(?:\/|$)/i.test(url.pathname)) {
-      return false;
-    }
-    if (/\/(?:feed|comments\/feed)(?:\/|$)/i.test(url.pathname) || /[?&](?:feed|preview|customize_changeset_uuid|replytocom)=/i.test(url.search)) {
-      return false;
-    }
-    if (isSamePageHashUrl(url)) {
-      return false;
-    }
-    return !(url.href === window.location.href || (samePath(url, new URL(window.location.href)) && url.hash === window.location.hash));
-  }
-
-  function syncHeadMetadata(nextDoc) {
-    var nextHtmlLang = nextDoc.documentElement && nextDoc.documentElement.getAttribute('lang');
-    if (nextHtmlLang) {
-      document.documentElement.setAttribute('lang', nextHtmlLang);
-    }
-    var nextCanonical = qs('link[rel="canonical"]', nextDoc);
-    var currentCanonical = qs('link[rel="canonical"]');
-    if (nextCanonical && currentCanonical) {
-      currentCanonical.setAttribute('href', nextCanonical.getAttribute('href') || '');
-    }
-    ['description', 'keywords'].forEach(function (name) {
-      var selector = 'meta[name="' + name + '"]';
-      var nextMeta = qs(selector, nextDoc);
-      var currentMeta = qs(selector);
-      if (nextMeta && currentMeta) {
-        currentMeta.setAttribute('content', nextMeta.getAttribute('content') || '');
-      } else if (nextMeta && !currentMeta) {
-        document.head.appendChild(nextMeta.cloneNode(true));
-      } else if (!nextMeta && currentMeta) {
-        currentMeta.remove();
-      }
-    });
-  }
-
-  function syncInlineConfig(nextDoc) {
-    qsa('script', nextDoc).forEach(function (script) {
-      var text = script.textContent || '';
-      if (text.indexOf('window.REIMU_CONFIG=') !== -1) {
-        try {
-          Function(text)();
-          config = window.REIMU_CONFIG || config;
-        } catch (error) {
-          if (window.console && window.console.warn) {
-            window.console.warn('[Yneko-Reimu] failed to sync page config', error);
-          }
-        }
-      }
-      if (text.indexOf('window.REIMU_HEATMAP_CONFIG') !== -1) {
-        try {
-          window.REIMU_HEATMAP_CONFIG = undefined;
-          Function(text)();
-        } catch (error) {
-          if (window.console && window.console.warn) {
-            window.console.warn('[Yneko-Reimu] failed to sync heatmap config', error);
-          }
-        }
-      }
-    });
-    if (!qs('#heatmap', nextDoc)) {
-      window.REIMU_HEATMAP_CONFIG = undefined;
-    }
   }
 
   function hideHeatmapTooltip() {
@@ -2375,27 +2170,6 @@ import { createCore } from './reimu/core.js';
       tooltip.style.visibility = '';
       tooltip.innerHTML = '';
     }
-  }
-
-  function replayPjaxScripts(nextDoc) {
-    qsa('#wrap script, #mobile-nav script, .site-search script', nextDoc).forEach(function (script) {
-      var src = script.getAttribute('src') || '';
-      var text = script.textContent || '';
-      if (!src && text.indexOf('window.REIMU_HEATMAP_CONFIG') !== -1) {
-        return;
-      }
-      var copy = document.createElement('script');
-      Array.prototype.slice.call(script.attributes || []).forEach(function (attr) {
-        copy.setAttribute(attr.name, attr.value);
-      });
-      if (src && qsa('script[src]').some(function (existing) { return existing.getAttribute('src') === src; })) {
-        return;
-      }
-      if (text) {
-        copy.text = text;
-      }
-      (document.body || document.head).appendChild(copy);
-    });
   }
 
   function replaceElement(selector, nextDoc, options) {
@@ -2412,43 +2186,6 @@ import { createCore } from './reimu/core.js';
       options.appendTo.appendChild(next.cloneNode(true));
     } else if (current && !next && !options.keepMissing) {
       current.remove();
-    }
-  }
-
-  function getAuthModalState() {
-    var loginModal = qs('#reimu-login-modal');
-    var profileModal = qs('#reimu-profile-modal');
-    var activePanel = loginModal ? qs('[data-login-panel].is-active', loginModal) : null;
-    return {
-      loginOpen: !!(loginModal && loginModal.classList.contains('show')),
-      loginPanel: activePanel ? activePanel.getAttribute('data-login-panel') || 'login' : 'login',
-      profileOpen: !!(profileModal && profileModal.classList.contains('show'))
-    };
-  }
-
-  function restoreAuthModalState(state) {
-    if (!state) {
-      return;
-    }
-    initLoginModal();
-    initProfileModal();
-    var loginModal = qs('#reimu-login-modal');
-    if (loginModal && state.loginOpen) {
-      setLoginModalOpen(true);
-      if (loginModal._reimuSetLoginPanel) {
-        loginModal._reimuSetLoginPanel(state.loginPanel || 'login');
-      }
-    }
-    var profileModal = qs('#reimu-profile-modal');
-    if (profileModal && state.profileOpen) {
-      if (profileModal._reimuSetProfileOpen) {
-        profileModal._reimuSetProfileOpen(true);
-      } else {
-        profileModal.classList.add('show');
-        profileModal.setAttribute('aria-hidden', 'false');
-        profileModal.hidden = false;
-        profileModal.inert = false;
-      }
     }
   }
 

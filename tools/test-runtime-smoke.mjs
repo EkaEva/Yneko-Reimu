@@ -49,6 +49,8 @@ const commentsRuntime = (await Promise.all(commentsRuntimePaths.map((path) => re
 const sourceFiles = {
   frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
+  runtimeLoader: await readFile(resolve(themeRoot, 'assets/src/reimu/runtime-loader.js'), 'utf8'),
+  pjaxUtils: await readFile(resolve(themeRoot, 'assets/src/reimu/pjax-utils.js'), 'utf8'),
   commentsEntry,
   commentsRuntime,
   searchEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-search.js'), 'utf8'),
@@ -97,14 +99,16 @@ for (const snippet of [
   'function syncInlineConfig(nextDoc)',
   'function replayPjaxScripts(nextDoc)',
   'function navigateTo(url, options)',
-  "script.id = 'yneko-reimu-search-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-search.js'",
-  "script.id = 'yneko-reimu-share-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-share.js'",
-  "script.id = 'yneko-reimu-photoswipe-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-photoswipe.js'",
-  "script.id = 'yneko-reimu-comments-runtime'",
-  "script.src = getAssetBaseUrl() + 'reimu-comments.js'",
+  'createLazyRuntimeLoader',
+  "script.src = getAssetBaseUrl() + scriptName",
+  "scriptId: 'yneko-reimu-search-runtime'",
+  "scriptName: 'reimu-search.js'",
+  "scriptId: 'yneko-reimu-share-runtime'",
+  "scriptName: 'reimu-share.js'",
+  "scriptId: 'yneko-reimu-photoswipe-runtime'",
+  "scriptName: 'reimu-photoswipe.js'",
+  "scriptId: 'yneko-reimu-comments-runtime'",
+  "scriptName: 'reimu-comments.js'",
   "replaceElement('#reimu-login-modal', nextDoc",
   "replaceElement('#reimu-profile-modal', nextDoc",
   "event.target.closest('[data-reimu-profile-open]')",
@@ -112,7 +116,9 @@ for (const snippet of [
   'form.dataset.ajaxCommentReady',
   'button.dataset.commentDeleteReady'
 ]) {
-  requireSnippet('main runtime smoke anchor', snippet, sourceFiles.frontend);
+  requireSnippet('main runtime smoke anchor', snippet, `${sourceFiles.frontend}
+${sourceFiles.runtimeLoader}
+${sourceFiles.pjaxUtils}`);
 }
 
 for (const [label, haystack, snippets] of [
