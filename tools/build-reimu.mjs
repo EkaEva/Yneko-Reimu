@@ -119,6 +119,40 @@ await buildClassicScript(resolve(themeRoot, 'assets/src/reimu-share.js'), 'reimu
 await buildClassicScript(resolve(themeRoot, 'assets/src/admin-settings.js'), 'admin-settings.js');
 await buildClassicScript(resolve(themeRoot, 'assets/src/customizer-restore-defaults.js'), 'customizer-restore-defaults.js');
 
+async function rewriteCursorAssetUrls() {
+  const cursorCssPath = resolve(distRoot, 'reimu.css');
+  const cursorCss = await readFile(cursorCssPath, 'utf8');
+  const cursorMap = new Map([
+    ['--cursor-default', 'lily-normal.png'],
+    ['--cursor-pointer', 'lily-link.png'],
+    ['--cursor-text', 'lily-text.png'],
+    ['--cursor-busy', 'lily-busy.png'],
+    ['--cursor-progress', 'lily-work.png'],
+    ['--cursor-not-allowed', 'lily-unavailable.png'],
+    ['--cursor-help', 'lily-help.png'],
+    ['--cursor-move', 'lily-move.png'],
+    ['--cursor-grab', 'lily-hand.png'],
+    ['--cursor-grabbing', 'lily-hand.png'],
+    ['--cursor-crosshair', 'lily-cross.png'],
+    ['--cursor-ew-resize', 'lily-resize-ew.png'],
+    ['--cursor-ns-resize', 'lily-resize-ns.png'],
+    ['--cursor-nwse-resize', 'lily-resize-nwse.png'],
+    ['--cursor-nesw-resize', 'lily-resize-nesw.png'],
+    ['--cursor-alias', 'lily-alternate.png']
+  ]);
+
+  const rewrittenCss = cursorCss.replace(/(--cursor-[a-z-]+):url\(\.\/lily-[^)]+\.png\)/g, (match, property) => {
+    const file = cursorMap.get(property);
+    return file ? `${property}:url(../images/cursor/${file})` : match;
+  });
+
+  if (rewrittenCss !== cursorCss) {
+    await writeFile(cursorCssPath, rewrittenCss);
+  }
+}
+
+await rewriteCursorAssetUrls();
+
 const viteCopiedCursorFiles = [
   'lily-alternate.png',
   'lily-busy.png',

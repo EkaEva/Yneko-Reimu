@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.12
+Stable tag: 0.2.13
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,15 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.13 =
+
+* Reduces settings/admin renderer hotspots with focused internal render helpers while preserving the existing settings save model, tabs, field names, nonce URLs, TOTP controls, and review actions.
+* Splits comments/profile modal PHP and comments/profile front-end source modules while preserving modal markup anchors, AJAX payloads, nonces, lazy runtime loading, review-status polling, and `window.ReimuCommentsRuntime`.
+* Splits PJAX/main runtime helpers for runtime loading, config replay, script replay, metadata sync, modal restoration, and PJAX utility behavior while preserving `window.ReimuWP.init()` and classic script compatibility.
+* Splits migration and Customizer long-function helpers behind the existing entrypoints while preserving legacy migration behavior, section/control IDs, theme_mod keys, sanitizer callbacks, and registration order.
+* Splits lower-risk template tag display helpers and GitHub login layout CSS helpers while preserving public helper function names, transient keys, shortcode behavior, style handles, and front-end output contracts.
+* Updates contract gates, runtime smoke aggregation, development docs, release notes, and the PHP complexity baseline for the new internal helper boundaries.
 
 = 0.2.12 =
 

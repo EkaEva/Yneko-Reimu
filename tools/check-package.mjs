@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { inflateRawSync } from 'node:zlib';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const releaseDir = resolve(root, 'releases');
@@ -81,6 +82,52 @@ async function listZipEntries(zipPath) {
   return entries;
 }
 
+async function readZipFile(zipPath, targetEntry) {
+  const zip = await readFile(zipPath);
+  const localFileSignature = 0x04034b50;
+  const entries = await listZipEntries(zipPath);
+
+  if (!entries.includes(targetEntry)) {
+    return '';
+  }
+
+  let offset = 0;
+  while (offset < zip.length - 30) {
+    if (zip.readUInt32LE(offset) !== localFileSignature) {
+      offset += 1;
+      continue;
+    }
+
+    const compressionMethod = zip.readUInt16LE(offset + 8);
+    const compressedSize = zip.readUInt32LE(offset + 18);
+    const fileNameLength = zip.readUInt16LE(offset + 26);
+    const extraLength = zip.readUInt16LE(offset + 28);
+    const fileNameStart = offset + 30;
+    const fileNameEnd = fileNameStart + fileNameLength;
+    const fileName = zip.subarray(fileNameStart, fileNameEnd).toString('utf8');
+    const dataStart = fileNameEnd + extraLength;
+    const dataEnd = dataStart + compressedSize;
+
+    if (fileName === targetEntry) {
+      if (compressionMethod === 0) {
+        return zip.subarray(dataStart, dataEnd).toString('utf8');
+      }
+
+      if (compressionMethod === 8) {
+        return inflateRawSync(zip.subarray(dataStart, dataEnd)).toString('utf8');
+      }
+
+      {
+        throw new Error(`ZIP entry ${targetEntry} uses unsupported compression method ${compressionMethod}`);
+      }
+    }
+
+    offset = dataEnd;
+  }
+
+  return '';
+}
+
 const zipPath = await latestZip();
 
 if (!zipPath) {
@@ -93,9 +140,16 @@ const entries = await listZipEntries(zipPath);
 const normalized = entries.map((entry) => entry.replace(/\\/g, '/'));
 const forbidden = normalized.filter((entry) => forbiddenPatterns.some((pattern) => pattern.test(entry)));
 const requiredEntries = [
-  'Yneko-Reimu/readme.txt'
+  'Yneko-Reimu/readme.txt',
+  'Yneko-Reimu/docs/release-notes-v0.2.13.md'
 ];
 const missingRequired = requiredEntries.filter((entry) => !normalized.includes(entry));
+const missingCursorAssets = [
+  'Yneko-Reimu/assets/images/cursor/lily-normal.png',
+  'Yneko-Reimu/assets/images/cursor/lily-link.png',
+  'Yneko-Reimu/assets/images/cursor/lily-text.png',
+  'Yneko-Reimu/assets/images/cursor/lily-work.png'
+].filter((entry) => !normalized.includes(entry));
 
 if (forbidden.length) {
   console.error(`[package] ${basename(zipPath)} contains forbidden files:`);
@@ -110,6 +164,20 @@ if (missingRequired.length) {
   for (const entry of missingRequired) {
     console.error(`- ${entry}`);
   }
+  process.exit(1);
+}
+
+if (missingCursorAssets.length) {
+  console.error(`[package] ${basename(zipPath)} is missing required cursor assets:`);
+  for (const entry of missingCursorAssets) {
+    console.error(`- ${entry}`);
+  }
+  process.exit(1);
+}
+
+const mainCss = await readZipFile(zipPath, 'Yneko-Reimu/assets/dist/reimu.css');
+if (mainCss.includes('url(./lily-')) {
+  console.error(`[package] ${basename(zipPath)} references transient dist cursor files from reimu.css.`);
   process.exit(1);
 }
 
