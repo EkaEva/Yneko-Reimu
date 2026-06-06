@@ -12,7 +12,7 @@ v0.2.15 是一次发布体验和本地 QA 增强版本。它新增 GitHub Releas
 - 新增本地 WordPress + Playwright E2E QA 底座，覆盖页面加载、登录、评论、资料弹窗、TOTP 设置、上传入口、自定义鼠标、中文文案和 PJAX 初始化。
 - 加固前台 AJAX 语言上下文，避免中文登录 2FA 提示或资料/TOTP 标签在双语场景下落到英文。
 - 加固资料弹窗 TOTP 设置状态，避免异步资料刷新清掉正在进行的认证器设置 UI。
-- 保持安装包边界：E2E 配置、测试文件、开发工具、源码目录、Playwright 输出、计划文件和构建 manifest 不进入主题 ZIP。
+- 收紧安装包边界：只保留运行时文档、版权说明和当前版本 release notes；E2E 配置、测试文件、开发工具、源码目录、Playwright 输出、计划文件、构建 manifest、gettext 源文件和重复构建图片不进入主题 ZIP。
 
 ### 说明
 
@@ -32,7 +32,7 @@ v0.2.15 improves release UX and local QA. It adds a GitHub Release updater so si
 - Added local WordPress + Playwright E2E QA for page loading, login, comments, profile modal, TOTP setup, upload controls, custom cursor, Chinese text, and PJAX initialization.
 - Hardened front-end AJAX language context so Chinese login 2FA prompts and profile/TOTP labels stay in the active language.
 - Preserved in-progress profile TOTP setup state when asynchronous profile data refreshes arrive.
-- Kept installable ZIP boundaries clean: E2E config, tests, development tools, source assets, Playwright output, planning files, and the build manifest stay out of theme packages.
+- Tightened installable ZIP boundaries: packages keep only runtime docs, notices, and the current release notes; E2E config, tests, development tools, source assets, Playwright output, planning files, the build manifest, gettext source files, and duplicated build-copied images stay out of theme packages.
 
 ### Notes
 
