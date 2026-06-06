@@ -131,6 +131,27 @@ for (const contract of [
   requireSnippet('i18n behavior contract', contract);
 }
 
+const dependencyFiles = {
+  'inc/seo-compat.php': await readFile(resolve(themeRoot, 'inc/seo-compat.php'), 'utf8'),
+  'inc/search-index.php': await readFile(resolve(themeRoot, 'inc/search-index.php'), 'utf8'),
+  'inc/post-meta.php and inc/post-meta/*.php': (
+    await Promise.all([
+      'inc/post-meta.php',
+      'inc/post-meta/register.php',
+      'inc/post-meta/admin.php',
+      'inc/post-meta/save.php'
+    ].map((relativeFile) => readFile(resolve(themeRoot, relativeFile), 'utf8')))
+  ).join('\n'),
+  'inc/template-tags/navigation-virtual.php and inc/template-tags/navigation-virtual/*.php': (
+    await Promise.all([
+      'inc/template-tags/navigation-virtual.php',
+      'inc/template-tags/navigation-virtual/navigation.php',
+      'inc/template-tags/navigation-virtual/virtual.php',
+      'inc/template-tags/navigation-virtual/walkers.php'
+    ].map((relativeFile) => readFile(resolve(themeRoot, relativeFile), 'utf8')))
+  ).join('\n')
+};
+
 for (const [relativeFile, dependencies] of Object.entries({
   'inc/seo-compat.php': [
     'yneko_reimu_i18n_enabled',
@@ -144,20 +165,20 @@ for (const [relativeFile, dependencies] of Object.entries({
     'yneko_reimu_i18n_prefixed_url',
     'yneko_reimu_i18n_language_meta_query'
   ],
-  'inc/post-meta.php': [
+  'inc/post-meta.php and inc/post-meta/*.php': [
     'yneko_reimu_i18n_normalize_language',
     'yneko_reimu_i18n_post_language',
     'yneko_reimu_i18n_translation_id',
     'yneko_reimu_i18n_languages'
   ],
-  'inc/template-tags/navigation-virtual.php': [
+  'inc/template-tags/navigation-virtual.php and inc/template-tags/navigation-virtual/*.php': [
     'yneko_reimu_i18n_is_english_request',
     'yneko_reimu_i18n_home_url',
     'yneko_reimu_i18n_virtual_path',
     'yneko_reimu_i18n_localize_url'
   ]
 })) {
-  const content = await readFile(resolve(themeRoot, relativeFile), 'utf8');
+  const content = dependencyFiles[relativeFile];
   for (const dependency of dependencies) {
     requireSnippet(`i18n dependency in ${relativeFile}`, dependency, content);
   }

@@ -4,26 +4,26 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 
 ## Current Baseline
 
-- Runtime PHP files scanned: 195
-- Named functions scanned: 923
-- Total lines: 20,085
-- Nonblank lines: 17,557
-- Approximate branch score: 6,345
+- Runtime PHP files scanned: 209
+- Named functions scanned: 970
+- Total lines: 20,196
+- Nonblank lines: 17,644
+- Approximate branch score: 6,388
 
 ## Largest Runtime Files
 
 | Nonblank lines | Functions | Branch score | File |
 | --- | --- | --- | --- |
 | 400 | 11 | 14 | `inc/github-login/styles.php` |
-| 377 | 24 | 115 | `inc/template-tags/layout-content.php` |
 | 368 | 23 | 149 | `inc/migrations.php` |
-| 346 | 18 | 94 | `inc/template-tags/content-tools.php` |
-| 343 | 10 | 149 | `inc/post-meta.php` |
-| 337 | 24 | 124 | `inc/template-tags/navigation-virtual.php` |
 | 320 | 19 | 295 | `inc/comments/modals.php` |
 | 319 | 19 | 140 | `inc/comments/avatars.php` |
 | 296 | 13 | 128 | `inc/comments/profile-save.php` |
 | 281 | 5 | 8 | `inc/settings/schema/defaults.php` |
+| 263 | 14 | 119 | `inc/enqueue/head.php` |
+| 258 | 16 | 86 | `inc/i18n/requests.php` |
+| 236 | 16 | 75 | `inc/enqueue/favicon.php` |
+| 226 | 15 | 73 | `inc/image-helpers.php` |
 
 ## Largest Functions
 
@@ -31,14 +31,14 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 | --- | --- | --- | --- |
 | 184 | 3 | `inc/settings/schema/defaults.php:6` | `yneko_reimu_settings_defaults` |
 | 96 | 3 | `inc/customizer/visual.php:6` | `yneko_reimu_register_customizer_visual_section` |
-| 90 | 57 | `inc/post-meta.php:122` | `yneko_reimu_render_post_options_meta_box` |
 | 86 | 3 | `inc/customizer/sidebar-widgets.php:6` | `yneko_reimu_register_customizer_sidebar_widgets_section` |
 | 86 | 1 | `inc/customizer/footer-virtual.php:6` | `yneko_reimu_register_customizer_footer_virtual_sections` |
 | 84 | 13 | `inc/comments/profile/save.php:6` | `yneko_reimu_ajax_profile_save` |
-| 82 | 25 | `inc/post-meta.php:269` | `yneko_reimu_save_post_options` |
 | 81 | 1 | `inc/enqueue/config.php:43` | `yneko_reimu_frontend_i18n` |
 | 81 | 1 | `inc/github-login/styles.php:236` | `yneko_reimu_github_login_password_css` |
 | 80 | 24 | `inc/comments/profile-save.php:74` | `yneko_reimu_profile_save_prepare_tags` |
+| 79 | 14 | `inc/comments/auth/login.php:6` | `yneko_reimu_ajax_login` |
+| 77 | 2 | `inc/customizer/articles.php:6` | `yneko_reimu_register_customizer_articles_section` |
 
 ## Meaningful Movement Since v0.2.13
 
@@ -49,6 +49,7 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 - Comments rendering Stage 1 moved comment item context/render helpers, external comment panel renderers, and administrator GIF/upload action helpers behind the existing entrypoints. `yneko_reimu_comment_callback()`, `yneko_reimu_render_external_comment_panel()`, and `yneko_reimu_admin_comment_gif_upload_action()` no longer appear in the largest-function or highest-branch-score lists.
 - Settings Stage 2 moved settings admin menu/UI/TOTP/review-count/asset helpers, panel bodies, repeatable renderers, user avatar/badge cards, and comment upload review cards behind focused modules. `inc/settings/renderers.php`, `inc/settings/panels.php`, and `inc/settings/admin.php` no longer appear in the largest-file list; the locked settings renderer and panel hotspots no longer appear in the largest-function or highest-branch-score top ten.
 - Security auth mail Stage 3 moved auth-security defaults/sanitizers, request context/device cookie, transient counters, event logging/email alerts, admin alert actions, and native `wp-login.php` filters behind focused modules. `inc/security-auth-mail.php` no longer appears in the largest-file list, and its guard functions no longer appear in the largest-function or highest-branch-score top ten while preserving `auth_security` settings, cookie, transient/option naming, hooks, and generic error boundaries.
+- Post meta and template-tags Stage 4 moved the editor meta box/save flow, layout/content helpers, navigation/virtual-page helpers, and content-tool helpers behind focused modules. `inc/post-meta.php`, `inc/template-tags/layout-content.php`, `inc/template-tags/navigation-virtual.php`, and `inc/template-tags/content-tools.php` no longer appear in the largest-file list, and the locked post-meta render/save functions no longer appear in the largest-function or highest-branch-score top ten while preserving post meta keys, virtual slugs, hooks, shortcodes, template output contracts, and transient names.
 - PJAX replacement is now expressed as explicit capture, detach, replace, sync, restore, and verification steps. The public `window.ReimuWP.init()` and `window.ReimuWP.navigate()` behavior, link exclusions, script replay, APlayer preservation, modal restoration, and lazy runtime rebinding remain stable.
 - The General settings panel was split into focused helper groups behind the existing renderer entrypoint, removing it from the highest branch-score hotspot list while preserving field names, option keys, tabs, and save behavior.
 - Contract checks now aggregate the new comments auth/profile/mutation modules, comment upload runtime source, and PJAX lifecycle anchors so internal moves keep the high-risk comments/profile/PJAX surface guarded.
@@ -73,5 +74,5 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 ## Recommended Follow-Up Targets
 
 - Keep high-risk comments/auth/profile/upload request handlers behind static contracts and manual WordPress QA before any further request-flow split.
-- Consider focused future passes for `inc/comments/auth.php`, `inc/comments/mutations.php`, and `inc/template-tags/layout-content.php` only when preserving AJAX, auth, comment, and display contracts is straightforward.
+- Consider focused future passes for Customizer/defaults and enqueue display helpers only when preserving setting IDs, default values, sanitizer expectations, and front-end output contracts is straightforward.
 - Settings defaults remain intentionally broad; split them only with a migration-aware plan that preserves default values, sanitizer expectations, and fallback readers.

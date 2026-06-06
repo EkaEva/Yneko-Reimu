@@ -8,7 +8,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: yneko-reimu\n"
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "(无标题)"
 msgstr ""
 
@@ -32,7 +32,7 @@ msgstr ""
 msgid "%1$s %2$d"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/metrics.php
 msgid "%d 分钟阅读"
 msgstr ""
 
@@ -40,11 +40,11 @@ msgstr ""
 msgid "%d 个待处理项目"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/taxonomy-adjacent.php
 msgid "%d 篇文章"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/metrics.php
 msgid "%d 字"
 msgstr ""
 
@@ -68,11 +68,11 @@ msgstr ""
 msgid "%s 阅读量"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/metrics.php
 msgid "%s 字"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/archive-footer.php
 msgid "© %s. Powered by WordPress."
 msgstr ""
 
@@ -80,7 +80,7 @@ msgstr ""
 msgid "+ 新增自定义标签"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/archive-footer.php
 msgid "404（´◔ ₃ ◔`)"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgstr ""
 msgid "按热度：按点赞、回复和近期活跃综合排序"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/virtual.php
 msgid "按时间整理全部文章。"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "暗色模式默认值"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "版权框"
 msgstr ""
 
@@ -228,7 +228,7 @@ msgstr ""
 msgid "部分设置暂时不可用，请刷新 Customizer 后重试。"
 msgstr ""
 
-#: inc/post-meta.php sidebar.php
+#: inc/post-meta/admin.php sidebar.php
 msgid "侧边栏"
 msgstr ""
 
@@ -420,7 +420,7 @@ msgstr ""
 msgid "辅助导航"
 msgstr ""
 
-#: inc/enqueue/config.php inc/template-tags/content-tools.php
+#: inc/enqueue/config.php inc/template-tags/content-tools/yml-sponsor.php
 msgid "复制"
 msgstr ""
 
@@ -472,15 +472,15 @@ msgstr ""
 msgid "个人资料已保存。"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "跟随 WordPress 置顶"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "跟随全局"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "跟随文章设置"
 msgstr ""
 
@@ -500,7 +500,7 @@ msgstr ""
 msgid "固定导航"
 msgstr ""
 
-#: inc/customizer/typography-layout.php inc/customizer/visual.php inc/post-meta.php
+#: inc/customizer/typography-layout.php inc/customizer/visual.php inc/post-meta/admin.php
 msgid "关闭"
 msgstr ""
 
@@ -524,11 +524,11 @@ msgstr ""
 msgid "关闭预览"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "关键词"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php inc/template-tags/navigation-virtual/virtual.php
 msgid "关于"
 msgstr ""
 
@@ -544,7 +544,7 @@ msgstr ""
 msgid "关于与友链"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/virtual.php
 msgid "关于这个站点与作者。"
 msgstr ""
 
@@ -560,7 +560,7 @@ msgstr ""
 msgid "广告/官方/测试"
 msgstr ""
 
-#: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual/navigation.php inc/template-tags/navigation-virtual/virtual.php template-parts/widgets/default-widgets.php
 msgid "归档"
 msgstr ""
 
@@ -568,7 +568,7 @@ msgstr ""
 msgid "归档数量"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "过期提示"
 msgstr ""
 
@@ -868,7 +868,7 @@ msgstr ""
 msgid "配置 GitHub 主页链接后会自动同步 starred 项目。"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/virtual.php
 msgid "朋友们的站点入口。"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr ""
 msgid "评论排序"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "评论区"
 msgstr ""
 
@@ -1200,7 +1200,7 @@ msgstr ""
 msgid "上一张图片"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/archive-footer.php
 msgid "少年，你迷路了吗？"
 msgstr ""
 
@@ -1248,7 +1248,7 @@ msgstr ""
 msgid "视觉资产"
 msgstr ""
 
-#: inc/schema.php inc/template-tags/navigation-virtual.php
+#: inc/schema.php inc/template-tags/navigation-virtual/navigation.php
 msgid "首页"
 msgstr ""
 
@@ -1284,7 +1284,7 @@ msgstr ""
 msgid "搜索"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/archive-footer.php
 msgid "搜索：%s"
 msgstr ""
 
@@ -1492,7 +1492,7 @@ msgstr ""
 msgid "文章阅读最大宽度 px"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "文章摘要/副标题"
 msgstr ""
 
@@ -1500,7 +1500,7 @@ msgstr ""
 msgid "文章字号 px"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/github-projects.php
 msgid "我的 GitHub 主页与项目索引。"
 msgstr ""
 
@@ -1512,11 +1512,11 @@ msgstr ""
 msgid "无标题"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "无对应内容"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/yml-sponsor.php
 msgid "无限进步"
 msgstr ""
 
@@ -1556,7 +1556,7 @@ msgstr ""
 msgid "下一张图片"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "显示"
 msgstr ""
 
@@ -1620,7 +1620,7 @@ msgstr ""
 msgid "限制在 48 到 320 像素之间，避免遮挡移动端内容。"
 msgstr ""
 
-#: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual.php template-parts/widgets/default-widgets.php
+#: inc/customizer/sidebar-widgets.php inc/template-tags/navigation-virtual/navigation.php inc/template-tags/navigation-virtual/virtual.php template-parts/widgets/default-widgets.php
 msgid "项目"
 msgstr ""
 
@@ -1800,7 +1800,7 @@ msgstr ""
 msgid "已应用头像"
 msgstr ""
 
-#: inc/template-tags/layout-content.php
+#: inc/template-tags/layout-content/archive-footer.php
 msgid "以下是与你输入关键词相关的文章。"
 msgstr ""
 
@@ -1808,7 +1808,7 @@ msgstr ""
 msgid "阴影强度"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "隐藏"
 msgstr ""
 
@@ -1848,7 +1848,7 @@ msgstr ""
 msgid "邮箱验证码不正确或已失效。"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php inc/template-tags/navigation-virtual/virtual.php
 msgid "友链"
 msgstr ""
 
@@ -1856,7 +1856,7 @@ msgstr ""
 msgid "友链待添加"
 msgstr ""
 
-#: inc/customizer/visual.php inc/post-meta.php
+#: inc/customizer/visual.php inc/post-meta/admin.php
 msgid "右侧"
 msgstr ""
 
@@ -1924,7 +1924,7 @@ msgstr ""
 msgid "暂无用户自定义标签。"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/yml-sponsor.php
 msgid "赞助"
 msgstr ""
 
@@ -1932,7 +1932,7 @@ msgstr ""
 msgid "赞助按钮装饰图"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/yml-sponsor.php
 msgid "赞助二维码"
 msgstr ""
 
@@ -1960,7 +1960,7 @@ msgstr ""
 msgid "找到 {count} 条结果"
 msgstr ""
 
-#: inc/enqueue/config.php inc/template-tags/content-tools.php
+#: inc/enqueue/config.php inc/template-tags/content-tools/yml-sponsor.php
 msgid "折叠代码"
 msgstr ""
 
@@ -1992,7 +1992,7 @@ msgstr ""
 msgid "置顶"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "置顶标识"
 msgstr ""
 
@@ -2032,15 +2032,15 @@ msgstr ""
 msgid "注册中..."
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "自定义 Banner URL"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "自定义封面 URL"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php
 msgid "自定义链接"
 msgstr ""
 
@@ -2056,7 +2056,7 @@ msgstr ""
 msgid "最多添加 5 个自定义标签；特殊标签和已勾选的自定义标签合计最多 2 个。自定义标签最多 8 个字符，保留标签不可自行设置。"
 msgstr ""
 
-#: inc/customizer/visual.php inc/post-meta.php
+#: inc/customizer/visual.php inc/post-meta/admin.php
 msgid "左侧"
 msgstr ""
 
@@ -2064,7 +2064,7 @@ msgstr ""
 msgid "作者"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php
 msgid "About"
 msgstr ""
 
@@ -2072,7 +2072,7 @@ msgstr ""
 msgid "anchor"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php
 msgid "Archives"
 msgstr ""
 
@@ -2112,7 +2112,7 @@ msgstr ""
 msgid "Footer Menu"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php
 msgid "Friends"
 msgstr ""
 
@@ -2152,11 +2152,11 @@ msgstr ""
 msgid "GitHub 链接"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/github-projects.php
 msgid "GitHub 项目"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/virtual.php
 msgid "GitHub 项目与作品。"
 msgstr ""
 
@@ -2184,7 +2184,7 @@ msgstr ""
 msgid "hexo-theme-reimu 原作者"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php
 msgid "Home"
 msgstr ""
 
@@ -2224,11 +2224,11 @@ msgstr ""
 msgid "Primary Sidebar"
 msgstr ""
 
-#: inc/template-tags/navigation-virtual.php
+#: inc/template-tags/navigation-virtual/navigation.php
 msgid "Projects"
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "Reimu 设置"
 msgstr ""
 
@@ -2252,7 +2252,7 @@ msgstr ""
 msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 msgstr ""
 
-#: inc/post-meta.php
+#: inc/post-meta/admin.php
 msgid "TOC"
 msgstr ""
 

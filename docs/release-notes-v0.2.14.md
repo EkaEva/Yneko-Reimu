@@ -15,7 +15,8 @@ v0.2.14 是一次深度维护与高风险流降险版本。它继续收敛评论
 - 拆分评论列表渲染、第三方评论面板和后台 GIF/upload 审核动作 helper，使 comment callback、external comment panel 和管理员 GIF 上传动作退出复杂度热点榜，同时保留评论 DOM、nonce、第三方评论锚点和审核动作 URL。
 - 拆分后台设置页 renderer、panel、admin helper 和 page helper 边界，使 `inc/settings/renderers.php`、`inc/settings/panels.php`、`inc/settings/admin.php` 退出最大文件榜，并让 user badge、music row、GitHub/comments/extensions panel 等设置页热点退出复杂度榜；保留 tab、field name、option key、nonce、提交模型、审核动作和 admin script/style handle。
 - 拆分认证邮件风控内部边界，把默认值/清洗、请求上下文、device cookie、transient 计数、事件/邮件报警、后台告警动作和原生 `wp-login.php` hook 分到 focused modules；保留 `auth_security` 设置 key、`yneko_reimu_auth_device` cookie、transient/option 命名、错误语义和邮件报警语义。
-- 更新维护记录和 PHP 复杂度 baseline：`inc/comments/auth.php`、`inc/comments/mutations.php`、`inc/comments/profile.php`、General settings panel 和 `inc/security-auth-mail.php` 已退出主要复杂度热点列表。
+- 拆分文章 meta box/save 和 template-tags 显示工具边界，把 post meta 注册/后台/保存、layout/content、navigation/virtual page/walker、YML/sponsor/friends/GitHub projects/post stats 分到 focused modules；保留 post meta key、字段名、虚拟页面 slug、hook、shortcode、模板输出、transient 命名和主题设置读取行为。
+- 更新维护记录和 PHP 复杂度 baseline：`inc/comments/auth.php`、`inc/comments/mutations.php`、`inc/comments/profile.php`、General settings panel、`inc/security-auth-mail.php`、`inc/post-meta.php` 和主要 template-tags 入口已退出主要复杂度热点列表。
 
 ### 说明
 
@@ -38,7 +39,8 @@ v0.2.14 is a deep maintenance and risk-reduction release. It lowers maintenance 
 - Split comment-list rendering, external comment panels, and administrator GIF/upload review helpers so the comment callback, external comment panel, and admin GIF upload action leave the complexity hotspot lists while preserving comment DOM, nonces, external comment anchors, and review-action URLs.
 - Split admin settings renderer, panel, admin-helper, and page-helper boundaries so `inc/settings/renderers.php`, `inc/settings/panels.php`, and `inc/settings/admin.php` leave the largest-file list and settings hotspots such as user badges, music rows, GitHub/comments/extensions panels leave the complexity lists while preserving tabs, field names, option keys, nonces, the submit model, review actions, and admin script/style handles.
 - Split the authentication email guard internals into focused defaults/sanitizer, request-context, device-cookie, transient-counter, event/mail-alert, admin-alert-action, and native `wp-login.php` hook modules while preserving the `auth_security` setting key, `yneko_reimu_auth_device` cookie, transient/option names, error semantics, and alert-mail semantics.
-- Updated maintenance notes and the PHP complexity baseline: `inc/comments/auth.php`, `inc/comments/mutations.php`, `inc/comments/profile.php`, the General settings panel, and `inc/security-auth-mail.php` no longer appear as primary complexity hotspots.
+- Split article meta-box/save and template-tags display-tool boundaries into focused modules for post meta registration/admin/save, layout/content, navigation/virtual pages/walkers, YML/sponsor/friends/GitHub projects/post stats while preserving post meta keys, field names, virtual page slugs, hooks, shortcodes, template output, transient names, and theme setting reads.
+- Updated maintenance notes and the PHP complexity baseline: `inc/comments/auth.php`, `inc/comments/mutations.php`, `inc/comments/profile.php`, the General settings panel, `inc/security-auth-mail.php`, `inc/post-meta.php`, and the primary template-tags entrypoints no longer appear as primary complexity hotspots.
 
 ### Notes
 

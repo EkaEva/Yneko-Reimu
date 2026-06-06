@@ -69,7 +69,11 @@ const commentsRenderingPaths = [
 const commentsRendering = (await Promise.all(commentsRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 const contentToolPaths = [
   resolve(themeRoot, 'inc/template-tags/content-tools.php'),
-  resolve(themeRoot, 'inc/template-tags/content-tools/home-categories.php')
+  resolve(themeRoot, 'inc/template-tags/content-tools/home-categories.php'),
+  resolve(themeRoot, 'inc/template-tags/content-tools/yml-sponsor.php'),
+  resolve(themeRoot, 'inc/template-tags/content-tools/friends.php'),
+  resolve(themeRoot, 'inc/template-tags/content-tools/github-projects.php'),
+  resolve(themeRoot, 'inc/template-tags/content-tools/post-stats.php')
 ];
 const contentTools = (await Promise.all(contentToolPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 

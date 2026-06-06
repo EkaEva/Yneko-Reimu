@@ -7,12 +7,44 @@ const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 
 const files = {
   entry: await readFile(resolve(themeRoot, 'inc/template-tags.php'), 'utf8'),
-  layout: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content.php'), 'utf8'),
+  layoutEntry: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content.php'), 'utf8'),
+  layoutMeta: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content/meta-layout.php'), 'utf8'),
+  layoutTaxonomy: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content/taxonomy-adjacent.php'), 'utf8'),
+  layoutMetrics: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content/metrics.php'), 'utf8'),
+  layoutArchive: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content/archive-footer.php'), 'utf8'),
   social: await readFile(resolve(themeRoot, 'inc/template-tags/social-share.php'), 'utf8'),
-  navigation: await readFile(resolve(themeRoot, 'inc/template-tags/navigation-virtual.php'), 'utf8'),
-  content: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8'),
-  homeCategories: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/home-categories.php'), 'utf8')
+  navigationEntry: await readFile(resolve(themeRoot, 'inc/template-tags/navigation-virtual.php'), 'utf8'),
+  navigation: await readFile(resolve(themeRoot, 'inc/template-tags/navigation-virtual/navigation.php'), 'utf8'),
+  virtual: await readFile(resolve(themeRoot, 'inc/template-tags/navigation-virtual/virtual.php'), 'utf8'),
+  walkers: await readFile(resolve(themeRoot, 'inc/template-tags/navigation-virtual/walkers.php'), 'utf8'),
+  contentEntry: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8'),
+  homeCategories: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/home-categories.php'), 'utf8'),
+  ymlSponsor: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/yml-sponsor.php'), 'utf8'),
+  friends: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/friends.php'), 'utf8'),
+  githubProjects: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/github-projects.php'), 'utf8'),
+  postStats: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/post-stats.php'), 'utf8')
 };
+const layout = [
+  files.layoutEntry,
+  files.layoutMeta,
+  files.layoutTaxonomy,
+  files.layoutMetrics,
+  files.layoutArchive
+].join('\n');
+const navigation = [
+  files.navigationEntry,
+  files.navigation,
+  files.virtual,
+  files.walkers
+].join('\n');
+const content = [
+  files.contentEntry,
+  files.homeCategories,
+  files.ymlSponsor,
+  files.friends,
+  files.githubProjects,
+  files.postStats
+].join('\n');
 
 const source = Object.values(files).join('\n');
 let failed = false;
@@ -33,18 +65,40 @@ for (const moduleImport of [
   "require_once YNEKO_REIMU_DIR . '/inc/template-tags/social-share.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/template-tags/navigation-virtual.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools.php';",
-  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/home-categories.php';"
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/layout-content/meta-layout.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/layout-content/taxonomy-adjacent.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/layout-content/metrics.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/layout-content/archive-footer.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/navigation-virtual/navigation.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/navigation-virtual/virtual.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/navigation-virtual/walkers.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/home-categories.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/yml-sponsor.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/friends.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/github-projects.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/post-stats.php';"
 ]) {
   requireSnippet('template-tags module boundary', moduleImport);
 }
 
 for (const [label, snippet, haystack] of [
   ['direct access guard in entry', "if ( ! defined( 'ABSPATH' ) )", files.entry],
-  ['direct access guard in layout module', "if ( ! defined( 'ABSPATH' ) )", files.layout],
+  ['direct access guard in layout entry', "if ( ! defined( 'ABSPATH' ) )", files.layoutEntry],
+  ['direct access guard in layout meta module', "if ( ! defined( 'ABSPATH' ) )", files.layoutMeta],
+  ['direct access guard in layout taxonomy module', "if ( ! defined( 'ABSPATH' ) )", files.layoutTaxonomy],
+  ['direct access guard in layout metrics module', "if ( ! defined( 'ABSPATH' ) )", files.layoutMetrics],
+  ['direct access guard in layout archive module', "if ( ! defined( 'ABSPATH' ) )", files.layoutArchive],
   ['direct access guard in social module', "if ( ! defined( 'ABSPATH' ) )", files.social],
+  ['direct access guard in navigation entry', "if ( ! defined( 'ABSPATH' ) )", files.navigationEntry],
   ['direct access guard in navigation module', "if ( ! defined( 'ABSPATH' ) )", files.navigation],
-  ['direct access guard in content module', "if ( ! defined( 'ABSPATH' ) )", files.content],
-  ['direct access guard in home categories module', "if ( ! defined( 'ABSPATH' ) )", files.homeCategories]
+  ['direct access guard in virtual module', "if ( ! defined( 'ABSPATH' ) )", files.virtual],
+  ['direct access guard in walker module', "if ( ! defined( 'ABSPATH' ) )", files.walkers],
+  ['direct access guard in content entry', "if ( ! defined( 'ABSPATH' ) )", files.contentEntry],
+  ['direct access guard in home categories module', "if ( ! defined( 'ABSPATH' ) )", files.homeCategories],
+  ['direct access guard in yml sponsor module', "if ( ! defined( 'ABSPATH' ) )", files.ymlSponsor],
+  ['direct access guard in friends module', "if ( ! defined( 'ABSPATH' ) )", files.friends],
+  ['direct access guard in GitHub projects module', "if ( ! defined( 'ABSPATH' ) )", files.githubProjects],
+  ['direct access guard in post stats module', "if ( ! defined( 'ABSPATH' ) )", files.postStats]
 ]) {
   requireSnippet(label, snippet, haystack);
 }
@@ -100,7 +154,7 @@ for (const className of [
   'class Yneko_Reimu_Menu_Walker extends Walker_Nav_Menu',
   'class Yneko_Reimu_Sidebar_Menu_Walker extends Walker_Nav_Menu'
 ]) {
-  requireSnippet('public menu walker class', className, files.navigation);
+  requireSnippet('public menu walker class', className, navigation);
 }
 
 for (const virtualSlug of [
@@ -110,7 +164,7 @@ for (const virtualSlug of [
   "'archives'",
   "locate_template( 'virtual-page.php' )"
 ]) {
-  requireSnippet('virtual page contract', virtualSlug, files.navigation);
+  requireSnippet('virtual page contract', virtualSlug, navigation);
 }
 
 for (const shareService of [
@@ -145,7 +199,7 @@ for (const remoteContract of [
   "'yneko_reimu_github_projects_' . md5( strtolower( $username ) )",
   "'yneko_reimu_github_starred_projects_' . md5( strtolower( $username ) )"
 ]) {
-  requireSnippet('GitHub project contract', remoteContract, files.content);
+  requireSnippet('GitHub project contract', remoteContract, content);
 }
 
 for (const settingKey of [
