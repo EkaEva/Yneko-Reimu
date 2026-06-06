@@ -437,6 +437,9 @@ for (const profileSaveSnippet of [
 ]) {
   requireSnippet('profile save helper contract', profileSaveSnippet);
 }
+if (!/\$secret\s*=\s*''\s*!==\s*\$code\s*&&\s*\$pending_secret\s*\?\s*\$pending_secret\s*:\s*\(/.test(files.profileSave)) {
+  fail('Profile TOTP save must verify a newly generated pending secret when a code is submitted.');
+}
 
 for (const selector of [
   '.reimu-confirm-modal',

@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.13
+Stable tag: 0.2.14
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,12 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.14 =
+
+* Fixes the profile authenticator setup flow after v0.2.13 so a newly generated pending TOTP secret is verified before the existing enabled secret when the user submits a 6-digit code.
+* Keeps the v0.2.13 profile-modal simplification: already-enabled authenticator 2FA still allows ordinary profile saves without re-entering a code.
+* Adds a comments/profile contract guard for the pending-secret verification priority.
 
 = 0.2.13 =
 

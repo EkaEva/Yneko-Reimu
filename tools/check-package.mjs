@@ -129,6 +129,8 @@ async function readZipFile(zipPath, targetEntry) {
 }
 
 const zipPath = await latestZip();
+const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+const packageVersion = String(packageJson.version || '').trim();
 
 if (!zipPath) {
   console.error('[package] No release ZIP found. Run npm run package first.');
@@ -141,7 +143,7 @@ const normalized = entries.map((entry) => entry.replace(/\\/g, '/'));
 const forbidden = normalized.filter((entry) => forbiddenPatterns.some((pattern) => pattern.test(entry)));
 const requiredEntries = [
   'Yneko-Reimu/readme.txt',
-  'Yneko-Reimu/docs/release-notes-v0.2.13.md'
+  `Yneko-Reimu/docs/release-notes-v${packageVersion}.md`
 ];
 const missingRequired = requiredEntries.filter((entry) => !normalized.includes(entry));
 const missingCursorAssets = [

@@ -196,7 +196,7 @@ function yneko_reimu_profile_save_apply_totp( $user_id, $enabled, $code ) {
 	if ( $enabled ) {
 		$current_secret = yneko_reimu_user_2fa_secret( $user_id );
 		$pending_secret = (string) get_user_meta( $user_id, '_yneko_reimu_totp_pending_secret', true );
-		$secret         = $current_secret ? $current_secret : $pending_secret;
+		$secret         = '' !== $code && $pending_secret ? $pending_secret : ( $current_secret ? $current_secret : $pending_secret );
 		if ( $current_secret && '' === $code ) {
 			update_user_meta( $user_id, '_yneko_reimu_totp_enabled', '1' );
 			delete_user_meta( $user_id, '_yneko_reimu_totp_pending_secret' );
