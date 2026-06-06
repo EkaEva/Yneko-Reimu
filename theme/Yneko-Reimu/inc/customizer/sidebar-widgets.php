@@ -4,7 +4,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_register_customizer_sidebar_widgets_section( $wp_customize ) {
+	yneko_reimu_customizer_add_sidebar_widgets_section( $wp_customize );
+	yneko_reimu_customizer_add_sidebar_widget_toggles( $wp_customize );
+	yneko_reimu_customizer_add_sidebar_widget_order_control( $wp_customize );
+	yneko_reimu_customizer_add_sidebar_widget_limit_controls( $wp_customize );
+}
 
+function yneko_reimu_customizer_add_sidebar_widgets_section( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_sidebar_widgets',
 		array(
@@ -14,8 +20,10 @@ function yneko_reimu_register_customizer_sidebar_widgets_section( $wp_customize 
 			'priority'    => 2,
 		)
 	);
+}
 
-	$sidebar_widget_toggles = array(
+function yneko_reimu_customizer_sidebar_widget_toggles() {
+	return array(
 		'tagcloud'        => array( __( '标签云', 'yneko-reimu' ), true ),
 		'projects'        => array( __( '项目', 'yneko-reimu' ), false ),
 		'recent_posts'    => array( __( '近期文章', 'yneko-reimu' ), false ),
@@ -23,7 +31,10 @@ function yneko_reimu_register_customizer_sidebar_widgets_section( $wp_customize 
 		'archives'        => array( __( '归档', 'yneko-reimu' ), false ),
 		'categories'      => array( __( '分类', 'yneko-reimu' ), false ),
 	);
-	foreach ( $sidebar_widget_toggles as $key => $setting ) {
+}
+
+function yneko_reimu_customizer_add_sidebar_widget_toggles( $wp_customize ) {
+	foreach ( yneko_reimu_customizer_sidebar_widget_toggles() as $key => $setting ) {
 		$wp_customize->add_setting(
 			'yneko_reimu_sidebar_widget_' . $key,
 			array(
@@ -40,7 +51,9 @@ function yneko_reimu_register_customizer_sidebar_widgets_section( $wp_customize 
 			)
 		);
 	}
+}
 
+function yneko_reimu_customizer_add_sidebar_widget_order_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_sidebar_widget_order',
 		array(
@@ -57,16 +70,20 @@ function yneko_reimu_register_customizer_sidebar_widgets_section( $wp_customize 
 			'type'        => 'text',
 		)
 	);
+}
 
-	foreach (
-		array(
-			'projects'        => array( __( '项目数量', 'yneko-reimu' ), 5 ),
-			'recent_posts'    => array( __( '近期文章数量', 'yneko-reimu' ), 5 ),
-			'recent_comments' => array( __( '近期评论数量', 'yneko-reimu' ), 5 ),
-			'archives'        => array( __( '归档数量', 'yneko-reimu' ), 8 ),
-			'categories'      => array( __( '分类数量', 'yneko-reimu' ), 8 ),
-		) as $key => $setting
-	) {
+function yneko_reimu_customizer_sidebar_widget_limits() {
+	return array(
+		'projects'        => array( __( '项目数量', 'yneko-reimu' ), 5 ),
+		'recent_posts'    => array( __( '近期文章数量', 'yneko-reimu' ), 5 ),
+		'recent_comments' => array( __( '近期评论数量', 'yneko-reimu' ), 5 ),
+		'archives'        => array( __( '归档数量', 'yneko-reimu' ), 8 ),
+		'categories'      => array( __( '分类数量', 'yneko-reimu' ), 8 ),
+	);
+}
+
+function yneko_reimu_customizer_add_sidebar_widget_limit_controls( $wp_customize ) {
+	foreach ( yneko_reimu_customizer_sidebar_widget_limits() as $key => $setting ) {
 		$wp_customize->add_setting(
 			'yneko_reimu_sidebar_widget_' . $key . '_limit',
 			array(

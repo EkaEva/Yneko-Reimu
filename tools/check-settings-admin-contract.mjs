@@ -45,6 +45,9 @@ const login2faPath = resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa
 const schemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults/user-badges.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults/friends.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults/core.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/normalizers.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/media.php'),
@@ -260,6 +263,9 @@ const requiredAdminPhpSnippets = [
 
 const requiredSchemaSnippets = [
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults/user-badges.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults/friends.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/defaults/core.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/normalizers.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers/media.php';",
@@ -268,7 +274,7 @@ const requiredSchemaSnippets = [
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/getters.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/compat.php';",
   "'auth_security'",
-  "'security'          => array(",
+  'function yneko_reimu_settings_security_defaults',
   "'allow_svg_uploads'        => '1'",
   "'comment_ip_region_lookup' => '1'",
   "'email_hour_limit'         => 3",

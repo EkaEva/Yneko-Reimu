@@ -22,6 +22,9 @@ const settingsPanels = (await Promise.all(settingsPanelPaths.map((path) => readF
 const settingsSchemaPaths = [
   resolve(themeRoot, 'inc/settings/schema.php'),
   resolve(themeRoot, 'inc/settings/schema/defaults.php'),
+  resolve(themeRoot, 'inc/settings/schema/defaults/user-badges.php'),
+  resolve(themeRoot, 'inc/settings/schema/defaults/friends.php'),
+  resolve(themeRoot, 'inc/settings/schema/defaults/core.php'),
   resolve(themeRoot, 'inc/settings/schema/normalizers.php'),
   resolve(themeRoot, 'inc/settings/schema/sanitizers.php'),
   resolve(themeRoot, 'inc/settings/schema/sanitizers/media.php'),

@@ -4,7 +4,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_register_customizer_visual_section( $wp_customize ) {
+	yneko_reimu_customizer_add_visual_section( $wp_customize );
+	yneko_reimu_customizer_add_accent_color_control( $wp_customize );
+	yneko_reimu_customizer_add_visual_select_controls( $wp_customize );
+	yneko_reimu_customizer_add_visual_boolean_controls( $wp_customize );
+}
 
+function yneko_reimu_customizer_add_visual_section( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_visual',
 		array(
@@ -13,7 +19,9 @@ function yneko_reimu_register_customizer_visual_section( $wp_customize ) {
 			'panel'       => 'yneko_reimu_panel',
 		)
 	);
+}
 
+function yneko_reimu_customizer_add_accent_color_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_accent_color',
 		array(
@@ -31,8 +39,10 @@ function yneko_reimu_register_customizer_visual_section( $wp_customize ) {
 			)
 		)
 	);
+}
 
-	$visual_settings = array(
+function yneko_reimu_customizer_visual_select_controls() {
+	return array(
 		'yneko_reimu_dark_mode_default' => array(
 			'label'   => __( '暗色模式默认值', 'yneko-reimu' ),
 			'type'    => 'select',
@@ -54,8 +64,10 @@ function yneko_reimu_register_customizer_visual_section( $wp_customize ) {
 			),
 		),
 	);
+}
 
-	foreach ( $visual_settings as $id => $setting ) {
+function yneko_reimu_customizer_add_visual_select_controls( $wp_customize ) {
+	foreach ( yneko_reimu_customizer_visual_select_controls() as $id => $setting ) {
 		$wp_customize->add_setting(
 			$id,
 			array(
@@ -73,15 +85,19 @@ function yneko_reimu_register_customizer_visual_section( $wp_customize ) {
 			)
 		);
 	}
+}
 
-	$visual_booleans = array(
+function yneko_reimu_customizer_visual_boolean_controls() {
+	return array(
 		'yneko_reimu_show_theme_toggle' => array( __( '显示暗色模式切换', 'yneko-reimu' ), true ),
 		'yneko_reimu_sticky_nav'        => array( __( '固定导航', 'yneko-reimu' ), true ),
 		'yneko_reimu_nav_hide'          => array( __( '导航滚动隐藏', 'yneko-reimu' ), true ),
 		'yneko_reimu_show_taichi'       => array( __( '显示太极装饰', 'yneko-reimu' ), true ),
 	);
+}
 
-	foreach ( $visual_booleans as $id => $setting ) {
+function yneko_reimu_customizer_add_visual_boolean_controls( $wp_customize ) {
+	foreach ( yneko_reimu_customizer_visual_boolean_controls() as $id => $setting ) {
 		$wp_customize->add_setting(
 			$id,
 			array(

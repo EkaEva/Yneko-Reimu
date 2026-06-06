@@ -38,6 +38,9 @@ const settingsPanelModulePaths = [
 const settingsSchemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults/user-badges.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults/friends.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/defaults/core.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/normalizers.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/sanitizers/media.php'),
@@ -142,8 +145,8 @@ const checks = [
       "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/sanitizers.php';",
       "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/getters.php';",
       "require_once YNEKO_REIMU_DIR . '/inc/settings/schema/compat.php';",
-      "'github_oauth'      => array(",
-      "'show_admin_toolbar'   => '0'",
+      'function yneko_reimu_settings_github_oauth_defaults',
+      "'show_admin_toolbar' => '0'",
       "'client_id'     => ''",
       "'client_secret' => ''",
       "'callback_url'  => ''",
@@ -315,7 +318,7 @@ const checks = [
       '#wpadminbar',
       'html {',
       'margin-top: 0 !important;',
-      "'show_admin_toolbar'   => '0'",
+      "'show_admin_toolbar' => '0'",
       'name="yneko_reimu_settings[features][show_admin_toolbar]"'
     ]
   },
