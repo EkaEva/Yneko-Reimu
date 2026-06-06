@@ -4,11 +4,11 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 
 ## Current Baseline
 
-- Runtime PHP files scanned: 168
-- Named functions scanned: 820
-- Total lines: 19,356
-- Nonblank lines: 16,963
-- Approximate branch score: 6,205
+- Runtime PHP files scanned: 171
+- Named functions scanned: 852
+- Total lines: 19,544
+- Nonblank lines: 17,109
+- Approximate branch score: 6,242
 
 ## Largest Runtime Files
 
@@ -46,6 +46,7 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 - Comments/profile was split behind `inc/comments/profile.php` into TOTP, payload, status, email, avatar, and save modules. The profile save callback now lives in `inc/comments/profile/save.php`, while profile modal, user meta keys, temporary response-only statuses, and review-status behavior remain compatible.
 - Comments/mutations was split behind `inc/comments/mutations.php` into visibility, likes, owner management, submit, and review-status modules. Existing submit/edit/delete/like actions, comment form anchors, owner checks, and review-state synchronization remain intact.
 - Comments upload front-end orchestration moved into `assets/src/reimu/comment-upload.js`, keeping the lazy classic `assets/dist/reimu-comments.js` output and `window.ReimuCommentsRuntime` contract unchanged.
+- Comments rendering Stage 1 moved comment item context/render helpers, external comment panel renderers, and administrator GIF/upload action helpers behind the existing entrypoints. `yneko_reimu_comment_callback()`, `yneko_reimu_render_external_comment_panel()`, and `yneko_reimu_admin_comment_gif_upload_action()` no longer appear in the largest-function or highest-branch-score lists.
 - PJAX replacement is now expressed as explicit capture, detach, replace, sync, restore, and verification steps. The public `window.ReimuWP.init()` and `window.ReimuWP.navigate()` behavior, link exclusions, script replay, APlayer preservation, modal restoration, and lazy runtime rebinding remain stable.
 - The General settings panel was split into focused helper groups behind the existing renderer entrypoint, removing it from the highest branch-score hotspot list while preserving field names, option keys, tabs, and save behavior.
 - Contract checks now aggregate the new comments auth/profile/mutation modules, comment upload runtime source, and PJAX lifecycle anchors so internal moves keep the high-risk comments/profile/PJAX surface guarded.

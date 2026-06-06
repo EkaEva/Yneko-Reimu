@@ -26,7 +26,9 @@ const commentRenderingPaths = [
   resolve(themeRoot, 'inc/comments/rendering/identity.php'),
   resolve(themeRoot, 'inc/comments/rendering/environment.php'),
   resolve(themeRoot, 'inc/comments/rendering/markdown.php'),
+  resolve(themeRoot, 'inc/comments/rendering/list-helpers.php'),
   resolve(themeRoot, 'inc/comments/rendering/list.php'),
+  resolve(themeRoot, 'inc/comments/rendering/external-panels.php'),
   resolve(themeRoot, 'inc/comments/rendering/external.php')
 ];
 const commentBadgeSource = (await Promise.all(commentBadgePaths.map((path) => readFile(path, 'utf8')))).join('\n');
@@ -85,7 +87,10 @@ const files = {
   uploadAjax: await readFile(resolve(themeRoot, 'inc/comments/uploads/ajax.php'), 'utf8'),
   uploadLifecycle: await readFile(resolve(themeRoot, 'inc/comments/uploads/lifecycle.php'), 'utf8'),
   uploadFilters: await readFile(resolve(themeRoot, 'inc/comments/uploads/filters.php'), 'utf8'),
-  uploadAdmin: await readFile(resolve(themeRoot, 'inc/comments/uploads/admin.php'), 'utf8'),
+  uploadAdmin: (await Promise.all([
+    readFile(resolve(themeRoot, 'inc/comments/uploads/admin-helpers.php'), 'utf8'),
+    readFile(resolve(themeRoot, 'inc/comments/uploads/admin.php'), 'utf8')
+  ])).join('\n'),
   modals: await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8'),
   auth: commentAuthSource,
   profileSave: await readFile(resolve(themeRoot, 'inc/comments/profile-save.php'), 'utf8'),
@@ -175,7 +180,9 @@ for (const renderingModule of [
   "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/identity.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/environment.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/markdown.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/list-helpers.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/list.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/external-panels.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/rendering/external.php';"
 ]) {
   requireSnippet('comment rendering module boundary', renderingModule, files.rendering);
@@ -188,6 +195,7 @@ for (const uploadModule of [
   "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/ajax.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/lifecycle.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/filters.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin-helpers.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin.php';"
 ]) {
   requireSnippet('comment upload module boundary', uploadModule, files.uploads);

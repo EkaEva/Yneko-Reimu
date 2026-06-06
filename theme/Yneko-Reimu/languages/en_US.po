@@ -165,7 +165,7 @@ msgstr "Edit"
 msgid "编辑个人资料"
 msgstr "Edit profile"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "编辑评论"
 msgstr ""
 
@@ -357,7 +357,7 @@ msgstr "Logging in..."
 msgid "等宽字体"
 msgstr ""
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "点赞"
 msgstr "Like"
 
@@ -641,7 +641,7 @@ msgstr ""
 msgid "回到顶部装饰图"
 msgstr ""
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "回复"
 msgstr "Reply"
 
@@ -897,7 +897,7 @@ msgstr "Comments"
 msgid "评论 GIF 上传已关闭。"
 msgstr ""
 
-#: inc/comments/uploads/admin.php
+#: inc/comments/uploads/admin-helpers.php
 msgid "评论 GIF：%s"
 msgstr ""
 
@@ -913,7 +913,7 @@ msgstr ""
 msgid "评论不存在。"
 msgstr "Comment does not exist."
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "评论操作"
 msgstr "Comment actions"
 
@@ -1161,7 +1161,7 @@ msgstr "If this email is registered, a code will be sent to it."
 msgid "删除"
 msgstr "Remove"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "删除评论"
 msgstr ""
 
@@ -1529,7 +1529,7 @@ msgstr "Keep improving"
 msgid "无效的 SVG 文件。"
 msgstr ""
 
-#: inc/comments/uploads/admin.php inc/comments/uploads/ajax.php
+#: inc/comments/uploads/admin-helpers.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php
 msgid "无效的评论上传附件。"
 msgstr "Invalid comment upload attachment."
 

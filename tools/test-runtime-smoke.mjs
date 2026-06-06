@@ -21,7 +21,9 @@ const commentRenderingPaths = [
   resolve(themeRoot, 'inc/comments/rendering/identity.php'),
   resolve(themeRoot, 'inc/comments/rendering/environment.php'),
   resolve(themeRoot, 'inc/comments/rendering/markdown.php'),
+  resolve(themeRoot, 'inc/comments/rendering/list-helpers.php'),
   resolve(themeRoot, 'inc/comments/rendering/list.php'),
+  resolve(themeRoot, 'inc/comments/rendering/external-panels.php'),
   resolve(themeRoot, 'inc/comments/rendering/external.php')
 ];
 const commentRenderingSource = (await Promise.all(commentRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');

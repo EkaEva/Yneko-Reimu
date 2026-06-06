@@ -165,7 +165,7 @@ msgstr "编辑"
 msgid "编辑个人资料"
 msgstr "编辑个人资料"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "编辑评论"
 msgstr "编辑评论"
 
@@ -357,7 +357,7 @@ msgstr "登录中..."
 msgid "等宽字体"
 msgstr "等宽字体"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "点赞"
 msgstr "点赞"
 
@@ -641,7 +641,7 @@ msgstr "恢复字体、字号、行高、内容宽度、密度、圆角和阴影
 msgid "回到顶部装饰图"
 msgstr "回到顶部装饰图"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "回复"
 msgstr "回复"
 
@@ -897,7 +897,7 @@ msgstr "评论"
 msgid "评论 GIF 上传已关闭。"
 msgstr "评论 GIF 上传已关闭。"
 
-#: inc/comments/uploads/admin.php
+#: inc/comments/uploads/admin-helpers.php
 msgid "评论 GIF：%s"
 msgstr "评论 GIF：%s"
 
@@ -913,7 +913,7 @@ msgstr "评论标签最多 8 个字符。"
 msgid "评论不存在。"
 msgstr "评论不存在。"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "评论操作"
 msgstr "评论操作"
 
@@ -1161,7 +1161,7 @@ msgstr "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgid "删除"
 msgstr "删除"
 
-#: inc/comments/rendering/list.php
+#: inc/comments/rendering/list-helpers.php
 msgid "删除评论"
 msgstr "删除评论"
 
@@ -1529,7 +1529,7 @@ msgstr "无限进步"
 msgid "无效的 SVG 文件。"
 msgstr "无效的 SVG 文件。"
 
-#: inc/comments/uploads/admin.php inc/comments/uploads/ajax.php
+#: inc/comments/uploads/admin-helpers.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php
 msgid "无效的评论上传附件。"
 msgstr "无效的评论上传附件。"
 

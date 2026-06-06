@@ -12,6 +12,7 @@ v0.2.14 是一次深度维护与高风险流降险版本。它继续收敛评论
 - 把评论上传前端流程移入 focused source module，继续构建到 lazy classic `assets/dist/reimu-comments.js`，并保留 `window.ReimuCommentsRuntime`、懒加载触发条件、上传替换/discard 和审核状态刷新行为。
 - 将 PJAX 替换流程整理成 capture、detach、replace、sync、restore、rebind 和 verification 生命周期，保留 `window.ReimuWP.init()`、`window.ReimuWP.navigate()`、link exclusion、script replay、APlayer preservation、modal restoration 和 classic script compatibility。
 - 加强 comments/profile、auth-security、PJAX runtime 和 runtime smoke contract gates，使懒加载触发、重复初始化防抖、登录状态刷新、profile 临时状态、PJAX modal 恢复、评论表单 rebind 和 comment upload runtime 边界受静态检查保护。
+- 拆分评论列表渲染、第三方评论面板和后台 GIF/upload 审核动作 helper，使 comment callback、external comment panel 和管理员 GIF 上传动作退出复杂度热点榜，同时保留评论 DOM、nonce、第三方评论锚点和审核动作 URL。
 - 更新维护记录和 PHP 复杂度 baseline：`inc/comments/auth.php`、`inc/comments/mutations.php`、`inc/comments/profile.php` 和 General settings panel 已退出主要复杂度热点列表。
 
 ### 说明
@@ -32,6 +33,7 @@ v0.2.14 is a deep maintenance and risk-reduction release. It lowers maintenance 
 - Moved comment-upload front-end orchestration into a focused source module while continuing to build the lazy classic `assets/dist/reimu-comments.js` runtime and preserving `window.ReimuCommentsRuntime`, lazy-load triggers, upload replace/discard behavior, and review-status refresh.
 - Reworked PJAX replacement into capture, detach, replace, sync, restore, rebind, and verification lifecycle steps while preserving `window.ReimuWP.init()`, `window.ReimuWP.navigate()`, link exclusions, script replay, APlayer preservation, modal restoration, and classic script compatibility.
 - Strengthened comments/profile, auth-security, PJAX runtime, and runtime smoke contract gates so lazy loading, duplicate-init guards, login-state refresh, temporary profile statuses, PJAX modal restoration, comment form rebinding, and comment-upload runtime boundaries stay protected.
+- Split comment-list rendering, external comment panels, and administrator GIF/upload review helpers so the comment callback, external comment panel, and admin GIF upload action leave the complexity hotspot lists while preserving comment DOM, nonces, external comment anchors, and review-action URLs.
 - Updated maintenance notes and the PHP complexity baseline: `inc/comments/auth.php`, `inc/comments/mutations.php`, `inc/comments/profile.php`, and the General settings panel no longer appear as primary complexity hotspots.
 
 ### Notes

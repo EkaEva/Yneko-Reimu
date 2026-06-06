@@ -9,4 +9,5 @@ require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/library.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/ajax.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/lifecycle.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/filters.php';
+require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin-helpers.php';
 require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin.php';
