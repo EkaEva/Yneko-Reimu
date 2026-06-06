@@ -57,7 +57,7 @@ jobs:
 
       - name: Package theme
         shell: pwsh
-        run: ./tools/package-theme.ps1 -OutputName '${{ steps.version.outputs.zip_name }}'
+        run: ./tools/package-theme.ps1 -Version '${{ steps.version.outputs.version }}' -OutputName '${{ steps.version.outputs.zip_name }}'
 
       - name: Check release package
         run: npm run check:package
