@@ -53,7 +53,15 @@ const schemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/getters.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
 ];
-const securityPath = resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail.php');
+const securityPaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail/settings.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail/context.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail/counters.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail/events.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail/admin.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/security-auth-mail/wp-login.php')
+];
 
 const pageEntry = await readFile(pagePath, 'utf8');
 const pageModules = await Promise.all(pageModulePaths.map((path) => readFile(path, 'utf8')));
@@ -70,7 +78,7 @@ const admin = [adminEntry, ...adminModules].join('\n');
 const adminJs = await readFile(adminJsPath, 'utf8');
 const login2fa = await readFile(login2faPath, 'utf8');
 const schema = (await Promise.all(schemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
-const security = await readFile(securityPath, 'utf8');
+const security = (await Promise.all(securityPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const tabs = [
   'general',

@@ -21,7 +21,7 @@ msgstr "(无标题)"
 msgid "[%s] 密码重置验证码"
 msgstr "[%s] 密码重置验证码"
 
-#: inc/security-auth-mail.php
+#: inc/security-auth-mail/events.php
 msgid "[%s] 认证邮件安全报警"
 msgstr "[%s] 认证邮件安全报警"
 
@@ -1029,7 +1029,7 @@ msgstr "请不要重复发送相同的评论。"
 msgid "请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 msgstr "请到“外观 -> Yneko-Reimu 设置”中配置 GitHub 主页链接。"
 
-#: inc/security-auth-mail.php
+#: inc/security-auth-mail/counters.php inc/security-auth-mail/wp-login.php
 msgid "请求过于频繁，请稍后再试。"
 msgstr "请求过于频繁，请稍后再试。"
 
@@ -1121,7 +1121,7 @@ msgstr "取消"
 msgid "取消回复"
 msgstr "取消回复"
 
-#: inc/comments/admin.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php inc/security-auth-mail.php inc/settings/admin/totp.php
+#: inc/comments/admin.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php inc/security-auth-mail/admin.php inc/settings/admin/totp.php
 msgid "权限不足。"
 msgstr "权限不足。"
 
@@ -1717,7 +1717,7 @@ msgstr "验证码会发送到账号邮箱，5 分钟内有效。"
 msgid "验证码已发送，请检查您的邮箱。"
 msgstr "验证码已发送，请检查您的邮箱。"
 
-#: inc/security-auth-mail.php
+#: inc/security-auth-mail/counters.php
 msgid "验证码已发送，请稍后再试。"
 msgstr "验证码已发送，请稍后再试。"
 
@@ -2277,7 +2277,7 @@ msgstr "Yneko"
 msgid "Yneko-Reimu"
 msgstr "Yneko-Reimu"
 
-#: inc/security-auth-mail.php
+#: inc/security-auth-mail/events.php
 msgid "Yneko-Reimu 捕获到认证邮件风控事件。\n\n类型：%1\\$s\n范围：%2\\$s\n维度：%3\\$s\n请进入 Yneko-Reimu 设置 -> 安全设置 查看详情。"
 msgstr "Yneko-Reimu 捕获到认证邮件风控事件。\n\n类型：%1\\$s\n范围：%2\\$s\n维度：%3\\$s\n请进入 Yneko-Reimu 设置 -> 安全设置 查看详情。"
 

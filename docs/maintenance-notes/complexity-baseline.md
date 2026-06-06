@@ -4,11 +4,11 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 
 ## Current Baseline
 
-- Runtime PHP files scanned: 189
-- Named functions scanned: 917
-- Total lines: 20,019
-- Nonblank lines: 17,505
-- Approximate branch score: 6,338
+- Runtime PHP files scanned: 195
+- Named functions scanned: 923
+- Total lines: 20,085
+- Nonblank lines: 17,557
+- Approximate branch score: 6,345
 
 ## Largest Runtime Files
 
@@ -16,7 +16,6 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 | --- | --- | --- | --- |
 | 400 | 11 | 14 | `inc/github-login/styles.php` |
 | 377 | 24 | 115 | `inc/template-tags/layout-content.php` |
-| 375 | 29 | 168 | `inc/security-auth-mail.php` |
 | 368 | 23 | 149 | `inc/migrations.php` |
 | 346 | 18 | 94 | `inc/template-tags/content-tools.php` |
 | 343 | 10 | 149 | `inc/post-meta.php` |
@@ -24,6 +23,7 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 | 320 | 19 | 295 | `inc/comments/modals.php` |
 | 319 | 19 | 140 | `inc/comments/avatars.php` |
 | 296 | 13 | 128 | `inc/comments/profile-save.php` |
+| 281 | 5 | 8 | `inc/settings/schema/defaults.php` |
 
 ## Largest Functions
 
@@ -48,6 +48,7 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 - Comments upload front-end orchestration moved into `assets/src/reimu/comment-upload.js`, keeping the lazy classic `assets/dist/reimu-comments.js` output and `window.ReimuCommentsRuntime` contract unchanged.
 - Comments rendering Stage 1 moved comment item context/render helpers, external comment panel renderers, and administrator GIF/upload action helpers behind the existing entrypoints. `yneko_reimu_comment_callback()`, `yneko_reimu_render_external_comment_panel()`, and `yneko_reimu_admin_comment_gif_upload_action()` no longer appear in the largest-function or highest-branch-score lists.
 - Settings Stage 2 moved settings admin menu/UI/TOTP/review-count/asset helpers, panel bodies, repeatable renderers, user avatar/badge cards, and comment upload review cards behind focused modules. `inc/settings/renderers.php`, `inc/settings/panels.php`, and `inc/settings/admin.php` no longer appear in the largest-file list; the locked settings renderer and panel hotspots no longer appear in the largest-function or highest-branch-score top ten.
+- Security auth mail Stage 3 moved auth-security defaults/sanitizers, request context/device cookie, transient counters, event logging/email alerts, admin alert actions, and native `wp-login.php` filters behind focused modules. `inc/security-auth-mail.php` no longer appears in the largest-file list, and its guard functions no longer appear in the largest-function or highest-branch-score top ten while preserving `auth_security` settings, cookie, transient/option naming, hooks, and generic error boundaries.
 - PJAX replacement is now expressed as explicit capture, detach, replace, sync, restore, and verification steps. The public `window.ReimuWP.init()` and `window.ReimuWP.navigate()` behavior, link exclusions, script replay, APlayer preservation, modal restoration, and lazy runtime rebinding remain stable.
 - The General settings panel was split into focused helper groups behind the existing renderer entrypoint, removing it from the highest branch-score hotspot list while preserving field names, option keys, tabs, and save behavior.
 - Contract checks now aggregate the new comments auth/profile/mutation modules, comment upload runtime source, and PJAX lifecycle anchors so internal moves keep the high-risk comments/profile/PJAX surface guarded.
@@ -72,5 +73,5 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 ## Recommended Follow-Up Targets
 
 - Keep high-risk comments/auth/profile/upload request handlers behind static contracts and manual WordPress QA before any further request-flow split.
-- Consider focused future passes for `inc/comments/auth.php`, `inc/comments/mutations.php`, `inc/template-tags/layout-content.php`, and `inc/security-auth-mail.php` only when preserving AJAX, auth, comment, and display contracts is straightforward.
+- Consider focused future passes for `inc/comments/auth.php`, `inc/comments/mutations.php`, and `inc/template-tags/layout-content.php` only when preserving AJAX, auth, comment, and display contracts is straightforward.
 - Settings defaults remain intentionally broad; split them only with a migration-aware plan that preserves default values, sanitizer expectations, and fallback readers.

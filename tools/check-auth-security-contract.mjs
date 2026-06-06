@@ -66,10 +66,20 @@ const commentProfilePaths = [
   resolve(themeRoot, 'inc/comments/profile/save.php')
 ];
 const commentProfileSource = (await Promise.all(commentProfilePaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const securityPaths = [
+  resolve(themeRoot, 'inc/security-auth-mail.php'),
+  resolve(themeRoot, 'inc/security-auth-mail/settings.php'),
+  resolve(themeRoot, 'inc/security-auth-mail/context.php'),
+  resolve(themeRoot, 'inc/security-auth-mail/counters.php'),
+  resolve(themeRoot, 'inc/security-auth-mail/events.php'),
+  resolve(themeRoot, 'inc/security-auth-mail/admin.php'),
+  resolve(themeRoot, 'inc/security-auth-mail/wp-login.php')
+];
+const securitySource = (await Promise.all(securityPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   functions: await readFile(resolve(themeRoot, 'functions.php'), 'utf8'),
-  security: await readFile(resolve(themeRoot, 'inc/security-auth-mail.php'), 'utf8'),
+  security: securitySource,
   schema: settingsSchema,
   page: settingsPage,
   panels: settingsPanels,
