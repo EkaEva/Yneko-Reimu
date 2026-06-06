@@ -10,7 +10,8 @@ const files = {
   layout: await readFile(resolve(themeRoot, 'inc/template-tags/layout-content.php'), 'utf8'),
   social: await readFile(resolve(themeRoot, 'inc/template-tags/social-share.php'), 'utf8'),
   navigation: await readFile(resolve(themeRoot, 'inc/template-tags/navigation-virtual.php'), 'utf8'),
-  content: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8')
+  content: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8'),
+  homeCategories: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools/home-categories.php'), 'utf8')
 };
 
 const source = Object.values(files).join('\n');
@@ -31,9 +32,10 @@ for (const moduleImport of [
   "require_once YNEKO_REIMU_DIR . '/inc/template-tags/layout-content.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/template-tags/social-share.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/template-tags/navigation-virtual.php';",
-  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools.php';"
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/template-tags/content-tools/home-categories.php';"
 ]) {
-  requireSnippet('template-tags module boundary', moduleImport, files.entry);
+  requireSnippet('template-tags module boundary', moduleImport);
 }
 
 for (const [label, snippet, haystack] of [
@@ -41,7 +43,8 @@ for (const [label, snippet, haystack] of [
   ['direct access guard in layout module', "if ( ! defined( 'ABSPATH' ) )", files.layout],
   ['direct access guard in social module', "if ( ! defined( 'ABSPATH' ) )", files.social],
   ['direct access guard in navigation module', "if ( ! defined( 'ABSPATH' ) )", files.navigation],
-  ['direct access guard in content module', "if ( ! defined( 'ABSPATH' ) )", files.content]
+  ['direct access guard in content module', "if ( ! defined( 'ABSPATH' ) )", files.content],
+  ['direct access guard in home categories module', "if ( ! defined( 'ABSPATH' ) )", files.homeCategories]
 ]) {
   requireSnippet(label, snippet, haystack);
 }

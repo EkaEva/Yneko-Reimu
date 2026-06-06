@@ -57,6 +57,11 @@ const commentsRenderingPaths = [
   resolve(themeRoot, 'inc/comments/rendering/external.php')
 ];
 const commentsRendering = (await Promise.all(commentsRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const contentToolPaths = [
+  resolve(themeRoot, 'inc/template-tags/content-tools.php'),
+  resolve(themeRoot, 'inc/template-tags/content-tools/home-categories.php')
+];
+const contentTools = (await Promise.all(contentToolPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   schema: settingsSchema,
@@ -68,7 +73,7 @@ const files = {
   commentsRendering,
   customizer,
   migrations: await readFile(resolve(themeRoot, 'inc/migrations.php'), 'utf8'),
-  contentTools: await readFile(resolve(themeRoot, 'inc/template-tags/content-tools.php'), 'utf8'),
+  contentTools,
   hooks: await readFile(resolve(root, 'docs/hooks.md'), 'utf8'),
   development: await readFile(resolve(root, 'docs/development.md'), 'utf8')
 };

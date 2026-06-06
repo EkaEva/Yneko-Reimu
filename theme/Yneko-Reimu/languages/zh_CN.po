@@ -1685,7 +1685,7 @@ msgstr "新邮箱验证码"
 msgid "选择文件"
 msgstr "选择文件"
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/home-categories.php
 msgid "学习笔记"
 msgstr "学习笔记"
 
@@ -2265,7 +2265,7 @@ msgstr "Users"
 msgid "WARNING"
 msgstr "WARNING"
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/home-categories.php
 msgid "Yneko"
 msgstr "Yneko"
 

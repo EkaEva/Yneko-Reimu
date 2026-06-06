@@ -1680,7 +1680,7 @@ msgstr ""
 msgid "选择文件"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/home-categories.php
 msgid "学习笔记"
 msgstr ""
 
@@ -2260,7 +2260,7 @@ msgstr ""
 msgid "WARNING"
 msgstr ""
 
-#: inc/template-tags/content-tools.php
+#: inc/template-tags/content-tools/home-categories.php
 msgid "Yneko"
 msgstr ""
 

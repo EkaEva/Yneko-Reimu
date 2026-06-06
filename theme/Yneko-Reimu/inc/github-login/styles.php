@@ -58,6 +58,17 @@ function yneko_reimu_github_login_button_css() {
 }
 
 function yneko_reimu_github_login_layout_css( $login_logo ) {
+	return implode(
+		"\n",
+		array(
+			yneko_reimu_github_login_canvas_css( $login_logo ),
+			yneko_reimu_github_login_form_shell_css(),
+			yneko_reimu_github_login_field_css(),
+		)
+	);
+}
+
+function yneko_reimu_github_login_canvas_css( $login_logo ) {
 	return '
 		html,
 		body.login {
@@ -88,6 +99,11 @@ function yneko_reimu_github_login_layout_css( $login_logo ) {
 			border-radius: 50%;
 			filter: drop-shadow(0 8px 18px rgba(255, 82, 82, .12));
 		}
+	';
+}
+
+function yneko_reimu_github_login_form_shell_css() {
+	return '
 		body.login #loginform,
 		body.login #lostpasswordform,
 		body.login #registerform {
@@ -121,6 +137,11 @@ function yneko_reimu_github_login_layout_css( $login_logo ) {
 			color: #ff5252;
 			font-weight: 700;
 		}
+	';
+}
+
+function yneko_reimu_github_login_field_css() {
+	return '
 		body.login form .input,
 		body.login input[type="text"],
 		body.login input[type="email"],
