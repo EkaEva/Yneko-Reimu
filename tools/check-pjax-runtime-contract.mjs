@@ -20,6 +20,7 @@ const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-commen
 const commentsRuntimePaths = [
   resolve(themeRoot, 'assets/src/reimu/comments-profile.js'),
   resolve(themeRoot, 'assets/src/reimu/auth-forms.js'),
+  resolve(themeRoot, 'assets/src/reimu/comment-upload.js'),
   resolve(themeRoot, 'assets/src/reimu/comment-mutations.js'),
   resolve(themeRoot, 'assets/src/reimu/login-state.js')
 ];
@@ -88,6 +89,14 @@ for (const snippet of [
 }
 
 for (const snippet of [
+  'function capturePjaxState()',
+  'authModalState: getAuthModalState()',
+  'preservedAPlayer: preserveAPlayer()',
+  'function detachPreservedPjaxState(state)',
+  'function replacePjaxDom(nextDoc)',
+  'function syncPjaxDocumentState(nextDoc)',
+  'function restorePjaxState(state)',
+  'function verifyPjaxPostNavigation()',
   'function getAuthModalState()',
   'loginOpen:',
   'loginPanel:',

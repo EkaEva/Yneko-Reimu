@@ -31,12 +31,41 @@ const commentRenderingPaths = [
 ];
 const commentBadgeSource = (await Promise.all(commentBadgePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 const commentRenderingSource = (await Promise.all(commentRenderingPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentAuthPaths = [
+  resolve(themeRoot, 'inc/comments/auth.php'),
+  resolve(themeRoot, 'inc/comments/auth/helpers.php'),
+  resolve(themeRoot, 'inc/comments/auth/session.php'),
+  resolve(themeRoot, 'inc/comments/auth/login.php'),
+  resolve(themeRoot, 'inc/comments/auth/registration.php'),
+  resolve(themeRoot, 'inc/comments/auth/lost-password.php')
+];
+const commentAuthSource = (await Promise.all(commentAuthPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentMutationPaths = [
+  resolve(themeRoot, 'inc/comments/mutations.php'),
+  resolve(themeRoot, 'inc/comments/mutations/visibility.php'),
+  resolve(themeRoot, 'inc/comments/mutations/likes.php'),
+  resolve(themeRoot, 'inc/comments/mutations/manage.php'),
+  resolve(themeRoot, 'inc/comments/mutations/submit.php'),
+  resolve(themeRoot, 'inc/comments/mutations/review-status.php')
+];
+const commentMutationSource = (await Promise.all(commentMutationPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentProfilePaths = [
+  resolve(themeRoot, 'inc/comments/profile.php'),
+  resolve(themeRoot, 'inc/comments/profile/totp.php'),
+  resolve(themeRoot, 'inc/comments/profile/payload.php'),
+  resolve(themeRoot, 'inc/comments/profile/status.php'),
+  resolve(themeRoot, 'inc/comments/profile/email.php'),
+  resolve(themeRoot, 'inc/comments/profile/avatar.php'),
+  resolve(themeRoot, 'inc/comments/profile/save.php')
+];
+const commentProfileSource = (await Promise.all(commentProfilePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
 const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'utf8');
 const commentsRuntimePaths = [
   resolve(themeRoot, 'assets/src/reimu/comments-profile.js'),
   resolve(themeRoot, 'assets/src/reimu/auth-forms.js'),
+  resolve(themeRoot, 'assets/src/reimu/comment-upload.js'),
   resolve(themeRoot, 'assets/src/reimu/comment-mutations.js'),
   resolve(themeRoot, 'assets/src/reimu/login-state.js')
 ];
@@ -58,10 +87,10 @@ const files = {
   uploadFilters: await readFile(resolve(themeRoot, 'inc/comments/uploads/filters.php'), 'utf8'),
   uploadAdmin: await readFile(resolve(themeRoot, 'inc/comments/uploads/admin.php'), 'utf8'),
   modals: await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8'),
-  auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),
+  auth: commentAuthSource,
   profileSave: await readFile(resolve(themeRoot, 'inc/comments/profile-save.php'), 'utf8'),
-  profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8'),
-  mutations: await readFile(resolve(themeRoot, 'inc/comments/mutations.php'), 'utf8'),
+  profile: commentProfileSource,
+  mutations: commentMutationSource,
   rendering: commentRenderingSource,
   frontend: `${frontendEntry}\n${commentsEntry}\n${commentsRuntime}`,
   frontendEntry,
@@ -101,6 +130,7 @@ for (const moduleImport of [
   "import { createCommentsProfileRuntime } from './reimu/comments-profile.js';",
   "import { createCommentList } from './comment-list.js';",
   "import { createCommentMedia } from './comment-media.js';",
+  "import { createCommentUploadRuntime } from './comment-upload.js';",
   "import { createCommentMutations } from './comment-mutations.js';",
   "import { createCommentTools } from './comment-tools.js';",
   "import { createLoginStateRuntime } from './login-state.js';",
@@ -161,6 +191,37 @@ for (const uploadModule of [
   "require_once YNEKO_REIMU_DIR . '/inc/comments/uploads/admin.php';"
 ]) {
   requireSnippet('comment upload module boundary', uploadModule, files.uploads);
+}
+
+for (const authModule of [
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/auth/helpers.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/auth/session.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/auth/login.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/auth/registration.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/auth/lost-password.php';"
+]) {
+  requireSnippet('comment auth service boundary', authModule, files.auth);
+}
+
+for (const mutationModule of [
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations/visibility.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations/likes.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations/manage.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations/submit.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/mutations/review-status.php';"
+]) {
+  requireSnippet('comment mutation service boundary', mutationModule, files.mutations);
+}
+
+for (const profileModule of [
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile/totp.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile/payload.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile/status.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile/email.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile/avatar.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/comments/profile/save.php';"
+]) {
+  requireSnippet('comment profile service boundary', profileModule, files.profile);
 }
 
 for (const globalContract of [

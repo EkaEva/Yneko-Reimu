@@ -2189,13 +2189,21 @@ import { createPjaxUtils } from './reimu/pjax-utils.js';
     }
   }
 
-  function replacePageContent(nextDoc) {
-    var authModalState = getAuthModalState();
-    var preservedAPlayer = preserveAPlayer();
+  function capturePjaxState() {
+    return {
+      authModalState: getAuthModalState(),
+      preservedAPlayer: preserveAPlayer()
+    };
+  }
+
+  function detachPreservedPjaxState(state) {
+    var preservedAPlayer = state && state.preservedAPlayer;
     if (preservedAPlayer && preservedAPlayer.parentNode) {
       preservedAPlayer.parentNode.removeChild(preservedAPlayer);
     }
+  }
 
+  function replacePjaxDom(nextDoc) {
     hideHeatmapTooltip();
     replaceElement('#main-nav', nextDoc);
     replaceElement('#sub-nav', nextDoc);
@@ -2216,10 +2224,6 @@ import { createPjaxUtils } from './reimu/pjax-utils.js';
     replaceElement('#reimu-login-modal', nextDoc, { appendTo: qs('#container') || document.body });
     replaceElement('#reimu-profile-modal', nextDoc, { appendTo: qs('#container') || document.body, keepMissing: true });
 
-    if (preservedAPlayer) {
-      placeAPlayerInSlot(preservedAPlayer);
-    }
-
     if (!qs('#main')) {
       var currentWrap = qs('#wrap');
       var nextWrap = qs('#wrap', nextDoc);
@@ -2237,14 +2241,37 @@ import { createPjaxUtils } from './reimu/pjax-utils.js';
         current.replaceWith(next.cloneNode(true));
       }
     });
+  }
 
+  function syncPjaxDocumentState(nextDoc) {
     document.body.className = nextDoc.body.className;
     document.body.classList.remove('mobile-nav-on');
     document.body.classList.add('reimu-page-loading');
     document.body.setAttribute('aria-busy', 'true');
     syncHeadMetadata(nextDoc);
     syncInlineConfig(nextDoc);
-    restoreAuthModalState(authModalState);
+  }
+
+  function restorePjaxState(state) {
+    if (state && state.preservedAPlayer) {
+      placeAPlayerInSlot(state.preservedAPlayer);
+    }
+    restoreAuthModalState(state ? state.authModalState : null);
+  }
+
+  function verifyPjaxPostNavigation() {
+    initCommentsProfileRuntime();
+    if (window.ReimuCommentsRuntime && typeof window.ReimuCommentsRuntime.syncConfig === 'function') {
+      window.ReimuCommentsRuntime.syncConfig();
+    }
+  }
+
+  function replacePageContent(nextDoc) {
+    var pjaxState = capturePjaxState();
+    detachPreservedPjaxState(pjaxState);
+    replacePjaxDom(nextDoc);
+    syncPjaxDocumentState(nextDoc);
+    restorePjaxState(pjaxState);
   }
 
   function navigateTo(url, options) {
@@ -2326,6 +2353,7 @@ import { createPjaxUtils } from './reimu/pjax-utils.js';
       }
       initReimu();
       mountAPlayerInFlow();
+      verifyPjaxPostNavigation();
       hideLoader(260);
       dispatchReimuEvent('reimu:after-navigate', { url: target.href });
       return true;

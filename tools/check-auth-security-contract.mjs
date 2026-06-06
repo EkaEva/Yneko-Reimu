@@ -31,6 +31,25 @@ const settingsPagePaths = [
   resolve(themeRoot, 'inc/settings/page/submit.php')
 ];
 const settingsPage = (await Promise.all(settingsPagePaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentAuthPaths = [
+  resolve(themeRoot, 'inc/comments/auth.php'),
+  resolve(themeRoot, 'inc/comments/auth/helpers.php'),
+  resolve(themeRoot, 'inc/comments/auth/session.php'),
+  resolve(themeRoot, 'inc/comments/auth/login.php'),
+  resolve(themeRoot, 'inc/comments/auth/registration.php'),
+  resolve(themeRoot, 'inc/comments/auth/lost-password.php')
+];
+const commentAuthSource = (await Promise.all(commentAuthPaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const commentProfilePaths = [
+  resolve(themeRoot, 'inc/comments/profile.php'),
+  resolve(themeRoot, 'inc/comments/profile/totp.php'),
+  resolve(themeRoot, 'inc/comments/profile/payload.php'),
+  resolve(themeRoot, 'inc/comments/profile/status.php'),
+  resolve(themeRoot, 'inc/comments/profile/email.php'),
+  resolve(themeRoot, 'inc/comments/profile/avatar.php'),
+  resolve(themeRoot, 'inc/comments/profile/save.php')
+];
+const commentProfileSource = (await Promise.all(commentProfilePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   functions: await readFile(resolve(themeRoot, 'functions.php'), 'utf8'),
@@ -39,8 +58,8 @@ const files = {
   page: settingsPage,
   panels: settingsPanels,
   admin: await readFile(resolve(themeRoot, 'inc/settings/admin.php'), 'utf8'),
-  auth: await readFile(resolve(themeRoot, 'inc/comments/auth.php'), 'utf8'),
-  profile: await readFile(resolve(themeRoot, 'inc/comments/profile.php'), 'utf8')
+  auth: commentAuthSource,
+  profile: commentProfileSource
 };
 
 const source = Object.values(files).join('\n');

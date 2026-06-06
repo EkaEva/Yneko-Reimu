@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.13
+Stable tag: 0.2.14
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,15 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.14 =
+
+* Further reduces comments/login/profile request-handler risk by splitting auth, registration, lost-password, profile payload/status/save, TOTP, email, avatar, comment submit, ownership actions, likes, visibility, and review-status internals behind the existing AJAX actions, nonces, fields, and JSON response shapes.
+* Moves comment upload front-end orchestration into a focused source module while preserving the lazy classic `assets/dist/reimu-comments.js` runtime, existing triggers, upload replacement/discard behavior, review-status polling, and `window.ReimuCommentsRuntime`.
+* Refines PJAX navigation into explicit capture, replace, sync, restore, rebind, and verification lifecycle steps while preserving `window.ReimuWP.init()`, `window.ReimuWP.navigate()`, link exclusions, script replay, APlayer preservation, modal restoration, and classic script compatibility.
+* Strengthens comments/profile, auth-security, PJAX, and runtime smoke contract gates so valid internal module moves continue to protect lazy loading, duplicate-init guards, login-state refresh, temporary profile statuses, modal restoration, and comment form rebinding.
+* Splits the General settings panel helpers and updates the PHP complexity baseline so the previous comments auth/mutations/profile and General panel hotspots no longer dominate the highest-risk lists.
+* Adds tracked v0.2.14 maintenance notes and release notes while keeping local planning files and release ZIP noise out of Git and packages.
 
 = 0.2.13 =
 

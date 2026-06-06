@@ -17,7 +17,7 @@ msgstr ""
 msgid "(无标题)"
 msgstr "(Untitled)"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "[%s] 密码重置验证码"
 msgstr "[%s] Password reset verification code"
 
@@ -25,11 +25,11 @@ msgstr "[%s] Password reset verification code"
 msgid "[%s] 认证邮件安全报警"
 msgstr ""
 
-#: inc/comments/profile.php
+#: inc/comments/profile/email.php
 msgid "[%s] 邮箱修改验证码"
 msgstr "[%s] Email change verification code"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/registration.php
 msgid "[%s] 注册验证码"
 msgstr "[%s] Registration verification code"
 
@@ -65,7 +65,7 @@ msgstr "%s comments"
 msgid "%s 秒后重发"
 msgstr "Resend in %s seconds"
 
-#: comments.php inc/comments/mutations.php
+#: comments.php inc/comments/mutations/manage.php inc/comments/mutations/submit.php
 msgid "%s 评论"
 msgstr "%s comments"
 
@@ -289,7 +289,7 @@ msgstr ""
 msgid "待审核"
 msgstr ""
 
-#: inc/comments/auth.php
+#: inc/comments/auth/registration.php
 msgid "当前未开放注册。"
 msgstr "Registration is currently closed."
 
@@ -325,7 +325,7 @@ msgstr "No more..."
 msgid "登录"
 msgstr "Login"
 
-#: inc/comments/auth.php inc/enqueue/config.php
+#: inc/comments/auth/login.php inc/enqueue/config.php
 msgid "登录成功。"
 msgstr "Login successful."
 
@@ -337,7 +337,7 @@ msgstr "Log in to upload GIFs."
 msgid "登录后可上传图片。"
 msgstr "Log in to upload images."
 
-#: inc/comments/auth.php inc/enqueue/config.php
+#: inc/comments/auth/helpers.php inc/enqueue/config.php
 msgid "登录失败，请检查账号和密码。"
 msgstr "Login failed. Please check your account and password."
 
@@ -345,7 +345,7 @@ msgstr "Login failed. Please check your account and password."
 msgid "登录信息或二次验证码不正确。"
 msgstr ""
 
-#: inc/comments/auth.php
+#: inc/comments/auth/login.php
 msgid "登录信息已过期，请重试。"
 msgstr "Login information has expired. Please try again."
 
@@ -441,19 +441,19 @@ msgstr "Copy failed (ﾟ⊿ﾟ)ﾂ"
 msgid "该评论标签为系统保留或屏蔽标签，请换一个。"
 msgstr ""
 
-#: inc/comments/profile.php
+#: inc/comments/profile/email.php
 msgid "该验证码将在 %2$d 分钟后失效。"
 msgstr "This code expires in %2$d minutes."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/registration.php
 msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请忽略这封邮件。"
 msgstr "This code expires in %2$d minutes. If this was not you, please ignore this email."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "该验证码将在 %2$d 分钟后失效。如果这不是您本人操作，请立即检查账号安全。"
 msgstr "This code expires in %2$d minutes. If this was not you, please check your account security immediately."
 
-#: inc/comments/auth.php inc/comments/profile-save.php inc/comments/profile.php
+#: inc/comments/auth/helpers.php inc/comments/profile/email.php inc/comments/profile-save.php
 msgid "该邮箱已被注册。"
 msgstr "This email is already registered."
 
@@ -769,7 +769,7 @@ msgstr ""
 msgid "两步验证码"
 msgstr "Two-factor code"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/login.php
 msgid "两步验证码不正确。"
 msgstr "The two-factor code is incorrect."
 
@@ -793,11 +793,11 @@ msgstr "No results"
 msgid "密码"
 msgstr "Password"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "密码已重置，请返回登录。"
 msgstr "Password reset. Please return to login."
 
-#: inc/comments/auth.php inc/comments/profile-save.php
+#: inc/comments/auth/helpers.php inc/comments/auth/lost-password.php inc/comments/profile-save.php
 msgid "密码至少需要 8 个字符。"
 msgstr "Password must be at least 8 characters."
 
@@ -837,11 +837,11 @@ msgstr ""
 msgid "内容显示"
 msgstr ""
 
-#: inc/comments/mutations.php
+#: inc/comments/mutations/manage.php
 msgid "你不能编辑这条评论。"
 msgstr ""
 
-#: inc/comments/mutations.php
+#: inc/comments/mutations/manage.php
 msgid "你不能删除这条评论。"
 msgstr ""
 
@@ -849,19 +849,19 @@ msgstr ""
 msgid "昵称"
 msgstr "Nickname"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/helpers.php
 msgid "昵称不能超过 50 个字符。"
 msgstr "Nickname cannot exceed 50 characters."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "您的密码重置验证码是：%1$s"
 msgstr "Your password reset verification code is: %1$s"
 
-#: inc/comments/profile.php
+#: inc/comments/profile/email.php
 msgid "您的邮箱修改验证码是：%1$s"
 msgstr "Your email change verification code is: %1$s"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/registration.php
 msgid "您的注册验证码是：%1$s"
 msgstr "Your registration verification code is: %1$s"
 
@@ -909,7 +909,7 @@ msgstr ""
 msgid "评论标签最多 8 个字符。"
 msgstr ""
 
-#: inc/comments/mutations.php
+#: inc/comments/mutations/likes.php inc/comments/mutations/manage.php
 msgid "评论不存在。"
 msgstr "Comment does not exist."
 
@@ -917,7 +917,7 @@ msgstr "Comment does not exist."
 msgid "评论操作"
 msgstr "Comment actions"
 
-#: inc/comments/mutations.php inc/enqueue/config.php
+#: inc/comments/mutations/manage.php inc/enqueue/config.php
 msgid "评论更新失败。"
 msgstr ""
 
@@ -925,7 +925,7 @@ msgstr ""
 msgid "评论环境信息"
 msgstr "Comment environment information"
 
-#: inc/comments/mutations.php
+#: inc/comments/mutations/manage.php
 msgid "评论内容不能为空。"
 msgstr ""
 
@@ -937,7 +937,7 @@ msgstr "Comment order"
 msgid "评论区"
 msgstr "Comments"
 
-#: inc/comments/mutations.php inc/enqueue/config.php
+#: inc/comments/mutations/manage.php inc/enqueue/config.php
 msgid "评论删除失败。"
 msgstr ""
 
@@ -953,7 +953,7 @@ msgstr "Comment review rejected"
 msgid "评论审核中"
 msgstr "Comment pending review"
 
-#: inc/comments/mutations.php inc/enqueue/config.php
+#: inc/comments/mutations/submit.php inc/enqueue/config.php
 msgid "评论提交失败。"
 msgstr "Comment submission failed."
 
@@ -961,7 +961,7 @@ msgstr "Comment submission failed."
 msgid "评论图片上传已关闭。"
 msgstr "Comment image uploads are disabled."
 
-#: inc/comments/mutations.php inc/enqueue/config.php
+#: inc/comments/mutations/submit.php inc/enqueue/config.php
 msgid "评论已发布。"
 msgstr "Comment published."
 
@@ -969,7 +969,7 @@ msgstr "Comment published."
 msgid "评论已更新"
 msgstr ""
 
-#: inc/comments/mutations.php
+#: inc/comments/mutations/manage.php
 msgid "评论已更新。"
 msgstr "Comment updated."
 
@@ -977,11 +977,11 @@ msgstr "Comment updated."
 msgid "评论已关闭。"
 msgstr "Comments are closed."
 
-#: inc/comments/mutations.php
+#: inc/comments/mutations/manage.php
 msgid "评论已删除。"
 msgstr "Comment deleted."
 
-#: inc/comments/mutations.php inc/enqueue/config.php
+#: inc/comments/mutations/submit.php inc/enqueue/config.php
 msgid "评论已提交，正在等待审核。"
 msgstr "Comment submitted and awaiting moderation."
 
@@ -1041,7 +1041,7 @@ msgstr "Please come back later or contact the administrator."
 msgid "请输入 1 到 50 个字符的昵称。"
 msgstr "Please enter a nickname between 1 and 50 characters."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php inc/comments/auth/registration.php
 msgid "请输入 6 位邮箱验证码。"
 msgstr "Please enter the 6-digit email code."
 
@@ -1049,27 +1049,27 @@ msgstr "Please enter the 6-digit email code."
 msgid "请输入 http(s) 图片地址"
 msgstr "Please enter an http(s) image URL"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/login.php
 msgid "请输入两步验证码。"
 msgstr "Please enter your two-factor code."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/login.php
 msgid "请输入邮箱和密码。"
 msgstr "Please enter your email and password."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/helpers.php
 msgid "请输入有效的昵称。"
 msgstr "Please enter a valid nickname."
 
-#: inc/comments/auth.php inc/comments/profile-save.php inc/comments/profile.php
+#: inc/comments/auth/helpers.php inc/comments/profile/email.php inc/comments/profile-save.php
 msgid "请输入有效的邮箱地址。"
 msgstr "Please enter a valid email address."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "请输入注册邮箱。"
 msgstr "Please enter the registered email address."
 
-#: inc/comments/avatars.php inc/comments/profile.php
+#: inc/comments/avatars.php inc/comments/profile/avatar.php inc/comments/profile/email.php inc/comments/profile/payload.php inc/comments/profile/save.php
 msgid "请先登录。"
 msgstr "Please log in first."
 
@@ -1153,7 +1153,7 @@ msgstr ""
 msgid "如果当前账号已开启二次认证，请输入认证器中的 6 位验证码，或输入一次性恢复码；如果没有开启二次认证，留空即可。"
 msgstr ""
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgstr "If this email is registered, a code will be sent to it."
 
@@ -1365,7 +1365,7 @@ msgstr "Avatar upload failed."
 msgid "头像审核不通过"
 msgstr "Avatar review rejected"
 
-#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile.php inc/enqueue/config.php inc/settings/renderers.php
+#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile/avatar.php inc/enqueue/config.php inc/settings/renderers.php
 msgid "头像审核中"
 msgstr "Avatar pending review"
 
@@ -1373,7 +1373,7 @@ msgstr "Avatar pending review"
 msgid "头像文件超过大小限制。"
 msgstr "Avatar file exceeds the size limit."
 
-#: inc/comments/avatars.php inc/comments/profile.php inc/enqueue/config.php
+#: inc/comments/avatars.php inc/comments/profile/avatar.php inc/enqueue/config.php
 msgid "头像已更新"
 msgstr ""
 
@@ -1673,7 +1673,7 @@ msgstr "New password"
 msgid "新邮箱"
 msgstr "New email"
 
-#: inc/comments/profile.php inc/enqueue/config.php
+#: inc/comments/profile/email.php inc/enqueue/config.php
 msgid "新邮箱地址不要与原邮箱地址重复。"
 msgstr "The new email must differ from the current email."
 
@@ -1693,15 +1693,15 @@ msgstr "Study notes"
 msgid "颜色、暗色模式和导航布局适合在这里实时预览；第三方脚本与装饰扩展请到“外观 -> Yneko-Reimu 设置”。"
 msgstr ""
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php inc/comments/auth/registration.php
 msgid "验证码不正确。"
 msgstr "The code is incorrect."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php
 msgid "验证码不正确或已失效。"
 msgstr "The code is incorrect or has expired."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/lost-password.php inc/comments/auth/registration.php
 msgid "验证码错误次数过多，请重新获取。"
 msgstr "Too many incorrect code attempts. Please request a new one."
 
@@ -1713,7 +1713,7 @@ msgstr "The code will be sent to your email and is valid for 5 minutes."
 msgid "验证码会发送到账号邮箱，5 分钟内有效。"
 msgstr "The code will be sent to the account email and is valid for 5 minutes."
 
-#: inc/comments/auth.php inc/comments/profile.php inc/enqueue/config.php
+#: inc/comments/auth/registration.php inc/comments/profile/email.php inc/enqueue/config.php
 msgid "验证码已发送，请检查您的邮箱。"
 msgstr "The code has been sent. Please check your email."
 
@@ -1721,11 +1721,11 @@ msgstr "The code has been sent. Please check your email."
 msgid "验证码已发送，请稍后再试。"
 msgstr "The code has been sent. Please try again later."
 
-#: inc/comments/auth.php
+#: inc/comments/auth/registration.php
 msgid "验证码已失效，请重新获取。"
 msgstr "The code has expired. Please request a new one."
 
-#: inc/comments/auth.php inc/comments/profile.php
+#: inc/comments/auth/lost-password.php inc/comments/auth/registration.php inc/comments/profile/email.php
 msgid "验证码邮件发送失败，请稍后重试。"
 msgstr "Failed to send the verification email. Please try again later."
 
@@ -1765,7 +1765,7 @@ msgstr ""
 msgid "一条评论"
 msgstr ""
 
-#: inc/comments/mutations.php inc/comments/uploads/filters.php
+#: inc/comments/mutations/manage.php inc/comments/uploads/filters.php
 msgid "一条评论最多只能添加一张图片或一个 GIF。"
 msgstr ""
 
@@ -1797,7 +1797,7 @@ msgstr ""
 msgid "已通过"
 msgstr ""
 
-#: inc/comments/auth.php
+#: inc/comments/auth/session.php
 msgid "已退出登录。"
 msgstr "Logged out."
 
@@ -2029,7 +2029,7 @@ msgstr "Main content"
 msgid "注册"
 msgstr "Register"
 
-#: inc/comments/auth.php
+#: inc/comments/auth/registration.php
 msgid "注册成功，请返回登录。"
 msgstr "Registration successful. Please return to login."
 

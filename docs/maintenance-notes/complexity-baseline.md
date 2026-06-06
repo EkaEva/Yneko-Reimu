@@ -1,29 +1,29 @@
 # PHP Complexity Baseline
 
-Generated with `npm run report:php-complexity` during the v0.2.13 complexity-hotspot cleanup release.
+Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow maintenance release.
 
 ## Current Baseline
 
-- Runtime PHP files scanned: 152
-- Named functions scanned: 812
-- Total lines: 19,160
-- Nonblank lines: 16,794
-- Approximate branch score: 6,133
+- Runtime PHP files scanned: 168
+- Named functions scanned: 820
+- Total lines: 19,356
+- Nonblank lines: 16,963
+- Approximate branch score: 6,205
 
 ## Largest Runtime Files
 
 | Nonblank lines | Functions | Branch score | File |
 | --- | --- | --- | --- |
-| 401 | 18 | 103 | `inc/comments/auth.php` |
 | 400 | 11 | 14 | `inc/github-login/styles.php` |
-| 378 | 19 | 106 | `inc/comments/mutations.php` |
 | 377 | 24 | 115 | `inc/template-tags/layout-content.php` |
 | 375 | 29 | 168 | `inc/security-auth-mail.php` |
 | 368 | 23 | 149 | `inc/migrations.php` |
 | 368 | 12 | 328 | `inc/settings/renderers.php` |
-| 349 | 15 | 83 | `inc/comments/profile.php` |
 | 346 | 11 | 380 | `inc/settings/panels.php` |
 | 346 | 18 | 94 | `inc/template-tags/content-tools.php` |
+| 344 | 22 | 110 | `inc/settings/admin.php` |
+| 343 | 10 | 149 | `inc/post-meta.php` |
+| 337 | 24 | 124 | `inc/template-tags/navigation-virtual.php` |
 
 ## Largest Functions
 
@@ -33,14 +33,24 @@ Generated with `npm run report:php-complexity` during the v0.2.13 complexity-hot
 | 103 | 53 | `inc/comments/rendering/external.php:66` | `yneko_reimu_render_external_comment_panel` |
 | 96 | 3 | `inc/customizer/visual.php:6` | `yneko_reimu_register_customizer_visual_section` |
 | 94 | 28 | `inc/comments/uploads/admin.php:6` | `yneko_reimu_admin_comment_gif_upload_action` |
-| 92 | 13 | `inc/comments/profile.php:296` | `yneko_reimu_ajax_profile_save` |
 | 90 | 57 | `inc/post-meta.php:122` | `yneko_reimu_render_post_options_meta_box` |
 | 86 | 3 | `inc/customizer/sidebar-widgets.php:6` | `yneko_reimu_register_customizer_sidebar_widgets_section` |
 | 86 | 1 | `inc/customizer/footer-virtual.php:6` | `yneko_reimu_register_customizer_footer_virtual_sections` |
 | 84 | 83 | `inc/settings/renderers.php:304` | `yneko_reimu_render_user_badge_admin` |
+| 84 | 13 | `inc/comments/profile/save.php:6` | `yneko_reimu_ajax_profile_save` |
 | 82 | 25 | `inc/post-meta.php:269` | `yneko_reimu_save_post_options` |
 
-## Meaningful Movement Since v0.2.12
+## Meaningful Movement Since v0.2.13
+
+- Comments/auth was split behind `inc/comments/auth.php` into login-state, login, registration, lost-password, session, and shared helper modules. The entrypoint preserves existing AJAX actions, nonce checks, payload fields, response shapes, and GitHub OAuth adjacency while dropping out of the largest-file list.
+- Comments/profile was split behind `inc/comments/profile.php` into TOTP, payload, status, email, avatar, and save modules. The profile save callback now lives in `inc/comments/profile/save.php`, while profile modal, user meta keys, temporary response-only statuses, and review-status behavior remain compatible.
+- Comments/mutations was split behind `inc/comments/mutations.php` into visibility, likes, owner management, submit, and review-status modules. Existing submit/edit/delete/like actions, comment form anchors, owner checks, and review-state synchronization remain intact.
+- Comments upload front-end orchestration moved into `assets/src/reimu/comment-upload.js`, keeping the lazy classic `assets/dist/reimu-comments.js` output and `window.ReimuCommentsRuntime` contract unchanged.
+- PJAX replacement is now expressed as explicit capture, detach, replace, sync, restore, and verification steps. The public `window.ReimuWP.init()` and `window.ReimuWP.navigate()` behavior, link exclusions, script replay, APlayer preservation, modal restoration, and lazy runtime rebinding remain stable.
+- The General settings panel was split into focused helper groups behind the existing renderer entrypoint, removing it from the highest branch-score hotspot list while preserving field names, option keys, tabs, and save behavior.
+- Contract checks now aggregate the new comments auth/profile/mutation modules, comment upload runtime source, and PJAX lifecycle anchors so internal moves keep the high-risk comments/profile/PJAX surface guarded.
+
+## Earlier Movement Since v0.2.12
 
 - Settings/admin renderer hotspots were split behind existing renderer entrypoints. Security, Users, Music, and comment upload review renderers no longer dominate the branch-score list, while tab IDs, field names, option keys, nonce URLs, TOTP controls, review actions, and the single settings save model remain intact.
 - Login/profile modal renderers were split behind `yneko_reimu_login_modal_html()` and `yneko_reimu_profile_modal_html()`. Both entrypoints left the largest-function and highest-branch lists while modal IDs/classes, form fields, data attributes, ARIA anchors, and social-login hook placement stayed compatible.
