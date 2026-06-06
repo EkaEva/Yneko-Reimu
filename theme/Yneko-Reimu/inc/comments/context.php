@@ -124,11 +124,7 @@ function yneko_reimu_ajax_set_language_from_redirect( $redirect ) {
 	}
 
 	$GLOBALS['yneko_reimu_current_language'] = $language;
-	if ( 'en_US' === $language ) {
-		$mofile = YNEKO_REIMU_DIR . '/languages/en_US.mo';
-		if ( file_exists( $mofile ) ) {
-			unload_textdomain( 'yneko-reimu' );
-			load_textdomain( 'yneko-reimu', $mofile, 'en_US' );
-		}
+	if ( function_exists( 'yneko_reimu_i18n_load_textdomain_for_language' ) ) {
+		yneko_reimu_i18n_load_textdomain_for_language( $language );
 	}
 }

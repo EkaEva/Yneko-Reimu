@@ -14,6 +14,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # WordPress local data and backups
+.wp-env/
 wp-local/
 backups/
 *.sql
@@ -23,6 +24,8 @@ backups/
 
 # Local packages and archives
 releases/
+test-results/
+playwright-report/
 *.zip
 *.tar
 *.tar.gz

@@ -1,0 +1,13 @@
+{
+  "core": null,
+  "themes": [
+    "./theme/Yneko-Reimu"
+  ],
+  "config": {
+    "WP_DEBUG": true,
+    "SCRIPT_DEBUG": true
+  },
+  "mappings": {
+    "wp-content/uploads": "./.wp-env/uploads"
+  }
+}

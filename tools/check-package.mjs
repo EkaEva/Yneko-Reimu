@@ -15,7 +15,8 @@ const forbiddenPatterns = [
   /^Yneko-Reimu\/AGENTS\.md$/,
   /^Yneko-Reimu\/task_plan\.md$/,
   /^Yneko-Reimu\/findings\.md$/,
-  /^Yneko-Reimu\/progress\.md$/
+  /^Yneko-Reimu\/progress\.md$/,
+  /^Yneko-Reimu\/docs\/e2e-qa\.md$/
 ];
 
 async function latestZip() {

@@ -8,6 +8,7 @@ function yneko_reimu_render_settings_general_panel( $context ) {
 	$settings             = isset( $context['settings'] ) && is_array( $context['settings'] ) ? $context['settings'] : yneko_reimu_settings();
 	$builtin_pages        = isset( $context['builtin_pages'] ) && is_array( $context['builtin_pages'] ) ? $context['builtin_pages'] : yneko_reimu_settings_builtin_pages();
 	$features             = isset( $context['features'] ) && is_array( $context['features'] ) ? $context['features'] : yneko_reimu_settings_features();
+	$updates              = function_exists( 'yneko_reimu_settings_updates' ) ? yneko_reimu_settings_updates() : array();
 	$admin_totp           = isset( $context['admin_totp'] ) && is_array( $context['admin_totp'] ) ? $context['admin_totp'] : yneko_reimu_admin_current_user_totp_payload();
 	$admin_totp_available = ! empty( $context['admin_totp_available'] );
 	?>
@@ -15,6 +16,7 @@ function yneko_reimu_render_settings_general_panel( $context ) {
 		<h2><?php yneko_reimu_admin_bilingual_heading( '常规设置', 'General settings' ); ?></h2>
 		<?php yneko_reimu_render_settings_general_customizer_group(); ?>
 		<?php yneko_reimu_render_settings_general_admin_experience_group( $features ); ?>
+		<?php yneko_reimu_render_settings_general_updates_group( $updates ); ?>
 		<?php yneko_reimu_render_settings_admin_totp_group( $admin_totp, $admin_totp_available ); ?>
 		<?php yneko_reimu_render_settings_general_builtin_pages_group( $builtin_pages ); ?>
 		<?php yneko_reimu_render_settings_general_resource_group( $settings ); ?>
@@ -37,6 +39,27 @@ function yneko_reimu_render_settings_general_admin_experience_group( $features )
 	<?php yneko_reimu_settings_group_open( '管理员体验', 'Administrator experience', '这里控制管理员登录浏览器访问前台时的后台辅助显示，不影响普通评论用户。', 'This controls administrator-only front-end helpers and does not affect regular comment users.' ); ?>
 		<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[features][show_admin_toolbar]" value="1" <?php checked( '1', $features['show_admin_toolbar'] ?? '0' ); ?>> <?php yneko_reimu_admin_bilingual_label( '显示前台管理员工具条', 'Show front-end admin toolbar' ); ?></label>
 		<?php yneko_reimu_admin_bilingual_description( '默认关闭，前台保持干净并隐藏 Rank Math 等插件工具条提示。需要临时调试 Rank Math、Query Monitor 或编辑入口时再开启。', 'Disabled by default to keep the front end clean and hide plugin toolbar prompts such as Rank Math. Enable it temporarily for Rank Math, Query Monitor, or edit-link debugging.' ); ?>
+	<?php yneko_reimu_settings_group_close(); ?>
+	<?php
+}
+
+function yneko_reimu_render_settings_general_updates_group( $updates ) {
+	$updates = wp_parse_args(
+		is_array( $updates ) ? $updates : array(),
+		array(
+			'github_release_check' => '1',
+			'cache_minutes'        => 360,
+		)
+	);
+	?>
+	<?php yneko_reimu_settings_group_open( '主题更新', 'Theme updates', '检测 GitHub Release 中的正式主题包，并接入 WordPress 原生一键更新。', 'Check stable GitHub Releases and expose them through WordPress native one-click theme updates.' ); ?>
+		<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[updates][github_release_check]" value="1" <?php checked( '1', $updates['github_release_check'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '自动检测 GitHub Release 更新', 'Check GitHub Release updates automatically' ); ?></label>
+		<?php yneko_reimu_admin_bilingual_description( '只读取正式 Release，并只安装 Release 附件中的 Yneko-Reimu-vX.Y.Z.zip；不会使用 GitHub 自动源码包。', 'Only stable Releases are checked, and updates install the Yneko-Reimu-vX.Y.Z.zip release asset instead of GitHub source archives.' ); ?>
+		<div class="yneko-reimu-field">
+			<label class="yneko-reimu-field__label" for="yneko-reimu-update-cache-minutes"><?php yneko_reimu_admin_bilingual_label( '更新检测缓存时间（分钟）', 'Update check cache time (minutes)' ); ?></label>
+			<input id="yneko-reimu-update-cache-minutes" class="small-text" type="number" min="5" max="4320" step="5" name="yneko_reimu_settings[updates][cache_minutes]" value="<?php echo esc_attr( absint( $updates['cache_minutes'] ?? 360 ) ); ?>">
+			<?php yneko_reimu_admin_bilingual_description( '默认 360 分钟。测试时可临时改成 5 分钟；正式站点建议保持 360 分钟或更长。', 'Default is 360 minutes. Use 5 minutes temporarily for testing; keep 360 minutes or longer on production sites.' ); ?>
+		</div>
 	<?php yneko_reimu_settings_group_close(); ?>
 	<?php
 }

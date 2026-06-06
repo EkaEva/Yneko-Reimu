@@ -418,6 +418,12 @@ for (const profileSecuritySnippet of [
 ]) {
   requireSnippet('auth email security guard in profile handler', profileSecuritySnippet, files.profile);
 }
+for (const ajaxLoginLanguageSnippet of [
+  "formData.append('redirect_to', window.location.href || '')",
+  "yneko_reimu_ajax_set_language_from_redirect( wp_validate_redirect( $redirect, home_url( '/' ) ) )"
+]) {
+  requireSnippet('AJAX login language context', ajaxLoginLanguageSnippet, `${files.auth}\n${files.commentsRuntime}`);
+}
 
 for (const uploadHelperSnippet of [
   'function yneko_reimu_comment_upload_cleanup_transient_key',
@@ -526,8 +532,8 @@ if (!/function yneko_reimu_user_review_primary_status_html\(\s*\$user_id,\s*\$ex
 if (!/Promise\.resolve\(profileData\s*&&\s*profileData\.identity\s*\?\s*true\s*:\s*refreshCommentLoginState\(\)\)[\s\S]*initCommentAjaxLogout\(\)[\s\S]*applyInlineProfileStatus\(profileData,\s*\{\s*autohide:\s*true\s*\}\)/.test(files.commentsRuntime)) {
   fail('Profile save must not overwrite temporary identity status with an immediate login-state refresh.');
 }
-if (!/profileTwoFactorActive\s*=\s*false[\s\S]*profileTwoFactorSetupRequested\s*=\s*false[\s\S]*function syncTwoFactorSetup\(\)[\s\S]*showSetup\s*=\s*!profileTwoFactorActive\s*&&\s*profileTwoFactorSetupRequested\s*&&\s*toggle\.checked[\s\S]*qr\.removeAttribute\('src'\)[\s\S]*control\.disabled = true/.test(files.commentsRuntime)) {
-  fail('Profile TOTP setup UI must be hidden, cleared, and disabled once authenticator 2FA is active.');
+if (!/profileTwoFactorActive\s*=\s*false[\s\S]*profileTwoFactorSetupRequested\s*=\s*false[\s\S]*function syncTwoFactorSetup\(\)[\s\S]*showSetup\s*=\s*!profileTwoFactorActive\s*&&\s*profileTwoFactorSetupRequested\s*&&\s*toggle\.checked[\s\S]*qr\.removeAttribute\('src'\)[\s\S]*control\.disabled = true[\s\S]*keepTwoFactorSetup\s*=\s*!data\.twoFactor\s*&&\s*profileTwoFactorSetupRequested\s*&&\s*twoFactor\.checked[\s\S]*profileTwoFactorSetupRequested\s*=\s*!profileTwoFactorActive[\s\S]*twoFactorToggle\.checked\s*=\s*true[\s\S]*syncTwoFactorSetup\(\)/.test(files.commentsRuntime)) {
+  fail('Profile TOTP setup UI must be hidden after activation but preserved while setup is in progress.');
 }
 if (!/\.reimu-profile-2fa\[data-profile-2fa-active="1"\]\s+\[data-profile-2fa-setup\]\s*\{[\s\S]*display:\s*none\s*!important/.test(files.commentsCss)) {
   fail('Profile TOTP setup CSS must force-hide setup controls when authenticator 2FA is active.');

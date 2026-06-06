@@ -64,6 +64,10 @@ npm run lint:php
 
 When PHP is available and PHP files changed, run a full syntax pass over `theme/Yneko-Reimu/**/*.php`.
 
+## Local E2E QA
+
+For browser-level checks of comments, login, profile, uploads, and PJAX, use the optional local WordPress E2E workflow in `docs/e2e-qa.md`. This requires Docker and is not part of the mandatory CI gate yet.
+
 ## Pull Request Checklist
 
 Every PR should describe:

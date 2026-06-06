@@ -42,6 +42,7 @@ const settingsPagePaths = [
   resolve(themeRoot, 'inc/settings/page/submit.php')
 ];
 const settingsPage = (await Promise.all(settingsPagePaths.map((path) => readFile(path, 'utf8')))).join('\n');
+const themeUpdater = await readFile(resolve(themeRoot, 'inc/theme-updater.php'), 'utf8');
 const customizerPaths = [
   resolve(themeRoot, 'inc/customizer.php'),
   resolve(themeRoot, 'inc/customizer/panel.php'),
@@ -105,6 +106,30 @@ function requireSnippet(category, snippet, haystack = source) {
 }
 
 const coveredAdminUi = [
+  {
+    key: 'updates.github_release_check',
+    snippets: [
+      "'github_release_check' => '1'",
+      'name="yneko_reimu_settings[updates][github_release_check]"',
+      'function yneko_reimu_theme_update_check_enabled',
+      'add_filter( \'site_transient_update_themes\', \'yneko_reimu_theme_updater_update_transient\' )',
+      "'draft'",
+      "'prerelease'",
+      "'Yneko-Reimu-v' . $version . '.zip'"
+    ],
+    haystack: `${settingsSchema}\n${settingsPage}\n${themeUpdater}`
+  },
+  {
+    key: 'updates.cache_minutes',
+    snippets: [
+      "'cache_minutes'        => 360",
+      'name="yneko_reimu_settings[updates][cache_minutes]"',
+      'max( 5, min( 4320',
+      'function yneko_reimu_theme_update_cache_minutes',
+      'set_site_transient( yneko_reimu_theme_updater_cache_key(), $release ? $release : array(), yneko_reimu_theme_update_cache_minutes() * MINUTE_IN_SECONDS )'
+    ],
+    haystack: `${settingsSchema}\n${settingsPage}\n${themeUpdater}`
+  },
   {
     key: 'security.allow_svg_uploads',
     snippets: [
@@ -186,7 +211,7 @@ const internalCompat = [
 
 for (const item of coveredAdminUi) {
   for (const snippet of item.snippets) {
-    requireSnippet(`covered/admin UI ${item.key}`, snippet);
+    requireSnippet(`covered/admin UI ${item.key}`, snippet, item.haystack || source);
   }
 }
 

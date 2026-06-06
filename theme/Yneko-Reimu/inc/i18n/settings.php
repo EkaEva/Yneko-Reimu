@@ -135,15 +135,27 @@ function yneko_reimu_i18n_filter_locale( $locale ) {
 add_filter( 'locale', 'yneko_reimu_i18n_filter_locale', 20 );
 add_filter( 'determine_locale', 'yneko_reimu_i18n_filter_locale', 20 );
 
+function yneko_reimu_i18n_load_textdomain_for_language( $language ) {
+	$language = yneko_reimu_i18n_normalize_language( $language );
+	if ( ! $language ) {
+		return false;
+	}
+
+	$mofile = YNEKO_REIMU_DIR . '/languages/' . $language . '.mo';
+	if ( file_exists( $mofile ) ) {
+		unload_textdomain( 'yneko-reimu' );
+		return load_textdomain( 'yneko-reimu', $mofile, $language );
+	}
+
+	return false;
+}
+
 function yneko_reimu_i18n_load_frontend_textdomain() {
-	if ( is_admin() || wp_doing_ajax() || ! yneko_reimu_i18n_enabled() || 'en_US' !== yneko_reimu_i18n_current_language() ) {
+	if ( is_admin() || wp_doing_ajax() || ! yneko_reimu_i18n_enabled() ) {
 		return;
 	}
 
-	$mofile = YNEKO_REIMU_DIR . '/languages/en_US.mo';
-	if ( file_exists( $mofile ) ) {
-		load_textdomain( 'yneko-reimu', $mofile, 'en_US' );
-	}
+	yneko_reimu_i18n_load_textdomain_for_language( yneko_reimu_i18n_current_language() );
 }
 add_action( 'after_setup_theme', 'yneko_reimu_i18n_load_frontend_textdomain', 20 );
 

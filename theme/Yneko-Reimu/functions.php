@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'YNEKO_REIMU_VERSION', '0.2.14' );
+define( 'YNEKO_REIMU_VERSION', '0.2.15' );
 define( 'YNEKO_REIMU_DIR', get_template_directory() );
 define( 'YNEKO_REIMU_URI', get_template_directory_uri() );
 
@@ -16,6 +16,7 @@ require_once YNEKO_REIMU_DIR . '/inc/svg.php';
 require_once YNEKO_REIMU_DIR . '/inc/security.php';
 require_once YNEKO_REIMU_DIR . '/inc/i18n.php';
 require_once YNEKO_REIMU_DIR . '/inc/migrations.php';
+require_once YNEKO_REIMU_DIR . '/inc/theme-updater.php';
 require_once YNEKO_REIMU_DIR . '/inc/seo-compat.php';
 require_once YNEKO_REIMU_DIR . '/inc/setup.php';
 require_once YNEKO_REIMU_DIR . '/inc/enqueue.php';

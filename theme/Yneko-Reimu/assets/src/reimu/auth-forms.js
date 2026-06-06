@@ -56,6 +56,7 @@ export function createAuthForms(deps) {
         var formData = new FormData(form);
         formData.append('action', 'yneko_reimu_login');
         formData.append('nonce', config.login.nonce || '');
+        formData.append('redirect_to', window.location.href || '');
         return fetch(config.login.ajaxUrl, {
           method: 'POST',
           credentials: 'same-origin',

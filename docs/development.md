@@ -75,7 +75,7 @@ The current public baseline is recorded in `docs/maintenance-notes/complexity-ba
 
 `npm run check:auth-security` verifies the authentication email guard contract. It protects the `auth_security` defaults and sanitizers, the random device cookie (`yneko_reimu_auth_device`), transient counter dimensions, global daily budget warning, bounded alert log, native `registration_errors` / `lostpassword_errors` coverage, and the three front-end verification-code send handlers. The check aggregates the `inc/security-auth-mail.php` entrypoint and its focused modules, so keep registration, lost-password, and profile email code sends behind this helper unless a migration is documented.
 
-`npm run check:config-surface` audits the theme's configurable surface by category. It protects admin UI coverage for `security.allow_svg_uploads` and `security.comment_ip_region_lookup`, representative Customizer-owned visual settings, the v0.2.12 staged visual asset plus typography/layout controls, documented developer extension filters, and internal/legacy compatibility values that should not become admin controls. Update this gate whenever a new user-configurable behavior is added or when a developer hook is intentionally documented instead of productized.
+`npm run check:config-surface` audits the theme's configurable surface by category. It protects admin UI coverage for `updates.github_release_check`, `updates.cache_minutes`, `security.allow_svg_uploads`, and `security.comment_ip_region_lookup`, representative Customizer-owned visual settings, the v0.2.12 staged visual asset plus typography/layout controls, documented developer extension filters, and internal/legacy compatibility values that should not become admin controls. Update this gate whenever a new user-configurable behavior is added or when a developer hook is intentionally documented instead of productized.
 
 `npm run check:customizer` verifies the Customizer visual-preview contract before further decomposition. It checks the public customize hook, panel/section IDs, key setting/control IDs, and sanitizer callbacks so future helper extraction does not silently rename saved `theme_mod` or option-backed Customizer fields.
 
@@ -98,6 +98,8 @@ The post meta PHP entrypoint is `theme/Yneko-Reimu/inc/post-meta.php`. Internal 
 `npm run check:enqueue` verifies the front-end enqueue contract after PHP helper splits. It checks the public enqueue hook, critical script/style handles, third-party asset paths, `window.REIMU_CONFIG` keys, and nonce names so future asset-configuration cleanup does not silently change the front-end runtime contract.
 
 The front-end enqueue PHP entrypoint is `theme/Yneko-Reimu/inc/enqueue.php`. Internal helpers may live under `theme/Yneko-Reimu/inc/enqueue/`; currently `assets.php` owns asset versioning and vendor URL helpers, `head.php` owns critical cursor, visual asset CSS variables, typography/layout CSS variables, meta, and early theme script output, `favicon.php` owns favicon/head icon links plus root icon compatibility responses, `styles.php` owns theme stylesheet enqueueing, `config.php` owns search/front-end configuration and translated runtime messages, `vendors.php` owns optional third-party asset enqueueing, and `runtime.php` owns the main classic script plus `window.REIMU_CONFIG`. Keep script/style handles, asset paths, enqueue conditions, nonce names, and `REIMU_CONFIG` keys unchanged unless a compatibility note is added.
+
+The GitHub Release updater lives in `theme/Yneko-Reimu/inc/theme-updater.php` and is loaded from `functions.php`. It checks stable Releases only, skips draft/prerelease payloads, accepts only `Yneko-Reimu-vX.Y.Z.zip` release assets, caches results according to `yneko_reimu_settings['updates']['cache_minutes']`, and feeds WordPress through `site_transient_update_themes`. Keep update detection admin/update-context only and fail silently when GitHub is unavailable.
 
 When the settings page has a `Favicon / Apple Touch fallback` PNG/JPG, `inc/enqueue/favicon.php` keeps the configured SVG Site Icon for modern browsers and also exposes stable root URLs for search engines and legacy clients: `/favicon.ico`, `/favicon-32x32.png`, `/favicon-192x192.png`, `/apple-touch-icon.png`, and `/apple-touch-icon-precomposed.png`. Those paths are served through `template_redirect` and the WordPress `do_favicon` hook so search engines such as Bing do not receive a WordPress HTML fallback at `/favicon.ico`.
 
@@ -165,7 +167,7 @@ Settings schema PHP keeps `theme/Yneko-Reimu/inc/settings/schema.php` as the ent
 
 ## Package Checks
 
-`npm run check:package` inspects the newest ZIP in `releases/` and fails if development-only files are present, including `assets/src`, `node_modules`, `vendor`, `tools`, planning files, local-only agent files, or `assets/dist/manifest.json`.
+`npm run check:package` inspects the newest ZIP in `releases/` and fails if development-only files are present, including `assets/src`, `node_modules`, `vendor`, `tools`, planning files, local-only agent files, E2E QA docs/config/tests, or `assets/dist/manifest.json`.
 
 The package check also requires the runtime `readme.txt` to be present in the installable ZIP.
 

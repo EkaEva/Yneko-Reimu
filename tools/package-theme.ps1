@@ -131,7 +131,8 @@ $removePatterns = @(
   'assets/images/projects',
   'assets/images/search-bg.png',
   'assets/images/taichi-fill.png',
-  'assets/images/taichi-fill.svg'
+  'assets/images/taichi-fill.svg',
+  'docs/e2e-qa.md'
 )
 
 foreach ($pattern in $removePatterns) {

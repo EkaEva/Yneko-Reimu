@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.14
+Stable tag: 0.2.15
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,15 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.15 =
+
+* Adds a GitHub Release updater for stable release ZIPs so WordPress can detect and install `Yneko-Reimu-vX.Y.Z.zip` through the native theme update flow.
+* Adds General settings for enabling GitHub Release update checks and adjusting the cache window, defaulting to 360 minutes with a 5-minute minimum for local testing.
+* Adds local WordPress + Playwright E2E QA tooling for comments, login, profile, uploads, PJAX, language text, TOTP setup, and custom cursor smoke coverage.
+* Hardens front-end AJAX language loading so Chinese login 2FA prompts and profile/TOTP labels stay in the active language context.
+* Preserves in-progress TOTP setup state when profile data refreshes asynchronously.
+* Keeps E2E tooling, Playwright output, source assets, build tools, planning files, and the build manifest out of installable theme ZIPs.
 
 = 0.2.14 =
 

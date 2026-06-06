@@ -4,6 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_ajax_login() {
+	$redirect = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : home_url( '/' );
+	yneko_reimu_ajax_set_language_from_redirect( wp_validate_redirect( $redirect, home_url( '/' ) ) );
+
 	if ( ! check_ajax_referer( 'yneko_reimu_ajax_login', 'nonce', false ) ) {
 		wp_send_json_error(
 			array(

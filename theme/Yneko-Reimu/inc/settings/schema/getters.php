@@ -163,6 +163,10 @@ function yneko_reimu_settings_security() {
 	return yneko_reimu_settings_group( 'security' );
 }
 
+function yneko_reimu_settings_updates() {
+	return yneko_reimu_settings_group( 'updates' );
+}
+
 function yneko_reimu_security_allow_svg_uploads() {
 	$security = yneko_reimu_settings_security();
 	return '1' === (string) ( $security['allow_svg_uploads'] ?? '1' );

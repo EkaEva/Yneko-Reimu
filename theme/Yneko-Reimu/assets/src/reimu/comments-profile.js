@@ -572,11 +572,16 @@ export function createCommentsProfileRuntime(deps) {
       }
       var twoFactor = qs('[name="totp_enabled"]', form);
       if (twoFactor) {
-        twoFactor.checked = !!data.twoFactor;
+        var keepTwoFactorSetup = !data.twoFactor && profileTwoFactorSetupRequested && twoFactor.checked;
+        if (!keepTwoFactorSetup) {
+          twoFactor.checked = !!data.twoFactor;
+        }
         twoFactor.defaultChecked = !!data.twoFactor;
       }
       profileTwoFactorActive = !!data.twoFactor;
-      profileTwoFactorSetupRequested = false;
+      if (profileTwoFactorActive || !profileTwoFactorSetupRequested) {
+        profileTwoFactorSetupRequested = false;
+      }
       var twoFactorWrap = qs('.reimu-profile-2fa', form);
       if (twoFactorWrap) {
         twoFactorWrap.setAttribute('data-profile-2fa-active', profileTwoFactorActive ? '1' : '0');
@@ -966,6 +971,11 @@ export function createCommentsProfileRuntime(deps) {
             qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(payload.data.uri || '');
             qr.hidden = false;
           }
+          profileTwoFactorSetupRequested = !profileTwoFactorActive;
+          if (twoFactorToggle) {
+            twoFactorToggle.checked = true;
+          }
+          syncTwoFactorSetup();
           setMessage(t('profile2faGenerated', '请用认证器扫码，并输入 6 位验证码后保存。'), true);
         });
       });

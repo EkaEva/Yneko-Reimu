@@ -129,6 +129,7 @@ function yneko_reimu_sanitize_settings( $input ) {
 			$defaults['builtin_pages'],
 			array( 'projects', 'archives', 'about', 'friend' )
 		),
+		'updates'           => yneko_reimu_sanitize_update_settings( yneko_reimu_settings_group_input( $input, 'updates' ), $defaults['updates'] ),
 		'i18n'              => yneko_reimu_sanitize_i18n_settings( yneko_reimu_settings_group_input( $input, 'i18n' ), $defaults['i18n'] ),
 		'search'            => yneko_reimu_sanitize_search_settings( yneko_reimu_settings_group_input( $input, 'search' ) ),
 		'features'          => yneko_reimu_sanitize_settings_bool_group(
@@ -140,5 +141,15 @@ function yneko_reimu_sanitize_settings( $input ) {
 		'third_party'       => yneko_reimu_sanitize_third_party_settings( yneko_reimu_settings_group_input( $input, 'third_party' ), $defaults['third_party'] ),
 		'external_comments' => yneko_reimu_sanitize_external_comments_settings( yneko_reimu_settings_group_input( $input, 'external_comments' ) ),
 		'music'             => yneko_reimu_sanitize_music_items( array_key_exists( 'music', $input ) ? $input['music'] : array() ),
+	);
+}
+
+function yneko_reimu_sanitize_update_settings( $input, $defaults ) {
+	$input    = is_array( $input ) ? $input : array();
+	$defaults = is_array( $defaults ) ? $defaults : yneko_reimu_settings_update_defaults();
+
+	return array(
+		'github_release_check' => ! empty( $input['github_release_check'] ) ? '1' : '0',
+		'cache_minutes'        => max( 5, min( 4320, absint( $input['cache_minutes'] ?? $defaults['cache_minutes'] ?? 360 ) ) ),
 	);
 }

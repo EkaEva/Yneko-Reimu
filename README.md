@@ -122,7 +122,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 - SEO 与隐私提示：检测 Rank Math、Yoast、AIOSEO、SEOPress、The SEO Framework 后，主题会停用重复 meta / OG / Twitter / JSON-LD，仅保留 hreflang、sitemap 和 canonical 兼容补充。
 - GitHub OAuth：Client ID、Client Secret、Callback URL、自动创建用户和管理员 GitHub 绑定。
 - 多语言：启用状态、默认语言、英文路径前缀、语言菜单显示名、文章/页面翻译关系。
-- 常规设置：视觉预览入口、管理员体验、当前管理员账号安全、内置项目/归档/关于/友链页面开关、favicon/apple-touch 兜底图、GitHub 展示链接和赞助二维码。
+- 常规设置：视觉预览入口、管理员体验、GitHub Release 更新检测、当前管理员账号安全、内置项目/归档/关于/友链页面开关、favicon/apple-touch 兜底图、GitHub 展示链接和赞助二维码。
 - 评论设置：评论图片/GIF 上传、人工审核、大小上限、临时文件清理、驳回后清理时间、评论上传管理、公共 GIF 表情库。
 - 用户设置：用户标签、自定义标签审核、屏蔽词、七种基础特殊标签、角色头像框、用户头像上传、头像审核、头像大小上限、用户标签和头像审核管理；有待审核项目时会显示数量角标。
 - 安全设置：注册、忘记密码、资料邮箱验证码的认证邮件风控、同邮箱/IP/设备/全站预算限额、安全报警日志、管理员 SVG 上传和评论 IP 地区查询开关。
@@ -145,6 +145,10 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 #### 管理员体验
 
 `常规设置 -> 管理员体验` 中的“显示前台管理员工具条”默认关闭。关闭时，管理员登录浏览器访问前台也不会显示 WordPress 顶部工具条，并会隐藏 Rank Math 等插件的前台工具条提示；需要临时使用 Rank Math、Query Monitor 或编辑入口调试时再开启。
+
+#### 主题更新
+
+`常规设置 -> 主题更新` 默认开启 GitHub Release 更新检测。主题只读取正式 Release，跳过 draft / prerelease，并只安装 Release 附件中的 `Yneko-Reimu-vX.Y.Z.zip`，不会使用 GitHub 自动生成的源码包。更新结果会接入 WordPress 原生主题更新界面，检测失败时静默跳过，不影响前台访问。缓存时间默认 `360` 分钟，测试更新流程时可以临时改成 `5` 分钟。
 
 #### 账号安全
 
@@ -427,7 +431,7 @@ npm run package
 如果需要生成带版本号的发布包，可以直接调用打包脚本：
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.2.14
+pwsh tools/package-theme.ps1 -Version v0.2.15
 ```
 
 生成结果：
@@ -464,8 +468,8 @@ theme/Yneko-Reimu/template-parts/
 仓库内置了 `.github/workflows/release-package.yml`。当你向 GitHub 推送版本 tag 时会自动触发构建，例如：
 
 ```bash
-git tag v0.2.14
-git push origin v0.2.14
+git tag v0.2.15
+git push origin v0.2.15
 ```
 
 Action 会执行：
@@ -475,26 +479,26 @@ npm ci
 composer install --no-interaction --prefer-dist
 npm run check
 npm audit --audit-level=moderate
-pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.14.zip
+pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.15.zip
 npm run check:package
 ```
 
 随后生成并上传：
 
 ```text
-Yneko-Reimu-v0.2.14.zip
+Yneko-Reimu-v0.2.15.zip
 ```
 
 如果同名 GitHub Release 不存在，Action 会根据 tag 创建 Release；如果 Release 已存在，则会把 ZIP 上传到该 Release。也可以在 GitHub Actions 页面手动运行该 workflow，输入版本号后生成同名 artifact。
 
-推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.14`。如果手动输入 `0.2.14`，打包脚本会自动补成 `v0.2.14`。
+推荐 tag 命名使用 `vX.Y.Z`，例如 `v0.2.15`。如果手动输入 `0.2.15`，打包脚本会自动补成 `v0.2.15`。
 
 ## 开发文档
 
 - [开发与构建](docs/development.md)
 - [Hooks / Filters](docs/hooks.md)
 - [发布流程](docs/release.md)
-- [v0.2.14 发布说明](docs/release-notes-v0.2.14.md)
+- [v0.2.15 发布说明](docs/release-notes-v0.2.15.md)
 - [v0.2.4 发布说明](docs/release-notes-v0.2.4.md)
 - [Theme Check 说明](docs/theme-check.md)
 
@@ -808,6 +812,10 @@ Theme extensions, third-party services, and privacy:
 
 The General tab includes an Administrator experience group. Its "Show front-end admin toolbar" switch is off by default, keeping the front end clean for administrator browser sessions and hiding plugin toolbar prompts such as Rank Math. Enable it temporarily when you need Rank Math, Query Monitor, or edit-link debugging tools.
 
+#### Theme Updates
+
+`General -> Theme updates` enables GitHub Release update checks by default. The theme checks stable Releases only, skips drafts and prereleases, and installs only the `Yneko-Reimu-vX.Y.Z.zip` Release asset instead of GitHub-generated source archives. Results are exposed through WordPress native theme updates; failed checks are silent and do not affect the front end. The cache window defaults to `360` minutes and can be set to `5` minutes temporarily when testing update flow.
+
 #### Account Security
 
 `General -> Account security` lets the current administrator generate an authenticator secret, bind TOTP two-factor authentication by scanning a QR code, or disable two-factor authentication for the current account. It reuses the same user meta as the front-end profile modal; it is not a site-wide forced-2FA switch and does not change the self-service flow for regular comment users. Once enabled for an account, both the front-end comment login flow and the WordPress `wp-login.php` password login require the current six-digit authenticator code.
@@ -904,7 +912,7 @@ Scripts:
 To build a versioned package:
 
 ```bash
-pwsh tools/package-theme.ps1 -Version v0.2.14
+pwsh tools/package-theme.ps1 -Version v0.2.15
 ```
 
 Output:
@@ -924,19 +932,19 @@ Images and standalone SVG icons should be maintained as files: theme images in `
 The workflow `.github/workflows/release-package.yml` runs when a version tag is pushed:
 
 ```bash
-git tag v0.2.14
-git push origin v0.2.14
+git tag v0.2.15
+git push origin v0.2.15
 ```
 
 It installs Node and Composer dependencies, runs the full project check, runs `npm audit --audit-level=moderate`, packages the theme, validates the ZIP, and uploads:
 
 ```text
-Yneko-Reimu-v0.2.14.zip
+Yneko-Reimu-v0.2.15.zip
 ```
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
 
-Current release notes: [v0.2.14](docs/release-notes-v0.2.14.md).
+Current release notes: [v0.2.15](docs/release-notes-v0.2.15.md).
 
 ### Repository Layout
 

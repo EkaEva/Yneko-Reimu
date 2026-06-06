@@ -19,6 +19,7 @@ function yneko_reimu_settings_defaults() {
 		'auth_security'        => function_exists( 'yneko_reimu_auth_security_defaults' ) ? yneko_reimu_auth_security_defaults() : yneko_reimu_settings_auth_security_fallback_defaults(),
 		'security'             => yneko_reimu_settings_security_defaults(),
 		'builtin_pages'        => yneko_reimu_settings_builtin_pages_defaults(),
+		'updates'              => yneko_reimu_settings_update_defaults(),
 		'i18n'                 => function_exists( 'yneko_reimu_i18n_defaults' ) ? yneko_reimu_i18n_defaults() : yneko_reimu_settings_i18n_fallback_defaults(),
 		'search'               => yneko_reimu_settings_search_defaults(),
 		'features'             => yneko_reimu_settings_feature_defaults(),
@@ -86,6 +87,13 @@ function yneko_reimu_settings_builtin_pages_defaults() {
 		'archives' => '1',
 		'about'    => '1',
 		'friend'   => '1',
+	);
+}
+
+function yneko_reimu_settings_update_defaults() {
+	return array(
+		'github_release_check' => '1',
+		'cache_minutes'        => 360,
 	);
 }
 

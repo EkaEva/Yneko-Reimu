@@ -1,6 +1,6 @@
 {
   "name": "yneko-reimu",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "private": true,
   "description": "WordPress Classic Hybrid port inspired by hexo-theme-reimu.",
   "scripts": {
@@ -25,6 +25,12 @@
     "check:size": "node tools/check-size.mjs",
     "check:package": "node tools/check-package.mjs",
     "test:runtime": "node tools/test-runtime-smoke.mjs",
+    "wp-env": "wp-env",
+    "qa:e2e:start": "node tools/start-e2e-wp-env.mjs",
+    "qa:e2e:seed": "node tools/seed-e2e-wp-env.mjs",
+    "qa:e2e": "playwright test",
+    "qa:e2e:headed": "playwright test --headed",
+    "qa:e2e:stop": "wp-env stop",
     "report:php-complexity": "node tools/report-php-complexity.mjs",
     "lint:php": "node tools/run-phpcs.mjs",
     "check": "npm run check:js && npm run check:settings-admin && npm run check:auth-security && npm run check:config-surface && npm run check:customizer && npm run check:template-tags && npm run check:enqueue && npm run check:comments-profile && npm run check:pjax-runtime && npm run check:github-oauth && npm run check:release-readiness && npm run check:css-split && npm run build && npm run test:runtime && npm run check:assets && npm run check:i18n-contract && npm run check:i18n-messages && npm run check:size && npm run lint:php",
@@ -32,6 +38,8 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@wordpress/env": "^10.38.0",
     "esbuild": "^0.28.0",
     "qrcode": "^1.5.4",
     "vite": "^8.0.16"
