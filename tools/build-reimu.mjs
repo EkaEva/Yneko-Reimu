@@ -13,7 +13,8 @@ const cssSources = [
   'assets/src/reimu-share.css',
   'assets/src/reimu-code.css',
   'assets/src/reimu-search.css',
-  'assets/src/reimu-comments.css'
+  'assets/src/reimu-comments.css',
+  'assets/src/reimu-editor.css'
 ];
 const distRoot = resolve(themeRoot, 'assets/dist');
 
@@ -54,6 +55,10 @@ await writeFile(searchStyleOutput, `${minifyCss(searchStyleSource)}\n`);
 const commentsStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.css'), 'utf8');
 const commentsStyleOutput = resolve(themeRoot, 'assets/dist/reimu-comments.css');
 await writeFile(commentsStyleOutput, `${minifyCss(commentsStyleSource)}\n`);
+
+const editorStyleSource = await readFile(resolve(themeRoot, 'assets/src/reimu-editor.css'), 'utf8');
+const editorStyleOutput = resolve(themeRoot, 'assets/dist/reimu-editor.css');
+await writeFile(editorStyleOutput, `${minifyCss(editorStyleSource)}\n`);
 
 const qrcodeOutput = resolve(themeRoot, 'assets/dist/qrcode.js');
 

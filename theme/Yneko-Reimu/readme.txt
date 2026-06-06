@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.15
+Stable tag: 0.2.16
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,14 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.16 =
+
+* Adds native Yneko-Reimu block patterns for settings tables, Reimu code windows, TIP/INFO/WARNING notices, and technical-note article sections.
+* Adds native block style variations for core table, code, and group blocks so editor-created content receives stable Reimu classes without custom Gutenberg blocks.
+* Adds an editor-only stylesheet for closer back-end previews of guide tables, code windows, notices, and technical notes without loading front-end PJAX, comments, search, or animation runtimes.
+* Preserves Classic Hybrid loading and existing front-end script/style handles while keeping the new editor asset scoped to the block editor.
+* Documents the new writing components and keeps Mermaid handled through existing code-block and feature-toggle behavior.
 
 = 0.2.15 =
 

@@ -212,7 +212,7 @@ msgstr ""
 msgid "博客卡片"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
 msgid "补充"
 msgstr ""
 
@@ -270,6 +270,10 @@ msgstr ""
 
 #: template-parts/virtual/about.php
 msgid "创建 slug 为 about 的 WordPress 页面后，这里会自动显示你的页面正文。"
+msgstr ""
+
+#: inc/editor.php
+msgid "代码窗口"
 msgstr ""
 
 #: inc/customizer/articles.php
@@ -660,6 +664,10 @@ msgstr ""
 msgid "记住我"
 msgstr ""
 
+#: inc/editor.php
+msgid "技术笔记段落结构"
+msgstr ""
+
 #: inc/customizer/visual-assets.php
 msgid "加载/忙碌鼠标指针"
 msgstr ""
@@ -690,6 +698,10 @@ msgstr ""
 
 #: inc/customizer/restore-defaults.php
 msgid "将“%s”恢复为默认值？预览会立即更新，但只有点击“发布”后才会保存。"
+msgstr ""
+
+#: inc/editor.php
+msgid "仅在满足页面上下文时加载。"
 msgstr ""
 
 #: inc/comments/uploads/helpers.php
@@ -822,6 +834,10 @@ msgstr ""
 
 #: inc/customizer/images.php
 msgid "默认头像/角色图"
+msgstr ""
+
+#: inc/editor.php
+msgid "默认值"
 msgstr ""
 
 #: inc/customizer/social.php
@@ -1216,6 +1232,14 @@ msgstr ""
 msgid "设为 0 时跟随主题默认文章宽度。"
 msgstr ""
 
+#: inc/editor.php
+msgid "设置说明表格"
+msgstr ""
+
+#: inc/editor.php
+msgid "设置项"
+msgstr ""
+
 #: template-parts/virtual/friend.php
 msgid "申请方法"
 msgstr ""
@@ -1228,6 +1252,10 @@ msgstr ""
 msgid "生成密钥"
 msgstr ""
 
+#: inc/editor.php
+msgid "实现思路"
+msgstr ""
+
 #: inc/github-login/rendering.php
 msgid "使用 GitHub 登录"
 msgstr ""
@@ -1238,6 +1266,10 @@ msgstr ""
 
 #: inc/customizer/preset.php
 msgid "使用主题内置侧栏"
+msgstr ""
+
+#: inc/editor.php
+msgid "示例命令"
 msgstr ""
 
 #: inc/customizer/visual.php
@@ -1272,8 +1304,24 @@ msgstr ""
 msgid "输入关键词后按回车搜索。"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
 msgid "双栏说明区块"
+msgstr ""
+
+#: inc/editor.php
+msgid "说明"
+msgstr ""
+
+#: inc/editor.php
+msgid "说明块"
+msgstr ""
+
+#: inc/editor.php
+msgid "说明推荐值和可选值。"
+msgstr ""
+
+#: inc/editor.php
+msgid "说明这个选项解决什么问题。"
 msgstr ""
 
 #: comments.php
@@ -1484,7 +1532,7 @@ msgstr ""
 msgid "文章页"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
 msgid "文章引言卡片"
 msgstr ""
 
@@ -1554,6 +1602,10 @@ msgstr ""
 
 #: inc/enqueue/config.php
 msgid "下一张图片"
+msgstr ""
+
+#: inc/editor.php
+msgid "先用一两句话说明问题、结论和适用范围。"
 msgstr ""
 
 #: inc/post-meta/admin.php
@@ -1816,6 +1868,14 @@ msgstr ""
 msgid "隐藏密码"
 msgstr ""
 
+#: inc/editor.php
+msgid "影响范围"
+msgstr ""
+
+#: inc/editor.php
+msgid "影响前台展示，不改变历史内容。"
+msgstr ""
+
 #: inc/comments/badges/special.php
 msgid "用户标签"
 msgstr ""
@@ -1828,12 +1888,28 @@ msgstr ""
 msgid "用户评论图片"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
+msgid "用于插入会在前台增强为 Reimu 代码窗口的原生代码块。"
+msgstr ""
+
+#: inc/editor.php
+msgid "用于插入主题化提示、说明或警告信息。"
+msgstr ""
+
+#: inc/editor.php
 msgid "用于放置上下文、链接或轻量的延伸解释。"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
 msgid "用于放置文章中的重点信息、更新说明或推荐阅读。"
+msgstr ""
+
+#: inc/editor.php
+msgid "用于快速搭建包含摘要、提示、表格和代码窗口的说明型文章段落。"
+msgstr ""
+
+#: inc/editor.php
+msgid "用于整理设置项、默认值、说明和影响范围。"
 msgstr ""
 
 #: inc/comments/modals.php inc/comments/rendering/toolbar.php
@@ -1900,8 +1976,12 @@ msgstr ""
 msgid "阅读量"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
 msgid "在这里写下文章的核心摘要，让读者先抓住这一页最重要的情绪与信息。"
+msgstr ""
+
+#: inc/editor.php
+msgid "在这里写下需要读者特别留意的说明。"
 msgstr ""
 
 #: template-parts/content/content-none.php
@@ -1996,7 +2076,7 @@ msgstr ""
 msgid "置顶标识"
 msgstr ""
 
-#: inc/setup.php
+#: inc/editor.php
 msgid "重点"
 msgstr ""
 
@@ -2188,6 +2268,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: inc/editor.php
+msgid "INFO 说明块"
+msgstr ""
+
 #: inc/widgets.php
 msgid "Main Reimu sidebar."
 msgstr ""
@@ -2228,8 +2312,16 @@ msgstr ""
 msgid "Projects"
 msgstr ""
 
+#: inc/editor.php
+msgid "Reimu 代码窗口"
+msgstr ""
+
 #: inc/post-meta/admin.php
 msgid "Reimu 设置"
+msgstr ""
+
+#: inc/editor.php
+msgid "Reimu 设置说明表格"
 msgstr ""
 
 #: template-parts/layout/site-header.php
@@ -2252,6 +2344,10 @@ msgstr ""
 msgid "This GitHub email already belongs to an existing WordPress account. Please log in normally first, then bind GitHub."
 msgstr ""
 
+#: inc/editor.php
+msgid "TIP 提示块"
+msgstr ""
+
 #: inc/post-meta/admin.php
 msgid "TOC"
 msgstr ""
@@ -2264,11 +2360,15 @@ msgstr ""
 msgid "WARNING"
 msgstr ""
 
+#: inc/editor.php
+msgid "WARNING 警告块"
+msgstr ""
+
 #: inc/template-tags/content-tools/home-categories.php
 msgid "Yneko"
 msgstr ""
 
-#: inc/setup.php template-parts/layout/banner.php
+#: inc/editor.php template-parts/layout/banner.php
 msgid "Yneko-Reimu"
 msgstr ""
 

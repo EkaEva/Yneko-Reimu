@@ -1,6 +1,6 @@
 {
   "name": "yneko-reimu",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "private": true,
   "description": "WordPress Classic Hybrid port inspired by hexo-theme-reimu.",
   "scripts": {
@@ -22,6 +22,7 @@
     "check:assets": "node tools/check-assets.mjs",
     "check:i18n-contract": "node tools/check-i18n-contract.mjs",
     "check:i18n-messages": "node tools/check-i18n-messages.mjs",
+    "check:editor": "node tools/check-editor-contract.mjs",
     "check:size": "node tools/check-size.mjs",
     "check:package": "node tools/check-package.mjs",
     "test:runtime": "node tools/test-runtime-smoke.mjs",
@@ -33,7 +34,7 @@
     "qa:e2e:stop": "wp-env stop",
     "report:php-complexity": "node tools/report-php-complexity.mjs",
     "lint:php": "node tools/run-phpcs.mjs",
-    "check": "npm run check:js && npm run check:settings-admin && npm run check:auth-security && npm run check:config-surface && npm run check:customizer && npm run check:template-tags && npm run check:enqueue && npm run check:comments-profile && npm run check:pjax-runtime && npm run check:github-oauth && npm run check:release-readiness && npm run check:css-split && npm run build && npm run test:runtime && npm run check:assets && npm run check:i18n-contract && npm run check:i18n-messages && npm run check:size && npm run lint:php",
+    "check": "npm run check:js && npm run check:settings-admin && npm run check:auth-security && npm run check:config-surface && npm run check:customizer && npm run check:template-tags && npm run check:enqueue && npm run check:comments-profile && npm run check:pjax-runtime && npm run check:github-oauth && npm run check:release-readiness && npm run check:css-split && npm run check:editor && npm run build && npm run test:runtime && npm run check:assets && npm run check:i18n-contract && npm run check:i18n-messages && npm run check:size && npm run lint:php",
     "package": "npm run build && node tools/package-theme.mjs"
   },
   "license": "MIT",

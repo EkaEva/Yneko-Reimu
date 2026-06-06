@@ -29,7 +29,7 @@ const forbiddenPatterns = [
   /^Yneko-Reimu\/docs\/release\.md$/,
   /^Yneko-Reimu\/docs\/hooks\.md$/,
   /^Yneko-Reimu\/docs\/maintenance-notes\//,
-  /^Yneko-Reimu\/docs\/release-notes-v(?!0\.2\.15\.md$).+\.md$/,
+  /^Yneko-Reimu\/docs\/release-notes-v(?!0\.2\.16\.md$).+\.md$/,
   /^Yneko-Reimu\/languages\/.*\.po$/,
   /^Yneko-Reimu\/languages\/.*\.pot$/
 ];

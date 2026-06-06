@@ -759,7 +759,9 @@ body.error404[data-theme="dark"] #header::after {
   height: 8px;
 }
 
-.yneko-guide-field-table {
+.wp-block-table.is-style-reimu-field-table table,
+.wp-block-table.yneko-guide-field-table table,
+table.yneko-guide-field-table {
   width: max-content;
   min-width: 1120px;
   color: inherit;
@@ -772,13 +774,23 @@ body.error404[data-theme="dark"] #header::after {
 
 .article-entry .yneko-guide-field-table th,
 .article-entry .yneko-guide-field-table td,
-.yneko-guide-field-table th,
-.yneko-guide-field-table td {
+.article-entry .wp-block-table.is-style-reimu-field-table th,
+.article-entry .wp-block-table.is-style-reimu-field-table td,
+.article-entry .wp-block-table.yneko-guide-field-table th,
+.article-entry .wp-block-table.yneko-guide-field-table td,
+.wp-block-table.is-style-reimu-field-table th,
+.wp-block-table.is-style-reimu-field-table td,
+.wp-block-table.yneko-guide-field-table th,
+.wp-block-table.yneko-guide-field-table td,
+table.yneko-guide-field-table th,
+table.yneko-guide-field-table td {
   text-align: left !important;
   vertical-align: top;
 }
 
-.yneko-guide-field-table th {
+.wp-block-table.is-style-reimu-field-table th,
+.wp-block-table.yneko-guide-field-table th,
+table.yneko-guide-field-table th {
   padding: 0 24px 8px 0;
   color: #ff5252;
   border-bottom: 3px solid var(--guide-line);
@@ -786,13 +798,19 @@ body.error404[data-theme="dark"] #header::after {
   white-space: nowrap;
 }
 
-.yneko-guide-field-table td {
+.wp-block-table.is-style-reimu-field-table td,
+.wp-block-table.yneko-guide-field-table td,
+table.yneko-guide-field-table td {
   padding: 8px 24px 8px 0;
   border-bottom: 1px solid var(--guide-line);
 }
 
-.yneko-guide-field-table td:first-child,
-.yneko-guide-field-table th:first-child {
+.wp-block-table.is-style-reimu-field-table td:first-child,
+.wp-block-table.is-style-reimu-field-table th:first-child,
+.wp-block-table.yneko-guide-field-table td:first-child,
+.wp-block-table.yneko-guide-field-table th:first-child,
+table.yneko-guide-field-table td:first-child,
+table.yneko-guide-field-table th:first-child {
   width: 150px;
   padding-left: 0;
   color: inherit;
@@ -802,15 +820,25 @@ body.error404[data-theme="dark"] #header::after {
 
 .article-entry .yneko-guide-field-table td:last-child,
 .article-entry .yneko-guide-field-table th:last-child,
-.yneko-guide-field-table td:last-child,
-.yneko-guide-field-table th:last-child {
+.article-entry .wp-block-table.is-style-reimu-field-table td:last-child,
+.article-entry .wp-block-table.is-style-reimu-field-table th:last-child,
+.article-entry .wp-block-table.yneko-guide-field-table td:last-child,
+.article-entry .wp-block-table.yneko-guide-field-table th:last-child,
+.wp-block-table.is-style-reimu-field-table td:last-child,
+.wp-block-table.is-style-reimu-field-table th:last-child,
+.wp-block-table.yneko-guide-field-table td:last-child,
+.wp-block-table.yneko-guide-field-table th:last-child,
+table.yneko-guide-field-table td:last-child,
+table.yneko-guide-field-table th:last-child {
   padding-right: 0;
   text-align: left !important;
   white-space: normal;
 }
 
-.yneko-guide-field-table code,
-.yneko-guide-field-table .guide-code-pill {
+.wp-block-table.is-style-reimu-field-table code,
+.wp-block-table.yneko-guide-field-table code,
+table.yneko-guide-field-table code,
+table.yneko-guide-field-table .guide-code-pill {
   display: inline-block;
   margin: 0 2px;
   padding: 1px 7px;
@@ -844,7 +872,9 @@ body.error404[data-theme="dark"] #header::after {
     font-size: 1.05em;
   }
 
-  .yneko-guide-field-table {
+  .wp-block-table.is-style-reimu-field-table table,
+  .wp-block-table.yneko-guide-field-table table,
+  table.yneko-guide-field-table {
     min-width: 920px;
   }
 }

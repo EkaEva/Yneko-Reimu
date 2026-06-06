@@ -13,6 +13,7 @@ const sharePath = resolve(themeRoot, 'assets/src/reimu-share.css');
 const codePath = resolve(themeRoot, 'assets/src/reimu-code.css');
 const searchPath = resolve(themeRoot, 'assets/src/reimu-search.css');
 const commentsPath = resolve(themeRoot, 'assets/src/reimu-comments.css');
+const editorPath = resolve(themeRoot, 'assets/src/reimu-editor.css');
 const buildPath = resolve(root, 'tools/build-reimu.mjs');
 const sizePath = resolve(root, 'tools/check-size.mjs');
 const adapterCss = await readFile(adapterPath, 'utf8');
@@ -23,7 +24,8 @@ const shareCss = await readFile(sharePath, 'utf8');
 const codeCss = await readFile(codePath, 'utf8');
 const searchCss = await readFile(searchPath, 'utf8');
 const commentsCss = await readFile(commentsPath, 'utf8');
-const combinedCss = `${baseCss}\n${adapterCss}\n${playerCss}\n${photoswipeCss}\n${shareCss}\n${codeCss}\n${searchCss}\n${commentsCss}`;
+const editorCss = await readFile(editorPath, 'utf8');
+const combinedCss = `${baseCss}\n${adapterCss}\n${playerCss}\n${photoswipeCss}\n${shareCss}\n${codeCss}\n${searchCss}\n${commentsCss}\n${editorCss}`;
 const buildSource = await readFile(buildPath, 'utf8');
 const sizeSource = await readFile(sizePath, 'utf8');
 let failed = false;
@@ -73,7 +75,8 @@ for (const source of [
   'assets/src/reimu-share.css',
   'assets/src/reimu-code.css',
   'assets/src/reimu-search.css',
-  'assets/src/reimu-comments.css'
+  'assets/src/reimu-comments.css',
+  'assets/src/reimu-editor.css'
 ]) {
   if (!buildSource.includes(source)) {
     fail(`build-reimu.mjs must keep ${source} in cssSources.`);
@@ -106,6 +109,10 @@ if (!sizeSource.includes("'assets/dist/reimu-search.css', 16 * 1024")) {
 
 if (!sizeSource.includes("'assets/dist/reimu-comments.css', 52 * 1024")) {
   fail('check-size.mjs must keep the reimu-comments.css 52 KB budget.');
+}
+
+if (!sizeSource.includes("'assets/dist/reimu-editor.css', 20 * 1024")) {
+  fail('check-size.mjs must keep the reimu-editor.css 20 KB budget.');
 }
 
 for (const line of cssSplitSummary()) {

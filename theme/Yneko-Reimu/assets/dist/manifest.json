@@ -14,7 +14,8 @@
     "assets/src/reimu-share.css",
     "assets/src/reimu-code.css",
     "assets/src/reimu-search.css",
-    "assets/src/reimu-comments.css"
+    "assets/src/reimu-comments.css",
+    "assets/src/reimu-editor.css"
   ],
   "outputs": [
     "assets/dist/admin-settings.js",
@@ -24,6 +25,7 @@
     "assets/dist/reimu-code.css",
     "assets/dist/reimu-comments.css",
     "assets/dist/reimu-comments.js",
+    "assets/dist/reimu-editor.css",
     "assets/dist/reimu-photoswipe.css",
     "assets/dist/reimu-photoswipe.js",
     "assets/dist/reimu-player.css",
@@ -42,6 +44,7 @@
     "assets/dist/reimu-code.css": 3601,
     "assets/dist/reimu-comments.css": 48182,
     "assets/dist/reimu-comments.js": 73998,
+    "assets/dist/reimu-editor.css": 5588,
     "assets/dist/reimu-photoswipe.css": 1842,
     "assets/dist/reimu-photoswipe.js": 5709,
     "assets/dist/reimu-player.css": 9505,
@@ -49,7 +52,7 @@
     "assets/dist/reimu-search.js": 9982,
     "assets/dist/reimu-share.css": 2940,
     "assets/dist/reimu-share.js": 4695,
-    "assets/dist/reimu.css": 102690,
+    "assets/dist/reimu.css": 104357,
     "assets/dist/reimu.js": 50521
   }
 }
