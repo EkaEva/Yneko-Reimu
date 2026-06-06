@@ -23,41 +23,7 @@ function yneko_reimu_render_settings_general_panel( $context ) {
 			<?php yneko_reimu_admin_bilingual_description( '默认关闭，前台保持干净并隐藏 Rank Math 等插件工具条提示。需要临时调试 Rank Math、Query Monitor 或编辑入口时再开启。', 'Disabled by default to keep the front end clean and hide plugin toolbar prompts such as Rank Math. Enable it temporarily for Rank Math, Query Monitor, or edit-link debugging.' ); ?>
 		<?php yneko_reimu_settings_group_close(); ?>
 
-		<?php yneko_reimu_settings_group_open( '账号安全', 'Account security', '这里管理当前管理员账号的认证器二次认证，和前台个人资料弹窗使用同一套 TOTP 数据。', 'Manage authenticator-app two-factor authentication for the current administrator account. It uses the same TOTP data as the front-end profile modal.' ); ?>
-			<div class="yneko-reimu-admin-totp" data-yneko-admin-totp data-nonce="<?php echo esc_attr( $admin_totp['nonce'] ); ?>" data-enabled="<?php echo $admin_totp['enabled'] ? '1' : '0'; ?>" data-qrcode-src="<?php echo esc_url( YNEKO_REIMU_URI . '/assets/dist/qrcode.js' ); ?>">
-				<span class="yneko-reimu-admin-totp-status<?php echo $admin_totp['enabled'] ? ' is-enabled' : ''; ?>" data-yneko-admin-totp-status><?php echo wp_kses_post( $admin_totp['enabled'] ? yneko_reimu_admin_bilingual_text( '已开启', 'Enabled' ) : yneko_reimu_admin_bilingual_text( '未开启', 'Disabled' ) ); ?></span>
-				<?php if ( $admin_totp_available ) : ?>
-					<div class="yneko-reimu-admin-totp-setup" data-yneko-admin-totp-setup hidden>
-						<img class="yneko-reimu-admin-totp-qr" data-yneko-admin-totp-qr alt="">
-						<div>
-							<div class="yneko-reimu-admin-totp-secret" data-yneko-admin-totp-secret></div>
-							<p class="description"><?php yneko_reimu_admin_bilingual_label( '用认证器 App 扫码，或手动输入密钥。', 'Scan with an authenticator app, or enter the secret manually.' ); ?></p>
-						</div>
-					</div>
-					<div class="yneko-reimu-admin-totp-actions">
-						<button type="button" class="button" data-yneko-admin-totp-generate><?php yneko_reimu_admin_bilingual_label( '生成认证器密钥', 'Generate authenticator secret' ); ?></button>
-						<input class="small-text" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" data-yneko-admin-totp-code>
-						<button type="button" class="button<?php echo $admin_totp['enabled'] ? '' : ' button-primary'; ?>" data-yneko-admin-totp-toggle><?php echo wp_kses_post( $admin_totp['enabled'] ? yneko_reimu_admin_bilingual_text( '关闭二次认证', 'Disable two-factor authentication' ) : yneko_reimu_admin_bilingual_text( '启用二次认证', 'Enable two-factor authentication' ) ); ?></button>
-					</div>
-					<div class="yneko-reimu-admin-totp-recovery" data-yneko-admin-totp-recovery<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>>
-						<div class="yneko-reimu-admin-totp-recovery__header">
-							<strong><?php yneko_reimu_admin_bilingual_label( '一次性恢复码', 'One-time recovery codes' ); ?></strong>
-							<span class="description" data-yneko-admin-totp-recovery-count><?php echo esc_html( sprintf( yneko_reimu_admin_prefers_zh() ? '剩余 %d 个' : '%d remaining', absint( $admin_totp['recoveryCount'] ?? 0 ) ) ); ?></span>
-						</div>
-						<p class="description"><?php yneko_reimu_admin_bilingual_label( '恢复码只在生成时显示明文，每个码只能使用一次。请离线保存，不要截图公开分享。', 'Recovery codes are shown in plain text only when generated. Each code can be used once. Save them offline and do not share screenshots publicly.' ); ?></p>
-						<pre class="yneko-reimu-admin-totp-recovery__codes" data-yneko-admin-totp-recovery-codes hidden></pre>
-						<div class="yneko-reimu-admin-totp-actions">
-							<button type="button" class="button" data-yneko-admin-totp-recovery-generate><?php yneko_reimu_admin_bilingual_label( '重新生成恢复码', 'Regenerate recovery codes' ); ?></button>
-							<button type="button" class="button" data-yneko-admin-totp-recovery-copy hidden><?php yneko_reimu_admin_bilingual_label( '复制恢复码', 'Copy recovery codes' ); ?></button>
-						</div>
-					</div>
-					<p class="yneko-reimu-admin-totp-message" data-yneko-admin-totp-message></p>
-					<?php yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口和后台 wp-login.php 登录时都需要输入认证器验证码；如果认证器不可用，可使用一个未用过的一次性恢复码登录。', 'After enabling it, this account must enter an authenticator code when logging in through the front-end comment login and backend wp-login.php. If the authenticator is unavailable, use an unused one-time recovery code.' ); ?>
-				<?php else : ?>
-					<?php yneko_reimu_admin_bilingual_description( '二次认证模块尚未加载，无法在后台管理。', 'The two-factor module is not loaded yet, so it cannot be managed in the admin page.' ); ?>
-				<?php endif; ?>
-			</div>
-		<?php yneko_reimu_settings_group_close(); ?>
+		<?php yneko_reimu_render_settings_admin_totp_group( $admin_totp, $admin_totp_available ); ?>
 
 		<?php yneko_reimu_settings_group_open( '内置页面', 'Built-in pages', '控制主题内置虚拟页面是否可访问，并同步影响主题默认导航。', 'Control whether built-in virtual pages are available and whether default theme navigation includes them.' ); ?>
 			<input type="hidden" name="yneko_reimu_settings[builtin_pages][_present]" value="1">
@@ -89,5 +55,69 @@ function yneko_reimu_render_settings_general_panel( $context ) {
 			</div>
 		<?php yneko_reimu_settings_group_close(); ?>
 	</section>
+	<?php
+}
+
+function yneko_reimu_render_settings_admin_totp_group( $admin_totp, $admin_totp_available ) {
+	?>
+	<?php yneko_reimu_settings_group_open( '账号安全', 'Account security', '这里管理当前管理员账号的认证器二次认证，和前台个人资料弹窗使用同一套 TOTP 数据。', 'Manage authenticator-app two-factor authentication for the current administrator account. It uses the same TOTP data as the front-end profile modal.' ); ?>
+		<div class="yneko-reimu-admin-totp" data-yneko-admin-totp data-nonce="<?php echo esc_attr( $admin_totp['nonce'] ); ?>" data-enabled="<?php echo $admin_totp['enabled'] ? '1' : '0'; ?>" data-qrcode-src="<?php echo esc_url( YNEKO_REIMU_URI . '/assets/dist/qrcode.js' ); ?>">
+			<?php yneko_reimu_render_settings_admin_totp_status( $admin_totp ); ?>
+			<?php if ( $admin_totp_available ) : ?>
+				<?php yneko_reimu_render_settings_admin_totp_setup(); ?>
+				<?php yneko_reimu_render_settings_admin_totp_actions( $admin_totp ); ?>
+				<?php yneko_reimu_render_settings_admin_totp_recovery( $admin_totp ); ?>
+				<p class="yneko-reimu-admin-totp-message" data-yneko-admin-totp-message></p>
+				<?php yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口和后台 wp-login.php 登录时都需要输入认证器验证码；如果认证器不可用，可使用一个未用过的一次性恢复码登录。', 'After enabling it, this account must enter an authenticator code when logging in through the front-end comment login and backend wp-login.php. If the authenticator is unavailable, use an unused one-time recovery code.' ); ?>
+			<?php else : ?>
+				<?php yneko_reimu_admin_bilingual_description( '二次认证模块尚未加载，无法在后台管理。', 'The two-factor module is not loaded yet, so it cannot be managed in the admin page.' ); ?>
+			<?php endif; ?>
+		</div>
+	<?php yneko_reimu_settings_group_close(); ?>
+	<?php
+}
+
+function yneko_reimu_render_settings_admin_totp_status( $admin_totp ) {
+	?>
+	<span class="yneko-reimu-admin-totp-status<?php echo $admin_totp['enabled'] ? ' is-enabled' : ''; ?>" data-yneko-admin-totp-status><?php echo wp_kses_post( $admin_totp['enabled'] ? yneko_reimu_admin_bilingual_text( '已开启', 'Enabled' ) : yneko_reimu_admin_bilingual_text( '未开启', 'Disabled' ) ); ?></span>
+	<?php
+}
+
+function yneko_reimu_render_settings_admin_totp_setup() {
+	?>
+	<div class="yneko-reimu-admin-totp-setup" data-yneko-admin-totp-setup hidden>
+		<img class="yneko-reimu-admin-totp-qr" data-yneko-admin-totp-qr alt="">
+		<div>
+			<div class="yneko-reimu-admin-totp-secret" data-yneko-admin-totp-secret></div>
+			<p class="description"><?php yneko_reimu_admin_bilingual_label( '用认证器 App 扫码，或手动输入密钥。', 'Scan with an authenticator app, or enter the secret manually.' ); ?></p>
+		</div>
+	</div>
+	<?php
+}
+
+function yneko_reimu_render_settings_admin_totp_actions( $admin_totp ) {
+	?>
+	<div class="yneko-reimu-admin-totp-actions">
+		<button type="button" class="button" data-yneko-admin-totp-generate><?php yneko_reimu_admin_bilingual_label( '生成认证器密钥', 'Generate authenticator secret' ); ?></button>
+		<input class="small-text" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" data-yneko-admin-totp-code>
+		<button type="button" class="button<?php echo $admin_totp['enabled'] ? '' : ' button-primary'; ?>" data-yneko-admin-totp-toggle><?php echo wp_kses_post( $admin_totp['enabled'] ? yneko_reimu_admin_bilingual_text( '关闭二次认证', 'Disable two-factor authentication' ) : yneko_reimu_admin_bilingual_text( '启用二次认证', 'Enable two-factor authentication' ) ); ?></button>
+	</div>
+	<?php
+}
+
+function yneko_reimu_render_settings_admin_totp_recovery( $admin_totp ) {
+	?>
+	<div class="yneko-reimu-admin-totp-recovery" data-yneko-admin-totp-recovery<?php echo $admin_totp['enabled'] ? '' : ' hidden'; ?>>
+		<div class="yneko-reimu-admin-totp-recovery__header">
+			<strong><?php yneko_reimu_admin_bilingual_label( '一次性恢复码', 'One-time recovery codes' ); ?></strong>
+			<span class="description" data-yneko-admin-totp-recovery-count><?php echo esc_html( sprintf( yneko_reimu_admin_prefers_zh() ? '剩余 %d 个' : '%d remaining', absint( $admin_totp['recoveryCount'] ?? 0 ) ) ); ?></span>
+		</div>
+		<p class="description"><?php yneko_reimu_admin_bilingual_label( '恢复码只在生成时显示明文，每个码只能使用一次。请离线保存，不要截图公开分享。', 'Recovery codes are shown in plain text only when generated. Each code can be used once. Save them offline and do not share screenshots publicly.' ); ?></p>
+		<pre class="yneko-reimu-admin-totp-recovery__codes" data-yneko-admin-totp-recovery-codes hidden></pre>
+		<div class="yneko-reimu-admin-totp-actions">
+			<button type="button" class="button" data-yneko-admin-totp-recovery-generate><?php yneko_reimu_admin_bilingual_label( '重新生成恢复码', 'Regenerate recovery codes' ); ?></button>
+			<button type="button" class="button" data-yneko-admin-totp-recovery-copy hidden><?php yneko_reimu_admin_bilingual_label( '复制恢复码', 'Copy recovery codes' ); ?></button>
+		</div>
+	</div>
 	<?php
 }

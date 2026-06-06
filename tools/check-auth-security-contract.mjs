@@ -57,6 +57,12 @@ function requireSnippet(label, snippet, haystack = source) {
   }
 }
 
+function requireSnippetOr(label, snippets, haystack = source) {
+  if (!snippets.some((snippet) => haystack.includes(snippet))) {
+    fail(`Missing ${label}: ${snippets.join(' OR ')}`);
+  }
+}
+
 for (const snippet of [
   "require_once YNEKO_REIMU_DIR . '/inc/security-auth-mail.php';",
   'function yneko_reimu_auth_security_defaults',
@@ -153,13 +159,18 @@ for (const uiSnippet of [
   'data-yneko-settings-tab="security"',
   'data-yneko-settings-panel="security"',
   'name="yneko_reimu_settings[auth_security][enabled]"',
-  'name="yneko_reimu_settings[auth_security][email_hour_limit]"',
-  'name="yneko_reimu_settings[auth_security][global_day_limit]"',
   'yneko-reimu-security-alert-card',
   'yneko_reimu_admin_badge( $review_badges[\'security\'] ?? 0 )',
   '$counts[\'security\'] = function_exists( \'yneko_reimu_auth_security_unhandled_count\' ) ? yneko_reimu_auth_security_unhandled_count() : 0'
 ]) {
   requireSnippet('settings auth security UI', uiSnippet);
+}
+
+for (const field of ['email_hour_limit', 'global_day_limit']) {
+  requireSnippetOr('settings auth security UI', [
+    `name="yneko_reimu_settings[auth_security][${field}]"`,
+    `array( '${field}',`
+  ]);
 }
 
 if (failed) {

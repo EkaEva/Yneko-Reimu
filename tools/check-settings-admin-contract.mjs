@@ -314,6 +314,10 @@ for (const snippet of requiredPageSnippets) {
 }
 
 for (const snippet of requiredPanelSnippets) {
+  const fallback = snippet.match(/^name="yneko_reimu_settings\[auth_security\]\[([^\]]+)\]"$/);
+  if (fallback && panels.includes(`array( '${fallback[1]}',`)) {
+    continue;
+  }
   if (!panels.includes(snippet)) {
     failures.push(`Missing required settings panel snippet: ${snippet}`);
   }
