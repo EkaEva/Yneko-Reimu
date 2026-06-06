@@ -26,9 +26,9 @@ pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.15.zip
 
 ## Package Boundaries
 
-The ZIP includes PHP templates, `inc/`, `template-parts/`, translations, runtime images, minified assets, `style.css`, `theme.json`, `screenshot.png`, `readme.txt`, and public docs/credits.
+The ZIP includes PHP templates, `inc/`, `template-parts/`, translations, runtime images, minified assets, `style.css`, `theme.json`, `screenshot.png`, runtime `readme.txt`, runtime `LICENSE.txt`, `NOTICE.md`, and the current version release notes.
 
-The ZIP excludes development source mirrors, source CSS/JS, build tools, `manifest.json`, cache folders, large PNG background fallbacks, local E2E QA docs/config/tests, and local release artifacts.
+The ZIP excludes repository README files, historical release notes, development/QA/maintenance docs, development source mirrors, source CSS/JS, build tools, `manifest.json`, cache folders, large PNG background fallbacks, local E2E QA config/tests, and local release artifacts.
 
 GitHub Release update checks expect the stable release asset to be named `Yneko-Reimu-vX.Y.Z.zip`. Do not rely on GitHub's generated source archives for theme updates.
 

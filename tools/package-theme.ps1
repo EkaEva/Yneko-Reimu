@@ -74,13 +74,11 @@ $allowedFiles = @(
 )
 
 $rootFiles = @(
-  'LICENSE',
-  'NOTICE.md',
-  'README.md'
+  'NOTICE.md'
 )
 
-$rootDirs = @(
-  'docs'
+$docFiles = @(
+  "release-notes-$Version.md"
 )
 
 New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
@@ -112,11 +110,12 @@ foreach ($file in $rootFiles) {
   }
 }
 
-foreach ($rootDir in $rootDirs) {
-  $source = Join-Path $repoDir $rootDir
+foreach ($docFile in $docFiles) {
+  $source = Join-Path $repoDir (Join-Path 'docs' $docFile)
   if (Test-Path -LiteralPath $source) {
-    $dest = Join-Path $stageTheme $rootDir
-    Copy-Item -LiteralPath $source -Destination $dest -Recurse -Force
+    $dest = Join-Path $stageTheme (Join-Path 'docs' $docFile)
+    New-Item -ItemType Directory -Path (Split-Path -Parent $dest) -Force | Out-Null
+    Copy-Item -LiteralPath $source -Destination $dest -Force
   }
 }
 
@@ -131,8 +130,7 @@ $removePatterns = @(
   'assets/images/projects',
   'assets/images/search-bg.png',
   'assets/images/taichi-fill.png',
-  'assets/images/taichi-fill.svg',
-  'docs/e2e-qa.md'
+  'assets/images/taichi-fill.svg'
 )
 
 foreach ($pattern in $removePatterns) {

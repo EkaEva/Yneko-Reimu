@@ -13,10 +13,20 @@ const forbiddenPatterns = [
   /^Yneko-Reimu\/assets\/dist\/manifest\.json$/,
   /^Yneko-Reimu\/PROJECT\.md$/,
   /^Yneko-Reimu\/AGENTS\.md$/,
+  /^Yneko-Reimu\/README\.md$/,
   /^Yneko-Reimu\/task_plan\.md$/,
   /^Yneko-Reimu\/findings\.md$/,
   /^Yneko-Reimu\/progress\.md$/,
-  /^Yneko-Reimu\/docs\/e2e-qa\.md$/
+  /^Yneko-Reimu\/docs\/development\.md$/,
+  /^Yneko-Reimu\/docs\/e2e-qa\.md$/,
+  /^Yneko-Reimu\/docs\/email-totp-qa\.md$/,
+  /^Yneko-Reimu\/docs\/github-oauth-qa\.md$/,
+  /^Yneko-Reimu\/docs\/comments-profile-contract\.md$/,
+  /^Yneko-Reimu\/docs\/theme-check\.md$/,
+  /^Yneko-Reimu\/docs\/release\.md$/,
+  /^Yneko-Reimu\/docs\/hooks\.md$/,
+  /^Yneko-Reimu\/docs\/maintenance-notes\//,
+  /^Yneko-Reimu\/docs\/release-notes-v(?!0\.2\.15\.md$).+\.md$/
 ];
 
 async function latestZip() {

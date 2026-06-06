@@ -167,9 +167,9 @@ Settings schema PHP keeps `theme/Yneko-Reimu/inc/settings/schema.php` as the ent
 
 ## Package Checks
 
-`npm run check:package` inspects the newest ZIP in `releases/` and fails if development-only files are present, including `assets/src`, `node_modules`, `vendor`, `tools`, planning files, local-only agent files, E2E QA docs/config/tests, or `assets/dist/manifest.json`.
+`npm run check:package` inspects the newest ZIP in `releases/` and fails if development-only files are present, including `assets/src`, `node_modules`, `vendor`, `tools`, planning files, local-only agent files, repository README files, historical release notes, development/QA/maintenance docs, E2E QA config/tests, or `assets/dist/manifest.json`.
 
-The package check also requires the runtime `readme.txt` to be present in the installable ZIP.
+The package check also requires runtime `readme.txt` and the current version release notes to be present in the installable ZIP. Complete development docs, QA notes, maintenance notes, and historical release notes stay in the GitHub repository instead of the theme package.
 
 ## Performance Defaults
 
