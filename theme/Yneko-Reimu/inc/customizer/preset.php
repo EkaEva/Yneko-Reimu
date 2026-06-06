@@ -4,6 +4,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_register_customizer_preset_section( $wp_customize ) {
+	yneko_reimu_register_customizer_preset_base_section( $wp_customize );
+	yneko_reimu_register_customizer_strict_clone_control( $wp_customize );
+	yneko_reimu_register_customizer_nav_controls( $wp_customize );
+	yneko_reimu_register_customizer_home_category_controls( $wp_customize );
+	yneko_reimu_register_customizer_player_position_control( $wp_customize );
+}
+
+function yneko_reimu_register_customizer_preset_base_section( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_clone_preset',
 		array(
@@ -13,7 +21,9 @@ function yneko_reimu_register_customizer_preset_section( $wp_customize ) {
 			'priority'    => 1,
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_strict_clone_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_strict_clone',
 		array(
@@ -30,7 +40,9 @@ function yneko_reimu_register_customizer_preset_section( $wp_customize ) {
 			'type'        => 'checkbox',
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_nav_controls( $wp_customize ) {
 	foreach ( yneko_reimu_default_nav_items() as $key => $item ) {
 		$wp_customize->add_setting(
 			'yneko_reimu_nav_' . $key . '_label',
@@ -72,7 +84,9 @@ function yneko_reimu_register_customizer_preset_section( $wp_customize ) {
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_home_category_controls( $wp_customize ) {
 	for ( $i = 1; $i <= 2; $i++ ) {
 		$defaults = yneko_reimu_home_category_capsules();
 		$default  = $defaults[ $i - 1 ];
@@ -127,7 +141,9 @@ function yneko_reimu_register_customizer_preset_section( $wp_customize ) {
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_player_position_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_player_position',
 		array(

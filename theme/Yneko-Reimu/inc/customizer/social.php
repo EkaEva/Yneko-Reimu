@@ -4,7 +4,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_settings_defaults ) {
+	yneko_reimu_register_customizer_social_base_section( $wp_customize );
+	yneko_reimu_register_customizer_share_heading( $wp_customize );
+	yneko_reimu_register_customizer_share_controls( $wp_customize );
+	yneko_reimu_register_customizer_social_sidebar_heading( $wp_customize );
+	yneko_reimu_register_customizer_social_sidebar_controls( $wp_customize, $reimu_settings_defaults );
+}
 
+function yneko_reimu_register_customizer_social_base_section( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_social',
 		array(
@@ -13,7 +20,9 @@ function yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_s
 			'panel'       => 'yneko_reimu_panel',
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_share_heading( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_social_share_heading',
 		array(
@@ -33,7 +42,9 @@ function yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_s
 			)
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_share_controls( $wp_customize ) {
 	foreach ( yneko_reimu_share_definitions() as $key => $item ) {
 		$id = 'yneko_reimu_share_' . $key . '_enabled';
 		$wp_customize->add_setting(
@@ -56,7 +67,9 @@ function yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_s
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_social_sidebar_heading( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_social_sidebar_heading',
 		array(
@@ -76,7 +89,9 @@ function yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_s
 			)
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_social_sidebar_controls( $wp_customize, $reimu_settings_defaults ) {
 	foreach ( yneko_reimu_social_definitions() as $key => $item ) {
 		$enabled_id = 'yneko_reimu_social_' . $key . '_enabled';
 		$wp_customize->add_setting(
@@ -100,63 +115,71 @@ function yneko_reimu_register_customizer_social_section( $wp_customize, $reimu_s
 		);
 
 		if ( 'github' === $key ) {
-			$wp_customize->add_setting(
-				'yneko_reimu_settings[github_url]',
-				array(
-					'default'           => $reimu_settings_defaults['github_url'] ?? '',
-					'sanitize_callback' => 'yneko_reimu_sanitize_url_or_empty',
-					'type'              => 'option',
-				)
-			);
-			$wp_customize->add_control(
-				'yneko_reimu_settings[github_url]',
-				array(
-					'label'       => __( 'GitHub 链接', 'yneko-reimu' ),
-					'description' => __( '同时用于顶部 GitHub 三角标、侧栏 GitHub 图标和项目页拉取来源。', 'yneko-reimu' ),
-					'section'     => 'yneko_reimu_social',
-					'type'        => 'url',
-				)
-			);
-			$wp_customize->add_setting(
-				'yneko_reimu_settings[features][triangle_badge]',
-				array(
-					'default'           => $reimu_settings_defaults['features']['triangle_badge'] ?? '1',
-					'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
-					'type'              => 'option',
-				)
-			);
-			$wp_customize->add_control(
-				'yneko_reimu_settings[features][triangle_badge]',
-				array(
-					'label'       => __( '显示右上角 GitHub 三角标', 'yneko-reimu' ),
-					'description' => __( '关闭后，页面右上角不再显示 GitHub 三角标。', 'yneko-reimu' ),
-					'section'     => 'yneko_reimu_social',
-					'type'        => 'checkbox',
-				)
-			);
+			yneko_reimu_register_customizer_github_social_controls( $wp_customize, $reimu_settings_defaults );
 			continue;
 		}
 
-		$url_id = 'twitter' === $key ? 'yneko_reimu_social_x' : 'yneko_reimu_social_' . $key;
-		$wp_customize->add_setting(
-			$url_id,
-			array(
-				'default'           => '',
-				'sanitize_callback' => 'yneko_reimu_sanitize_social_url_or_empty',
-			)
-		);
-		$wp_customize->add_control(
-			$url_id,
-			array(
-				'label'       => sprintf(
-					/* translators: %s: social service label. */
-					__( '%s 链接', 'yneko-reimu' ),
-					$item['label']
-				),
-				'description' => $item['placeholder'],
-				'section'     => 'yneko_reimu_social',
-				'type'        => 'email' === $key ? 'text' : 'url',
-			)
-		);
+		yneko_reimu_register_customizer_social_url_control( $wp_customize, $key, $item );
 	}
+}
+
+function yneko_reimu_register_customizer_github_social_controls( $wp_customize, $reimu_settings_defaults ) {
+	$wp_customize->add_setting(
+		'yneko_reimu_settings[github_url]',
+		array(
+			'default'           => $reimu_settings_defaults['github_url'] ?? '',
+			'sanitize_callback' => 'yneko_reimu_sanitize_url_or_empty',
+			'type'              => 'option',
+		)
+	);
+	$wp_customize->add_control(
+		'yneko_reimu_settings[github_url]',
+		array(
+			'label'       => __( 'GitHub 链接', 'yneko-reimu' ),
+			'description' => __( '同时用于顶部 GitHub 三角标、侧栏 GitHub 图标和项目页拉取来源。', 'yneko-reimu' ),
+			'section'     => 'yneko_reimu_social',
+			'type'        => 'url',
+		)
+	);
+	$wp_customize->add_setting(
+		'yneko_reimu_settings[features][triangle_badge]',
+		array(
+			'default'           => $reimu_settings_defaults['features']['triangle_badge'] ?? '1',
+			'sanitize_callback' => 'yneko_reimu_sanitize_checkbox',
+			'type'              => 'option',
+		)
+	);
+	$wp_customize->add_control(
+		'yneko_reimu_settings[features][triangle_badge]',
+		array(
+			'label'       => __( '显示右上角 GitHub 三角标', 'yneko-reimu' ),
+			'description' => __( '关闭后，页面右上角不再显示 GitHub 三角标。', 'yneko-reimu' ),
+			'section'     => 'yneko_reimu_social',
+			'type'        => 'checkbox',
+		)
+	);
+}
+
+function yneko_reimu_register_customizer_social_url_control( $wp_customize, $key, $item ) {
+	$url_id = 'twitter' === $key ? 'yneko_reimu_social_x' : 'yneko_reimu_social_' . $key;
+	$wp_customize->add_setting(
+		$url_id,
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'yneko_reimu_sanitize_social_url_or_empty',
+		)
+	);
+	$wp_customize->add_control(
+		$url_id,
+		array(
+			'label'       => sprintf(
+				/* translators: %s: social service label. */
+				__( '%s 链接', 'yneko-reimu' ),
+				$item['label']
+			),
+			'description' => $item['placeholder'],
+			'section'     => 'yneko_reimu_social',
+			'type'        => 'email' === $key ? 'text' : 'url',
+		)
+	);
 }

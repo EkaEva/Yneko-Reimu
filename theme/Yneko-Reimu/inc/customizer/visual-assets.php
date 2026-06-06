@@ -4,6 +4,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) {
+	yneko_reimu_register_customizer_visual_assets_base_section( $wp_customize );
+	yneko_reimu_register_customizer_cursor_asset_controls( $wp_customize );
+	yneko_reimu_register_customizer_preloader_asset_control( $wp_customize );
+	yneko_reimu_register_customizer_preloader_text_controls( $wp_customize );
+	yneko_reimu_register_customizer_preloader_image_size_control( $wp_customize );
+	yneko_reimu_register_customizer_preloader_image_rotate_control( $wp_customize );
+	yneko_reimu_register_customizer_decoration_asset_controls( $wp_customize );
+}
+
+function yneko_reimu_register_customizer_visual_assets_base_section( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_visual_assets',
 		array(
@@ -12,7 +22,9 @@ function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) 
 			'panel'       => 'yneko_reimu_panel',
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_cursor_asset_controls( $wp_customize ) {
 	$cursor_controls = array(
 		'yneko_reimu_cursor_default_url'  => __( '默认鼠标指针', 'yneko-reimu' ),
 		'yneko_reimu_cursor_pointer_url'  => __( '链接/按钮鼠标指针', 'yneko-reimu' ),
@@ -40,7 +52,9 @@ function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) 
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_preloader_asset_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_preloader_image_url',
 		array(
@@ -59,7 +73,9 @@ function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) 
 			)
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_preloader_text_controls( $wp_customize ) {
 	foreach (
 		array(
 			'yneko_reimu_preloader_text_zh' => array( __( '加载动画中文文案', 'yneko-reimu' ), '未来有你...' ),
@@ -82,7 +98,9 @@ function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) 
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_preloader_image_size_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_preloader_image_size',
 		array(
@@ -104,7 +122,9 @@ function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) 
 			),
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_preloader_image_rotate_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_preloader_image_rotate',
 		array(
@@ -120,7 +140,9 @@ function yneko_reimu_register_customizer_visual_assets_section( $wp_customize ) 
 			'type'    => 'checkbox',
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_decoration_asset_controls( $wp_customize ) {
 	foreach (
 		array(
 			'yneko_reimu_top_icon_url'     => __( '回到顶部装饰图', 'yneko-reimu' ),

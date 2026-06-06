@@ -4,6 +4,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function yneko_reimu_register_customizer_typography_layout_section( $wp_customize ) {
+	yneko_reimu_register_customizer_typography_layout_base_section( $wp_customize );
+	yneko_reimu_register_customizer_font_controls( $wp_customize );
+	yneko_reimu_register_customizer_layout_number_controls( $wp_customize );
+	yneko_reimu_register_customizer_layout_density_control( $wp_customize );
+	yneko_reimu_register_customizer_shadow_strength_control( $wp_customize );
+}
+
+function yneko_reimu_register_customizer_typography_layout_base_section( $wp_customize ) {
 	$wp_customize->add_section(
 		'yneko_reimu_typography_layout',
 		array(
@@ -12,7 +20,9 @@ function yneko_reimu_register_customizer_typography_layout_section( $wp_customiz
 			'panel'       => 'yneko_reimu_panel',
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_font_controls( $wp_customize ) {
 	$font_choices = array(
 		'default'  => __( '跟随主题默认', 'yneko-reimu' ),
 		'system'   => __( '系统无衬线', 'yneko-reimu' ),
@@ -47,7 +57,9 @@ function yneko_reimu_register_customizer_typography_layout_section( $wp_customiz
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_layout_number_controls( $wp_customize ) {
 	$number_controls = array(
 		'yneko_reimu_base_font_size'       => array( __( '基础字号 px', 'yneko-reimu' ), 16, 14, 20, 'yneko_reimu_sanitize_base_font_size' ),
 		'yneko_reimu_article_font_size'    => array( __( '文章字号 px', 'yneko-reimu' ), 16, 14, 22, 'yneko_reimu_sanitize_article_font_size' ),
@@ -81,7 +93,9 @@ function yneko_reimu_register_customizer_typography_layout_section( $wp_customiz
 			)
 		);
 	}
+}
 
+function yneko_reimu_register_customizer_layout_density_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_layout_density',
 		array(
@@ -102,7 +116,9 @@ function yneko_reimu_register_customizer_typography_layout_section( $wp_customiz
 			),
 		)
 	);
+}
 
+function yneko_reimu_register_customizer_shadow_strength_control( $wp_customize ) {
 	$wp_customize->add_setting(
 		'yneko_reimu_shadow_strength',
 		array(
