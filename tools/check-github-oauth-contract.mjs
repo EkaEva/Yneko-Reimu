@@ -39,7 +39,12 @@ const settingsSchemaPaths = [
   resolve(root, 'theme/Yneko-Reimu/inc/settings/schema/compat.php')
 ];
 const reimuSourcePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu.js');
-const commentsRuntimePath = resolve(root, 'theme/Yneko-Reimu/assets/src/reimu/comments-profile.js');
+const commentsRuntimePaths = [
+  resolve(root, 'theme/Yneko-Reimu/assets/src/reimu/comments-profile.js'),
+  resolve(root, 'theme/Yneko-Reimu/assets/src/reimu/auth-forms.js'),
+  resolve(root, 'theme/Yneko-Reimu/assets/src/reimu/comment-mutations.js'),
+  resolve(root, 'theme/Yneko-Reimu/assets/src/reimu/login-state.js')
+];
 
 const [
   githubEntry,
@@ -54,7 +59,6 @@ const [
   settingsPageEntry,
   settingsPanelsEntry,
   reimuEntrySource,
-  commentsRuntimeSource,
   ...settingsModules
 ] = await Promise.all([
   readFile(githubPath, 'utf8'),
@@ -69,11 +73,12 @@ const [
   readFile(settingsPagePath, 'utf8'),
   readFile(settingsPanelsPath, 'utf8'),
   readFile(reimuSourcePath, 'utf8'),
-  readFile(commentsRuntimePath, 'utf8'),
   ...settingsPageModulePaths.map((path) => readFile(path, 'utf8')),
   ...settingsPanelModulePaths.map((path) => readFile(path, 'utf8')),
   ...settingsSchemaPaths.map((path) => readFile(path, 'utf8'))
 ]);
+
+const commentsRuntimeSource = (await Promise.all(commentsRuntimePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const settingsPageModules = settingsModules.slice(0, settingsPageModulePaths.length);
 const settingsPanelModules = settingsModules.slice(settingsPageModulePaths.length, settingsPageModulePaths.length + settingsPanelModulePaths.length);

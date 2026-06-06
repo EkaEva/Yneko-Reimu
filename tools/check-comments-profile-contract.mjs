@@ -34,7 +34,13 @@ const commentRenderingSource = (await Promise.all(commentRenderingPaths.map((pat
 
 const frontendEntry = await readFile(resolve(themeRoot, 'assets/src/reimu.js'), 'utf8');
 const commentsEntry = await readFile(resolve(themeRoot, 'assets/src/reimu-comments.js'), 'utf8');
-const commentsRuntime = await readFile(resolve(themeRoot, 'assets/src/reimu/comments-profile.js'), 'utf8');
+const commentsRuntimePaths = [
+  resolve(themeRoot, 'assets/src/reimu/comments-profile.js'),
+  resolve(themeRoot, 'assets/src/reimu/auth-forms.js'),
+  resolve(themeRoot, 'assets/src/reimu/comment-mutations.js'),
+  resolve(themeRoot, 'assets/src/reimu/login-state.js')
+];
+const commentsRuntime = (await Promise.all(commentsRuntimePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 
 const files = {
   enqueue: enqueueSource,
@@ -90,10 +96,13 @@ function requirePair(label, left, right, haystack = source) {
 }
 
 for (const moduleImport of [
+  "import { createAuthForms } from './auth-forms.js';",
   "import { createCommentsProfileRuntime } from './reimu/comments-profile.js';",
   "import { createCommentList } from './comment-list.js';",
   "import { createCommentMedia } from './comment-media.js';",
+  "import { createCommentMutations } from './comment-mutations.js';",
   "import { createCommentTools } from './comment-tools.js';",
+  "import { createLoginStateRuntime } from './login-state.js';",
   "import { createProfileFormUi } from './profile-form.js';",
   "import { createProfileStatusUi } from './profile-status.js';"
 ]) {
