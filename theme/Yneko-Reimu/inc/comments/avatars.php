@@ -166,9 +166,12 @@ function yneko_reimu_user_review_status_payload( $user_id ) {
 	return $payload;
 }
 
-function yneko_reimu_user_review_primary_status_html( $user_id ) {
+function yneko_reimu_user_review_primary_status_html( $user_id, $extra_statuses = array() ) {
 	$statuses = yneko_reimu_user_review_status_payload( $user_id );
-	$priority = array( 'avatar', 'tags', 'comments' );
+	if ( is_array( $extra_statuses ) ) {
+		$statuses = array_merge( $statuses, $extra_statuses );
+	}
+	$priority = array( 'profile', 'avatar', 'tags', 'comments' );
 	$html     = '';
 	foreach ( $priority as $type ) {
 		if ( empty( $statuses[ $type ]['status'] ) ) {
@@ -177,7 +180,9 @@ function yneko_reimu_user_review_primary_status_html( $user_id ) {
 		$status = (string) $statuses[ $type ]['status'];
 		$label  = '';
 		$class  = 'reimu-comment-current-user__status';
-		if ( 'avatar' === $type ) {
+		if ( 'profile' === $type ) {
+			$label = __( '已更新', 'yneko-reimu' );
+		} elseif ( 'avatar' === $type ) {
 			$label = 'pending' === $status ? __( '头像审核中', 'yneko-reimu' ) : ( 'rejected' === $status ? __( '头像审核不通过', 'yneko-reimu' ) : __( '头像已更新', 'yneko-reimu' ) );
 		} elseif ( 'tags' === $type ) {
 			$label = 'pending' === $status ? __( '标签审核中', 'yneko-reimu' ) : ( 'rejected' === $status ? __( '标签审核不通过', 'yneko-reimu' ) : __( '标签已更新', 'yneko-reimu' ) );

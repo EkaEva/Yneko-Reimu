@@ -8,18 +8,18 @@ Use GitHub Releases as the primary distribution channel.
 npm run package
 ```
 
-The package script builds assets first, then creates a timestamped local validation ZIP such as `releases/Yneko-Reimu-v0.2.14-YYYYMMDD-HHMM.zip`.
+The package script builds assets first, then creates a timestamped local validation ZIP such as `releases/Yneko-Reimu-v0.2.13-YYYYMMDD-HHMM.zip`.
 
 For a versioned package:
 
 ```powershell
-pwsh tools/package-theme.ps1 -Version v0.2.14
+pwsh tools/package-theme.ps1 -Version v0.2.13
 ```
 
 For a stable release artifact name, used by GitHub Actions:
 
 ```powershell
-pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.14.zip
+pwsh tools/package-theme.ps1 -OutputName Yneko-Reimu-v0.2.13.zip
 ```
 
 `npm run package` uses a Node wrapper that calls PowerShell 7 (`pwsh`) on Linux/macOS/CI and falls back to Windows PowerShell on Windows. Local development expects Node.js 24, npm with `package-lock.json`, PHP 8.0+, and Composer for PHPCS/WPCS.
@@ -45,4 +45,4 @@ Before packaging a public release, make sure `theme/Yneko-Reimu/screenshot.png` 
 
 Tag pushes matching `v*.*.*` upload the package to the GitHub Release.
 
-Release notes are read from `docs/release-notes-<tag>.md` when that file exists. For the current release, tag `v0.2.14` uses `docs/release-notes-v0.2.14.md`.
+Release notes are read from `docs/release-notes-<tag>.md` when that file exists. For the current release, tag `v0.2.13` uses `docs/release-notes-v0.2.13.md`.

@@ -13,6 +13,7 @@ v0.2.13 是一次复杂度热点清理版本。它按阶段降低设置页、评
 - 拆分 legacy migration 和 Customizer 长函数，保留旧设置迁移行为、Customizer section/control ID、`theme_mod` key、sanitizer callback、注册顺序、恢复默认分组和 inline CSS 输出行为。
 - 拆分低风险模板标签显示 helper 和 GitHub 登录 layout CSS helper，保留公开 helper 名称、shortcode、transient key、style handle、enqueue hook 和视觉输出合同。
 - 优化个人资料弹窗体验：已开启认证器两步验证后再次打开弹窗时，仅保留两步验证开关；普通资料保存后的头像下方状态统一显示为“已更新”，并排在头像、标签、评论状态之前。
+- 修复个人资料认证器设置流程：重新生成认证器密钥并提交 6 位验证码时，优先校验新生成的 pending secret；已开启认证器后再次打开弹窗时不再显示生成密钥、二维码和验证码输入区域。
 - 更新 PHP 复杂度 baseline、开发文档、release 文档、runtime changelog 以及相关 contract gates，使新的内部模块边界受静态检查保护。
 
 ### 说明
@@ -35,6 +36,7 @@ v0.2.13 is a complexity-hotspot cleanup release. It reduces maintainability pres
 - Split legacy migration and Customizer long functions while preserving legacy settings migration behavior, Customizer section/control IDs, `theme_mod` keys, sanitizer callbacks, registration order, restore-default groups, and inline CSS output behavior.
 - Split lower-risk template tag display helpers and GitHub login layout CSS helpers while preserving public helper names, shortcode behavior, transient keys, style handles, enqueue hooks, and front-end output contracts.
 - Refined the profile modal experience: after authenticator-based 2FA is enabled, reopening the modal keeps only the 2FA toggle visible; general profile-save status now appears as a concise "updated" row before avatar, tag, and comment statuses.
+- Fixed the profile authenticator setup flow so regenerated pending TOTP secrets are verified before existing enabled secrets, and already-enabled profile modals no longer display the generate-secret, QR, or code-input setup area.
 - Updated the PHP complexity baseline, development docs, release docs, runtime changelog, and related contract gates for the new internal helper boundaries.
 
 ### Notes

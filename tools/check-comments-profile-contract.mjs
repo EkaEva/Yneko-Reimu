@@ -429,6 +429,8 @@ for (const uploadAdminSnippet of [
 
 for (const profileSaveSnippet of [
   'function yneko_reimu_profile_save_request',
+  'function yneko_reimu_profile_save_has_general_changes',
+  'function yneko_reimu_profile_save_payload',
   'function yneko_reimu_profile_save_prepare_tags',
   'function yneko_reimu_profile_save_apply_email',
   'function yneko_reimu_profile_save_apply_totp',
@@ -439,6 +441,27 @@ for (const profileSaveSnippet of [
 }
 if (!/\$secret\s*=\s*''\s*!==\s*\$code\s*&&\s*\$pending_secret\s*\?\s*\$pending_secret\s*:\s*\(/.test(files.profileSave)) {
   fail('Profile TOTP save must verify a newly generated pending secret when a code is submitted.');
+}
+if (!/function yneko_reimu_profile_save_has_general_changes[\s\S]*\$request\['totp_enabled'\][\s\S]*\$current\['twoFactor'\]/.test(files.profileSave)) {
+  fail('Profile save must treat authenticator 2FA toggle changes as ordinary profile updates.');
+}
+if (!/function yneko_reimu_profile_save_payload[\s\S]*\$general_changed[\s\S]*\['profile'\]\s*=\s*array\(\s*'status'\s*=>\s*'updated'\s*\)/.test(files.profileSave)) {
+  fail('Profile save response must include a temporary ordinary profile updated status.');
+}
+if (!/yneko_reimu_comment_current_user_identity_html\(\s*\$redirect,\s*\$extra_statuses\s*\)/.test(files.profileSave)) {
+  fail('Profile save identity HTML must include temporary ordinary profile update status.');
+}
+if (!/function yneko_reimu_user_review_primary_status_html\(\s*\$user_id,\s*\$extra_statuses\s*=\s*array\(\s*\)\s*\)[\s\S]*array_merge\(\s*\$statuses,\s*\$extra_statuses\s*\)[\s\S]*array\(\s*'profile',\s*'avatar',\s*'tags',\s*'comments'\s*\)/.test(files.avatars)) {
+  fail('Current-user identity status HTML must render temporary profile status before avatar, tags, and comments.');
+}
+if (!/Promise\.resolve\(profileData\s*&&\s*profileData\.identity\s*\?\s*true\s*:\s*refreshCommentLoginState\(\)\)[\s\S]*initCommentAjaxLogout\(\)[\s\S]*applyInlineProfileStatus\(profileData,\s*\{\s*autohide:\s*true\s*\}\)/.test(files.commentsRuntime)) {
+  fail('Profile save must not overwrite temporary identity status with an immediate login-state refresh.');
+}
+if (!/profileTwoFactorActive\s*=\s*false[\s\S]*profileTwoFactorSetupRequested\s*=\s*false[\s\S]*function syncTwoFactorSetup\(\)[\s\S]*showSetup\s*=\s*!profileTwoFactorActive\s*&&\s*profileTwoFactorSetupRequested\s*&&\s*toggle\.checked[\s\S]*qr\.removeAttribute\('src'\)[\s\S]*control\.disabled = true/.test(files.commentsRuntime)) {
+  fail('Profile TOTP setup UI must be hidden, cleared, and disabled once authenticator 2FA is active.');
+}
+if (!/\.reimu-profile-2fa\[data-profile-2fa-active="1"\]\s+\[data-profile-2fa-setup\]\s*\{[\s\S]*display:\s*none\s*!important/.test(files.commentsCss)) {
+  fail('Profile TOTP setup CSS must force-hide setup controls when authenticator 2FA is active.');
 }
 
 for (const selector of [

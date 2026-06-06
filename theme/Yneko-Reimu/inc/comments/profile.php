@@ -308,6 +308,7 @@ function yneko_reimu_ajax_profile_save() {
 	if ( is_wp_error( $basic_check ) ) {
 		wp_send_json_error( array( 'message' => $basic_check->get_error_message() ), 400 );
 	}
+	$general_changed = yneko_reimu_profile_save_has_general_changes( $user_id, $user, $request );
 	$prepared_tags = yneko_reimu_profile_save_prepare_tags( $user_id, $request );
 	if ( is_wp_error( $prepared_tags ) ) {
 		wp_send_json_error(
@@ -373,16 +374,7 @@ function yneko_reimu_ajax_profile_save() {
 	}
 
 	wp_send_json_success(
-		array_merge(
-			yneko_reimu_user_profile_payload( $user_id ),
-			array(
-				'message' => yneko_reimu_profile_save_message( ! empty( $avatar_state['avatar_pending'] ), $comment_tags ),
-				'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
-				'logoutNonce' => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
-				'identity' => yneko_reimu_comment_current_user_identity_html( $redirect ),
-				'tagsPending' => $tags_pending,
-			)
-		)
+		yneko_reimu_profile_save_payload( $user_id, $redirect, $avatar_state, $comment_tags, $tags_pending, $general_changed )
 	);
 }
 add_action( 'wp_ajax_yneko_reimu_profile_save', 'yneko_reimu_ajax_profile_save' );

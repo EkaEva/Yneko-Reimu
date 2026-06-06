@@ -1568,6 +1568,10 @@ body.reimu-login-on #mobile-nav {
   display: none !important;
 }
 
+.reimu-profile-2fa[data-profile-2fa-active="1"] [data-profile-2fa-setup] {
+  display: none !important;
+}
+
 .reimu-profile-2fa-secret {
   margin: 10px 0;
   color: var(--color-default);

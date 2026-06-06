@@ -40,6 +40,37 @@ function yneko_reimu_profile_save_validate_basics( $request ) {
 	return true;
 }
 
+function yneko_reimu_profile_save_has_general_changes( $user_id, $user, $request ) {
+	$current = yneko_reimu_user_profile_payload( $user_id );
+	return (string) $request['display_name'] !== (string) ( $current['displayName'] ?? $user->display_name )
+		|| (string) $request['profile_url'] !== (string) ( $current['profileUrl'] ?? $user->user_url )
+		|| strtolower( (string) $request['new_email'] ) !== strtolower( (string) ( $current['email'] ?? $user->user_email ) )
+		|| '' !== (string) $request['new_password']
+		|| (bool) $request['avatar_frame_enabled'] !== (bool) ( $current['avatarFrameEnabled'] ?? true )
+		|| (bool) $request['totp_enabled'] !== (bool) ( $current['twoFactor'] ?? false );
+}
+
+function yneko_reimu_profile_save_payload( $user_id, $redirect, $avatar_state, $comment_tags, $tags_pending, $general_changed ) {
+	$payload = yneko_reimu_user_profile_payload( $user_id );
+	$extra_statuses = array();
+	if ( $general_changed ) {
+		$payload['reviewStatuses']            = isset( $payload['reviewStatuses'] ) && is_array( $payload['reviewStatuses'] ) ? $payload['reviewStatuses'] : array();
+		$payload['reviewStatuses']['profile'] = array( 'status' => 'updated' );
+		$extra_statuses['profile']            = $payload['reviewStatuses']['profile'];
+	}
+
+	return array_merge(
+		$payload,
+		array(
+			'message'      => yneko_reimu_profile_save_message( ! empty( $avatar_state['avatar_pending'] ), $comment_tags ),
+			'profileNonce' => wp_create_nonce( 'yneko_reimu_profile' ),
+			'logoutNonce'  => wp_create_nonce( 'yneko_reimu_ajax_logout' ),
+			'identity'     => yneko_reimu_comment_current_user_identity_html( $redirect, $extra_statuses ),
+			'tagsPending'  => $tags_pending,
+		)
+	);
+}
+
 function yneko_reimu_profile_save_prepare_tags( $user_id, $request ) {
 	$comment_tags          = array();
 	$hidden_special_badges = array();

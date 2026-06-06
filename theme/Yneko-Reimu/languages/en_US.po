@@ -1781,6 +1781,10 @@ msgstr "Inserted into the comment."
 msgid "已撤销"
 msgstr ""
 
+#: inc/comments/avatars.php
+msgid "已更新"
+msgstr ""
+
 #: inc/settings/renderers.php
 msgid "已上传 %d 个 GIF 并加入表情库。"
 msgstr ""

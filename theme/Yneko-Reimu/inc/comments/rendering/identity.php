@@ -12,7 +12,7 @@ function yneko_reimu_comment_current_user_identity( $redirect_post_id = 0 ) {
 	return yneko_reimu_comment_current_user_identity_html( $redirect );
 }
 
-function yneko_reimu_comment_current_user_identity_html( $redirect = '' ) {
+function yneko_reimu_comment_current_user_identity_html( $redirect = '', $extra_statuses = array() ) {
 	if ( ! is_user_logged_in() ) {
 		return '';
 	}
@@ -25,7 +25,7 @@ function yneko_reimu_comment_current_user_identity_html( $redirect = '' ) {
 	$logout_url   = wp_logout_url( $redirect );
 	$avatar       = yneko_reimu_comment_avatar_for_user_html( $user_id, 56 );
 	$name_html    = esc_html( $display_name );
-	$status_html  = yneko_reimu_user_review_primary_status_html( $user_id );
+	$status_html  = yneko_reimu_user_review_primary_status_html( $user_id, $extra_statuses );
 
 	if ( $profile_url ) {
 		$name_html = '<a class="reimu-comment-current-user__name" href="' . esc_url( $profile_url ) . '" target="_blank" rel="noopener noreferrer nofollow">' . esc_html( $display_name ) . '</a>';

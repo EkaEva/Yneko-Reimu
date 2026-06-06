@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.14
+Stable tag: 0.2.13
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -50,12 +50,6 @@ Theme images ship as files under `assets/images` or generated runtime files unde
 
 == Changelog ==
 
-= 0.2.14 =
-
-* Fixes the profile authenticator setup flow after v0.2.13 so a newly generated pending TOTP secret is verified before the existing enabled secret when the user submits a 6-digit code.
-* Keeps the v0.2.13 profile-modal simplification: already-enabled authenticator 2FA still allows ordinary profile saves without re-entering a code.
-* Adds a comments/profile contract guard for the pending-secret verification priority.
-
 = 0.2.13 =
 
 * Reduces settings/admin renderer hotspots with focused internal render helpers while preserving the existing settings save model, tabs, field names, nonce URLs, TOTP controls, and review actions.
@@ -63,6 +57,7 @@ Theme images ship as files under `assets/images` or generated runtime files unde
 * Splits PJAX/main runtime helpers for runtime loading, config replay, script replay, metadata sync, modal restoration, and PJAX utility behavior while preserving `window.ReimuWP.init()` and classic script compatibility.
 * Splits migration and Customizer long-function helpers behind the existing entrypoints while preserving legacy migration behavior, section/control IDs, theme_mod keys, sanitizer callbacks, and registration order.
 * Splits lower-risk template tag display helpers and GitHub login layout CSS helpers while preserving public helper function names, transient keys, shortcode behavior, style handles, and front-end output contracts.
+* Fixes profile authenticator setup so newly generated pending TOTP secrets are verified before existing enabled secrets, and already-enabled 2FA profile modals display only the two-factor toggle.
 * Updates contract gates, runtime smoke aggregation, development docs, release notes, and the PHP complexity baseline for the new internal helper boundaries.
 
 = 0.2.12 =

@@ -468,6 +468,8 @@ export function createCommentsProfileRuntime(deps) {
     var profileTagState = { tagMessageTimer: null };
     var profileAvatarOriginalUrl = '';
     var profileInitialState = {};
+    var profileTwoFactorActive = false;
+    var profileTwoFactorSetupRequested = false;
     var profileStatusUi = createProfileStatusUi({
       qs: qs,
       qsa: qsa,
@@ -548,9 +550,23 @@ export function createCommentsProfileRuntime(deps) {
       if (!wrap || !toggle || !setup) {
         return;
       }
-      var active = wrap.getAttribute('data-profile-2fa-active') === '1';
-      setup.hidden = active || !toggle.checked;
-      if (active) {
+      wrap.setAttribute('data-profile-2fa-active', profileTwoFactorActive ? '1' : '0');
+      var showSetup = !profileTwoFactorActive && profileTwoFactorSetupRequested && toggle.checked;
+      setup.hidden = !showSetup;
+      if (profileTwoFactorActive || !showSetup) {
+        var secret = qs('[data-profile-2fa-secret]', setup);
+        var qr = qs('[data-profile-2fa-qr]', setup);
+        var code = qs('[name="totp_code"]', setup);
+        if (secret) {
+          secret.textContent = '';
+        }
+        if (qr) {
+          qr.removeAttribute('src');
+          qr.hidden = true;
+        }
+        if (code) {
+          code.value = '';
+        }
         qsa('input, button', setup).forEach(function (control) {
           control.disabled = true;
         });
@@ -581,9 +597,12 @@ export function createCommentsProfileRuntime(deps) {
           message.textContent = '';
           message.classList.remove('error', 'success');
         }
+        profileTwoFactorSetupRequested = false;
+        syncTwoFactorSetup();
         refreshProfile();
       } else if (form) {
         form.reset();
+        profileTwoFactorSetupRequested = false;
         validateProfilePasswords();
         clearProfileTagError();
         setProfileAvatarHint('');
@@ -698,10 +717,13 @@ export function createCommentsProfileRuntime(deps) {
       var twoFactor = qs('[name="totp_enabled"]', form);
       if (twoFactor) {
         twoFactor.checked = !!data.twoFactor;
+        twoFactor.defaultChecked = !!data.twoFactor;
       }
+      profileTwoFactorActive = !!data.twoFactor;
+      profileTwoFactorSetupRequested = false;
       var twoFactorWrap = qs('.reimu-profile-2fa', form);
       if (twoFactorWrap) {
-        twoFactorWrap.setAttribute('data-profile-2fa-active', data.twoFactor ? '1' : '0');
+        twoFactorWrap.setAttribute('data-profile-2fa-active', profileTwoFactorActive ? '1' : '0');
       }
       var avatarFrame = qs('[name="avatar_frame_enabled"]', form);
       if (avatarFrame) {
@@ -1064,6 +1086,7 @@ export function createCommentsProfileRuntime(deps) {
     if (twoFactorToggle && twoFactorSetup) {
       syncTwoFactorSetup();
       twoFactorToggle.addEventListener('change', function () {
+        profileTwoFactorSetupRequested = !profileTwoFactorActive && twoFactorToggle.checked;
         syncTwoFactorSetup();
       });
     }
@@ -1071,6 +1094,8 @@ export function createCommentsProfileRuntime(deps) {
     var generate2fa = qs('[data-profile-2fa-generate]', form);
     if (generate2fa) {
       generate2fa.addEventListener('click', function () {
+        profileTwoFactorSetupRequested = !profileTwoFactorActive;
+        syncTwoFactorSetup();
         postProfileAction('yneko_reimu_profile_totp_generate').then(function (payload) {
           if (!payload || !payload.success) {
             setMessage(payload && payload.data && payload.data.message ? payload.data.message : config.login.failedText, false);
@@ -1118,7 +1143,10 @@ export function createCommentsProfileRuntime(deps) {
               applyInlineProfileStatus(profileData, { autohide: true });
             }
             setOpen(false);
-            refreshCommentLoginState();
+            Promise.resolve(profileData && profileData.identity ? true : refreshCommentLoginState()).then(function () {
+              initCommentAjaxLogout();
+              applyInlineProfileStatus(profileData, { autohide: true });
+            });
           } else if (payload && payload.data && payload.data.field === 'comment_tag_label') {
             showProfileTagError(payload);
           } else if (payload && payload.data && payload.data.message) {
