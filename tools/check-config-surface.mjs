@@ -6,6 +6,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 const settingsPanelPaths = [
   resolve(themeRoot, 'inc/settings/panels.php'),
+  resolve(themeRoot, 'inc/settings/panels/common.php'),
+  resolve(themeRoot, 'inc/settings/panels/i18n.php'),
+  resolve(themeRoot, 'inc/settings/panels/github.php'),
+  resolve(themeRoot, 'inc/settings/panels/comments.php'),
+  resolve(themeRoot, 'inc/settings/panels/search.php'),
+  resolve(themeRoot, 'inc/settings/panels/friends.php'),
+  resolve(themeRoot, 'inc/settings/panels/extensions.php'),
+  resolve(themeRoot, 'inc/settings/panels/external-comments.php'),
   resolve(themeRoot, 'inc/settings/panels/users.php'),
   resolve(themeRoot, 'inc/settings/panels/security.php'),
   resolve(themeRoot, 'inc/settings/panels/music.php')

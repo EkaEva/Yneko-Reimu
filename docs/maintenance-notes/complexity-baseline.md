@@ -4,11 +4,11 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 
 ## Current Baseline
 
-- Runtime PHP files scanned: 171
-- Named functions scanned: 852
-- Total lines: 19,544
-- Nonblank lines: 17,109
-- Approximate branch score: 6,242
+- Runtime PHP files scanned: 189
+- Named functions scanned: 917
+- Total lines: 20,019
+- Nonblank lines: 17,505
+- Approximate branch score: 6,338
 
 ## Largest Runtime Files
 
@@ -18,27 +18,27 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 | 377 | 24 | 115 | `inc/template-tags/layout-content.php` |
 | 375 | 29 | 168 | `inc/security-auth-mail.php` |
 | 368 | 23 | 149 | `inc/migrations.php` |
-| 368 | 12 | 328 | `inc/settings/renderers.php` |
-| 346 | 11 | 380 | `inc/settings/panels.php` |
 | 346 | 18 | 94 | `inc/template-tags/content-tools.php` |
-| 344 | 22 | 110 | `inc/settings/admin.php` |
 | 343 | 10 | 149 | `inc/post-meta.php` |
 | 337 | 24 | 124 | `inc/template-tags/navigation-virtual.php` |
+| 320 | 19 | 295 | `inc/comments/modals.php` |
+| 319 | 19 | 140 | `inc/comments/avatars.php` |
+| 296 | 13 | 128 | `inc/comments/profile-save.php` |
 
 ## Largest Functions
 
 | Lines | Branch score | Location | Function |
 | --- | --- | --- | --- |
 | 184 | 3 | `inc/settings/schema/defaults.php:6` | `yneko_reimu_settings_defaults` |
-| 103 | 53 | `inc/comments/rendering/external.php:66` | `yneko_reimu_render_external_comment_panel` |
 | 96 | 3 | `inc/customizer/visual.php:6` | `yneko_reimu_register_customizer_visual_section` |
-| 94 | 28 | `inc/comments/uploads/admin.php:6` | `yneko_reimu_admin_comment_gif_upload_action` |
 | 90 | 57 | `inc/post-meta.php:122` | `yneko_reimu_render_post_options_meta_box` |
 | 86 | 3 | `inc/customizer/sidebar-widgets.php:6` | `yneko_reimu_register_customizer_sidebar_widgets_section` |
 | 86 | 1 | `inc/customizer/footer-virtual.php:6` | `yneko_reimu_register_customizer_footer_virtual_sections` |
-| 84 | 83 | `inc/settings/renderers.php:304` | `yneko_reimu_render_user_badge_admin` |
 | 84 | 13 | `inc/comments/profile/save.php:6` | `yneko_reimu_ajax_profile_save` |
 | 82 | 25 | `inc/post-meta.php:269` | `yneko_reimu_save_post_options` |
+| 81 | 1 | `inc/enqueue/config.php:43` | `yneko_reimu_frontend_i18n` |
+| 81 | 1 | `inc/github-login/styles.php:236` | `yneko_reimu_github_login_password_css` |
+| 80 | 24 | `inc/comments/profile-save.php:74` | `yneko_reimu_profile_save_prepare_tags` |
 
 ## Meaningful Movement Since v0.2.13
 
@@ -47,6 +47,7 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 - Comments/mutations was split behind `inc/comments/mutations.php` into visibility, likes, owner management, submit, and review-status modules. Existing submit/edit/delete/like actions, comment form anchors, owner checks, and review-state synchronization remain intact.
 - Comments upload front-end orchestration moved into `assets/src/reimu/comment-upload.js`, keeping the lazy classic `assets/dist/reimu-comments.js` output and `window.ReimuCommentsRuntime` contract unchanged.
 - Comments rendering Stage 1 moved comment item context/render helpers, external comment panel renderers, and administrator GIF/upload action helpers behind the existing entrypoints. `yneko_reimu_comment_callback()`, `yneko_reimu_render_external_comment_panel()`, and `yneko_reimu_admin_comment_gif_upload_action()` no longer appear in the largest-function or highest-branch-score lists.
+- Settings Stage 2 moved settings admin menu/UI/TOTP/review-count/asset helpers, panel bodies, repeatable renderers, user avatar/badge cards, and comment upload review cards behind focused modules. `inc/settings/renderers.php`, `inc/settings/panels.php`, and `inc/settings/admin.php` no longer appear in the largest-file list; the locked settings renderer and panel hotspots no longer appear in the largest-function or highest-branch-score top ten.
 - PJAX replacement is now expressed as explicit capture, detach, replace, sync, restore, and verification steps. The public `window.ReimuWP.init()` and `window.ReimuWP.navigate()` behavior, link exclusions, script replay, APlayer preservation, modal restoration, and lazy runtime rebinding remain stable.
 - The General settings panel was split into focused helper groups behind the existing renderer entrypoint, removing it from the highest branch-score hotspot list while preserving field names, option keys, tabs, and save behavior.
 - Contract checks now aggregate the new comments auth/profile/mutation modules, comment upload runtime source, and PJAX lifecycle anchors so internal moves keep the high-risk comments/profile/PJAX surface guarded.

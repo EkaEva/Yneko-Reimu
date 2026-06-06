@@ -7,17 +7,32 @@ function yneko_reimu_render_settings_nav_tabs( $review_badges ) {
 	$review_badges = is_array( $review_badges ) ? $review_badges : array();
 	?>
 	<nav class="nav-tab-wrapper yneko-reimu-settings-tabs" aria-label="<?php esc_attr_e( 'Yneko-Reimu 设置分类', 'yneko-reimu' ); ?>">
-		<button type="button" class="nav-tab nav-tab-active" data-yneko-settings-tab="general"><?php yneko_reimu_admin_bilingual_label( '常规设置', 'General' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="github"><?php yneko_reimu_admin_bilingual_label( 'GitHub 登录设置', 'GitHub login' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="i18n"><?php yneko_reimu_admin_bilingual_label( '多语言设置', 'Multilingual' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="comments"><?php yneko_reimu_admin_bilingual_label( '评论设置', 'Comments' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $review_badges['comments'] ?? 0 ) ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="users"><?php yneko_reimu_admin_bilingual_label( '用户设置', 'Users' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $review_badges['users'] ?? 0 ) ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="security"><?php yneko_reimu_admin_bilingual_label( '安全设置', 'Security' ); ?><?php echo wp_kses_post( yneko_reimu_admin_badge( $review_badges['security'] ?? 0 ) ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="search"><?php yneko_reimu_admin_bilingual_label( '搜索设置', 'Search' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="extensions"><?php yneko_reimu_admin_bilingual_label( '扩展与第三方', 'Extensions' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="external-comments"><?php yneko_reimu_admin_bilingual_label( '外部评论', 'External comments' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="friends"><?php yneko_reimu_admin_bilingual_label( '友链设置', 'Friend links' ); ?></button>
-		<button type="button" class="nav-tab" data-yneko-settings-tab="music"><?php yneko_reimu_admin_bilingual_label( '曲目设置', 'Music' ); ?></button>
+		<?php foreach ( yneko_reimu_settings_tab_definitions() as $tab ) : ?>
+			<?php yneko_reimu_render_settings_nav_tab( $tab, $review_badges ); ?>
+		<?php endforeach; ?>
 	</nav>
+	<?php
+}
+
+function yneko_reimu_settings_tab_definitions() {
+	return array(
+		array( 'general', '常规设置', 'General', '' ),
+		array( 'github', 'GitHub 登录设置', 'GitHub login', '' ),
+		array( 'i18n', '多语言设置', 'Multilingual', '' ),
+		array( 'comments', '评论设置', 'Comments', 'comments' ),
+		array( 'users', '用户设置', 'Users', 'users' ),
+		array( 'security', '安全设置', 'Security', 'security' ),
+		array( 'search', '搜索设置', 'Search', '' ),
+		array( 'extensions', '扩展与第三方', 'Extensions', '' ),
+		array( 'external-comments', '外部评论', 'External comments', '' ),
+		array( 'friends', '友链设置', 'Friend links', '' ),
+		array( 'music', '曲目设置', 'Music', '' ),
+	);
+}
+
+function yneko_reimu_render_settings_nav_tab( $tab, $review_badges ) {
+	$slug = $tab[0];
+	?>
+	<button type="button" class="nav-tab<?php echo 'general' === $slug ? ' nav-tab-active' : ''; ?>" data-yneko-settings-tab="<?php echo esc_attr( $slug ); ?>"><?php yneko_reimu_admin_bilingual_label( $tab[1], $tab[2] ); ?><?php echo wp_kses_post( $tab[3] ? yneko_reimu_admin_badge( $review_badges[ $tab[3] ] ?? 0 ) : '' ); ?></button>
 	<?php
 }

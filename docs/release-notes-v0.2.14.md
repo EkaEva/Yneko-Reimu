@@ -13,6 +13,7 @@ v0.2.14 是一次深度维护与高风险流降险版本。它继续收敛评论
 - 将 PJAX 替换流程整理成 capture、detach、replace、sync、restore、rebind 和 verification 生命周期，保留 `window.ReimuWP.init()`、`window.ReimuWP.navigate()`、link exclusion、script replay、APlayer preservation、modal restoration 和 classic script compatibility。
 - 加强 comments/profile、auth-security、PJAX runtime 和 runtime smoke contract gates，使懒加载触发、重复初始化防抖、登录状态刷新、profile 临时状态、PJAX modal 恢复、评论表单 rebind 和 comment upload runtime 边界受静态检查保护。
 - 拆分评论列表渲染、第三方评论面板和后台 GIF/upload 审核动作 helper，使 comment callback、external comment panel 和管理员 GIF 上传动作退出复杂度热点榜，同时保留评论 DOM、nonce、第三方评论锚点和审核动作 URL。
+- 拆分后台设置页 renderer、panel、admin helper 和 page helper 边界，使 `inc/settings/renderers.php`、`inc/settings/panels.php`、`inc/settings/admin.php` 退出最大文件榜，并让 user badge、music row、GitHub/comments/extensions panel 等设置页热点退出复杂度榜；保留 tab、field name、option key、nonce、提交模型、审核动作和 admin script/style handle。
 - 更新维护记录和 PHP 复杂度 baseline：`inc/comments/auth.php`、`inc/comments/mutations.php`、`inc/comments/profile.php` 和 General settings panel 已退出主要复杂度热点列表。
 
 ### 说明
@@ -34,6 +35,7 @@ v0.2.14 is a deep maintenance and risk-reduction release. It lowers maintenance 
 - Reworked PJAX replacement into capture, detach, replace, sync, restore, rebind, and verification lifecycle steps while preserving `window.ReimuWP.init()`, `window.ReimuWP.navigate()`, link exclusions, script replay, APlayer preservation, modal restoration, and classic script compatibility.
 - Strengthened comments/profile, auth-security, PJAX runtime, and runtime smoke contract gates so lazy loading, duplicate-init guards, login-state refresh, temporary profile statuses, PJAX modal restoration, comment form rebinding, and comment-upload runtime boundaries stay protected.
 - Split comment-list rendering, external comment panels, and administrator GIF/upload review helpers so the comment callback, external comment panel, and admin GIF upload action leave the complexity hotspot lists while preserving comment DOM, nonces, external comment anchors, and review-action URLs.
+- Split admin settings renderer, panel, admin-helper, and page-helper boundaries so `inc/settings/renderers.php`, `inc/settings/panels.php`, and `inc/settings/admin.php` leave the largest-file list and settings hotspots such as user badges, music rows, GitHub/comments/extensions panels leave the complexity lists while preserving tabs, field names, option keys, nonces, the submit model, review actions, and admin script/style handles.
 - Updated maintenance notes and the PHP complexity baseline: `inc/comments/auth.php`, `inc/comments/mutations.php`, `inc/comments/profile.php`, and the General settings panel no longer appear as primary complexity hotspots.
 
 ### Notes

@@ -41,7 +41,7 @@ msgstr ""
 msgid "%d 分钟阅读"
 msgstr "%d min read"
 
-#: inc/settings/admin.php
+#: inc/settings/admin/ui.php
 msgid "%d 个待处理项目"
 msgstr ""
 
@@ -205,11 +205,11 @@ msgstr "Stickers"
 msgid "播放器位置"
 msgstr "Player position"
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php inc/settings/renderers/user-badges.php
 msgid "驳回"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-avatar.php
 msgid "驳回并删除"
 msgstr ""
 
@@ -225,7 +225,7 @@ msgstr ""
 msgid "布局密度"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "部分 GIF 上传失败。"
 msgstr ""
 
@@ -269,7 +269,7 @@ msgstr "Insert GIF link"
 msgid "插入图片链接"
 msgstr "Insert image link"
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php inc/settings/renderers/user-badges.php
 msgid "撤销"
 msgstr ""
 
@@ -285,7 +285,7 @@ msgstr "Code collapse height"
 msgid "代码字体"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-badges.php
 msgid "待审核"
 msgstr ""
 
@@ -301,7 +301,7 @@ msgstr "Avatar upload is currently disabled."
 msgid "当前用户无权上传 SVG。"
 msgstr ""
 
-#: inc/settings/panels.php
+#: inc/settings/panels/github.php
 msgid "当前账户已绑定 GitHub：%s"
 msgstr ""
 
@@ -369,15 +369,15 @@ msgstr ""
 msgid "订阅者"
 msgstr ""
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "二次认证模块尚未加载。"
 msgstr ""
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "二次认证已关闭。"
 msgstr ""
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "二次认证已开启。请立即保存这些一次性恢复码，它们只会显示这一次。"
 msgstr ""
 
@@ -601,7 +601,7 @@ msgstr ""
 msgid "横幅与图片"
 msgstr "Banners and images"
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "后台上传的 GIF"
 msgstr ""
 
@@ -617,7 +617,7 @@ msgstr ""
 msgid "恢复此组默认值"
 msgstr ""
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "恢复码模块尚未加载。"
 msgstr ""
 
@@ -701,7 +701,7 @@ msgstr ""
 msgid "仅支持 JPG、PNG、WebP 和 GIF。"
 msgstr "Only JPG, PNG, WebP, and GIF are supported."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "仅支持未超出大小限制的 GIF 文件。"
 msgstr ""
 
@@ -877,11 +877,11 @@ msgstr "Starred projects will be synced after a GitHub profile URL is configured
 msgid "朋友们的站点入口。"
 msgstr "Entry points to friends’ sites."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-badges.php
 msgid "批准"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-avatar.php
 msgid "批准头像"
 msgstr ""
 
@@ -1073,11 +1073,11 @@ msgstr "Please enter the registered email address."
 msgid "请先登录。"
 msgstr "Please log in first."
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "请先开启二次认证。"
 msgstr ""
 
-#: inc/comments/profile-save.php inc/settings/admin.php
+#: inc/comments/profile-save.php inc/settings/admin/totp.php
 msgid "请先生成认证器密钥。"
 msgstr "Please generate an authenticator key first."
 
@@ -1093,7 +1093,7 @@ msgstr "Please choose a GIF file."
 msgid "请选择头像文件。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "请选择要上传的 GIF。"
 msgstr "Please choose a GIF to upload."
 
@@ -1105,7 +1105,7 @@ msgstr "Please choose a file to upload."
 msgid "请用认证器扫码，并输入 6 位验证码后保存。"
 msgstr "Scan with your authenticator app, then enter the 6-digit code and save."
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "请用认证器扫码，并输入 6 位验证码后启用。"
 msgstr ""
 
@@ -1121,7 +1121,7 @@ msgstr "Cancel"
 msgid "取消回复"
 msgstr "Cancel reply"
 
-#: inc/comments/admin.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php inc/security-auth-mail.php inc/settings/admin.php
+#: inc/comments/admin.php inc/comments/uploads/admin.php inc/comments/uploads/ajax.php inc/security-auth-mail.php inc/settings/admin/totp.php
 msgid "权限不足。"
 msgstr "Insufficient permissions."
 
@@ -1137,7 +1137,7 @@ msgstr "Confirm new password"
 msgid "认证器验证码"
 msgstr "Authenticator code"
 
-#: inc/comments/profile-save.php inc/settings/admin.php
+#: inc/comments/profile-save.php inc/settings/admin/totp.php
 msgid "认证器验证码不正确。"
 msgstr "The authenticator code is incorrect."
 
@@ -1157,7 +1157,7 @@ msgstr ""
 msgid "如果该邮箱已注册，验证码将发送到对应邮箱。"
 msgstr "If this email is registered, a code will be sent to it."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "删除"
 msgstr "Remove"
 
@@ -1165,7 +1165,7 @@ msgstr "Remove"
 msgid "删除评论"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-avatar.php
 msgid "删除头像"
 msgstr ""
 
@@ -1225,7 +1225,7 @@ msgstr ""
 msgid "申请方法"
 msgstr "How to apply"
 
-#: inc/comments/uploads/media.php inc/settings/renderers.php
+#: inc/comments/uploads/media.php inc/settings/renderers/comment-upload.php
 msgid "审核未通过"
 msgstr ""
 
@@ -1337,7 +1337,7 @@ msgstr "After adding this site, leave a comment on this page in the following fo
 msgid "跳到内容"
 msgstr "Skip to content"
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "通过"
 msgstr ""
 
@@ -1365,7 +1365,7 @@ msgstr "Avatar upload failed."
 msgid "头像审核不通过"
 msgstr "Avatar review rejected"
 
-#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile/avatar.php inc/enqueue/config.php inc/settings/renderers.php
+#: inc/comments/avatars.php inc/comments/modals.php inc/comments/profile/avatar.php inc/enqueue/config.php inc/settings/renderers/user-avatar.php
 msgid "头像审核中"
 msgstr "Avatar pending review"
 
@@ -1381,11 +1381,11 @@ msgstr ""
 msgid "头像已选择，保存后生效。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "图片"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "图片待审核"
 msgstr ""
 
@@ -1393,7 +1393,7 @@ msgstr ""
 msgid "图片上传不支持 GIF，请使用 GIF 按钮。"
 msgstr "Image upload does not support GIFs. Please use the GIF button."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "图片已通过"
 msgstr ""
 
@@ -1441,11 +1441,11 @@ msgstr "No content found for \"{query}\""
 msgid "未来有你..."
 msgstr "Loading..."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-badges.php
 msgid "未启用"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "未知用户"
 msgstr "Unknown user"
 
@@ -1661,7 +1661,7 @@ msgstr "Friends"
 msgid "小组件排序"
 msgstr "Widget order"
 
-#: inc/settings/admin.php
+#: inc/settings/admin/totp.php
 msgid "新的恢复码已生成，旧恢复码已失效。请立即保存这些恢复码。"
 msgstr ""
 
@@ -1777,7 +1777,7 @@ msgstr "Mobile navigation"
 msgid "已插入评论。"
 msgstr "Inserted into the comment."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "已撤销"
 msgstr ""
 
@@ -1785,15 +1785,15 @@ msgstr ""
 msgid "已更新"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "已上传 %d 个 GIF 并加入表情库。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "已上传 %d 个 GIF，部分文件未成功。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-badges.php
 msgid "已通过"
 msgstr ""
 
@@ -1801,7 +1801,7 @@ msgstr ""
 msgid "已退出登录。"
 msgstr "Logged out."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-avatar.php
 msgid "已应用头像"
 msgstr ""
 
@@ -1825,11 +1825,11 @@ msgstr "Hide password"
 msgid "用户标签"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "用户评论 GIF"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "用户评论图片"
 msgstr ""
 
@@ -1893,7 +1893,7 @@ msgstr ""
 msgid "预设"
 msgstr "Presets"
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-badges.php
 msgid "原标签：%s"
 msgstr ""
 
@@ -1913,19 +1913,19 @@ msgstr ""
 msgid "暂时没有内容"
 msgstr "No content yet"
 
-#: inc/enqueue/config.php inc/settings/renderers.php
+#: inc/enqueue/config.php inc/settings/renderers/comment-upload.php
 msgid "暂无可选..."
 msgstr "Nothing available..."
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "暂无评论图片或 GIF 上传。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-avatar.php
 msgid "暂无用户上传头像。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/user-badges.php
 msgid "暂无用户自定义标签。"
 msgstr ""
 
@@ -2121,15 +2121,15 @@ msgstr ""
 msgid "Friends"
 msgstr "Friends"
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "GIF"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "GIF 待审核"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "GIF 上传失败。"
 msgstr ""
 
@@ -2137,11 +2137,11 @@ msgstr ""
 msgid "GIF 已加入表情库。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/admin-gif.php
 msgid "GIF 已上传并加入表情库。"
 msgstr ""
 
-#: inc/settings/renderers.php
+#: inc/settings/renderers/comment-upload.php
 msgid "GIF 已通过"
 msgstr ""
 
@@ -2281,7 +2281,7 @@ msgstr ""
 msgid "Yneko-Reimu 捕获到认证邮件风控事件。\n\n类型：%1\\$s\n范围：%2\\$s\n维度：%3\\$s\n请进入 Yneko-Reimu 设置 -> 安全设置 查看详情。"
 msgstr ""
 
-#: inc/settings/admin.php inc/settings/page.php
+#: inc/settings/admin/menu.php inc/settings/page.php
 msgid "Yneko-Reimu 设置"
 msgstr "Yneko-Reimu Settings"
 

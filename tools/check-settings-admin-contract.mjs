@@ -12,12 +12,34 @@ const pageModulePaths = [
 ];
 const panelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
 const panelModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/common.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/i18n.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/github.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/comments.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/search.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/friends.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/extensions.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/external-comments.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/users.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/security.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/music.php')
 ];
 const renderersPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers.php');
+const rendererModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers/admin-gif.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers/repeatable.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers/comment-upload.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers/user-avatar.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/renderers/user-badges.php')
+];
 const adminPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/admin.php');
+const adminModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/admin/menu.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/admin/ui.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/admin/totp.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/admin/review-counts.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/admin/assets.php')
+];
 const adminJsPath = resolve(root, 'theme/Yneko-Reimu/assets/src/admin-settings.js');
 const login2faPath = resolve(root, 'theme/Yneko-Reimu/inc/github-login/login-2fa.php');
 const schemaPaths = [
@@ -39,8 +61,12 @@ const page = [pageEntry, ...pageModules].join('\n');
 const panelsEntry = await readFile(panelsPath, 'utf8');
 const panelModules = await Promise.all(panelModulePaths.map((path) => readFile(path, 'utf8')));
 const panels = [panelsEntry, ...panelModules].join('\n');
-const renderers = await readFile(renderersPath, 'utf8');
-const admin = await readFile(adminPath, 'utf8');
+const renderersEntry = await readFile(renderersPath, 'utf8');
+const rendererModules = await Promise.all(rendererModulePaths.map((path) => readFile(path, 'utf8')));
+const renderers = [renderersEntry, ...rendererModules].join('\n');
+const adminEntry = await readFile(adminPath, 'utf8');
+const adminModules = await Promise.all(adminModulePaths.map((path) => readFile(path, 'utf8')));
+const admin = [adminEntry, ...adminModules].join('\n');
 const adminJs = await readFile(adminJsPath, 'utf8');
 const login2fa = await readFile(login2faPath, 'utf8');
 const schema = (await Promise.all(schemaPaths.map((path) => readFile(path, 'utf8')))).join('\n');
@@ -104,6 +130,11 @@ const requiredPageSnippets = [
 ];
 
 const requiredPanelSnippets = [
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/common.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/github.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/comments.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/extensions.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/external-comments.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/users.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/security.php';",
   "require_once YNEKO_REIMU_DIR . '/inc/settings/panels/music.php';",
@@ -162,6 +193,11 @@ const requiredPanelSnippets = [
 ];
 
 const requiredRendererSnippets = [
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/renderers/admin-gif.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/renderers/repeatable.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/renderers/comment-upload.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/renderers/user-avatar.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/renderers/user-badges.php';",
   'name="yneko_reimu_settings[friends][<?php echo esc_attr( $index ); ?>][name]"',
   'name="yneko_reimu_settings[friends][<?php echo esc_attr( $index ); ?>][url]"',
   'name="yneko_reimu_settings[friends][<?php echo esc_attr( $index ); ?>][image]"',
@@ -192,6 +228,11 @@ const requiredAdminStyleSnippets = [
 ];
 
 const requiredAdminPhpSnippets = [
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/admin/menu.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/admin/ui.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/admin/totp.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/admin/review-counts.php';",
+  "require_once YNEKO_REIMU_DIR . '/inc/settings/admin/assets.php';",
   'function yneko_reimu_admin_current_user_totp_payload',
   'function yneko_reimu_ajax_admin_totp_generate',
   'function yneko_reimu_ajax_admin_totp_enable',
@@ -280,7 +321,8 @@ const failures = [];
 for (const tab of tabs) {
   const tabNeedle = `data-yneko-settings-tab="${tab}"`;
   const panelNeedle = `data-yneko-settings-panel="${tab}"`;
-  const tabCount = countOccurrences(page, tabNeedle);
+  const tabCount = countOccurrences(page, tabNeedle)
+    + (page.includes('data-yneko-settings-tab="<?php echo esc_attr( $slug ); ?>"') && page.includes(`array( '${tab}',`) ? 1 : 0);
   const panelCount = countOccurrences(tab === 'general' ? page : panels, panelNeedle);
 
   if (tabCount !== 1) {
@@ -308,6 +350,10 @@ for (const [panel, functionName] of panelFunctions) {
 }
 
 for (const snippet of requiredPageSnippets) {
+  const tabFallback = snippet.match(/^data-yneko-settings-tab="([^"]+)"$/);
+  if (tabFallback && page.includes('data-yneko-settings-tab="<?php echo esc_attr( $slug ); ?>"') && page.includes(`array( '${tabFallback[1]}',`)) {
+    continue;
+  }
   if (!page.includes(snippet)) {
     failures.push(`Missing required settings page snippet: ${snippet}`);
   }
@@ -318,12 +364,24 @@ for (const snippet of requiredPanelSnippets) {
   if (fallback && panels.includes(`array( '${fallback[1]}',`)) {
     continue;
   }
+  const commentUploadFallback = snippet.match(/^name="yneko_reimu_settings\[comment_upload\]\[(image|gif)_enabled\]"$/);
+  if (commentUploadFallback && panels.includes("name=\"yneko_reimu_settings[comment_upload][<?php echo esc_attr( $type ); ?>_enabled]\"") && panels.includes(`yneko_reimu_render_settings_comment_upload_group( '${'image' === commentUploadFallback[1] ? '图片上传' : 'GIF 上传'}`)) {
+    continue;
+  }
+  const friendSiteFallback = snippet.match(/^name="yneko_reimu_settings\[friend_site\]\[([^\]]+)\]"$/);
+  if (friendSiteFallback && panels.includes("name=\"yneko_reimu_settings[friend_site][<?php echo esc_attr( $key ); ?>]\"") && panels.includes(`'${friendSiteFallback[1]}'`)) {
+    continue;
+  }
   if (!panels.includes(snippet)) {
     failures.push(`Missing required settings panel snippet: ${snippet}`);
   }
 }
 
 for (const snippet of requiredRendererSnippets) {
+  const repeatableFallback = snippet.match(/^name="yneko_reimu_settings\[(friends|music)\]\[<\?php echo esc_attr\( \$index \); \?>\]\[([^\]]+)\]"$/);
+  if (repeatableFallback && renderers.includes("name=\"yneko_reimu_settings[<?php echo esc_attr( $group ); ?>][<?php echo esc_attr( $index ); ?>][<?php echo esc_attr( $key ); ?>]\"") && renderers.includes(`'${repeatableFallback[1]}', $index, '${repeatableFallback[2]}'`)) {
+    continue;
+  }
   if (!renderers.includes(snippet)) {
     failures.push(`Missing required settings renderer snippet: ${snippet}`);
   }

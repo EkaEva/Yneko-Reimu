@@ -45,12 +45,26 @@ function yneko_reimu_render_settings_general_builtin_pages_group( $builtin_pages
 	?>
 	<?php yneko_reimu_settings_group_open( '内置页面', 'Built-in pages', '控制主题内置虚拟页面是否可访问，并同步影响主题默认导航。', 'Control whether built-in virtual pages are available and whether default theme navigation includes them.' ); ?>
 		<input type="hidden" name="yneko_reimu_settings[builtin_pages][_present]" value="1">
-		<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][projects]" value="1" <?php checked( '1', $builtin_pages['projects'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '项目页', 'Projects page' ); ?></label>
-		<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][archives]" value="1" <?php checked( '1', $builtin_pages['archives'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '归档页', 'Archives page' ); ?></label>
-		<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][about]" value="1" <?php checked( '1', $builtin_pages['about'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '关于页', 'About page' ); ?></label>
-		<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][friend]" value="1" <?php checked( '1', $builtin_pages['friend'] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( '友链页', 'Friends page' ); ?></label>
+		<?php foreach ( yneko_reimu_settings_builtin_page_fields() as $field ) : ?>
+			<?php yneko_reimu_render_settings_builtin_page_toggle( $builtin_pages, $field ); ?>
+		<?php endforeach; ?>
 		<?php yneko_reimu_admin_bilingual_description( '关闭后会从主题默认导航和菜单中的对应内置链接移除，并让对应内置路径返回 404；不会影响 WordPress 原生分类、标签、日期等归档页。', 'Disabled pages are removed from the theme default navigation and matching built-in menu links, and their built-in paths return 404. Native WordPress category, tag, date, and other archives are not affected.' ); ?>
 	<?php yneko_reimu_settings_group_close(); ?>
+	<?php
+}
+
+function yneko_reimu_settings_builtin_page_fields() {
+	return array(
+		array( 'projects', '项目页', 'Projects page' ),
+		array( 'archives', '归档页', 'Archives page' ),
+		array( 'about', '关于页', 'About page' ),
+		array( 'friend', '友链页', 'Friends page' ),
+	);
+}
+
+function yneko_reimu_render_settings_builtin_page_toggle( $builtin_pages, $field ) {
+	?>
+	<label class="yneko-reimu-checkbox-line"><input type="checkbox" name="yneko_reimu_settings[builtin_pages][<?php echo esc_attr( $field[0] ); ?>]" value="1" <?php checked( '1', $builtin_pages[ $field[0] ] ?? '1' ); ?>> <?php yneko_reimu_admin_bilingual_label( $field[1], $field[2] ); ?></label>
 	<?php
 }
 
@@ -88,18 +102,25 @@ function yneko_reimu_render_settings_admin_totp_group( $admin_totp, $admin_totp_
 	<?php yneko_reimu_settings_group_open( '账号安全', 'Account security', '这里管理当前管理员账号的认证器二次认证，和前台个人资料弹窗使用同一套 TOTP 数据。', 'Manage authenticator-app two-factor authentication for the current administrator account. It uses the same TOTP data as the front-end profile modal.' ); ?>
 		<div class="yneko-reimu-admin-totp" data-yneko-admin-totp data-nonce="<?php echo esc_attr( $admin_totp['nonce'] ); ?>" data-enabled="<?php echo $admin_totp['enabled'] ? '1' : '0'; ?>" data-qrcode-src="<?php echo esc_url( YNEKO_REIMU_URI . '/assets/dist/qrcode.js' ); ?>">
 			<?php yneko_reimu_render_settings_admin_totp_status( $admin_totp ); ?>
-			<?php if ( $admin_totp_available ) : ?>
-				<?php yneko_reimu_render_settings_admin_totp_setup(); ?>
-				<?php yneko_reimu_render_settings_admin_totp_actions( $admin_totp ); ?>
-				<?php yneko_reimu_render_settings_admin_totp_recovery( $admin_totp ); ?>
-				<p class="yneko-reimu-admin-totp-message" data-yneko-admin-totp-message></p>
-				<?php yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口和后台 wp-login.php 登录时都需要输入认证器验证码；如果认证器不可用，可使用一个未用过的一次性恢复码登录。', 'After enabling it, this account must enter an authenticator code when logging in through the front-end comment login and backend wp-login.php. If the authenticator is unavailable, use an unused one-time recovery code.' ); ?>
-			<?php else : ?>
-				<?php yneko_reimu_admin_bilingual_description( '二次认证模块尚未加载，无法在后台管理。', 'The two-factor module is not loaded yet, so it cannot be managed in the admin page.' ); ?>
-			<?php endif; ?>
+			<?php yneko_reimu_render_settings_admin_totp_body( $admin_totp, $admin_totp_available ); ?>
 		</div>
 	<?php yneko_reimu_settings_group_close(); ?>
 	<?php
+}
+
+function yneko_reimu_render_settings_admin_totp_body( $admin_totp, $admin_totp_available ) {
+	if ( ! $admin_totp_available ) {
+		yneko_reimu_admin_bilingual_description( '二次认证模块尚未加载，无法在后台管理。', 'The two-factor module is not loaded yet, so it cannot be managed in the admin page.' );
+		return;
+	}
+
+	yneko_reimu_render_settings_admin_totp_setup();
+	yneko_reimu_render_settings_admin_totp_actions( $admin_totp );
+	yneko_reimu_render_settings_admin_totp_recovery( $admin_totp );
+	?>
+	<p class="yneko-reimu-admin-totp-message" data-yneko-admin-totp-message></p>
+	<?php
+	yneko_reimu_admin_bilingual_description( '启用后，当前账号从前台评论登录入口和后台 wp-login.php 登录时都需要输入认证器验证码；如果认证器不可用，可使用一个未用过的一次性恢复码登录。', 'After enabling it, this account must enter an authenticator code when logging in through the front-end comment login and backend wp-login.php. If the authenticator is unavailable, use an unused one-time recovery code.' );
 }
 
 function yneko_reimu_render_settings_admin_totp_status( $admin_totp ) {

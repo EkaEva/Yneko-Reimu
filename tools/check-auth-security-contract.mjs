@@ -6,9 +6,25 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const themeRoot = resolve(root, 'theme/Yneko-Reimu');
 const settingsPanelPaths = [
   resolve(themeRoot, 'inc/settings/panels.php'),
+  resolve(themeRoot, 'inc/settings/panels/common.php'),
+  resolve(themeRoot, 'inc/settings/panels/i18n.php'),
+  resolve(themeRoot, 'inc/settings/panels/github.php'),
+  resolve(themeRoot, 'inc/settings/panels/comments.php'),
+  resolve(themeRoot, 'inc/settings/panels/search.php'),
+  resolve(themeRoot, 'inc/settings/panels/friends.php'),
+  resolve(themeRoot, 'inc/settings/panels/extensions.php'),
+  resolve(themeRoot, 'inc/settings/panels/external-comments.php'),
   resolve(themeRoot, 'inc/settings/panels/users.php'),
   resolve(themeRoot, 'inc/settings/panels/security.php'),
   resolve(themeRoot, 'inc/settings/panels/music.php')
+];
+const settingsAdminPaths = [
+  resolve(themeRoot, 'inc/settings/admin.php'),
+  resolve(themeRoot, 'inc/settings/admin/menu.php'),
+  resolve(themeRoot, 'inc/settings/admin/ui.php'),
+  resolve(themeRoot, 'inc/settings/admin/totp.php'),
+  resolve(themeRoot, 'inc/settings/admin/review-counts.php'),
+  resolve(themeRoot, 'inc/settings/admin/assets.php')
 ];
 const settingsPanels = (await Promise.all(settingsPanelPaths.map((path) => readFile(path, 'utf8')))).join('\n');
 const settingsSchemaPaths = [
@@ -57,7 +73,7 @@ const files = {
   schema: settingsSchema,
   page: settingsPage,
   panels: settingsPanels,
-  admin: await readFile(resolve(themeRoot, 'inc/settings/admin.php'), 'utf8'),
+  admin: (await Promise.all(settingsAdminPaths.map((path) => readFile(path, 'utf8')))).join('\n'),
   auth: commentAuthSource,
   profile: commentProfileSource
 };
@@ -182,6 +198,15 @@ for (const uiSnippet of [
   'yneko_reimu_admin_badge( $review_badges[\'security\'] ?? 0 )',
   '$counts[\'security\'] = function_exists( \'yneko_reimu_auth_security_unhandled_count\' ) ? yneko_reimu_auth_security_unhandled_count() : 0'
 ]) {
+  if ('data-yneko-settings-tab="security"' === uiSnippet && source.includes('data-yneko-settings-tab="<?php echo esc_attr( $slug ); ?>"') && source.includes("array( 'security', '安全设置', 'Security', 'security' )")) {
+    continue;
+  }
+  if ('name="yneko_reimu_settings[auth_security][enabled]"' === uiSnippet && source.includes('name="yneko_reimu_settings[auth_security][<?php echo esc_attr( $field[0] ); ?>]"') && source.includes("array( 'enabled', '启用认证邮件风控', 'Enable authentication email guard', '1' )")) {
+    continue;
+  }
+  if ('yneko_reimu_admin_badge( $review_badges[\'security\'] ?? 0 )' === uiSnippet && source.includes("array( 'security', '安全设置', 'Security', 'security' )") && source.includes('yneko_reimu_admin_badge( $review_badges[ $tab[3] ] ?? 0 )')) {
+    continue;
+  }
   requireSnippet('settings auth security UI', uiSnippet);
 }
 

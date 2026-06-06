@@ -23,6 +23,14 @@ const settingsPageModulePaths = [
 ];
 const settingsPanelsPath = resolve(root, 'theme/Yneko-Reimu/inc/settings/panels.php');
 const settingsPanelModulePaths = [
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/common.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/i18n.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/github.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/comments.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/search.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/friends.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/extensions.php'),
+  resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/external-comments.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/users.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/security.php'),
   resolve(root, 'theme/Yneko-Reimu/inc/settings/panels/music.php')
