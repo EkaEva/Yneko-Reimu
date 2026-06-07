@@ -18,6 +18,8 @@ const commentModalSource = await readFile(resolve(themeRoot, 'inc/comments/modal
 const setupSource = await readFile(resolve(themeRoot, 'inc/setup.php'), 'utf8');
 const editorSource = await readFile(resolve(themeRoot, 'inc/editor.php'), 'utf8');
 const settingsAdminAssetsSource = await readFile(resolve(themeRoot, 'inc/settings/admin/assets.php'), 'utf8');
+const themeUpdaterSource = await readFile(resolve(themeRoot, 'inc/theme-updater.php'), 'utf8');
+const settingsPageGeneralSource = await readFile(resolve(themeRoot, 'inc/settings/page/general.php'), 'utf8');
 const commentRenderingPaths = [
   resolve(themeRoot, 'inc/comments/rendering.php'),
   resolve(themeRoot, 'inc/comments/rendering/toolbar.php'),
@@ -176,9 +178,22 @@ for (const snippet of [
   "'appearance_page_yneko-reimu-settings'",
   "wp_register_script( 'yneko-reimu-admin-settings'",
   "YNEKO_REIMU_URI . '/assets/dist/admin-settings.js'",
-  'window.YNEKO_REIMU_ADMIN_I18N='
+  'window.YNEKO_REIMU_ADMIN_I18N=',
+  'data-yneko-theme-update-status',
+  'data-yneko-theme-update-force',
+  'data-yneko-theme-update-clear',
+  'function yneko_reimu_theme_updater_fetch_status',
+  'function yneko_reimu_theme_updater_handle_admin_action',
+  "check_admin_referer( 'yneko_reimu_theme_update_' . $action )",
+  "current_user_can( 'manage_options' )",
+  "'wp_http_error'",
+  "'http_error'",
+  "'invalid_json'",
+  "'unstable_release'",
+  "'invalid_tag'",
+  "'missing_asset'"
 ]) {
-  requireSnippet('admin settings smoke anchor', snippet, sourceFiles.adminSettings);
+  requireSnippet('admin settings smoke anchor', snippet, `${sourceFiles.adminSettings}\n${themeUpdaterSource}\n${settingsPageGeneralSource}`);
 }
 
 if (failures.length) {

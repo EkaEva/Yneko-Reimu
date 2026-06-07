@@ -60,8 +60,102 @@ function yneko_reimu_render_settings_general_updates_group( $updates ) {
 			<input id="yneko-reimu-update-cache-minutes" class="small-text" type="number" min="5" max="4320" step="5" name="yneko_reimu_settings[updates][cache_minutes]" value="<?php echo esc_attr( absint( $updates['cache_minutes'] ?? 360 ) ); ?>">
 			<?php yneko_reimu_admin_bilingual_description( '默认 360 分钟。测试时可临时改成 5 分钟；正式站点建议保持 360 分钟或更长。', 'Default is 360 minutes. Use 5 minutes temporarily for testing; keep 360 minutes or longer on production sites.' ); ?>
 		</div>
+		<?php yneko_reimu_render_settings_general_updates_status(); ?>
 	<?php yneko_reimu_settings_group_close(); ?>
 	<?php
+}
+
+function yneko_reimu_render_settings_general_updates_status() {
+	$enabled = yneko_reimu_theme_update_check_enabled();
+	$status  = function_exists( 'yneko_reimu_theme_updater_get_cached_status' ) ? yneko_reimu_theme_updater_get_cached_status() : false;
+	$current = yneko_reimu_theme_updater_normalize_version( YNEKO_REIMU_VERSION );
+	$latest  = is_array( $status ) ? (string) ( $status['version'] ?? '' ) : '';
+	$asset   = is_array( $status ) ? (string) ( $status['asset_name'] ?? '' ) : '';
+	$package = is_array( $status ) ? (string) ( $status['package'] ?? '' ) : '';
+	$conclusion = yneko_reimu_theme_update_status_conclusion( $enabled, $status, $current );
+	?>
+	<div class="yneko-reimu-update-status" data-yneko-theme-update-status>
+		<div class="yneko-reimu-update-status__header">
+			<strong><?php yneko_reimu_admin_bilingual_label( '更新检测状态', 'Update check status' ); ?></strong>
+			<span class="yneko-reimu-update-status__pill is-<?php echo esc_attr( $conclusion['tone'] ); ?>"><?php echo esc_html( yneko_reimu_theme_update_status_text( $conclusion['zh'], $conclusion['en'] ) ); ?></span>
+		</div>
+		<dl class="yneko-reimu-update-status__grid">
+			<?php yneko_reimu_theme_update_status_row( '当前安装版本', 'Installed version', $current ? $current : '-' ); ?>
+			<?php yneko_reimu_theme_update_status_row( 'GitHub 最新正式版本', 'Latest stable GitHub version', $latest ? $latest : '-' ); ?>
+			<?php yneko_reimu_theme_update_status_row( '目标附件名', 'Expected asset', $asset ? $asset : ( $latest ? yneko_reimu_theme_updater_expected_asset_name( $latest ) : '-' ) ); ?>
+			<?php yneko_reimu_theme_update_status_row( '附件状态', 'Asset status', $package ? yneko_reimu_theme_update_status_text( '已找到', 'Found' ) : yneko_reimu_theme_update_status_text( '未找到', 'Not found' ) ); ?>
+			<?php yneko_reimu_theme_update_status_row( '上次检测时间', 'Last checked', yneko_reimu_theme_update_format_time( is_array( $status ) ? absint( $status['checked_at'] ?? 0 ) : 0 ) ); ?>
+			<?php yneko_reimu_theme_update_status_row( '缓存过期时间', 'Cache expires', yneko_reimu_theme_update_format_time( is_array( $status ) ? absint( $status['expires_at'] ?? 0 ) : 0 ) ); ?>
+			<?php yneko_reimu_theme_update_status_row( '缓存时长', 'Cache window', sprintf( '%d min', yneko_reimu_theme_update_cache_minutes() ) ); ?>
+			<?php yneko_reimu_theme_update_status_row( '失败原因', 'Failure reason', yneko_reimu_theme_update_status_error_text( $status ) ); ?>
+		</dl>
+		<div class="yneko-reimu-update-status__actions">
+			<a class="button button-secondary" href="<?php echo esc_url( yneko_reimu_theme_updater_admin_action_url( 'force_check' ) ); ?>" data-yneko-theme-update-force><?php yneko_reimu_admin_bilingual_label( '立即重新检测', 'Check now' ); ?></a>
+			<a class="button" href="<?php echo esc_url( yneko_reimu_theme_updater_admin_action_url( 'clear_cache' ) ); ?>" data-yneko-theme-update-clear><?php yneko_reimu_admin_bilingual_label( '清除缓存', 'Clear cache' ); ?></a>
+			<a class="button-link" href="<?php echo esc_url( admin_url( 'update-core.php?force-check=1' ) ); ?>"><?php yneko_reimu_admin_bilingual_label( '打开 WordPress 更新页', 'Open WordPress Updates' ); ?></a>
+		</div>
+		<?php yneko_reimu_admin_bilingual_description( '普通加载只读取缓存；点击立即重新检测才会同步请求 GitHub。WordPress 仍会在「仪表盘 -> 更新」和「外观 -> 主题」中安装更新。', 'Normal page loads read the cache only; Check now performs a synchronous GitHub request. WordPress still installs updates through Dashboard -> Updates and Appearance -> Themes.' ); ?>
+	</div>
+	<?php
+}
+
+function yneko_reimu_theme_update_status_text( $zh, $en ) {
+	return yneko_reimu_admin_prefers_zh() ? (string) $zh : (string) $en;
+}
+
+function yneko_reimu_theme_update_status_conclusion( $enabled, $status, $current ) {
+	if ( ! $enabled ) {
+		return array( 'zh' => '未启用检测', 'en' => 'Disabled', 'tone' => 'muted' );
+	}
+
+	if ( ! is_array( $status ) ) {
+		return array( 'zh' => '尚未检测', 'en' => 'Not checked', 'tone' => 'muted' );
+	}
+
+	if ( empty( $status['ok'] ) ) {
+		return array( 'zh' => '检测失败', 'en' => 'Check failed', 'tone' => 'error' );
+	}
+
+	if ( ! empty( $status['version'] ) && version_compare( $status['version'], $current, '>' ) ) {
+		return array( 'zh' => '有可用更新', 'en' => 'Update available', 'tone' => 'success' );
+	}
+
+	return array( 'zh' => '当前已是最新', 'en' => 'Up to date', 'tone' => 'ok' );
+}
+
+function yneko_reimu_theme_update_status_row( $label_zh, $label_en, $value ) {
+	?>
+	<div class="yneko-reimu-update-status__row">
+		<dt><?php yneko_reimu_admin_bilingual_label( $label_zh, $label_en ); ?></dt>
+		<dd><?php echo esc_html( $value ); ?></dd>
+	</div>
+	<?php
+}
+
+function yneko_reimu_theme_update_format_time( $timestamp ) {
+	if ( ! $timestamp ) {
+		return '-';
+	}
+
+	return wp_date( 'Y-m-d H:i:s T', $timestamp );
+}
+
+function yneko_reimu_theme_update_status_error_text( $status ) {
+	if ( ! is_array( $status ) ) {
+		return yneko_reimu_theme_update_status_text( '暂无检测记录。', 'No check has been recorded yet.' );
+	}
+
+	if ( ! empty( $status['ok'] ) ) {
+		return '-';
+	}
+
+	$code    = (string) ( $status['error_code'] ?? '' );
+	$message = (string) ( $status['message'] ?? '' );
+	if ( $code && $message ) {
+		return $code . ': ' . $message;
+	}
+
+	return $message ? $message : yneko_reimu_theme_update_status_text( '未知错误。', 'Unknown error.' );
 }
 
 function yneko_reimu_render_settings_general_builtin_pages_group( $builtin_pages ) {

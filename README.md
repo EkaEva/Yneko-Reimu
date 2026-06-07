@@ -148,7 +148,7 @@ theme/Yneko-Reimu -> wp-content/themes/Yneko-Reimu
 
 #### 主题更新
 
-`常规设置 -> 主题更新` 默认开启 GitHub Release 更新检测。主题只读取正式 Release，跳过 draft / prerelease，并只安装 Release 附件中的 `Yneko-Reimu-vX.Y.Z.zip`，不会使用 GitHub 自动生成的源码包。更新结果会接入 WordPress 原生主题更新界面，检测失败时静默跳过，不影响前台访问。缓存时间默认 `360` 分钟，测试更新流程时可以临时改成 `5` 分钟。
+`常规设置 -> 主题更新` 默认开启 GitHub Release 更新检测。主题只读取正式 Release，跳过 draft / prerelease，并只安装 Release 附件中的 `Yneko-Reimu-vX.Y.Z.zip`，不会使用 GitHub 自动生成的源码包。更新结果会接入 WordPress 原生主题更新界面，检测失败不会影响前台访问。缓存时间默认 `360` 分钟，测试更新流程时可以临时改成 `5` 分钟。状态区会显示当前版本、GitHub 最新正式版本、目标附件名、附件是否找到、上次检测时间、缓存过期时间和失败原因；普通打开设置页只读取缓存，点击“立即重新检测”才会同步请求 GitHub。
 
 #### 账号安全
 
@@ -498,6 +498,7 @@ Yneko-Reimu-v0.2.17.zip
 - [开发与构建](docs/development.md)
 - [Hooks / Filters](docs/hooks.md)
 - [发布流程](docs/release.md)
+- [v0.2.18 发布说明](docs/release-notes-v0.2.18.md)
 - [v0.2.17 发布说明](docs/release-notes-v0.2.17.md)
 - [v0.2.4 发布说明](docs/release-notes-v0.2.4.md)
 - [Theme Check 说明](docs/theme-check.md)
@@ -814,7 +815,7 @@ The General tab includes an Administrator experience group. Its "Show front-end 
 
 #### Theme Updates
 
-`General -> Theme updates` enables GitHub Release update checks by default. The theme checks stable Releases only, skips drafts and prereleases, and installs only the `Yneko-Reimu-vX.Y.Z.zip` Release asset instead of GitHub-generated source archives. Results are exposed through WordPress native theme updates; failed checks are silent and do not affect the front end. The cache window defaults to `360` minutes and can be set to `5` minutes temporarily when testing update flow.
+`General -> Theme updates` enables GitHub Release update checks by default. The theme checks stable Releases only, skips drafts and prereleases, and installs only the `Yneko-Reimu-vX.Y.Z.zip` Release asset instead of GitHub-generated source archives. Results are exposed through WordPress native theme updates; failed checks do not affect the front end. The cache window defaults to `360` minutes and can be set to `5` minutes temporarily when testing update flow. The status area shows the installed version, latest stable GitHub version, expected asset name, asset availability, last checked time, cache expiry, and failure reason; normal settings page loads read cache only, while “Check now” performs a synchronous GitHub request.
 
 #### Account Security
 
@@ -944,7 +945,7 @@ Yneko-Reimu-v0.2.17.zip
 
 If a GitHub Release for the tag does not exist, the workflow creates one. If it already exists, the ZIP is uploaded with overwrite enabled.
 
-Current release notes: [v0.2.17](docs/release-notes-v0.2.17.md).
+Current release notes: [v0.2.17](docs/release-notes-v0.2.17.md). Next release notes draft: [v0.2.18](docs/release-notes-v0.2.18.md).
 
 ### Repository Layout
 

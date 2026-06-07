@@ -126,7 +126,11 @@ const coveredAdminUi = [
       'name="yneko_reimu_settings[updates][cache_minutes]"',
       'max( 5, min( 4320',
       'function yneko_reimu_theme_update_cache_minutes',
-      'set_site_transient( yneko_reimu_theme_updater_cache_key(), $release ? $release : array(), yneko_reimu_theme_update_cache_minutes() * MINUTE_IN_SECONDS )'
+      'set_site_transient( yneko_reimu_theme_updater_cache_key(), $status, yneko_reimu_theme_update_cache_minutes() * MINUTE_IN_SECONDS )',
+      "'checked_at'",
+      "'expires_at'",
+      "'error_code'",
+      "'asset_name'"
     ],
     haystack: `${settingsSchema}\n${settingsPage}\n${themeUpdater}`
   },
