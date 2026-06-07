@@ -110,7 +110,7 @@ requireIncludes(sizeSource, [
 ], 'tools/check-size.mjs');
 
 requireIncludes(packageSource, [
-  'release-notes-v(?!0\\.2\\.16\\.md$)',
+  'release-notes-v(?!0\\.2\\.17\\.md$)',
   "`Yneko-Reimu/docs/release-notes-v${packageVersion}.md`"
 ], 'tools/check-package.mjs');
 

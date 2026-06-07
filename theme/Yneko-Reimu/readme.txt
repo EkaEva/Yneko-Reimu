@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.16
+Stable tag: 0.2.17
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,14 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.17 =
+
+* Extends local Playwright E2E coverage to the Yneko-Reimu settings page, including the admin settings runtime, tab surface, and administrator TOTP controls.
+* Extends local Playwright E2E coverage to the block editor, including the editor-only stylesheet and the Reimu pattern/style registrations introduced in v0.2.16.
+* Strengthens the local wp-env seed so the administrator and subscriber accounts are repeatable and local TOTP state is cleaned before browser QA.
+* Adds backend/editor smoke anchors to the fast runtime smoke check while preserving Classic Hybrid script loading and public WordPress contracts.
+* Updates E2E documentation, release notes, and the PHP complexity baseline for the quality-hardening release.
 
 = 0.2.16 =
 

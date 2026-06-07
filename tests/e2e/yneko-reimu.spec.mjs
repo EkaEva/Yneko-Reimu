@@ -6,6 +6,27 @@ const user = {
   email: 'reimu-user@example.test',
   password: 'password'
 };
+const admin = {
+  login: 'admin',
+  password: 'password'
+};
+const editorPatternSlugs = [
+  'yneko-reimu/article-intro',
+  'yneko-reimu/two-column-note',
+  'yneko-reimu/settings-table',
+  'yneko-reimu/code-window',
+  'yneko-reimu/tip-notice',
+  'yneko-reimu/info-notice',
+  'yneko-reimu/warning-notice',
+  'yneko-reimu/technical-note'
+];
+const editorStyleClasses = [
+  'reimu-field-table',
+  'reimu-code-window',
+  'reimu-notice-tip',
+  'reimu-notice-info',
+  'reimu-notice-warning'
+];
 
 test.describe.configure({ mode: 'serial' });
 
@@ -27,6 +48,18 @@ test.afterEach(() => {
 async function waitForThemeRuntime(page) {
   await expect(page.locator('script[src*="assets/dist/reimu.js"]')).toHaveCount(1);
   await page.waitForFunction(() => Boolean(window.ReimuWP && typeof window.ReimuWP.init === 'function'));
+}
+
+async function loginAsAdmin(page) {
+  await page.goto('/wp-login.php');
+  await page.locator('#user_login').fill(admin.login);
+  await page.locator('#user_pass').fill(admin.password);
+  await Promise.all([
+    page.waitForURL(/\/wp-admin\//),
+    page.locator('#wp-submit').click({ noWaitAfter: true })
+  ]);
+  await expect(page).toHaveURL(/\/wp-admin\//);
+  await expect(page.locator('#wpadminbar')).toBeVisible();
 }
 
 async function expectCustomCursorEnabled(page) {
@@ -133,6 +166,57 @@ test('loads primary public pages without browser runtime errors', async ({ page 
     await page.goto(path);
     await waitForThemeRuntime(page);
     await expect(page.locator('#wrap')).toBeVisible();
+  }
+});
+
+test('loads the Yneko-Reimu admin settings surface', async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto('/wp-admin/themes.php?page=yneko-reimu-settings');
+
+  await expect(page.locator('.yneko-reimu-settings-page')).toBeVisible();
+  await expect(page.locator('script[src*="assets/dist/admin-settings.js"]')).toHaveCount(1);
+  await expect(page.locator('[data-yneko-settings-tab="general"]')).toBeVisible();
+  await expect(page.locator('[data-yneko-settings-panel="general"]')).toBeVisible();
+  await expect(page.locator('[data-yneko-settings-tab="comments"]')).toBeVisible();
+  await expect(page.locator('[data-yneko-settings-tab="security"]')).toBeVisible();
+  await expect(page.locator('[data-yneko-admin-totp]')).toBeVisible();
+});
+
+test('loads Reimu block editor patterns, styles, and editor CSS', async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto('/wp-admin/post-new.php');
+
+  await expect(page.locator('link[href*="assets/dist/reimu-editor.css"]')).toHaveCount(1);
+  await page.waitForFunction(() => Boolean(window.wp?.blocks && window.wp?.data));
+
+  const contract = await page.evaluate(({ slugs, styles }) => {
+    const blockPatterns = typeof window.wp.blocks.getBlockPatterns === 'function'
+      ? window.wp.blocks.getBlockPatterns()
+      : [];
+    const editorSettings = window.wp.data.select('core/block-editor')?.getSettings?.() || {};
+    const settingsPatterns = editorSettings.__experimentalBlockPatterns || editorSettings.blockPatterns || [];
+    const registeredPatterns = [...blockPatterns, ...settingsPatterns].map((pattern) => pattern.name);
+    const getStyles = typeof window.wp.blocks.getBlockStyles === 'function'
+      ? (blockName) => window.wp.blocks.getBlockStyles(blockName).map((style) => style.name)
+      : () => [];
+    const tableStyles = getStyles('core/table');
+    const codeStyles = getStyles('core/code');
+    const groupStyles = getStyles('core/group');
+    return {
+      patternApiAvailable: registeredPatterns.length > 0,
+      styleApiAvailable: tableStyles.length > 0 || codeStyles.length > 0 || groupStyles.length > 0,
+      missingPatterns: registeredPatterns.length ? slugs.filter((slug) => !registeredPatterns.includes(slug)) : [],
+      missingStyles: tableStyles.length || codeStyles.length || groupStyles.length
+        ? styles.filter((style) => !tableStyles.includes(style) && !codeStyles.includes(style) && !groupStyles.includes(style))
+        : []
+    };
+  }, { slugs: editorPatternSlugs, styles: editorStyleClasses });
+
+  if (contract.patternApiAvailable) {
+    expect(contract.missingPatterns).toEqual([]);
+  }
+  if (contract.styleApiAvailable) {
+    expect(contract.missingStyles).toEqual([]);
   }
 });
 

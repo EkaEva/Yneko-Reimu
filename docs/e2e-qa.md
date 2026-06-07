@@ -22,9 +22,14 @@ Use `npm run qa:e2e:start` when normal `wp-env start --update` fails on Windows 
 
 ## Seeded Site
 
-`npm run qa:e2e:seed` activates the local theme, enables pretty permalinks, opens comments, creates a fixed subscriber account, creates `Reimu E2E Post`, and enables the smallest settings needed for comments/profile/upload/PJAX checks.
+`npm run qa:e2e:seed` activates the local theme, enables pretty permalinks, opens comments, creates fixed administrator and subscriber accounts, creates `Reimu E2E Post`, and enables the smallest settings needed for comments/profile/upload/PJAX/admin/editor checks.
 
-Seeded account:
+Seeded administrator:
+
+- Login: `admin`
+- Password: `password`
+
+Seeded subscriber:
 
 - Email: `reimu-user@example.test`
 - Password: `password`
@@ -44,6 +49,8 @@ Important seeded paths:
 - Comment upload controls render when uploads are enabled.
 - AJAX comment submission inserts the comment without a full page reload.
 - PJAX navigation keeps the lazy comments runtime available after moving between pages.
+- The Yneko-Reimu settings page loads its admin script, tab panels, and administrator TOTP controls.
+- The block editor loads `assets/dist/reimu-editor.css` and exposes the Reimu pattern/style registrations added in v0.2.16.
 
 ## Manual QA Still Required
 

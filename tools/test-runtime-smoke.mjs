@@ -15,6 +15,9 @@ const enqueuePaths = [
 ];
 const enqueueSource = (await Promise.all(enqueuePaths.map((path) => readFile(path, 'utf8')))).join('\n');
 const commentModalSource = await readFile(resolve(themeRoot, 'inc/comments/modals.php'), 'utf8');
+const setupSource = await readFile(resolve(themeRoot, 'inc/setup.php'), 'utf8');
+const editorSource = await readFile(resolve(themeRoot, 'inc/editor.php'), 'utf8');
+const settingsAdminAssetsSource = await readFile(resolve(themeRoot, 'inc/settings/admin/assets.php'), 'utf8');
 const commentRenderingPaths = [
   resolve(themeRoot, 'inc/comments/rendering.php'),
   resolve(themeRoot, 'inc/comments/rendering/toolbar.php'),
@@ -60,7 +63,9 @@ const sourceFiles = {
   shareEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-share.js'), 'utf8'),
   photoswipeEntry: await readFile(resolve(themeRoot, 'assets/src/reimu-photoswipe.js'), 'utf8'),
   modals: `${commentModalSource}\n${commentRenderingSource}`,
-  enqueue: enqueueSource
+  enqueue: enqueueSource,
+  editor: `${setupSource}\n${editorSource}`,
+  adminSettings: settingsAdminAssetsSource
 };
 
 const failures = [];
@@ -150,6 +155,30 @@ for (const snippet of [
   'window.REIMU_CONFIG='
 ]) {
   requireSnippet('enqueue smoke anchor', snippet, sourceFiles.enqueue);
+}
+
+for (const snippet of [
+  "add_editor_style( 'assets/dist/reimu-editor.css' );",
+  "wp_enqueue_style(\n\t\t'yneko-reimu-editor'",
+  "YNEKO_REIMU_URI . '/assets/dist/reimu-editor.css'",
+  "register_block_pattern_category(\n\t\t'yneko-reimu'",
+  'yneko-reimu/settings-table',
+  'yneko-reimu/code-window',
+  'yneko-reimu/technical-note',
+  'is-style-reimu-field-table',
+  'is-style-reimu-code-window',
+  'is-style-reimu-notice-warning'
+]) {
+  requireSnippet('editor smoke anchor', snippet, sourceFiles.editor);
+}
+
+for (const snippet of [
+  "'appearance_page_yneko-reimu-settings'",
+  "wp_register_script( 'yneko-reimu-admin-settings'",
+  "YNEKO_REIMU_URI . '/assets/dist/admin-settings.js'",
+  'window.YNEKO_REIMU_ADMIN_I18N='
+]) {
+  requireSnippet('admin settings smoke anchor', snippet, sourceFiles.adminSettings);
 }
 
 if (failures.length) {

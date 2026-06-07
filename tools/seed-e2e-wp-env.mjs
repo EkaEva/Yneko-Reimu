@@ -10,6 +10,11 @@ const testUser = {
   email: 'reimu-user@example.test',
   password: 'password'
 };
+const adminUser = {
+  login: 'admin',
+  email: 'admin@example.test',
+  password: 'password'
+};
 const commandTimeoutMs = Number(process.env.YNEKO_E2E_WP_TIMEOUT_MS || 60000);
 
 function wp(args, options = {}) {
@@ -154,12 +159,32 @@ async function ensureWordPressInstalled() {
       'install',
       '--url=http://localhost:8888',
       '--title=Yneko Reimu E2E',
-      '--admin_user=admin',
-      '--admin_password=password',
-      '--admin_email=admin@example.test',
+      `--admin_user=${adminUser.login}`,
+      `--admin_password=${adminUser.password}`,
+      `--admin_email=${adminUser.email}`,
       '--skip-email'
     ]);
   }
+}
+
+async function ensureAdminUser() {
+  await wpMaybe([
+    'user',
+    'create',
+    adminUser.login,
+    adminUser.email,
+    '--role=administrator',
+    `--user_pass=${adminUser.password}`,
+    '--display_name=Reimu QA Admin'
+  ]);
+  await wp([
+    'user',
+    'update',
+    adminUser.login,
+    `--user_pass=${adminUser.password}`,
+    '--role=administrator',
+    '--display_name=Reimu QA Admin'
+  ]);
 }
 
 async function ensureUser() {
@@ -173,6 +198,15 @@ async function ensureUser() {
     '--display_name=Reimu QA User'
   ]);
   await wp(['user', 'update', testUser.login, `--user_pass=${testUser.password}`, '--display_name=Reimu QA User']);
+}
+
+async function clearUserMeta(login, keys) {
+  for (const key of keys) {
+    const existingMeta = await wpCaptureMaybe(['user', 'meta', 'get', login, key]);
+    if (existingMeta) {
+      await wpMaybe(['user', 'meta', 'delete', login, key]);
+    }
+  }
 }
 
 async function upsertPost(slug, title, content, type = 'post') {
@@ -248,8 +282,9 @@ async function main() {
   await wp(['rewrite', 'flush', '--hard']);
   await ensurePermalinkRules();
 
+  await ensureAdminUser();
   await ensureUser();
-  for (const key of [
+  const volatileUserMetaKeys = [
     '_yneko_reimu_avatar_review_status',
     '_yneko_reimu_avatar_review_status_time',
     '_yneko_reimu_comment_tags_review_status',
@@ -264,12 +299,14 @@ async function main() {
     '_yneko_reimu_totp_secret',
     '_yneko_reimu_totp_pending_secret',
     '_yneko_reimu_totp_recovery_codes'
-  ]) {
-    const existingMeta = await wpCaptureMaybe(['user', 'meta', 'get', testUser.login, key]);
-    if (existingMeta) {
-      await wpMaybe(['user', 'meta', 'delete', testUser.login, key]);
-    }
-  }
+  ];
+  await clearUserMeta(testUser.login, volatileUserMetaKeys);
+  await clearUserMeta(adminUser.login, [
+    '_yneko_reimu_totp_enabled',
+    '_yneko_reimu_totp_secret',
+    '_yneko_reimu_totp_pending_secret',
+    '_yneko_reimu_totp_recovery_codes'
+  ]);
 
   const postId = await upsertPost(
     'reimu-e2e-post',
@@ -344,6 +381,7 @@ async function main() {
 
   console.log('[e2e-seed] Done.');
   console.log(`[e2e-seed] Test post: /reimu-e2e-post/`);
+  console.log(`[e2e-seed] Admin: ${adminUser.login} / ${adminUser.password}`);
   console.log(`[e2e-seed] User: ${testUser.email} / ${testUser.password}`);
 }
 

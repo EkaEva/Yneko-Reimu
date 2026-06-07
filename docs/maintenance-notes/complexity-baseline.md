@@ -1,14 +1,14 @@
 # PHP Complexity Baseline
 
-Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow maintenance release.
+Generated with `npm run report:php-complexity` during the v0.2.17 quality-hardening release prep.
 
 ## Current Baseline
 
-- Runtime PHP files scanned: 212
-- Named functions scanned: 1004
-- Total lines: 20,258
-- Nonblank lines: 17,681
-- Approximate branch score: 6,424
+- Runtime PHP files scanned: 214
+- Named functions scanned: 1033
+- Total lines: 20,615
+- Nonblank lines: 17,979
+- Approximate branch score: 6,532
 
 ## Largest Runtime Files
 
@@ -30,15 +30,20 @@ Generated with `npm run report:php-complexity` during the v0.2.14 high-risk-flow
 | Lines | Branch score | Location | Function |
 | --- | --- | --- | --- |
 | 84 | 13 | `inc/comments/profile/save.php:6` | `yneko_reimu_ajax_profile_save` |
+| 82 | 15 | `inc/comments/auth/login.php:6` | `yneko_reimu_ajax_login` |
 | 81 | 1 | `inc/enqueue/config.php:43` | `yneko_reimu_frontend_i18n` |
 | 81 | 1 | `inc/github-login/styles.php:236` | `yneko_reimu_github_login_password_css` |
 | 80 | 24 | `inc/comments/profile-save.php:74` | `yneko_reimu_profile_save_prepare_tags` |
-| 79 | 14 | `inc/comments/auth/login.php:6` | `yneko_reimu_ajax_login` |
 | 77 | 2 | `inc/customizer/articles.php:6` | `yneko_reimu_register_customizer_articles_section` |
 | 75 | 27 | `inc/enqueue/config.php:125` | `yneko_reimu_build_frontend_config` |
 | 74 | 9 | `inc/schema.php:14` | `yneko_reimu_schema_graph` |
 | 70 | 13 | `inc/enqueue/head.php:110` | `yneko_reimu_typography_layout_css` |
 | 70 | 1 | `inc/github-login/styles.php:318` | `yneko_reimu_github_login_footer_css` |
+
+## v0.2.17 QA Baseline Note
+
+- v0.2.17 does not intentionally refactor runtime PHP. The slight baseline increase since v0.2.14 comes from later released features such as the GitHub Release updater, local E2E QA tooling, and block-editor writing support.
+- The quality-hardening work expands local Playwright coverage for the Yneko-Reimu settings page and block editor contracts while preserving the current PHP hotspot profile.
 
 ## Meaningful Movement Since v0.2.13
 
