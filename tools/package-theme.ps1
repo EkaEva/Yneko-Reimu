@@ -38,6 +38,11 @@ if ($OutputName.Trim()) {
   $zipFileName = 'Yneko-Reimu.zip'
 }
 
+$docVersion = $Version.Trim()
+if (-not $docVersion -and $zipFileName -match 'Yneko-Reimu-(v\d+(?:\.\d+){1,3})\.zip$') {
+  $docVersion = $Matches[1]
+}
+
 $zipPath = Join-Path $releaseDir $zipFileName
 
 $allowedRoots = @(
@@ -78,7 +83,9 @@ $rootFiles = @(
 )
 
 $docFiles = @(
-  "release-notes-$Version.md"
+  if ($docVersion) {
+    "release-notes-$docVersion.md"
+  }
 )
 
 New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null

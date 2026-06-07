@@ -3,7 +3,7 @@ Contributors: EkaEva
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 0.2.17
+Stable tag: 0.2.18
 License: MIT
 License URI: https://github.com/EkaEva/Yneko-Reimu/blob/main/LICENSE
 
@@ -49,6 +49,13 @@ The release ZIP excludes source assets, build tools, local planning files, depen
 Theme images ship as files under `assets/images` or generated runtime files under `assets/dist`. Standalone SVG icons live under `assets/images/icons`; small UI SVG components may remain inline, but runtime PHP/CSS/JS must not contain base64 `data:image` assets.
 
 == Changelog ==
+
+= 0.2.18 =
+
+* Adds an admin-only GitHub Release updater status area under General > Theme updates, showing installed/latest versions, expected ZIP asset, asset status, cache timing, and failure reasons.
+* Upgrades updater caching to store structured success and failure status while preserving the existing `yneko_reimu_github_release_update` transient key.
+* Adds nonce- and capability-protected internal admin actions for Check now and Clear cache.
+* Keeps the WordPress native theme update flow unchanged: only stable Releases with `Yneko-Reimu-vX.Y.Z.zip` and a newer version are exposed as theme updates.
 
 = 0.2.17 =
 

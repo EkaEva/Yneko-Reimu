@@ -1,14 +1,14 @@
 # PHP Complexity Baseline
 
-Generated with `npm run report:php-complexity` during the v0.2.17 quality-hardening release prep.
+Generated with `npm run report:php-complexity` during the v0.2.18 theme-updater observability release prep.
 
 ## Current Baseline
 
 - Runtime PHP files scanned: 214
-- Named functions scanned: 1033
-- Total lines: 20,615
-- Nonblank lines: 17,979
-- Approximate branch score: 6,532
+- Named functions scanned: 1052
+- Total lines: 20,928
+- Nonblank lines: 18,251
+- Approximate branch score: 6,671
 
 ## Largest Runtime Files
 
@@ -18,12 +18,12 @@ Generated with `npm run report:php-complexity` during the v0.2.17 quality-harden
 | 368 | 23 | 149 | `inc/migrations.php` |
 | 320 | 19 | 295 | `inc/comments/modals.php` |
 | 319 | 19 | 140 | `inc/comments/avatars.php` |
+| 318 | 25 | 99 | `inc/theme-updater.php` |
 | 296 | 13 | 128 | `inc/comments/profile-save.php` |
 | 263 | 14 | 119 | `inc/enqueue/head.php` |
 | 258 | 16 | 86 | `inc/i18n/requests.php` |
+| 256 | 21 | 303 | `inc/settings/page/general.php` |
 | 236 | 16 | 75 | `inc/enqueue/favicon.php` |
-| 226 | 15 | 73 | `inc/image-helpers.php` |
-| 225 | 27 | 97 | `inc/comments/uploads/media.php` |
 
 ## Largest Functions
 
@@ -36,9 +36,14 @@ Generated with `npm run report:php-complexity` during the v0.2.17 quality-harden
 | 80 | 24 | `inc/comments/profile-save.php:74` | `yneko_reimu_profile_save_prepare_tags` |
 | 77 | 2 | `inc/customizer/articles.php:6` | `yneko_reimu_register_customizer_articles_section` |
 | 75 | 27 | `inc/enqueue/config.php:125` | `yneko_reimu_build_frontend_config` |
+| 74 | 12 | `inc/theme-updater.php:122` | `yneko_reimu_theme_updater_fetch_status` |
 | 74 | 9 | `inc/schema.php:14` | `yneko_reimu_schema_graph` |
 | 70 | 13 | `inc/enqueue/head.php:110` | `yneko_reimu_typography_layout_css` |
-| 70 | 1 | `inc/github-login/styles.php:318` | `yneko_reimu_github_login_footer_css` |
+
+## v0.2.18 QA Baseline Note
+
+- v0.2.18 adds admin-only updater observability. The baseline increase is concentrated in `inc/theme-updater.php` and `inc/settings/page/general.php`, where structured update status, failure reasons, cache timing, and admin-only check/clear actions now live.
+- The update installer path remains WordPress-native through `site_transient_update_themes`; no front-end runtime surface or public theme update package naming rule changes.
 
 ## v0.2.17 QA Baseline Note
 
