@@ -179,6 +179,10 @@ test('loads the Yneko-Reimu admin settings surface', async ({ page }) => {
   await expect(page.locator('[data-yneko-settings-panel="general"]')).toBeVisible();
   await expect(page.locator('[data-yneko-settings-tab="comments"]')).toBeVisible();
   await expect(page.locator('[data-yneko-settings-tab="security"]')).toBeVisible();
+  await expect(page.locator('[data-yneko-theme-update-status]')).toBeVisible();
+  await expect(page.locator('[data-yneko-theme-update-status]')).toContainText('0.2.17');
+  await expect(page.locator('[data-yneko-theme-update-force]')).toBeVisible();
+  await expect(page.locator('[data-yneko-theme-update-clear]')).toBeVisible();
   await expect(page.locator('[data-yneko-admin-totp]')).toBeVisible();
 });
 

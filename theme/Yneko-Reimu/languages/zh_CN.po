@@ -2161,6 +2161,10 @@ msgstr "anchor"
 msgid "Archives"
 msgstr "Archives"
 
+#: inc/theme-updater.php
+msgid "Cached GitHub Release update result."
+msgstr "Cached GitHub Release update result."
+
 #: inc/github-login/settings.php
 msgid "Callback URL"
 msgstr "Callback URL"
@@ -2249,6 +2253,14 @@ msgstr "GitHub 项目与作品。"
 msgid "GitHub API request failed."
 msgstr "GitHub API request failed."
 
+#: inc/theme-updater.php
+msgid "GitHub API response was not valid JSON."
+msgstr "GitHub API response was not valid JSON."
+
+#: inc/theme-updater.php
+msgid "GitHub API returned HTTP %d."
+msgstr "GitHub API returned HTTP %d."
+
 #: inc/github-login/oauth.php
 msgid "GitHub did not return an access token."
 msgstr "GitHub did not return an access token."
@@ -2264,6 +2276,14 @@ msgstr "GitHub login state expired. Please try again."
 #: inc/github-login/users.php
 msgid "GitHub profile is missing required fields."
 msgstr "GitHub profile is missing required fields."
+
+#: inc/theme-updater.php
+msgid "GitHub Release update check completed with a visible failure reason below."
+msgstr "GitHub Release update check completed with a visible failure reason below."
+
+#: inc/theme-updater.php
+msgid "GitHub Release update check completed."
+msgstr "GitHub Release update check completed."
 
 #: inc/settings/schema/defaults/friends.php
 msgid "hexo-theme-reimu 原作者"
@@ -2341,6 +2361,22 @@ msgstr "Social Menu"
 msgid "SVG 包含不安全内容，已拒绝上传。"
 msgstr "SVG 包含不安全内容，已拒绝上传。"
 
+#: inc/theme-updater.php
+msgid "The latest GitHub Release is a draft or prerelease."
+msgstr "The latest GitHub Release is a draft or prerelease."
+
+#: inc/theme-updater.php
+msgid "The latest GitHub Release is missing %s."
+msgstr "The latest GitHub Release is missing %s."
+
+#: inc/theme-updater.php
+msgid "The latest GitHub Release tag is not a valid theme version."
+msgstr "The latest GitHub Release tag is not a valid theme version."
+
+#: inc/theme-updater.php
+msgid "Theme update cache was cleared."
+msgstr "Theme update cache was cleared."
+
 #: inc/github-login/users.php
 msgid "This GitHub account is already linked to another WordPress account."
 msgstr "This GitHub account is already linked to another WordPress account."
@@ -2404,3 +2440,7 @@ msgstr "Yneko-Reimu 主题作者"
 #: inc/github-login/settings.php
 msgid "Yneko-Reimu GitHub Login"
 msgstr "Yneko-Reimu GitHub Login"
+
+#: inc/theme-updater.php
+msgid "You do not have permission to manage theme updates."
+msgstr "You do not have permission to manage theme updates."

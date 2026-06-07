@@ -129,6 +129,12 @@ const requiredPageSnippets = [
   'yneko_reimu_settings_group_open( \'主题更新\', \'Theme updates\'',
   'name="yneko_reimu_settings[updates][github_release_check]"',
   'name="yneko_reimu_settings[updates][cache_minutes]"',
+  'data-yneko-theme-update-status',
+  'data-yneko-theme-update-force',
+  'data-yneko-theme-update-clear',
+  'yneko_reimu_render_settings_general_updates_status',
+  'yneko_reimu_theme_updater_admin_action_url( \'force_check\' )',
+  'yneko_reimu_theme_updater_admin_action_url( \'clear_cache\' )',
   'yneko_reimu_settings_group_open( \'账号安全\', \'Account security\'',
   'data-yneko-admin-totp',
   'data-yneko-admin-totp-generate',
@@ -236,6 +242,9 @@ const requiredAdminStyleSnippets = [
   '.yneko-reimu-admin-totp-recovery{display:flex;flex-direction:column;gap:10px',
   '.yneko-reimu-admin-totp-recovery__codes',
   '.yneko-reimu-admin-totp-status.is-enabled',
+  '.yneko-reimu-update-status{display:flex',
+  '.yneko-reimu-update-status__pill.is-error',
+  '.yneko-reimu-update-status__actions',
   '.yneko-reimu-security-alert-card.is-unhandled',
   '.yneko-reimu-security-alert-list',
   '.yneko-reimu-security-alert-actions'
@@ -436,6 +445,17 @@ for (const snippet of requiredSecuritySnippets) {
 for (const snippet of requiredAdminJsSnippets) {
   if (!adminJs.includes(snippet)) {
     failures.push(`Missing required settings admin JS snippet: ${snippet}`);
+  }
+}
+
+const updateStatusStart = page.indexOf('function yneko_reimu_render_settings_general_updates_status');
+const builtInPagesStart = page.indexOf('function yneko_reimu_render_settings_general_builtin_pages_group');
+if (-1 === updateStatusStart || -1 === builtInPagesStart || builtInPagesStart <= updateStatusStart) {
+  failures.push('Could not locate the General theme update status helper boundaries.');
+} else {
+  const updateStatusSource = page.slice(updateStatusStart, builtInPagesStart);
+  if (updateStatusSource.includes('yneko_reimu_admin_bilingual_text(')) {
+    failures.push('Theme update status values must use plain text, not yneko_reimu_admin_bilingual_text() HTML wrappers.');
   }
 }
 
