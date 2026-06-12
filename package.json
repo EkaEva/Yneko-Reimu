@@ -40,8 +40,8 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.60.0",
-    "@wordpress/env": "^10.38.0",
-    "esbuild": "^0.28.0",
+    "@wordpress/env": "^11.8.0",
+    "esbuild": "^0.28.1",
     "qrcode": "^1.5.4",
     "vite": "^8.0.16"
   }
